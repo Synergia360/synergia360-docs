@@ -1,32 +1,43 @@
 # Synergia Greenfield Rebuild Plan
 
-> Status: AWAITING CONFIRMATION  
-> Last updated: 2026-05-07  
-> Competitive additions incorporated: StoreFEEDER, Linnworks, Veeqo, Rithum, Sellercloud, Brightpearl, Cin7 analysis  
-> Internal MCP: Phase 13 · Public MCP read-only beta: Phase 13 · Public MCP write: Phase 17  
-> B2B Wholesale Portal: deferred (see `2027-plans/wholesale-portal.md`)
-> 
-> **2026-05-07 plan review additions** (line-by-line audit):
-> - **Critical schema gaps now in Phase 1 lock:** multi-currency / FX, VAT / tax engine, customers/buyers as first-class entity, channel buffer stock rules
-> - **New domains added:** Customers/CRM, Tax & Currency, Repricing, Stock Take, Returns to Vendor, Pricing Rules, GDPR/Compliance
-> - **Market-leading additions:** AI woven through workflows from Phase 5 (not just chat at Phase 13), public MCP read-only beta brought forward to Phase 13, free tier for sub-£100K turnover sellers, channel onboarding "60-second connect" wizard, public uptime/metrics page, open-source adapter SDK, 3PL shadow-tenant model, public marketing site at `synergia.co.uk` (Astro), bilingual UI (English + Urdu with full RTL support) from launch, **AI-authored saved reports + 18-report finance starter pack + user-built drag-and-drop dashboards**, **three-tier product research stack — Tier A (Phase 13) → Tier B Marketplace Research (Phase 14) → Tier C Full Research Platform with AI image-match supplier finding & cross-marketplace arbitrage detection (Phase 15)**
-> - **Phases now 0–17** (was 0–15): Tier B + Tier C product research inserted as Phases 14 + 15; Storefronts moved to 16; Enterprise + Public API + MCP GA moved to 17.
-> - **Implementation Sequence rewritten** to match new phase order
->
-> **2026-05-07 gap-analysis additions:**
-> - **New domains added:** Smart Category Management (Catalogue & Inventory), Expense Management, Portfolio Management, Monthly Financial Closing (Finance & Operations)
-> - **Expense model:** company-level and channel-level expenses; flexible allocation rules (equal across all channels, or selected channels at custom percentages); feeds channel P&L and monthly close
-> - **Monthly close:** per-company AND per-channel; locks the period; produces an immutable financial snapshot; unlocks are audit-logged
-> - **Portfolio Management:** operator-defined groupings of channels for cross-channel reporting and P&L view; no investor or profit-sharing logic
->
-> **2026-05-07 Vinted API verification (D5 updated):**
-> - **Vinted Pro Integrations API verified against official docs.** Invite-only allowlist; HMAC-SHA256 auth (not OAuth); 500-active-item slot per API user (negotiable); UK supported. **Capabilities exposed:** listings CRUD, orders read + cancel, shipping labels (Vinted-managed only), webhooks for item + order lifecycle. **Capabilities NOT exposed:** returns, disputes / seller-protection cases, messaging, account health, feedback, payouts — all those workflows remain in the Vinted UI for the operator.
-> - **Vinted stays in Phase 5 launch trio** (pilot client uses it) but with **reduced capability scope** in adapter capability flags. Phase 7 returns / Phase 11 messaging hub / account health dashboard explicitly exclude Vinted.
-> - **Etsy promoted to must-ship in Phase 12** to fill the workflow gaps Vinted leaves (Etsy has full returns / messaging / cases / feedback).
-> - **Marketing site Phase 5 must be honest** about Vinted scope — "listings + orders only" — to maintain credibility.
-> - **v1 Launch Milestone updated** to reflect Vinted reduced depth.
+## Status
+
+| Field | Value |
+| --- | --- |
+| Status | AWAITING CONFIRMATION |
+| Last updated | 2026-05-07 |
+| Competitive additions | StoreFEEDER, Linnworks, Veeqo, Rithum, Sellercloud, Brightpearl, Cin7 analysis |
+| Internal MCP | Phase 13 |
+| Public MCP read-only beta | Phase 13 |
+| Public MCP write | Phase 17 |
+| B2B Wholesale Portal | Deferred (see `2027-plans/wholesale-portal.md`) |
 
 > **Documentation rule:** `docs/PROJECT_STATUS.md` must be updated at the end of every phase before the phase is marked complete. Any engineer or agent must be able to orient from that file alone. See Step 4 (Documentation System) for the full `docs/` structure.
+
+## Changelog
+
+### 2026-05-07 — Plan Review Additions (line-by-line audit)
+
+- **Critical schema gaps now in Phase 1 lock:** multi-currency / FX, VAT / tax engine, customers/buyers as first-class entity, channel buffer stock rules
+- **New domains added:** Customers/CRM, Tax & Currency, Repricing, Stock Take, Returns to Vendor, Pricing Rules, GDPR/Compliance
+- **Market-leading additions:** AI woven through workflows from Phase 5 (not just chat at Phase 13), public MCP read-only beta brought forward to Phase 13, free tier for sub-£100K turnover sellers, channel onboarding "60-second connect" wizard, public uptime/metrics page, open-source adapter SDK, 3PL shadow-tenant model, public marketing site at `synergia.co.uk` (Astro), bilingual UI (English + Urdu with full RTL support) from launch, **AI-authored saved reports + 18-report finance starter pack + user-built drag-and-drop dashboards**, **three-tier product research stack — Tier A (Phase 13) → Tier B Marketplace Research (Phase 14) → Tier C Full Research Platform with AI image-match supplier finding & cross-marketplace arbitrage detection (Phase 15)**
+- **Phases now 0–17** (was 0–15): Tier B + Tier C product research inserted as Phases 14 + 15; Storefronts moved to 16; Enterprise + Public API + MCP GA moved to 17.
+- **Implementation Sequence rewritten** to match new phase order
+
+### 2026-05-07 — Gap-Analysis Additions
+
+- **New domains added:** Smart Category Management (Catalogue & Inventory), Expense Management, Portfolio Management, Monthly Financial Closing (Finance & Operations)
+- **Expense model:** company-level and channel-level expenses; flexible allocation rules (equal across all channels, or selected channels at custom percentages); feeds channel P&L and monthly close
+- **Monthly close:** per-company AND per-channel; locks the period; produces an immutable financial snapshot; unlocks are audit-logged
+- **Portfolio Management:** operator-defined groupings of channels for cross-channel reporting and P&L view; no investor or profit-sharing logic
+
+### 2026-05-07 — Vinted API Verification (D5 updated)
+
+- **Vinted Pro Integrations API verified against official docs.** Invite-only allowlist; HMAC-SHA256 auth (not OAuth); 500-active-item slot per API user (negotiable); UK supported. **Capabilities exposed:** listings CRUD, orders read + cancel, shipping labels (Vinted-managed only), webhooks for item + order lifecycle. **Capabilities NOT exposed:** returns, disputes / seller-protection cases, messaging, account health, feedback, payouts — all those workflows remain in the Vinted UI for the operator.
+- **Vinted stays in Phase 5 launch trio** (pilot client uses it) but with **reduced capability scope** in adapter capability flags. Phase 7 returns / Phase 11 messaging hub / account health dashboard explicitly exclude Vinted.
+- **Etsy promoted to must-ship in Phase 12** to fill the workflow gaps Vinted leaves (Etsy has full returns / messaging / cases / feedback).
+- **Marketing site Phase 5 must be honest** about Vinted scope — "listings + orders only" — to maintain credibility.
+- **v1 Launch Milestone updated** to reflect Vinted reduced depth.
 
 ---
 
@@ -37,7 +48,7 @@ Synergia is a **multichannel marketplace management + 3PL platform** targeting U
 ### Positioning
 
 | Dimension | Synergia |
-|---|---|
+| --- | --- |
 | Primary market | UK (launch), EU (Phase 9+) |
 | Target segment | Warehouse-owning multichannel sellers + 3PL operators |
 | Pricing model | Turnover-based flat tiers (no per-order, per-user, per-listing fees) |
@@ -117,7 +128,7 @@ Synergia is a **multichannel marketplace management + 3PL platform** targeting U
 ### Tech Stack
 
 | Layer | Choice | Rationale |
-|---|---|---|
+| --- | --- | --- |
 | Backend | ASP.NET Core 8 (C#) | Performance, strong typing, first-class SignalR + Azure integration |
 | Frontend (app) | Vite + React 18 + Shadcn/ui + Tailwind CSS | SPA; fast HMR; no SSR complexity; deploys to Azure Static Web Apps; served at `app.synergia.co.uk` |
 | Marketing site | Astro 4 + Tailwind CSS + MDX (blog) + light React islands | Static-first for SEO + Core Web Vitals; MDX for blog/changelog; React islands only for interactive widgets (pricing calculator, demo form); served at `synergia.co.uk` (apex + `www`) |
@@ -155,7 +166,7 @@ Synergia is a **multichannel marketplace management + 3PL platform** targeting U
 ### Architectural Decisions
 
 | Decision | Chosen | Runner-up | Rationale |
-|---|---|---|---|
+| --- | --- | --- | --- |
 | Service topology | Modular monolith | Microservices | Operational simplicity; decompose when justified by load |
 | Marketplace sync | Webhook-first + nightly reconciliation | Polling-only | Low latency on real events; reconciliation catches gaps |
 | Marketplace abstraction | MarketplaceAdapter interface (C# port of existing adapter pattern) | Rewrite from scratch | Same pattern, same capability flags, translated to C# interfaces |
@@ -202,7 +213,7 @@ Each workflow deploys independently to its own target — a change to `frontend/
 ### Domain layout
 
 | Domain | Hosts | Purpose |
-|---|---|---|
+| --- | --- | --- |
 | `synergia.co.uk` (apex) + `www.synergia.co.uk` | Marketing site (Astro) | Public site, lead gen, content marketing, SEO |
 | `app.synergia.co.uk` | Frontend SPA (Vite + React) | Authenticated tenant app |
 | `api.synergia.co.uk` | API (Container Apps) | REST + webhooks; behind Azure Front Door |
@@ -451,7 +462,7 @@ Lead workflow: marketing site form → API endpoint `/api/public/marketing/lead`
 The following tables/columns were added during the 2026-05-07 line-by-line audit and **must be in the Phase 1 lock**:
 
 | Domain | New tables | Why |
-|---|---|---|
+| --- | --- | --- |
 | **Customers** | `customers`, `customer_addresses`, `customer_channels`, `customer_tags`, `customer_notes` | LTV/CAC analytics impossible without this; was hidden inside `orders` |
 | **Currency** | `currencies`, `fx_rates` (global); `currency` columns on `companies`, `orders`, `order_lines`, `product_variants`, `purchase_orders`, `warehouses`, `channels` | Multi-channel sellers operate across GBP/EUR/USD; P&L needs FX |
 | **Tax** | `tax_jurisdictions`, `tax_codes`, `product_tax_codes`; `tax_rate`, `tax_amount`, `tax_collected_by`, `tax_jurisdiction` on `order_lines` | UK VAT, EU OSS/IOSS, marketplace facilitator rules |
@@ -676,7 +687,7 @@ frontend/
 ### Custom Components
 
 | Component | Purpose |
-|---|---|
+| --- | --- |
 | `DataGrid` | Virtualised table with column pinning, bulk select, inline edit; gold row highlight on hover |
 | `CommandPalette` | Cmd+K global search across orders/SKUs/channels; dark glass surface |
 | `ScanInput` | Barcode-optimised input with audible feedback states |
@@ -907,7 +918,7 @@ _Sign-off:_
 **Azure infrastructure tier:** Consumption / serverless only. Estimated cost: **~£80–100/month** (deferred free-tier resources where possible — see earlier discussion).
 
 | Service | Tier | Purpose |
-|---|---|---|
+| --- | --- | --- |
 | Azure SQL | Serverless — General Purpose, 1–4 vCores (auto-pause after 1h inactivity) | Primary DB; ~£30–50/month when active; £0 when paused |
 | Azure Container Apps | Consumption plan (scale to zero) | API only; no charge when idle |
 | Azure Static Web Apps | Free tier | Frontend SPA hosting; global CDN; free SSL; preview envs per PR |
@@ -1155,7 +1166,7 @@ _Expense Management setup (NEW)_
 **Azure infrastructure tier:** First paying customers expected. Upgrade DB; add Service Bus. Estimated cost: **~£200–280/month**.
 
 | Change | From | To | Reason |
-|---|---|---|---|
+| --- | --- | --- | --- |
 | Azure SQL | Serverless (auto-pause) | General Purpose, 2 vCores provisioned (always-on) | Consistent latency for customers; no cold-start pause |
 | Azure Static Web Apps | Free tier | Standard tier (~£7/month) | Custom auth providers + private endpoints |
 | Azure Service Bus | — | Standard tier | DLQ for failed listing sync jobs; scheduled retry messages |
@@ -1408,7 +1419,7 @@ _Dispute Cases_
 **Azure infrastructure tier:** Add SignalR Service for WMS real-time updates. Estimated cost: **~£250–330/month**.
 
 | Change | From | To | Reason |
-|---|---|---|---|
+| --- | --- | --- | --- |
 | Azure SignalR Service | — | Standard, 1 unit | WMS barcode scan → live pick task updates; low-stock alerts pushed to warehouse manager |
 
 **Deliverables:**
@@ -1469,7 +1480,7 @@ _Dispute Cases_
 **Azure infrastructure tier:** Upgrade DB to handle analytics queries; add Front Door for WAF + CDN. Estimated cost: **~£380–480/month**.
 
 | Change | From | To | Reason |
-|---|---|---|---|
+| --- | --- | --- | --- |
 | Azure SQL | General Purpose 2 vCores (~£280/month) | General Purpose 4 vCores (~£450/month) | Indexed view refresh + profitability queries under load |
 | Azure Front Door | — | Standard | WAF (OWASP rules), CDN for images/labels, SSL termination, health-based routing |
 
@@ -1537,7 +1548,7 @@ _Monthly Financial Closing workflow (NEW)_
 _Finance reports starter pack — 18 pre-built reports shipped with every tenant_
 
 | # | Report | Group |
-|---|---|---|
+| --- | --- | --- |
 | 1 | Channel P&L | Profitability |
 | 2 | Portfolio P&L comparison | Profitability |
 | 3 | SKU profitability (top/bottom N) | Profitability |
@@ -1650,7 +1661,7 @@ _Marketing site (Phase 11 update)_
 ### What v1 Launch includes (Phases 0–11)
 
 | Capability area | Status at launch |
-|---|---|
+| --- | --- |
 | **Marketplaces** | **eBay + TikTok Shop — full adapter depth** (orders, fulfilment, returns, cases, account health, messaging, payouts, feedback). **Vinted — reduced depth** (listings, orders, cancellations, shipping labels, webhooks only — Vinted Pro Integrations API does not expose returns / cases / messaging / account health / feedback / payouts; those workflows remain in Vinted UI for operator). Etsy added Phase 12 fills the gap. |
 | **Carriers** | ShipStation + Royal Mail + Evri + DPD — rate shopping, label generation, manifest, tracking writeback |
 | **Catalogue** | Products, variants, BOM/combos, structured attributes, listing templates, variation syndication, AI listing optimisation |
@@ -1685,7 +1696,7 @@ _Marketing site (Phase 11 update)_
 Phases 12–17 ship as **continuous monthly releases** post-launch, gated on customer demand:
 
 | Phase | Theme | Trigger to start |
-|---|---|---|
+| --- | --- | --- |
 | 12 | Etsy + Amazon expansion adapters | First 5 paying customers requesting Amazon |
 | 13 | AI/MCP layer (in-app + public read-only beta) | Deeper AI features needed; Tier-A research demand |
 | 14 | Tier-B Marketplace Research | Customer requests for Terapeak/SP-API research |
@@ -1723,7 +1734,7 @@ Phases 12–17 ship as **continuous monthly releases** post-launch, gated on cus
 **Azure infrastructure tier:** Buy 1-year reserved capacity on stable resources. Estimated cost: **~£300–380/month** (reserved discount applied).
 
 | Change | From | To | Reason |
-|---|---|---|---|
+| --- | --- | --- | --- |
 | Azure SQL 4 vCores | Pay-as-you-go (~£450/month) | 1-year reserved (~£290/month) | ~35% saving; ~£160/month saved |
 | Container Apps | Consumption | Dedicated workload profile (D4) | Predictable capacity for API + analytics workers under load |
 | Application Insights | Free 5 GB/month | Pay-per-GB with adaptive sampling | Analytics queries generate significant telemetry; sampling keeps cost under £30/month |
@@ -1896,7 +1907,7 @@ _Research-aware AI assistant_
 **Azure infrastructure tier:** Add Azure OpenAI (or Anthropic vision endpoints) for AI image matching; storage for product image vectors; potential ClickHouse/dedicated analytics tier for time-series market data at scale. Estimated cost: **~£450–600/month** before per-tenant Tier-C usage charges.
 
 | Change | From | To | Reason |
-|---|---|---|---|
+| --- | --- | --- | --- |
 | Vector storage | — | Azure AI Search (with vector index) OR Azure CosmosDB vCore (Mongo-style with vector) | AI image-match across millions of supplier products |
 | ClickHouse evaluation | — | Decide here whether market time-series data crosses the 10M-events threshold from earlier ADR (`reporting-store`) — provision if so | Tier-C generates large volumes of price/BSR/trend time-series |
 
@@ -1978,7 +1989,7 @@ _AI research orchestration_
 **Azure infrastructure tier:** Add geo-redundancy and zone-redundant HA for enterprise SLA commitments. Estimated cost: **~£500–700/month**.
 
 | Change | From | To | Reason |
-|---|---|---|---|
+| --- | --- | --- | --- |
 | Azure SQL | General Purpose, single zone | Business Critical or zone-redundant replica | 99.99% SLA required for enterprise contracts |
 | Azure Container Apps (API) | UK South only | UK South primary + UK West secondary (Front Door routing) | Regional failover for enterprise customers |
 | Azure Static Web Apps | Standard, single region | Standard — already globally distributed via built-in CDN | No change needed; SWA CDN is global by default |
@@ -2038,7 +2049,7 @@ _Enterprise hardening_
 **Vinted note (verified 2026-05-07 against Vinted Pro Integrations docs):** Vinted Pro Integrations API is **invite-only**, supports listings/orders/webhooks/shipping labels but **does NOT offer returns, disputes, messaging, account health, payouts, or feedback APIs**. The reduced capability set is reflected below; what isn't checked here means the operator uses the Vinted UI directly for that workflow. Initial slot allocation is 500 active items per API user — slot increase negotiated per partner.
 
 | Capability | eBay (P5) | TikTok Shop (P5) | Vinted (P5) | Etsy (P12) | Amazon (P12) | Shopify (P16) | WooCommerce (P16) | ShipStation (P8) | Royal Mail (P8) | Evri (P11) | DPD (P11) |
-|---|---|---|---|---|---|---|---|---|---|---|---|
+| --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- |
 | Auth | OAuth | OAuth | HMAC | OAuth | OAuth | OAuth | OAuth | API key | API key | API key | API key |
 | Listings | ✓ | ✓ | ✓ (≤500 items) | ✓ | ✓ | ✓ | ✓ | — | — | — | — |
 | Orders | ✓ | ✓ | ✓ (read + cancel) | ✓ | ✓ | ✓ | ✓ | — | — | — | — |
@@ -2060,7 +2071,7 @@ _Enterprise hardening_
 ### Rate-Limit Budget (70% of documented API maximum)
 
 | Adapter | Documented limit | Synergia budget | Strategy |
-|---|---|---|---|
+| --- | --- | --- | --- |
 | eBay REST | 5,000 calls/day per app | 3,500/day | Token bucket per (company_id, adapter); backoff + re-queue |
 | TikTok Shop | 10,000 calls/day | 7,000/day | Token bucket; webhook-first to reduce polling |
 | Amazon SP-API | Varies by endpoint (1–100 req/s) | 70% per endpoint | Per-endpoint token bucket; respect Retry-After header |
@@ -2084,7 +2095,7 @@ Full detail in `docs/testing/TESTING_STRATEGY.md`. Summary below.
 #### Test Pyramid
 
 | Layer | Tool | Scope | Coverage target |
-|---|---|---|---|
+| --- | --- | --- | --- |
 | Unit | xUnit (.NET) + Vitest (frontend) | Individual functions, services, components, permission resolution, fee calculations | 80% line coverage — CI fails below threshold |
 | Integration | xUnit + Testcontainers (real SQL Server + Redis in Docker) | API endpoints, DB queries, EF Core migrations, webhook handlers, queue consumers | All API endpoints covered |
 | E2E | Playwright (web) | Critical user flows: sign-up, order lifecycle, stock movement, label generation, returns | Every flow defined in phase acceptance criteria |
@@ -2115,7 +2126,7 @@ Pre-release gate:
 #### Per-Phase Test Focus
 
 | Phase | Test focus |
-|---|---|
+| --- | --- |
 | 0 | No code — research docs peer-reviewed |
 | 1 | No code — schema entity stubs compile; permission matrix reviewed; currency/tax/customer/buffer schema decisions locked |
 | 2 | Migration integrity; all tables have `company_id NOT NULL`; tenancy guard 403; idempotency middleware; marketing site Lighthouse 95+/100/100; waitlist form E2E; ESLint blocks raw JSX strings; RTL Playwright snapshot for app shell |
@@ -2150,7 +2161,7 @@ Cost optimisation principles applied throughout:
 - **AI Cost Model:** see [`Plans/AI_COST_MODEL.md`](AI_COST_MODEL.md) — per-feature cost estimates, per-tier roll-ups, daily caps, validation milestones. Reviewed at Phase 0, 5, 11, 13, then monthly.
 
 | Phase | Key infrastructure changes | Est. monthly (production) |
-|---|---|---|
+| --- | --- | --- |
 | 0–1 | No infrastructure spend — research and schema design only | **£0** |
 | 2–4 | Azure SQL Serverless, Container Apps consumption, SWA Free, GHCR (free), Blob, App Insights free; Redis deferred | **£80–110** |
 | 5–8 | Azure SQL provisioned 2 vCores, SWA Standard (~£7/month), Redis Standard C1, Service Bus Standard, Storage Queues | **£200–270** |
@@ -2171,7 +2182,7 @@ Performance is a first-class engineering discipline, not an afterthought. **Ever
 #### Latency budgets (production targets)
 
 | Endpoint class | p50 | p95 | p99 | Hard cap |
-|---|---|---|---|---|
+| --- | --- | --- | --- | --- |
 | Health check | 10ms | 50ms | 100ms | 200ms |
 | Read API (single resource) | 50ms | 200ms | 500ms | 1s |
 | Read API (list/search) | 100ms | 400ms | 800ms | 2s |
@@ -2187,7 +2198,7 @@ Performance is a first-class engineering discipline, not an afterthought. **Ever
 #### Frontend performance budgets
 
 | Metric | Target | Hard cap |
-|---|---|---|
+| --- | --- | --- |
 | LCP (Largest Contentful Paint) | < 1.5s | < 2.5s |
 | INP (Interaction to Next Paint) | < 100ms | < 200ms |
 | CLS (Cumulative Layout Shift) | < 0.05 | < 0.1 |
@@ -2199,7 +2210,7 @@ Performance is a first-class engineering discipline, not an afterthought. **Ever
 #### Mobile WMS performance budgets (Phase 9)
 
 | Metric | Target | Hard cap |
-|---|---|---|
+| --- | --- | --- |
 | Scan-to-confirmation visual feedback | < 100ms | < 250ms |
 | Wrong-scan error block | < 50ms | < 150ms |
 | Pick-task list load (50 items) | < 500ms | < 1.5s |
@@ -2210,7 +2221,7 @@ Performance is a first-class engineering discipline, not an afterthought. **Ever
 #### Scalability targets (per tenant at upper bound)
 
 | Workload | Phase 11 (post-launch) target | Phase 17 (enterprise) target |
-|---|---|---|
+| --- | --- | --- |
 | Orders/day ingested | 10,000 / day / tenant | 100,000 / day / tenant |
 | SKUs in catalogue | 100,000 / tenant | 1,000,000 / tenant |
 | Concurrent WMS pickers | 20 / tenant | 200 / tenant |
@@ -2231,7 +2242,7 @@ Performance is a first-class engineering discipline, not an afterthought. **Ever
 #### Caching strategy (Redis)
 
 | Cache | TTL | Invalidation | Phase introduced |
-|---|---|---|---|
+| --- | --- | --- | --- |
 | Carrier rate quotes (same shipment) | 5 min | TTL only | 8 |
 | FX rates (latest) | 1h | TTL + manual refresh on rate-source webhook | 4 |
 | Tax rates (per jurisdiction) | 24h | Manual on tax-table edit | 4 |
@@ -2245,7 +2256,7 @@ Performance is a first-class engineering discipline, not an afterthought. **Ever
 #### Load testing schedule (k6 against staging)
 
 | Phase | Test scenario | Pass criteria |
-|---|---|---|
+| --- | --- | --- |
 | 5 | Channel listing push at 100 RPS sustained for 5 min | p95 < 2s, error rate < 0.1% |
 | 6 | Order webhook ingest at 500 RPS sustained for 10 min | p95 < 600ms, zero duplicates, zero lost events |
 | 8 | Carrier rate shopping at 50 RPS (multi-carrier fan-out) | p95 < 2s; carrier rate-limit headroom remains > 30% |
@@ -2332,7 +2343,7 @@ UK + EU operation requires explicit data protection compliance from day one. **P
 Three endpoints on `Synergia.Api` from Phase 2 onward:
 
 | Endpoint | Type | Checks | Used by |
-|---|---|---|---|
+| --- | --- | --- | --- |
 | `GET /health/live` | Liveness | Process is alive (always 200 if running) | Container Apps liveness probe |
 | `GET /health/ready` | Readiness | DB connection, Redis connection, Key Vault reachable | Container Apps readiness probe — traffic held on old revision if failing |
 | `GET /health/startup` | Startup | EF Core migrations applied; seed data present | Container Apps startup probe |
@@ -2359,7 +2370,7 @@ Three endpoints on `Synergia.Api` from Phase 2 onward:
 Alert rules active from Phase 2 onward, tightened at each phase:
 
 | Alert | Threshold | Action |
-|---|---|---|
+| --- | --- | --- |
 | API p95 latency | > 2 000ms over 5 min | Email + webhook to on-call |
 | API error rate | > 1% of requests over 5 min | Email + webhook |
 | Container Apps memory | > 80% for 10 min | Email |
@@ -2417,7 +2428,7 @@ Every `POST`, `PUT`, `PATCH`, `DELETE` endpoint supports an `Idempotency-Key` he
 #### 9. Data Backup & Point-in-Time Recovery
 
 | Tier | Backup type | Retention | RTO | RPO |
-|---|---|---|---|---|
+| --- | --- | --- | --- | --- |
 | Azure SQL built-in PITR | Continuous transaction log backup | 7 days (dev), 35 days (prod) | < 4 hours | < 5 minutes |
 | Weekly export | Full `.bacpac` export to Blob Storage (GRS) | 12 weeks | < 8 hours | 1 week |
 | Pre-migration snapshot | Manual `.bacpac` before every EF Core migration | Indefinite | < 2 hours | Point of snapshot |
@@ -2435,7 +2446,7 @@ Every `POST`, `PUT`, `PATCH`, `DELETE` endpoint supports an `Idempotency-Key` he
 These are the features that move Synergia from "competitive with Linnworks/StoreFEEDER" to "category leader." Each is a deliberate design choice woven through the phases.
 
 | Differentiator | Phase | Why it wins |
-|---|---|---|
+| --- | --- | --- |
 | **Native MCP server (internal + public)** | 13 (read) → 15 (write) | First-and-only operations platform with full MCP support — operators run analyses and actions from Claude Desktop directly against their live data |
 | **AI woven through every workflow** | From Phase 5 onwards | Listing optimisation (P5), return triage (P7), repricing suggestions (P10), forecasting (P9 → P13), messaging drafts (P11) — not a single chat panel bolted on at the end |
 | **Free tier for sub-£100K turnover sellers** | Phase 3 | Acquires sellers young; locks them in before they hit Linnworks/StoreFEEDER price brackets. Near-zero Azure cost on consumption tier |
@@ -2577,7 +2588,7 @@ These are pending the **AI-Core decision** — do we want to add the AI-Core arc
 ## Competitive Positioning Summary
 
 | Competitor | Synergia advantage |
-|---|---|
+| --- | --- |
 | StoreFEEDER | Modern UI + AI woven through workflows + repricing engine + free tier + multi-currency + same WMS depth, same UK channels |
 | Linnworks | Transparent rolling-30-day pricing + free tier + native MCP + AI repricing + 60-second channel onboarding + comparable channel breadth |
 | Veeqo | Independent ownership (no Amazon conflict of interest) + far deeper analytics + AI layer everywhere + repricing |
