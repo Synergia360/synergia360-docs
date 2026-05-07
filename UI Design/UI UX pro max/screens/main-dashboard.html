@@ -1,0 +1,1147 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Synergia — Dashboard</title>
+  <link rel="stylesheet" href="../shared.css">
+  <script src="https://cdn.tailwindcss.com"></script>
+  <style>
+    :root {
+      --color-bg: #141414;
+      --color-surface: #1E1E1E;
+      --color-surface-raised: #252525;
+      --color-border: #383838;
+      --color-border-active: #5A5A5A;
+      --color-text: #F2F2F2;
+      --color-text-muted: #999999;
+      --color-text-subtle: #666666;
+      --color-accent: #C4972A;
+      --color-accent-dim: #8B6914;
+      --color-accent-glow: rgba(196,151,42,0.15);
+      --color-success: #4A9E6E;
+      --color-warning: #D4872C;
+      --color-danger: #8B3A3A;
+      --color-info: #3A6B8B;
+    }
+
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    body { font-family: 'Inter', sans-serif; background: var(--color-bg); color: var(--color-text); -webkit-font-smoothing: antialiased; overflow: hidden; height: 100vh; }
+
+    .app-shell { display: flex; height: 100vh; overflow: hidden; }
+
+    /* ===== SIDEBAR ===== */
+    .sidebar {
+      width: 240px;
+      min-width: 240px;
+      background: var(--color-surface);
+      border-right: 1px solid var(--color-border);
+      display: flex;
+      flex-direction: column;
+      height: 100vh;
+      overflow-y: auto;
+    }
+
+    .sidebar-logo {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      padding: 18px 20px 16px;
+      border-bottom: 1px solid var(--color-border);
+    }
+
+    .logo-mark {
+      width: 32px;
+      height: 32px;
+      background: linear-gradient(135deg, #C4972A 0%, #8B6914 100%);
+      border-radius: 8px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 16px;
+      font-weight: 800;
+      color: #141414;
+      box-shadow: 0 0 16px rgba(196,151,42,0.3);
+      flex-shrink: 0;
+    }
+
+    .logo-text { font-size: 16px; font-weight: 700; color: var(--color-text); letter-spacing: -0.01em; }
+
+    .sidebar-nav { flex: 1; padding: 10px 0; }
+
+    .nav-section-label {
+      font-size: 9.5px;
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: 0.1em;
+      color: var(--color-text-subtle);
+      padding: 12px 20px 4px;
+    }
+
+    .nav-item {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      padding: 7px 20px;
+      color: var(--color-text-muted);
+      text-decoration: none;
+      font-size: 13px;
+      font-weight: 400;
+      position: relative;
+      transition: color 0.12s, background 0.12s;
+      cursor: pointer;
+      border-left: 2px solid transparent;
+    }
+
+    .nav-item:hover { color: var(--color-text); background: rgba(255,255,255,0.03); }
+    .nav-item.active { color: var(--color-accent); border-left-color: var(--color-accent); background: var(--color-accent-glow); font-weight: 500; }
+    .nav-item svg { opacity: 0.65; flex-shrink: 0; }
+    .nav-item.active svg { opacity: 1; }
+
+    .nav-badge-red {
+      margin-left: auto;
+      background: #8B3A3A;
+      color: #FF9999;
+      font-size: 9.5px;
+      font-weight: 700;
+      padding: 1px 6px;
+      border-radius: 8px;
+    }
+
+    .sidebar-footer {
+      padding: 12px 14px;
+      border-top: 1px solid var(--color-border);
+    }
+
+    .sidebar-user {
+      display: flex;
+      align-items: center;
+      gap: 9px;
+      padding: 7px 8px;
+      border-radius: 8px;
+      cursor: pointer;
+    }
+
+    .sidebar-user:hover { background: rgba(255,255,255,0.04); }
+
+    .user-avatar {
+      width: 30px;
+      height: 30px;
+      border-radius: 50%;
+      background: linear-gradient(135deg, var(--color-accent-dim), var(--color-accent));
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 11px;
+      font-weight: 700;
+      color: #141414;
+      flex-shrink: 0;
+    }
+
+    .user-name { font-size: 12.5px; font-weight: 500; color: var(--color-text); }
+    .user-role { font-size: 11px; color: var(--color-text-muted); }
+
+    /* ===== MAIN COL ===== */
+    .main-col { flex: 1; display: flex; flex-direction: column; overflow: hidden; }
+
+    /* ===== TOPBAR ===== */
+    .topbar {
+      height: 54px;
+      background: var(--color-surface);
+      border-bottom: 1px solid var(--color-border);
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      padding: 0 20px;
+      flex-shrink: 0;
+    }
+
+    .company-switcher {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      background: var(--color-surface-raised);
+      border: 1px solid var(--color-border);
+      border-radius: 7px;
+      padding: 5px 12px;
+      cursor: pointer;
+      font-size: 13px;
+      font-weight: 500;
+      color: var(--color-text);
+      transition: border-color 0.15s;
+    }
+
+    .company-switcher:hover { border-color: var(--color-border-active); }
+
+    .company-dot {
+      width: 8px;
+      height: 8px;
+      border-radius: 50%;
+      background: var(--color-success);
+      box-shadow: 0 0 6px rgba(74,158,110,0.6);
+    }
+
+    .topbar-spacer { flex: 1; }
+
+    .cmd-k {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      background: var(--color-surface-raised);
+      border: 1px solid var(--color-border);
+      border-radius: 7px;
+      padding: 5px 12px;
+      cursor: pointer;
+      color: var(--color-text-subtle);
+      font-size: 12px;
+      transition: all 0.15s;
+      min-width: 160px;
+    }
+
+    .cmd-k:hover { border-color: var(--color-border-active); color: var(--color-text-muted); }
+
+    .kbd {
+      background: var(--color-border);
+      border-radius: 3px;
+      padding: 1px 5px;
+      font-size: 10px;
+      font-family: 'Geist Mono', monospace;
+      color: var(--color-text-subtle);
+      margin-left: auto;
+    }
+
+    .topbar-btn {
+      position: relative;
+      width: 34px;
+      height: 34px;
+      border-radius: 7px;
+      border: 1px solid var(--color-border);
+      background: var(--color-surface-raised);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      cursor: pointer;
+      color: var(--color-text-muted);
+    }
+
+    .topbar-btn:hover { border-color: var(--color-border-active); color: var(--color-text); }
+
+    .topbar-badge {
+      position: absolute;
+      top: -4px;
+      right: -4px;
+      background: #8B3A3A;
+      color: #FF9999;
+      font-size: 8.5px;
+      font-weight: 700;
+      width: 15px;
+      height: 15px;
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      border: 1.5px solid var(--color-surface);
+    }
+
+    .topbar-avatar {
+      width: 30px;
+      height: 30px;
+      border-radius: 50%;
+      background: linear-gradient(135deg, var(--color-accent-dim), var(--color-accent));
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 11px;
+      font-weight: 700;
+      color: #141414;
+      cursor: pointer;
+      border: 1.5px solid var(--color-border);
+    }
+
+    /* ===== CONTENT ===== */
+    .content-area {
+      flex: 1;
+      overflow-y: auto;
+      padding: 22px 24px;
+      background: var(--color-bg);
+    }
+
+    .page-header {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      margin-bottom: 20px;
+    }
+
+    .page-title {
+      font-size: 20px;
+      font-weight: 700;
+      color: var(--color-text);
+      letter-spacing: -0.02em;
+    }
+
+    .header-date { font-size: 12.5px; color: var(--color-text-muted); }
+
+    /* ===== KPI CARDS ===== */
+    .kpi-grid { display: grid; grid-template-columns: repeat(6, 1fr); gap: 12px; margin-bottom: 16px; }
+
+    .kpi-card {
+      background: var(--color-surface);
+      border: 1px solid var(--color-border);
+      border-radius: 10px;
+      padding: 16px;
+      position: relative;
+      overflow: hidden;
+      transition: border-color 0.15s;
+    }
+
+    .kpi-card:hover { border-color: var(--color-border-active); }
+
+    .kpi-card::before {
+      content: '';
+      position: absolute;
+      top: 0;
+      left: 0;
+      right: 0;
+      height: 2px;
+      background: linear-gradient(90deg, transparent, transparent);
+    }
+
+    .kpi-card.green::before { background: linear-gradient(90deg, transparent, rgba(74,158,110,0.4), transparent); }
+    .kpi-card.red::before { background: linear-gradient(90deg, transparent, rgba(224,85,85,0.4), transparent); }
+    .kpi-card.amber::before { background: linear-gradient(90deg, transparent, rgba(212,135,44,0.4), transparent); }
+    .kpi-card.gold::before { background: linear-gradient(90deg, transparent, rgba(196,151,42,0.4), transparent); }
+
+    .kpi-label { font-size: 10.5px; font-weight: 600; color: var(--color-text-subtle); text-transform: uppercase; letter-spacing: 0.07em; margin-bottom: 8px; }
+
+    .kpi-value {
+      font-size: 26px;
+      font-weight: 700;
+      font-family: 'Geist Mono', monospace;
+      color: var(--color-text);
+      letter-spacing: -0.02em;
+      line-height: 1;
+      margin-bottom: 8px;
+    }
+
+    .kpi-footer { display: flex; align-items: center; justify-content: space-between; }
+
+    .kpi-change { display: flex; align-items: center; gap: 4px; font-size: 11px; font-weight: 600; }
+    .kpi-change.up { color: var(--color-success); }
+    .kpi-change.down { color: #E05555; }
+    .kpi-change.amber { color: var(--color-warning); }
+    .kpi-change.neutral { color: var(--color-text-muted); }
+
+    /* Sparkline SVGs */
+    .sparkline { margin-top: 6px; }
+
+    /* ===== CHANNEL SYNC ROW ===== */
+    .channel-sync-row {
+      background: var(--color-surface);
+      border: 1px solid var(--color-border);
+      border-radius: 10px;
+      padding: 14px 18px;
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      margin-bottom: 16px;
+    }
+
+    .sync-label { font-size: 12px; font-weight: 600; color: var(--color-text-subtle); text-transform: uppercase; letter-spacing: 0.07em; margin-right: 8px; white-space: nowrap; }
+
+    .channel-pill {
+      display: flex;
+      align-items: center;
+      gap: 7px;
+      background: var(--color-surface-raised);
+      border: 1px solid var(--color-border);
+      border-radius: 6px;
+      padding: 6px 12px;
+      flex: 1;
+      min-width: 0;
+    }
+
+    .channel-logo {
+      width: 22px;
+      height: 22px;
+      border-radius: 5px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 12px;
+      flex-shrink: 0;
+    }
+
+    .ch-ebay-logo { background: rgba(255,174,0,0.12); }
+    .ch-tiktok-logo { background: rgba(105,201,208,0.12); }
+    .ch-vinted-logo { background: rgba(9,183,117,0.12); }
+    .ch-etsy-logo { background: rgba(243,89,36,0.12); }
+
+    .ch-name { font-size: 12px; font-weight: 600; color: var(--color-text); }
+    .ch-time { font-size: 10.5px; color: var(--color-text-subtle); margin-left: auto; }
+
+    .status-dot-sm { width: 7px; height: 7px; border-radius: 50%; flex-shrink: 0; }
+    .dot-green { background: var(--color-success); box-shadow: 0 0 5px rgba(74,158,110,0.7); }
+    .dot-amber { background: var(--color-warning); box-shadow: 0 0 5px rgba(212,135,44,0.7); }
+    .dot-red { background: #E05555; box-shadow: 0 0 5px rgba(224,85,85,0.7); }
+
+    /* ===== BOTTOM ROW ===== */
+    .bottom-row { display: grid; grid-template-columns: 3fr 2fr; gap: 14px; }
+
+    /* Order Feed */
+    .feed-panel {
+      background: var(--color-surface);
+      border: 1px solid var(--color-border);
+      border-radius: 10px;
+      overflow: hidden;
+    }
+
+    .feed-header {
+      padding: 14px 18px;
+      border-bottom: 1px solid var(--color-border);
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      background: var(--color-surface-raised);
+    }
+
+    .feed-title { font-size: 13px; font-weight: 600; color: var(--color-text); }
+
+    .live-dot {
+      width: 8px;
+      height: 8px;
+      border-radius: 50%;
+      background: var(--color-success);
+      animation: liveGlow 2s ease-in-out infinite;
+    }
+
+    @keyframes liveGlow {
+      0%, 100% { box-shadow: 0 0 4px rgba(74,158,110,0.6); }
+      50% { box-shadow: 0 0 10px rgba(74,158,110,0.9), 0 0 20px rgba(74,158,110,0.3); }
+    }
+
+    .feed-body { padding: 4px 0; }
+
+    .order-row {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      padding: 9px 18px;
+      transition: background 0.12s;
+      cursor: pointer;
+      border-left: 2px solid transparent;
+    }
+
+    .order-row:hover { background: rgba(196,151,42,0.04); border-left-color: rgba(196,151,42,0.2); }
+
+    .ch-badge {
+      font-size: 9.5px;
+      font-weight: 700;
+      padding: 2px 6px;
+      border-radius: 4px;
+      text-transform: uppercase;
+      letter-spacing: 0.04em;
+      white-space: nowrap;
+      flex-shrink: 0;
+    }
+
+    .order-id { font-family: 'Geist Mono', monospace; font-size: 11.5px; color: var(--color-text-muted); flex-shrink: 0; min-width: 96px; }
+    .order-buyer { font-size: 12.5px; color: var(--color-text); flex: 1; min-width: 0; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+    .order-value { font-size: 13px; font-weight: 600; color: var(--color-text); font-family: 'Geist Mono', monospace; white-space: nowrap; }
+
+    .order-status-badge {
+      font-size: 9.5px;
+      font-weight: 600;
+      padding: 2px 7px;
+      border-radius: 4px;
+      text-transform: uppercase;
+      letter-spacing: 0.03em;
+      white-space: nowrap;
+      flex-shrink: 0;
+    }
+
+    .status-processing { background: rgba(58,107,139,0.2); color: #5B9DC8; }
+    .status-shipped { background: rgba(74,158,110,0.15); color: #4A9E6E; }
+    .status-pending { background: rgba(212,135,44,0.15); color: #D4872C; }
+    .status-cancelled { background: rgba(139,58,58,0.2); color: #E05555; }
+    .status-awaiting { background: rgba(255,255,255,0.06); color: var(--color-text-muted); }
+
+    .order-time { font-size: 10.5px; color: var(--color-text-subtle); white-space: nowrap; flex-shrink: 0; }
+
+    /* Right panels */
+    .right-panels { display: flex; flex-direction: column; gap: 14px; }
+
+    .small-panel {
+      background: var(--color-surface);
+      border: 1px solid var(--color-border);
+      border-radius: 10px;
+      overflow: hidden;
+    }
+
+    .small-panel-header {
+      padding: 12px 16px;
+      border-bottom: 1px solid var(--color-border);
+      background: var(--color-surface-raised);
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+    }
+
+    .small-panel-title { font-size: 12.5px; font-weight: 600; color: var(--color-text); }
+
+    /* Reorder alerts */
+    .reorder-row {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      padding: 8px 16px;
+      border-bottom: 1px solid rgba(56,56,56,0.5);
+    }
+
+    .reorder-row:last-child { border-bottom: none; }
+
+    .sku-name { font-size: 12px; color: var(--color-text); flex: 1; min-width: 0; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+    .days-left { font-size: 11px; font-family: 'Geist Mono', monospace; white-space: nowrap; }
+    .days-critical { color: #E05555; }
+    .days-warning { color: var(--color-warning); }
+    .days-ok { color: var(--color-success); }
+
+    .create-po-btn {
+      font-size: 10px;
+      font-weight: 600;
+      padding: 3px 8px;
+      border-radius: 4px;
+      border: 1px solid var(--color-accent-dim);
+      color: var(--color-accent);
+      background: transparent;
+      cursor: pointer;
+      white-space: nowrap;
+      font-family: 'Inter', sans-serif;
+      transition: all 0.12s;
+    }
+
+    .create-po-btn:hover { background: var(--color-accent-glow); }
+
+    /* SLA Warnings */
+    .sla-row {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      padding: 8px 16px;
+      border-bottom: 1px solid rgba(56,56,56,0.5);
+    }
+
+    .sla-row:last-child { border-bottom: none; }
+
+    /* SVG ring */
+    .sla-ring {
+      position: relative;
+      width: 36px;
+      height: 36px;
+      flex-shrink: 0;
+    }
+
+    .sla-ring svg { transform: rotate(-90deg); }
+
+    .sla-ring-value {
+      position: absolute;
+      inset: 0;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 9px;
+      font-weight: 700;
+      font-family: 'Geist Mono', monospace;
+    }
+
+    .sla-info { flex: 1; min-width: 0; }
+    .sla-order { font-size: 11.5px; font-family: 'Geist Mono', monospace; color: var(--color-text-muted); }
+    .sla-buyer { font-size: 12px; color: var(--color-text); margin-top: 1px; }
+
+    .sla-tag { font-size: 10px; font-weight: 600; padding: 2px 6px; border-radius: 4px; }
+    .sla-critical { background: rgba(139,58,58,0.25); color: #E05555; }
+    .sla-warning { background: rgba(212,135,44,0.2); color: var(--color-warning); }
+
+    /* ===== FAB ===== */
+    .fab-bar {
+      position: fixed;
+      bottom: 24px;
+      right: 24px;
+      display: flex;
+      flex-direction: column;
+      gap: 8px;
+      z-index: 100;
+    }
+
+    .fab-btn {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      background: var(--color-accent);
+      color: #141414;
+      border: none;
+      border-radius: 10px;
+      padding: 10px 16px;
+      font-size: 12.5px;
+      font-weight: 700;
+      cursor: pointer;
+      font-family: 'Inter', sans-serif;
+      box-shadow: 0 4px 20px rgba(196,151,42,0.3);
+      transition: all 0.15s;
+      white-space: nowrap;
+    }
+
+    .fab-btn:hover { background: #D4A830; box-shadow: 0 6px 28px rgba(196,151,42,0.45); transform: translateY(-1px); }
+
+    .fab-btn.secondary {
+      background: var(--color-surface);
+      color: var(--color-text-muted);
+      border: 1px solid var(--color-border);
+      box-shadow: 0 2px 8px rgba(0,0,0,0.3);
+    }
+
+    .fab-btn.secondary:hover { border-color: var(--color-accent); color: var(--color-accent); background: var(--color-accent-glow); }
+  </style>
+</head>
+<body>
+
+<div class="app-shell">
+
+  <!-- ===== SIDEBAR ===== -->
+  <div class="sidebar">
+    <div class="sidebar-logo">
+      <div class="logo-mark">S</div>
+      <span class="logo-text">Synergia</span>
+    </div>
+
+    <div class="sidebar-nav">
+      <div class="nav-section-label">Workspace</div>
+
+      <a class="nav-item active" href="#">
+        <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="3" width="7" height="7"/><rect x="14" y="3" width="7" height="7"/><rect x="14" y="14" width="7" height="7"/><rect x="3" y="14" width="7" height="7"/></svg>
+        Dashboard
+      </a>
+
+      <a class="nav-item" href="order-queue.html" style="color: var(--color-text-muted);">
+        <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M6 2 3 6v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2V6l-3-4z"/><line x1="3" y1="6" x2="21" y2="6"/><path d="M16 10a4 4 0 0 1-8 0"/></svg>
+        Orders
+        <span class="nav-badge-red">12</span>
+      </a>
+
+      <a class="nav-item" href="#">
+        <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M9 5H7a2 2 0 0 0-2 2v12a2 2 0 0 0 2 2h10a2 2 0 0 0 2-2V7a2 2 0 0 0-2-2h-2"/><rect x="9" y="3" width="6" height="4" rx="2"/><path d="M9 12h6M9 16h4"/></svg>
+        Listings
+      </a>
+
+      <a class="nav-item" href="#">
+        <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="2" y="3" width="20" height="14" rx="2"/><path d="M8 21h8M12 17v4"/></svg>
+        Inventory
+      </a>
+
+      <a class="nav-item" href="#">
+        <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 9h18v10a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V9z"/><path d="m3 9 2.45-4.9A2 2 0 0 1 7.24 3h9.52a2 2 0 0 1 1.8 1.1L21 9"/><path d="M12 3v6"/></svg>
+        Suppliers
+      </a>
+
+      <a class="nav-item" href="#">
+        <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/></svg>
+        Customers
+      </a>
+
+      <a class="nav-item" href="#">
+        <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 12h18M3 6h18M3 18h18"/></svg>
+        Returns
+      </a>
+
+      <div class="nav-section-label" style="margin-top: 4px;">Fulfilment</div>
+
+      <a class="nav-item" href="#">
+        <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="1" y="3" width="15" height="13"/><path d="M16 8h4l3 3v5h-7V8zM5.5 21a2.5 2.5 0 1 0 0-5 2.5 2.5 0 0 0 0 5zM18.5 21a2.5 2.5 0 1 0 0-5 2.5 2.5 0 0 0 0 5z"/></svg>
+        Shipping
+      </a>
+
+      <div class="nav-section-label" style="margin-top: 4px;">Finance</div>
+
+      <a class="nav-item" href="#">
+        <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="2" y="5" width="20" height="14" rx="2"/><line x1="2" y1="10" x2="22" y2="10"/></svg>
+        Finance
+      </a>
+
+      <a class="nav-item" href="#">
+        <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="22 12 18 12 15 21 9 3 6 12 2 12"/></svg>
+        Reports
+      </a>
+
+      <div class="nav-section-label" style="margin-top: 4px;">Intelligence</div>
+
+      <a class="nav-item" href="#">
+        <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="8"/><path d="m21 21-4.35-4.35"/></svg>
+        Research
+      </a>
+
+      <a class="nav-item" href="#">
+        <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 16V8a2 2 0 0 0-1-1.73l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.73l7 4a2 2 0 0 0 2 0l7-4A2 2 0 0 0 21 16z"/></svg>
+        Catalogue
+      </a>
+
+      <a class="nav-item" href="#">
+        <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M13 2L3 14h9l-1 8 10-12h-9l1-8z"/></svg>
+        Channels
+      </a>
+
+      <a class="nav-item" href="#">
+        <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="22 12 18 12 15 21 9 3 6 12 2 12"/></svg>
+        Forecasting
+      </a>
+
+      <a class="nav-item" href="#">
+        <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/></svg>
+        Messaging
+      </a>
+
+      <div class="nav-section-label" style="margin-top: 4px;">Config</div>
+
+      <a class="nav-item" href="#">
+        <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1-2.83 2.83l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-4 0v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83-2.83l.06-.06A1.65 1.65 0 0 0 4.68 15a1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1 0-4h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 2.83-2.83l.06.06A1.65 1.65 0 0 0 9 4.68a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 4 0v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 2.83l-.06.06A1.65 1.65 0 0 0 19.4 9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 0 4h-.09a1.65 1.65 0 0 0-1.51 1z"/></svg>
+        Settings
+      </a>
+    </div>
+
+    <div class="sidebar-footer">
+      <div class="sidebar-user">
+        <div class="user-avatar">AD</div>
+        <div>
+          <div class="user-name">Adam Davies</div>
+          <div class="user-role">Admin · Meridian</div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ===== MAIN COL ===== -->
+  <div class="main-col">
+
+    <!-- Topbar -->
+    <div class="topbar">
+      <div class="company-switcher">
+        <div class="company-dot"></div>
+        Meridian Trading Ltd
+        <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="m6 9 6 6 6-6"/></svg>
+      </div>
+
+      <div class="topbar-spacer"></div>
+
+      <div class="cmd-k">
+        <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="8"/><path d="m21 21-4.35-4.35"/></svg>
+        <span>Search anything...</span>
+        <span class="kbd">⌘K</span>
+      </div>
+
+      <div class="topbar-btn">
+        <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M18 8A6 6 0 0 0 6 8c0 7-3 9-3 9h18s-3-2-3-9"/><path d="M13.73 21a2 2 0 0 1-3.46 0"/></svg>
+        <div class="topbar-badge">7</div>
+      </div>
+
+      <div class="topbar-avatar">AD</div>
+    </div>
+
+    <!-- Content -->
+    <div class="content-area">
+
+      <div class="page-header">
+        <div>
+          <div class="page-title">Dashboard</div>
+          <div class="header-date" style="margin-top:3px;">Wednesday, 7 May 2026 · UK Trading Day</div>
+        </div>
+        <div style="display:flex; gap:8px;">
+          <button style="background: var(--color-surface); border: 1px solid var(--color-border); border-radius:7px; padding:6px 12px; color: var(--color-text-muted); font-size:12px; cursor:pointer; font-family:'Inter',sans-serif; display:flex; align-items:center; gap:6px;">
+            <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="4" width="18" height="18" rx="2" ry="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/></svg>
+            Today
+          </button>
+          <button style="background: var(--color-surface); border: 1px solid var(--color-border); border-radius:7px; padding:6px 12px; color: var(--color-text-muted); font-size:12px; cursor:pointer; font-family:'Inter',sans-serif; display:flex; align-items:center; gap:6px;">
+            <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1-2.83 2.83l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-4 0v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83-2.83l.06-.06A1.65 1.65 0 0 0 4.68 15a1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1 0-4h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 2.83-2.83l.06.06A1.65 1.65 0 0 0 9 4.68a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 4 0v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 2.83l-.06.06A1.65 1.65 0 0 0 19.4 9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 0 4h-.09a1.65 1.65 0 0 0-1.51 1z"/></svg>
+            Customise
+          </button>
+        </div>
+      </div>
+
+      <!-- KPI Cards -->
+      <div class="kpi-grid">
+
+        <div class="kpi-card green">
+          <div class="kpi-label">Today's Orders</div>
+          <div class="kpi-value">247</div>
+          <div class="kpi-footer">
+            <div class="kpi-change up">
+              <svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3"><path d="M12 19V5M5 12l7-7 7 7"/></svg>
+              +18% vs yesterday
+            </div>
+          </div>
+          <svg class="sparkline" width="100%" height="28" viewBox="0 0 100 28" preserveAspectRatio="none">
+            <polyline points="0,22 10,18 20,20 30,14 40,16 50,10 60,12 70,8 80,6 90,4 100,2" fill="none" stroke="rgba(74,158,110,0.5)" stroke-width="1.5"/>
+            <polyline points="0,22 10,18 20,20 30,14 40,16 50,10 60,12 70,8 80,6 90,4 100,2 100,28 0,28" fill="rgba(74,158,110,0.08)" stroke="none"/>
+          </svg>
+        </div>
+
+        <div class="kpi-card green">
+          <div class="kpi-label">Revenue</div>
+          <div class="kpi-value" style="font-size:20px;">£14,832</div>
+          <div class="kpi-footer">
+            <div class="kpi-change up">
+              <svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3"><path d="M12 19V5M5 12l7-7 7 7"/></svg>
+              +12% vs yesterday
+            </div>
+          </div>
+          <svg class="sparkline" width="100%" height="28" viewBox="0 0 100 28" preserveAspectRatio="none">
+            <polyline points="0,24 10,20 20,22 30,16 40,14 50,12 60,10 70,8 80,10 90,5 100,3" fill="none" stroke="rgba(74,158,110,0.5)" stroke-width="1.5"/>
+            <polyline points="0,24 10,20 20,22 30,16 40,14 50,12 60,10 70,8 80,10 90,5 100,3 100,28 0,28" fill="rgba(74,158,110,0.08)" stroke="none"/>
+          </svg>
+        </div>
+
+        <div class="kpi-card red">
+          <div class="kpi-label">Units Shipped</div>
+          <div class="kpi-value">189</div>
+          <div class="kpi-footer">
+            <div class="kpi-change down">
+              <svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3"><path d="M12 5v14M5 12l7 7 7-7"/></svg>
+              -3% vs yesterday
+            </div>
+          </div>
+          <svg class="sparkline" width="100%" height="28" viewBox="0 0 100 28" preserveAspectRatio="none">
+            <polyline points="0,8 10,10 20,8 30,10 40,12 50,10 60,14 70,16 80,14 90,18 100,20" fill="none" stroke="rgba(224,85,85,0.5)" stroke-width="1.5"/>
+            <polyline points="0,8 10,10 20,8 30,10 40,12 50,10 60,14 70,16 80,14 90,18 100,20 100,28 0,28" fill="rgba(224,85,85,0.08)" stroke="none"/>
+          </svg>
+        </div>
+
+        <div class="kpi-card amber">
+          <div class="kpi-label">Open Returns</div>
+          <div class="kpi-value">8</div>
+          <div class="kpi-footer">
+            <div class="kpi-change amber">
+              <svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3"><path d="M12 9v4M12 17h.01"/></svg>
+              Needs review
+            </div>
+          </div>
+          <svg class="sparkline" width="100%" height="28" viewBox="0 0 100 28" preserveAspectRatio="none">
+            <polyline points="0,20 10,18 20,16 30,18 40,14 50,16 60,12 70,14 80,10 90,12 100,10" fill="none" stroke="rgba(212,135,44,0.5)" stroke-width="1.5"/>
+            <polyline points="0,20 10,18 20,16 30,18 40,14 50,16 60,12 70,14 80,10 90,12 100,10 100,28 0,28" fill="rgba(212,135,44,0.08)" stroke="none"/>
+          </svg>
+        </div>
+
+        <div class="kpi-card red">
+          <div class="kpi-label">Low Stock Alerts</div>
+          <div class="kpi-value">23</div>
+          <div class="kpi-footer">
+            <div class="kpi-change down">
+              <svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3"><path d="M12 9v4M12 17h.01"/></svg>
+              Action needed
+            </div>
+          </div>
+          <svg class="sparkline" width="100%" height="28" viewBox="0 0 100 28" preserveAspectRatio="none">
+            <polyline points="0,12 10,14 20,12 30,16 40,18 50,20 60,18 70,22 80,20 90,24 100,22" fill="none" stroke="rgba(224,85,85,0.5)" stroke-width="1.5"/>
+            <polyline points="0,12 10,14 20,12 30,16 40,18 50,20 60,18 70,22 80,20 90,24 100,22 100,28 0,28" fill="rgba(224,85,85,0.08)" stroke="none"/>
+          </svg>
+        </div>
+
+        <div class="kpi-card gold">
+          <div class="kpi-label">Active Listings</div>
+          <div class="kpi-value" style="font-size:22px;">1,847</div>
+          <div class="kpi-footer">
+            <div class="kpi-change up" style="color: var(--color-accent);">
+              <svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3"><path d="M12 19V5M5 12l7-7 7 7"/></svg>
+              +4% this week
+            </div>
+          </div>
+          <svg class="sparkline" width="100%" height="28" viewBox="0 0 100 28" preserveAspectRatio="none">
+            <polyline points="0,22 10,20 20,18 30,16 40,14 50,12 60,10 70,8 80,9 90,6 100,4" fill="none" stroke="rgba(196,151,42,0.5)" stroke-width="1.5"/>
+            <polyline points="0,22 10,20 20,18 30,16 40,14 50,12 60,10 70,8 80,9 90,6 100,4 100,28 0,28" fill="rgba(196,151,42,0.08)" stroke="none"/>
+          </svg>
+        </div>
+      </div>
+
+      <!-- Channel Sync Status -->
+      <div class="channel-sync-row">
+        <span class="sync-label">Channel Sync</span>
+
+        <div class="channel-pill">
+          <div class="channel-logo ch-ebay-logo">🛍</div>
+          <span class="ch-name">eBay</span>
+          <div class="status-dot-sm dot-green" style="margin-left:6px;"></div>
+          <span class="ch-time">2 min ago</span>
+        </div>
+
+        <div class="channel-pill">
+          <div class="channel-logo ch-tiktok-logo">🎵</div>
+          <span class="ch-name">TikTok Shop</span>
+          <div class="status-dot-sm dot-green" style="margin-left:6px;"></div>
+          <span class="ch-time">5 min ago</span>
+        </div>
+
+        <div class="channel-pill">
+          <div class="channel-logo ch-vinted-logo">👗</div>
+          <span class="ch-name">Vinted</span>
+          <div class="status-dot-sm dot-amber" style="margin-left:6px;"></div>
+          <span class="ch-time" style="color: var(--color-warning);">23 min ago</span>
+        </div>
+
+        <div class="channel-pill">
+          <div class="channel-logo ch-etsy-logo">🎨</div>
+          <span class="ch-name">Etsy</span>
+          <div class="status-dot-sm dot-green" style="margin-left:6px;"></div>
+          <span class="ch-time">8 min ago</span>
+        </div>
+
+        <button style="display:flex; align-items:center; gap:6px; background: transparent; border: 1px solid var(--color-border); border-radius:6px; padding:6px 12px; color: var(--color-text-subtle); font-size:11.5px; cursor:pointer; font-family:'Inter',sans-serif; white-space:nowrap; margin-left:auto;">
+          <svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21.5 2v6h-6M2.5 22v-6h6M2 11.5a10 10 0 0 1 18.8-4.3M22 12.5a10 10 0 0 1-18.8 4.2"/></svg>
+          Sync all now
+        </button>
+      </div>
+
+      <!-- Bottom row -->
+      <div class="bottom-row">
+
+        <!-- Live Order Feed -->
+        <div class="feed-panel">
+          <div class="feed-header">
+            <div class="live-dot"></div>
+            <span class="feed-title">Live Orders</span>
+            <span style="font-size:11px; color:var(--color-text-subtle); margin-left:4px;">real-time</span>
+            <div style="margin-left:auto; display:flex; gap:8px;">
+              <button style="background:transparent; border:1px solid var(--color-border); border-radius:5px; padding:4px 10px; font-size:11px; color:var(--color-text-muted); cursor:pointer; font-family:'Inter',sans-serif;">Filter</button>
+              <a href="order-queue.html" style="background:transparent; border:1px solid var(--color-border); border-radius:5px; padding:4px 10px; font-size:11px; color:var(--color-text-muted); cursor:pointer; font-family:'Inter',sans-serif; text-decoration:none;">View all →</a>
+            </div>
+          </div>
+          <div class="feed-body">
+
+            <div class="order-row">
+              <span class="ch-badge" style="background:rgba(255,174,0,0.12);color:#FFAE00;">eBay</span>
+              <span class="order-id">#EB-2847391</span>
+              <span class="order-buyer">Sarah Mitchell</span>
+              <span class="order-value">£34.99</span>
+              <span class="order-status-badge status-processing">Processing</span>
+              <span class="order-time">2m ago</span>
+            </div>
+
+            <div class="order-row">
+              <span class="ch-badge" style="background:rgba(105,201,208,0.12);color:#69C9D0;">TikTok</span>
+              <span class="order-id">#TT-0192847</span>
+              <span class="order-buyer">James Cooper</span>
+              <span class="order-value">£89.50</span>
+              <span class="order-status-badge status-awaiting">Awaiting</span>
+              <span class="order-time">4m ago</span>
+            </div>
+
+            <div class="order-row">
+              <span class="ch-badge" style="background:rgba(9,183,117,0.12);color:#09B775;">Vinted</span>
+              <span class="order-id">#VT-3847291</span>
+              <span class="order-buyer">Emma Watson</span>
+              <span class="order-value">£12.00</span>
+              <span class="order-status-badge status-shipped">Shipped</span>
+              <span class="order-time">7m ago</span>
+            </div>
+
+            <div class="order-row">
+              <span class="ch-badge" style="background:rgba(255,174,0,0.12);color:#FFAE00;">eBay</span>
+              <span class="order-id">#EB-2847386</span>
+              <span class="order-buyer">Michael Brown</span>
+              <span class="order-value">£156.00</span>
+              <span class="order-status-badge status-processing">Processing</span>
+              <span class="order-time">11m ago</span>
+            </div>
+
+            <div class="order-row">
+              <span class="ch-badge" style="background:rgba(243,89,36,0.12);color:#F35924;">Etsy</span>
+              <span class="order-id">#ET-8472910</span>
+              <span class="order-buyer">Charlotte Patel</span>
+              <span class="order-value">£42.00</span>
+              <span class="order-status-badge status-shipped">Shipped</span>
+              <span class="order-time">14m ago</span>
+            </div>
+
+            <div class="order-row">
+              <span class="ch-badge" style="background:rgba(105,201,208,0.12);color:#69C9D0;">TikTok</span>
+              <span class="order-id">#TT-0192831</span>
+              <span class="order-buyer">Oliver Hughes</span>
+              <span class="order-value">£24.99</span>
+              <span class="order-status-badge status-pending">Pending</span>
+              <span class="order-time">19m ago</span>
+            </div>
+
+            <div class="order-row">
+              <span class="ch-badge" style="background:rgba(255,174,0,0.12);color:#FFAE00;">eBay</span>
+              <span class="order-id">#EB-2847371</span>
+              <span class="order-buyer">Isabella Clarke</span>
+              <span class="order-value">£278.00</span>
+              <span class="order-status-badge status-processing">Processing</span>
+              <span class="order-time">25m ago</span>
+            </div>
+
+            <div class="order-row">
+              <span class="ch-badge" style="background:rgba(9,183,117,0.12);color:#09B775;">Vinted</span>
+              <span class="order-id">#VT-3847265</span>
+              <span class="order-buyer">Noah Thompson</span>
+              <span class="order-value">£8.50</span>
+              <span class="order-status-badge status-shipped">Shipped</span>
+              <span class="order-time">31m ago</span>
+            </div>
+
+            <div class="order-row">
+              <span class="ch-badge" style="background:rgba(243,89,36,0.12);color:#F35924;">Etsy</span>
+              <span class="order-id">#ET-8472884</span>
+              <span class="order-buyer">Amelia Johnson</span>
+              <span class="order-value">£67.50</span>
+              <span class="order-status-badge status-cancelled">Cancelled</span>
+              <span class="order-time">38m ago</span>
+            </div>
+
+          </div>
+        </div>
+
+        <!-- Right: Reorders + SLA -->
+        <div class="right-panels">
+
+          <!-- Reorder Alerts -->
+          <div class="small-panel">
+            <div class="small-panel-header">
+              <div class="small-panel-title">
+                <span style="color:#E05555; margin-right:5px;">●</span> Reorder Alerts
+              </div>
+              <span style="font-size:11px; color: var(--color-text-subtle);">5 critical SKUs</span>
+            </div>
+
+            <div class="reorder-row">
+              <div style="flex:1; min-width:0;">
+                <div class="sku-name">Sony WH-1000XM5 Headphones</div>
+                <div style="font-size:10.5px; font-family:'Geist Mono',monospace; color:var(--color-text-subtle);">SKU-AU-48291</div>
+              </div>
+              <span class="days-left days-critical">2d left</span>
+              <button class="create-po-btn">+ PO</button>
+            </div>
+
+            <div class="reorder-row">
+              <div style="flex:1; min-width:0;">
+                <div class="sku-name">Logitech MX Keys Wireless</div>
+                <div style="font-size:10.5px; font-family:'Geist Mono',monospace; color:var(--color-text-subtle);">SKU-KB-38847</div>
+              </div>
+              <span class="days-left days-critical">4d left</span>
+              <button class="create-po-btn">+ PO</button>
+            </div>
+
+            <div class="reorder-row">
+              <div style="flex:1; min-width:0;">
+                <div class="sku-name">Anker 20,000mAh Power Bank</div>
+                <div style="font-size:10.5px; font-family:'Geist Mono',monospace; color:var(--color-text-subtle);">SKU-PB-11029</div>
+              </div>
+              <span class="days-left days-warning">7d left</span>
+              <button class="create-po-btn">+ PO</button>
+            </div>
+
+            <div class="reorder-row">
+              <div style="flex:1; min-width:0;">
+                <div class="sku-name">USB-C Hub 8-in-1 Adapter</div>
+                <div style="font-size:10.5px; font-family:'Geist Mono',monospace; color:var(--color-text-subtle);">SKU-HB-57391</div>
+              </div>
+              <span class="days-left days-warning">9d left</span>
+              <button class="create-po-btn">+ PO</button>
+            </div>
+
+            <div class="reorder-row">
+              <div style="flex:1; min-width:0;">
+                <div class="sku-name">MacBook Air M2 13" Sleeve</div>
+                <div style="font-size:10.5px; font-family:'Geist Mono',monospace; color:var(--color-text-subtle);">SKU-CS-20041</div>
+              </div>
+              <span class="days-left days-ok">14d left</span>
+              <button class="create-po-btn">+ PO</button>
+            </div>
+          </div>
+
+          <!-- SLA Warnings -->
+          <div class="small-panel">
+            <div class="small-panel-header">
+              <div class="small-panel-title">
+                <span style="color: var(--color-warning); margin-right:5px;">⚡</span> SLA Warnings
+              </div>
+              <span style="font-size:11px; color: #E05555; font-weight:600;">3 at risk</span>
+            </div>
+
+            <!-- SLA Row 1 — critical -->
+            <div class="sla-row">
+              <div class="sla-ring">
+                <svg width="36" height="36" viewBox="0 0 36 36">
+                  <circle cx="18" cy="18" r="15" fill="none" stroke="rgba(139,58,58,0.3)" stroke-width="3"/>
+                  <circle cx="18" cy="18" r="15" fill="none" stroke="#E05555" stroke-width="3"
+                    stroke-dasharray="94.25" stroke-dashoffset="75" stroke-linecap="round"/>
+                </svg>
+                <div class="sla-ring-value" style="color:#E05555;">4h</div>
+              </div>
+              <div class="sla-info">
+                <div class="sla-order">#EB-2847391</div>
+                <div class="sla-buyer">Sarah Mitchell · eBay</div>
+              </div>
+              <span class="sla-tag sla-critical">Critical</span>
+            </div>
+
+            <!-- SLA Row 2 — warning -->
+            <div class="sla-row">
+              <div class="sla-ring">
+                <svg width="36" height="36" viewBox="0 0 36 36">
+                  <circle cx="18" cy="18" r="15" fill="none" stroke="rgba(212,135,44,0.3)" stroke-width="3"/>
+                  <circle cx="18" cy="18" r="15" fill="none" stroke="#D4872C" stroke-width="3"
+                    stroke-dasharray="94.25" stroke-dashoffset="47" stroke-linecap="round"/>
+                </svg>
+                <div class="sla-ring-value" style="color:#D4872C;">11h</div>
+              </div>
+              <div class="sla-info">
+                <div class="sla-order">#TT-0192847</div>
+                <div class="sla-buyer">James Cooper · TikTok</div>
+              </div>
+              <span class="sla-tag sla-warning">At risk</span>
+            </div>
+
+            <!-- SLA Row 3 — warning -->
+            <div class="sla-row">
+              <div class="sla-ring">
+                <svg width="36" height="36" viewBox="0 0 36 36">
+                  <circle cx="18" cy="18" r="15" fill="none" stroke="rgba(212,135,44,0.3)" stroke-width="3"/>
+                  <circle cx="18" cy="18" r="15" fill="none" stroke="#D4872C" stroke-width="3"
+                    stroke-dasharray="94.25" stroke-dashoffset="28" stroke-linecap="round"/>
+                </svg>
+                <div class="sla-ring-value" style="color:#D4872C;">18h</div>
+              </div>
+              <div class="sla-info">
+                <div class="sla-order">#VT-3847291</div>
+                <div class="sla-buyer">Emma Watson · Vinted</div>
+              </div>
+              <span class="sla-tag sla-warning">At risk</span>
+            </div>
+          </div>
+
+        </div>
+      </div>
+
+    </div>
+  </div>
+</div>
+
+<!-- FAB Bar -->
+<div class="fab-bar">
+  <button class="fab-btn">
+    <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M12 5v14M5 12h14"/></svg>
+    + Order
+  </button>
+  <button class="fab-btn">
+    <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M12 5v14M5 12h14"/></svg>
+    + Listing
+  </button>
+  <button class="fab-btn secondary">
+    <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>
+    Print Labels
+  </button>
+  <button class="fab-btn secondary">
+    <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="3" width="7" height="7" rx="1"/><path d="M3 14h4M3 17h4M3 20h4M14 3h4M17 3v4M14 8h7"/></svg>
+    Scan Item
+  </button>
+</div>
+
+</body>
+</html>

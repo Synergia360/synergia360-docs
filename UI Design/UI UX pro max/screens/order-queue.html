@@ -1,0 +1,819 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Synergia — Orders</title>
+  <link rel="stylesheet" href="../shared.css">
+  <script src="https://cdn.tailwindcss.com"></script>
+  <style>
+    :root {
+      --color-bg: #141414;
+      --color-surface: #1E1E1E;
+      --color-surface-raised: #252525;
+      --color-border: #383838;
+      --color-border-active: #5A5A5A;
+      --color-text: #F2F2F2;
+      --color-text-muted: #999999;
+      --color-text-subtle: #666666;
+      --color-accent: #C4972A;
+      --color-accent-dim: #8B6914;
+      --color-accent-glow: rgba(196,151,42,0.15);
+      --color-success: #4A9E6E;
+      --color-warning: #D4872C;
+      --color-danger: #8B3A3A;
+      --color-info: #3A6B8B;
+    }
+
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    body { font-family: 'Inter', sans-serif; background: var(--color-bg); color: var(--color-text); -webkit-font-smoothing: antialiased; overflow: hidden; height: 100vh; }
+
+    .app-shell { display: flex; height: 100vh; overflow: hidden; }
+
+    /* Sidebar identical to dashboard */
+    .sidebar {
+      width: 240px;
+      min-width: 240px;
+      background: var(--color-surface);
+      border-right: 1px solid var(--color-border);
+      display: flex;
+      flex-direction: column;
+      height: 100vh;
+      overflow-y: auto;
+    }
+
+    .sidebar-logo { display: flex; align-items: center; gap: 10px; padding: 18px 20px 16px; border-bottom: 1px solid var(--color-border); }
+    .logo-mark { width: 32px; height: 32px; background: linear-gradient(135deg, #C4972A 0%, #8B6914 100%); border-radius: 8px; display: flex; align-items: center; justify-content: center; font-size: 16px; font-weight: 800; color: #141414; box-shadow: 0 0 16px rgba(196,151,42,0.3); flex-shrink: 0; }
+    .logo-text { font-size: 16px; font-weight: 700; color: var(--color-text); letter-spacing: -0.01em; }
+
+    .sidebar-nav { flex: 1; padding: 10px 0; }
+    .nav-section-label { font-size: 9.5px; font-weight: 700; text-transform: uppercase; letter-spacing: 0.1em; color: var(--color-text-subtle); padding: 12px 20px 4px; }
+
+    .nav-item { display: flex; align-items: center; gap: 10px; padding: 7px 20px; color: var(--color-text-muted); text-decoration: none; font-size: 13px; transition: color 0.12s, background 0.12s; cursor: pointer; border-left: 2px solid transparent; }
+    .nav-item:hover { color: var(--color-text); background: rgba(255,255,255,0.03); }
+    .nav-item.active { color: var(--color-accent); border-left-color: var(--color-accent); background: var(--color-accent-glow); font-weight: 500; }
+    .nav-item svg { opacity: 0.65; flex-shrink: 0; }
+    .nav-item.active svg { opacity: 1; }
+    .nav-badge-red { margin-left: auto; background: #8B3A3A; color: #FF9999; font-size: 9.5px; font-weight: 700; padding: 1px 6px; border-radius: 8px; }
+
+    .sidebar-footer { padding: 12px 14px; border-top: 1px solid var(--color-border); }
+    .sidebar-user { display: flex; align-items: center; gap: 9px; padding: 7px 8px; border-radius: 8px; cursor: pointer; }
+    .sidebar-user:hover { background: rgba(255,255,255,0.04); }
+    .user-avatar { width: 30px; height: 30px; border-radius: 50%; background: linear-gradient(135deg, var(--color-accent-dim), var(--color-accent)); display: flex; align-items: center; justify-content: center; font-size: 11px; font-weight: 700; color: #141414; flex-shrink: 0; }
+    .user-name { font-size: 12.5px; font-weight: 500; color: var(--color-text); }
+    .user-role { font-size: 11px; color: var(--color-text-muted); }
+
+    /* Main */
+    .main-col { flex: 1; display: flex; flex-direction: column; overflow: hidden; }
+
+    /* Topbar */
+    .topbar { height: 54px; background: var(--color-surface); border-bottom: 1px solid var(--color-border); display: flex; align-items: center; gap: 10px; padding: 0 20px; flex-shrink: 0; }
+    .company-switcher { display: flex; align-items: center; gap: 8px; background: var(--color-surface-raised); border: 1px solid var(--color-border); border-radius: 7px; padding: 5px 12px; cursor: pointer; font-size: 13px; font-weight: 500; color: var(--color-text); }
+    .company-dot { width: 8px; height: 8px; border-radius: 50%; background: var(--color-success); box-shadow: 0 0 6px rgba(74,158,110,0.6); }
+    .topbar-spacer { flex: 1; }
+    .cmd-k { display: flex; align-items: center; gap: 8px; background: var(--color-surface-raised); border: 1px solid var(--color-border); border-radius: 7px; padding: 5px 12px; cursor: pointer; color: var(--color-text-subtle); font-size: 12px; min-width: 160px; }
+    .kbd { background: var(--color-border); border-radius: 3px; padding: 1px 5px; font-size: 10px; font-family: 'Geist Mono', monospace; color: var(--color-text-subtle); margin-left: auto; }
+    .topbar-btn { position: relative; width: 34px; height: 34px; border-radius: 7px; border: 1px solid var(--color-border); background: var(--color-surface-raised); display: flex; align-items: center; justify-content: center; cursor: pointer; color: var(--color-text-muted); }
+    .topbar-badge { position: absolute; top: -4px; right: -4px; background: #8B3A3A; color: #FF9999; font-size: 8.5px; font-weight: 700; width: 15px; height: 15px; border-radius: 50%; display: flex; align-items: center; justify-content: center; border: 1.5px solid var(--color-surface); }
+    .topbar-avatar { width: 30px; height: 30px; border-radius: 50%; background: linear-gradient(135deg, var(--color-accent-dim), var(--color-accent)); display: flex; align-items: center; justify-content: center; font-size: 11px; font-weight: 700; color: #141414; cursor: pointer; border: 1.5px solid var(--color-border); }
+
+    /* Content */
+    .content-area { flex: 1; overflow-y: auto; padding: 22px 24px; background: var(--color-bg); display: flex; flex-direction: column; }
+
+    .page-header { display: flex; align-items: center; justify-content: space-between; margin-bottom: 18px; flex-shrink: 0; }
+    .page-title { font-size: 20px; font-weight: 700; color: var(--color-text); letter-spacing: -0.02em; display: flex; align-items: center; gap: 10px; }
+    .order-count-badge { background: var(--color-surface-raised); border: 1px solid var(--color-border); border-radius: 6px; padding: 3px 10px; font-size: 12px; font-weight: 600; color: var(--color-text-muted); font-family: 'Geist Mono', monospace; }
+
+    /* Filter bar */
+    .filter-bar {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      flex-wrap: wrap;
+      margin-bottom: 12px;
+      flex-shrink: 0;
+    }
+
+    .filter-select {
+      background: var(--color-surface);
+      border: 1px solid var(--color-border);
+      border-radius: 7px;
+      padding: 7px 12px;
+      color: var(--color-text-muted);
+      font-size: 12.5px;
+      font-family: 'Inter', sans-serif;
+      cursor: pointer;
+      outline: none;
+      appearance: none;
+      background-image: url("data:image/svg+xml,%3Csvg width='10' height='6' viewBox='0 0 10 6' fill='none' xmlns='http://www.w3.org/2000/svg'%3E%3Cpath d='M1 1l4 4 4-4' stroke='%23666' stroke-width='1.5' stroke-linecap='round'/%3E%3C/svg%3E");
+      background-repeat: no-repeat;
+      background-position: right 10px center;
+      padding-right: 28px;
+      transition: border-color 0.15s;
+    }
+
+    .filter-select:hover { border-color: var(--color-border-active); }
+
+    .filter-search {
+      flex: 1;
+      min-width: 200px;
+      background: var(--color-surface);
+      border: 1px solid var(--color-border);
+      border-radius: 7px;
+      padding: 7px 12px 7px 32px;
+      color: var(--color-text);
+      font-size: 12.5px;
+      font-family: 'Inter', sans-serif;
+      outline: none;
+      position: relative;
+      transition: border-color 0.15s, box-shadow 0.15s;
+    }
+
+    .filter-search:focus { border-color: var(--color-accent); box-shadow: 0 0 0 3px rgba(196,151,42,0.1); }
+    .filter-search::placeholder { color: var(--color-text-subtle); }
+
+    .search-wrapper { position: relative; flex: 1; min-width: 200px; }
+    .search-icon { position: absolute; left: 10px; top: 50%; transform: translateY(-50%); color: var(--color-text-subtle); pointer-events: none; }
+
+    .filter-bar-right { display: flex; gap: 8px; margin-left: auto; }
+
+    .btn-outline-sm {
+      background: transparent;
+      border: 1px solid var(--color-border);
+      border-radius: 7px;
+      padding: 7px 12px;
+      color: var(--color-text-muted);
+      font-size: 12.5px;
+      font-family: 'Inter', sans-serif;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      transition: all 0.15s;
+      white-space: nowrap;
+    }
+
+    .btn-outline-sm:hover { border-color: var(--color-border-active); color: var(--color-text); }
+
+    /* Density toggle */
+    .density-row {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      margin-bottom: 10px;
+      flex-shrink: 0;
+    }
+
+    .density-toggle {
+      display: flex;
+      background: var(--color-surface);
+      border: 1px solid var(--color-border);
+      border-radius: 7px;
+      overflow: hidden;
+    }
+
+    .density-btn {
+      padding: 5px 12px;
+      font-size: 11.5px;
+      color: var(--color-text-subtle);
+      cursor: pointer;
+      background: transparent;
+      border: none;
+      font-family: 'Inter', sans-serif;
+      transition: all 0.12s;
+    }
+
+    .density-btn.active { background: var(--color-surface-raised); color: var(--color-text); }
+
+    .results-info { font-size: 12px; color: var(--color-text-subtle); }
+
+    /* Bulk action bar */
+    .bulk-bar {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      background: var(--color-surface-raised);
+      border: 1px solid var(--color-accent-dim);
+      border-radius: 8px;
+      padding: 8px 14px;
+      margin-bottom: 10px;
+      flex-shrink: 0;
+    }
+
+    .bulk-count { font-size: 13px; font-weight: 600; color: var(--color-accent); margin-right: 4px; }
+    .bulk-sep { width: 1px; height: 18px; background: var(--color-border); margin: 0 4px; }
+
+    .bulk-btn {
+      background: transparent;
+      border: 1px solid var(--color-border);
+      border-radius: 5px;
+      padding: 5px 10px;
+      font-size: 11.5px;
+      color: var(--color-text-muted);
+      cursor: pointer;
+      font-family: 'Inter', sans-serif;
+      display: flex;
+      align-items: center;
+      gap: 5px;
+      transition: all 0.12s;
+    }
+
+    .bulk-btn:hover { border-color: var(--color-border-active); color: var(--color-text); }
+    .bulk-btn.danger:hover { border-color: rgba(139,58,58,0.5); color: #E05555; }
+
+    .bulk-deselect { margin-left: auto; background: transparent; border: none; color: var(--color-text-subtle); font-size: 11.5px; cursor: pointer; font-family: 'Inter', sans-serif; }
+    .bulk-deselect:hover { color: var(--color-text-muted); }
+
+    /* DataGrid */
+    .grid-wrapper {
+      flex: 1;
+      background: var(--color-surface);
+      border: 1px solid var(--color-border);
+      border-radius: 10px;
+      overflow: hidden;
+      display: flex;
+      flex-direction: column;
+    }
+
+    .grid-table { width: 100%; border-collapse: collapse; table-layout: fixed; }
+
+    .grid-head th {
+      background: var(--color-surface-raised);
+      border-bottom: 1px solid var(--color-border);
+      padding: 10px 12px;
+      text-align: left;
+      font-size: 10.5px;
+      font-weight: 700;
+      color: var(--color-text-subtle);
+      text-transform: uppercase;
+      letter-spacing: 0.08em;
+      white-space: nowrap;
+      user-select: none;
+    }
+
+    .grid-head th:first-child { width: 36px; padding: 10px 12px; }
+
+    .grid-row td {
+      padding: 10px 12px;
+      border-bottom: 1px solid rgba(56,56,56,0.5);
+      vertical-align: middle;
+      font-size: 12.5px;
+    }
+
+    .grid-row:last-child td { border-bottom: none; }
+
+    .grid-row:hover td { background: rgba(255,255,255,0.02); }
+
+    .grid-row.selected td { background: rgba(196,151,42,0.04); }
+    .grid-row.selected td:first-child { border-left: 2px solid var(--color-accent); }
+
+    .checkbox-cell {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+
+    .ch-box {
+      width: 14px;
+      height: 14px;
+      border-radius: 3px;
+      border: 1.5px solid var(--color-border-active);
+      background: transparent;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      cursor: pointer;
+      flex-shrink: 0;
+    }
+
+    .ch-box.checked {
+      background: var(--color-accent);
+      border-color: var(--color-accent);
+    }
+
+    .ch-box.checked::after {
+      content: '';
+      width: 8px;
+      height: 5px;
+      border-left: 1.5px solid #141414;
+      border-bottom: 1.5px solid #141414;
+      transform: rotate(-45deg) translateY(-1px);
+    }
+
+    .ch-badge {
+      display: inline-flex;
+      align-items: center;
+      gap: 4px;
+      font-size: 9.5px;
+      font-weight: 700;
+      padding: 2px 7px;
+      border-radius: 4px;
+      text-transform: uppercase;
+      letter-spacing: 0.04em;
+      white-space: nowrap;
+    }
+
+    .order-id-cell { font-family: 'Geist Mono', monospace; font-size: 11.5px; color: var(--color-text-muted); white-space: nowrap; }
+
+    .order-status-badge {
+      display: inline-flex;
+      align-items: center;
+      gap: 4px;
+      font-size: 10px;
+      font-weight: 600;
+      padding: 2px 7px;
+      border-radius: 4px;
+      text-transform: uppercase;
+      letter-spacing: 0.04em;
+      white-space: nowrap;
+    }
+
+    .stat-processing { background: rgba(58,107,139,0.2); color: #5B9DC8; }
+    .stat-shipped { background: rgba(74,158,110,0.15); color: #4A9E6E; }
+    .stat-pending { background: rgba(212,135,44,0.15); color: #D4872C; }
+    .stat-cancelled { background: rgba(139,58,58,0.2); color: #E05555; }
+    .stat-awaiting { background: rgba(255,255,255,0.06); color: var(--color-text-subtle); }
+    .stat-returned { background: rgba(139,58,58,0.15); color: #D46B6B; }
+
+    .value-cell { font-family: 'Geist Mono', monospace; font-size: 12.5px; font-weight: 600; color: var(--color-text); white-space: nowrap; }
+
+    /* SLA ring mini */
+    .sla-mini { display: flex; align-items: center; gap: 5px; }
+    .sla-mini-ring { position: relative; width: 24px; height: 24px; flex-shrink: 0; }
+    .sla-mini-ring svg { transform: rotate(-90deg); }
+    .sla-mini-val { position: absolute; inset: 0; display: flex; align-items: center; justify-content: center; font-size: 7px; font-weight: 700; font-family: 'Geist Mono', monospace; }
+    .sla-label { font-size: 11px; font-family: 'Geist Mono', monospace; }
+
+    .action-cell { display: flex; justify-content: flex-end; }
+    .action-btn { background: transparent; border: none; color: var(--color-text-subtle); cursor: pointer; padding: 4px 6px; border-radius: 4px; font-size: 14px; }
+    .action-btn:hover { background: rgba(255,255,255,0.06); color: var(--color-text); }
+
+    .courier-label { font-size: 11.5px; color: var(--color-text-muted); }
+
+    /* Pagination footer */
+    .grid-footer {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 10px 16px;
+      border-top: 1px solid var(--color-border);
+      background: var(--color-surface-raised);
+      flex-shrink: 0;
+    }
+
+    .page-info { font-size: 12px; color: var(--color-text-subtle); }
+
+    .page-nav { display: flex; gap: 4px; }
+    .page-btn { width: 28px; height: 28px; border-radius: 5px; border: 1px solid var(--color-border); background: transparent; color: var(--color-text-muted); font-size: 12px; cursor: pointer; font-family: 'Inter', sans-serif; display: flex; align-items: center; justify-content: center; transition: all 0.12s; }
+    .page-btn.active { background: var(--color-accent); border-color: var(--color-accent); color: #141414; font-weight: 700; }
+    .page-btn:hover:not(.active) { border-color: var(--color-border-active); color: var(--color-text); }
+
+    .overflow-scroll { overflow-y: auto; flex: 1; }
+  </style>
+</head>
+<body>
+
+<div class="app-shell">
+
+  <!-- Sidebar -->
+  <div class="sidebar">
+    <div class="sidebar-logo">
+      <div class="logo-mark">S</div>
+      <span class="logo-text">Synergia</span>
+    </div>
+    <div class="sidebar-nav">
+      <div class="nav-section-label">Workspace</div>
+      <a class="nav-item" href="main-dashboard.html">
+        <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="3" width="7" height="7"/><rect x="14" y="3" width="7" height="7"/><rect x="14" y="14" width="7" height="7"/><rect x="3" y="14" width="7" height="7"/></svg>
+        Dashboard
+      </a>
+      <a class="nav-item active" href="#">
+        <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M6 2 3 6v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2V6l-3-4z"/><line x1="3" y1="6" x2="21" y2="6"/><path d="M16 10a4 4 0 0 1-8 0"/></svg>
+        Orders
+        <span class="nav-badge-red">12</span>
+      </a>
+      <a class="nav-item" href="#"><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M9 5H7a2 2 0 0 0-2 2v12a2 2 0 0 0 2 2h10a2 2 0 0 0 2-2V7a2 2 0 0 0-2-2h-2"/><rect x="9" y="3" width="6" height="4" rx="2"/></svg> Listings</a>
+      <a class="nav-item" href="#"><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="2" y="3" width="20" height="14" rx="2"/><path d="M8 21h8M12 17v4"/></svg> Inventory</a>
+      <a class="nav-item" href="#"><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 9h18v10a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V9z"/><path d="m3 9 2.45-4.9A2 2 0 0 1 7.24 3h9.52a2 2 0 0 1 1.8 1.1L21 9"/><path d="M12 3v6"/></svg> Suppliers</a>
+      <a class="nav-item" href="#"><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/></svg> Customers</a>
+      <a class="nav-item" href="#"><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 12h18M3 6h18M3 18h18"/></svg> Returns</a>
+      <div class="nav-section-label" style="margin-top:4px;">Fulfilment</div>
+      <a class="nav-item" href="#"><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="1" y="3" width="15" height="13"/><path d="M16 8h4l3 3v5h-7V8zM5.5 21a2.5 2.5 0 1 0 0-5 2.5 2.5 0 0 0 0 5zM18.5 21a2.5 2.5 0 1 0 0-5 2.5 2.5 0 0 0 0 5z"/></svg> Shipping</a>
+      <div class="nav-section-label" style="margin-top:4px;">Finance</div>
+      <a class="nav-item" href="#"><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="2" y="5" width="20" height="14" rx="2"/><line x1="2" y1="10" x2="22" y2="10"/></svg> Finance</a>
+      <a class="nav-item" href="#"><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="22 12 18 12 15 21 9 3 6 12 2 12"/></svg> Reports</a>
+      <div class="nav-section-label" style="margin-top:4px;">Intelligence</div>
+      <a class="nav-item" href="#"><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="8"/><path d="m21 21-4.35-4.35"/></svg> Research</a>
+      <a class="nav-item" href="#"><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 16V8a2 2 0 0 0-1-1.73l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.73l7 4a2 2 0 0 0 2 0l7-4A2 2 0 0 0 21 16z"/></svg> Catalogue</a>
+      <a class="nav-item" href="#"><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M13 2L3 14h9l-1 8 10-12h-9l1-8z"/></svg> Channels</a>
+      <a class="nav-item" href="#"><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/></svg> Messaging</a>
+      <div class="nav-section-label" style="margin-top:4px;">Config</div>
+      <a class="nav-item" href="#"><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1-2.83 2.83l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-4 0v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83-2.83l.06-.06A1.65 1.65 0 0 0 4.68 15a1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1 0-4h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 2.83-2.83l.06.06A1.65 1.65 0 0 0 9 4.68a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 4 0v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 2.83l-.06.06A1.65 1.65 0 0 0 19.4 9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 0 4h-.09a1.65 1.65 0 0 0-1.51 1z"/></svg> Settings</a>
+    </div>
+    <div class="sidebar-footer">
+      <div class="sidebar-user">
+        <div class="user-avatar">AD</div>
+        <div><div class="user-name">Adam Davies</div><div class="user-role">Admin · Meridian</div></div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Main -->
+  <div class="main-col">
+    <!-- Topbar -->
+    <div class="topbar">
+      <div class="company-switcher"><div class="company-dot"></div> Meridian Trading Ltd <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="m6 9 6 6 6-6"/></svg></div>
+      <div class="topbar-spacer"></div>
+      <div class="cmd-k"><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="8"/><path d="m21 21-4.35-4.35"/></svg> <span>Search anything...</span><span class="kbd">⌘K</span></div>
+      <div class="topbar-btn"><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M18 8A6 6 0 0 0 6 8c0 7-3 9-3 9h18s-3-2-3-9"/><path d="M13.73 21a2 2 0 0 1-3.46 0"/></svg><div class="topbar-badge">7</div></div>
+      <div class="topbar-avatar">AD</div>
+    </div>
+
+    <!-- Content -->
+    <div class="content-area">
+
+      <div class="page-header">
+        <div class="page-title">
+          Orders
+          <span class="order-count-badge">2,847</span>
+        </div>
+        <div style="display:flex; gap:8px;">
+          <button class="btn-outline-sm">
+            <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="8 17 12 21 16 17"/><line x1="12" y1="3" x2="12" y2="21"/></svg>
+            Export CSV
+          </button>
+          <button class="btn-outline-sm">
+            <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 20h9"/><path d="M16.5 3.5a2.121 2.121 0 0 1 3 3L7 19l-4 1 1-4L16.5 3.5z"/></svg>
+            Columns
+          </button>
+        </div>
+      </div>
+
+      <!-- Filter bar -->
+      <div class="filter-bar">
+        <select class="filter-select">
+          <option>All Channels</option>
+          <option>eBay</option>
+          <option>TikTok Shop</option>
+          <option>Vinted</option>
+          <option>Etsy</option>
+          <option>Amazon</option>
+        </select>
+
+        <select class="filter-select">
+          <option>All Statuses</option>
+          <option>Processing</option>
+          <option>Awaiting Payment</option>
+          <option>Shipped</option>
+          <option>Cancelled</option>
+          <option>Returned</option>
+        </select>
+
+        <select class="filter-select">
+          <option>All Dates</option>
+          <option>Today</option>
+          <option>Last 7 days</option>
+          <option>Last 30 days</option>
+          <option>Custom range</option>
+        </select>
+
+        <select class="filter-select">
+          <option>All Couriers</option>
+          <option>Royal Mail</option>
+          <option>Evri</option>
+          <option>DPD</option>
+          <option>DHL</option>
+        </select>
+
+        <div class="search-wrapper">
+          <span class="search-icon">
+            <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="8"/><path d="m21 21-4.35-4.35"/></svg>
+          </span>
+          <input type="text" class="filter-search" placeholder="Search order ID, buyer name, product...">
+        </div>
+      </div>
+
+      <!-- Density + Results row -->
+      <div class="density-row">
+        <span class="results-info">Showing 1–15 of 2,847 orders</span>
+        <div style="display:flex; align-items:center; gap:8px;">
+          <span style="font-size:11px; color:var(--color-text-subtle);">Density:</span>
+          <div class="density-toggle">
+            <button class="density-btn">Compact</button>
+            <button class="density-btn active">Normal</button>
+            <button class="density-btn">Relaxed</button>
+          </div>
+        </div>
+      </div>
+
+      <!-- Bulk action bar (3 selected) -->
+      <div class="bulk-bar">
+        <span class="bulk-count">3 selected</span>
+        <div class="bulk-sep"></div>
+        <button class="bulk-btn">
+          <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>
+          Print Labels
+        </button>
+        <button class="bulk-btn">
+          <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="1" y="3" width="15" height="13"/><path d="M16 8h4l3 3v5h-7V8z"/></svg>
+          Assign Courier
+        </button>
+        <button class="bulk-btn">
+          <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M20 6 9 17l-5-5"/></svg>
+          Mark Shipped
+        </button>
+        <button class="bulk-btn danger">
+          <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><path d="m15 9-6 6M9 9l6 6"/></svg>
+          Cancel
+        </button>
+        <button class="bulk-deselect">Deselect all ×</button>
+      </div>
+
+      <!-- DataGrid -->
+      <div class="grid-wrapper">
+        <div class="overflow-scroll">
+          <table class="grid-table">
+            <thead class="grid-head">
+              <tr>
+                <th style="width:36px;"><div class="checkbox-cell"><div class="ch-box"></div></div></th>
+                <th style="width:90px;">Channel</th>
+                <th style="width:110px;">Order ID</th>
+                <th>Buyer</th>
+                <th style="width:90px;">Value</th>
+                <th style="width:115px;">Status</th>
+                <th style="width:100px;">Courier</th>
+                <th style="width:80px;">SLA</th>
+                <th style="width:40px;"></th>
+              </tr>
+            </thead>
+            <tbody>
+
+              <!-- Row 1 — selected -->
+              <tr class="grid-row selected">
+                <td><div class="checkbox-cell"><div class="ch-box checked"></div></div></td>
+                <td><span class="ch-badge" style="background:rgba(255,174,0,0.12);color:#FFAE00;">eBay</span></td>
+                <td><span class="order-id-cell">#EB-2847391</span></td>
+                <td style="color:var(--color-text); font-size:12.5px;">Sarah Mitchell</td>
+                <td><span class="value-cell">£34.99</span></td>
+                <td><span class="order-status-badge stat-processing">Processing</span></td>
+                <td><span class="courier-label">Royal Mail</span></td>
+                <td>
+                  <div class="sla-mini">
+                    <div class="sla-mini-ring">
+                      <svg width="24" height="24" viewBox="0 0 24 24"><circle cx="12" cy="12" r="9" fill="none" stroke="rgba(224,85,85,0.25)" stroke-width="2.5"/><circle cx="12" cy="12" r="9" fill="none" stroke="#E05555" stroke-width="2.5" stroke-dasharray="56.55" stroke-dashoffset="47" stroke-linecap="round" transform="rotate(-90 12 12)"/></svg>
+                      <div class="sla-mini-val" style="color:#E05555;">4h</div>
+                    </div>
+                  </div>
+                </td>
+                <td><div class="action-cell"><button class="action-btn">⋮</button></div></td>
+              </tr>
+
+              <!-- Row 2 — selected -->
+              <tr class="grid-row selected">
+                <td><div class="checkbox-cell"><div class="ch-box checked"></div></div></td>
+                <td><span class="ch-badge" style="background:rgba(105,201,208,0.12);color:#69C9D0;">TikTok</span></td>
+                <td><span class="order-id-cell">#TT-0192847</span></td>
+                <td style="color:var(--color-text); font-size:12.5px;">James Cooper</td>
+                <td><span class="value-cell">£89.50</span></td>
+                <td><span class="order-status-badge stat-awaiting">Awaiting</span></td>
+                <td><span class="courier-label" style="color:var(--color-text-subtle);">—</span></td>
+                <td>
+                  <div class="sla-mini">
+                    <div class="sla-mini-ring">
+                      <svg width="24" height="24" viewBox="0 0 24 24"><circle cx="12" cy="12" r="9" fill="none" stroke="rgba(224,85,85,0.25)" stroke-width="2.5"/><circle cx="12" cy="12" r="9" fill="none" stroke="#E05555" stroke-width="2.5" stroke-dasharray="56.55" stroke-dashoffset="43" stroke-linecap="round" transform="rotate(-90 12 12)"/></svg>
+                      <div class="sla-mini-val" style="color:#E05555;">6h</div>
+                    </div>
+                  </div>
+                </td>
+                <td><div class="action-cell"><button class="action-btn">⋮</button></div></td>
+              </tr>
+
+              <!-- Row 3 — selected -->
+              <tr class="grid-row selected">
+                <td><div class="checkbox-cell"><div class="ch-box checked"></div></div></td>
+                <td><span class="ch-badge" style="background:rgba(9,183,117,0.12);color:#09B775;">Vinted</span></td>
+                <td><span class="order-id-cell">#VT-3847291</span></td>
+                <td style="color:var(--color-text); font-size:12.5px;">Emma Watson</td>
+                <td><span class="value-cell">£12.00</span></td>
+                <td><span class="order-status-badge stat-shipped">Shipped</span></td>
+                <td><span class="courier-label">Evri</span></td>
+                <td><span style="font-size:11px; color:var(--color-success);">✓ Done</span></td>
+                <td><div class="action-cell"><button class="action-btn">⋮</button></div></td>
+              </tr>
+
+              <!-- Row 4 -->
+              <tr class="grid-row">
+                <td><div class="checkbox-cell"><div class="ch-box"></div></div></td>
+                <td><span class="ch-badge" style="background:rgba(255,174,0,0.12);color:#FFAE00;">eBay</span></td>
+                <td><span class="order-id-cell">#EB-2847386</span></td>
+                <td style="color:var(--color-text); font-size:12.5px;">Michael Brown</td>
+                <td><span class="value-cell">£156.00</span></td>
+                <td><span class="order-status-badge stat-cancelled">Cancelled</span></td>
+                <td><span class="courier-label">DPD</span></td>
+                <td><span style="font-size:11px; color:var(--color-text-subtle);">—</span></td>
+                <td><div class="action-cell"><button class="action-btn">⋮</button></div></td>
+              </tr>
+
+              <!-- Row 5 -->
+              <tr class="grid-row">
+                <td><div class="checkbox-cell"><div class="ch-box"></div></div></td>
+                <td><span class="ch-badge" style="background:rgba(243,89,36,0.12);color:#F35924;">Etsy</span></td>
+                <td><span class="order-id-cell">#ET-8472910</span></td>
+                <td style="color:var(--color-text); font-size:12.5px;">Charlotte Patel</td>
+                <td><span class="value-cell">£42.00</span></td>
+                <td><span class="order-status-badge stat-shipped">Shipped</span></td>
+                <td><span class="courier-label">Royal Mail</span></td>
+                <td><span style="font-size:11px; color:var(--color-success);">✓ Done</span></td>
+                <td><div class="action-cell"><button class="action-btn">⋮</button></div></td>
+              </tr>
+
+              <!-- Row 6 -->
+              <tr class="grid-row">
+                <td><div class="checkbox-cell"><div class="ch-box"></div></div></td>
+                <td><span class="ch-badge" style="background:rgba(105,201,208,0.12);color:#69C9D0;">TikTok</span></td>
+                <td><span class="order-id-cell">#TT-0192831</span></td>
+                <td style="color:var(--color-text); font-size:12.5px;">Oliver Hughes</td>
+                <td><span class="value-cell">£24.99</span></td>
+                <td><span class="order-status-badge stat-pending">Pending</span></td>
+                <td><span class="courier-label" style="color:var(--color-text-subtle);">—</span></td>
+                <td>
+                  <div class="sla-mini">
+                    <div class="sla-mini-ring">
+                      <svg width="24" height="24" viewBox="0 0 24 24"><circle cx="12" cy="12" r="9" fill="none" stroke="rgba(212,135,44,0.25)" stroke-width="2.5"/><circle cx="12" cy="12" r="9" fill="none" stroke="#D4872C" stroke-width="2.5" stroke-dasharray="56.55" stroke-dashoffset="28" stroke-linecap="round" transform="rotate(-90 12 12)"/></svg>
+                      <div class="sla-mini-val" style="color:#D4872C;">18h</div>
+                    </div>
+                  </div>
+                </td>
+                <td><div class="action-cell"><button class="action-btn">⋮</button></div></td>
+              </tr>
+
+              <!-- Row 7 -->
+              <tr class="grid-row">
+                <td><div class="checkbox-cell"><div class="ch-box"></div></div></td>
+                <td><span class="ch-badge" style="background:rgba(255,174,0,0.12);color:#FFAE00;">eBay</span></td>
+                <td><span class="order-id-cell">#EB-2847371</span></td>
+                <td style="color:var(--color-text); font-size:12.5px;">Isabella Clarke</td>
+                <td><span class="value-cell">£278.00</span></td>
+                <td><span class="order-status-badge stat-processing">Processing</span></td>
+                <td><span class="courier-label">DHL</span></td>
+                <td>
+                  <div class="sla-mini">
+                    <div class="sla-mini-ring">
+                      <svg width="24" height="24" viewBox="0 0 24 24"><circle cx="12" cy="12" r="9" fill="none" stroke="rgba(74,158,110,0.25)" stroke-width="2.5"/><circle cx="12" cy="12" r="9" fill="none" stroke="#4A9E6E" stroke-width="2.5" stroke-dasharray="56.55" stroke-dashoffset="14" stroke-linecap="round" transform="rotate(-90 12 12)"/></svg>
+                      <div class="sla-mini-val" style="color:#4A9E6E;">36h</div>
+                    </div>
+                  </div>
+                </td>
+                <td><div class="action-cell"><button class="action-btn">⋮</button></div></td>
+              </tr>
+
+              <!-- Row 8 -->
+              <tr class="grid-row">
+                <td><div class="checkbox-cell"><div class="ch-box"></div></div></td>
+                <td><span class="ch-badge" style="background:rgba(9,183,117,0.12);color:#09B775;">Vinted</span></td>
+                <td><span class="order-id-cell">#VT-3847265</span></td>
+                <td style="color:var(--color-text); font-size:12.5px;">Noah Thompson</td>
+                <td><span class="value-cell">£8.50</span></td>
+                <td><span class="order-status-badge stat-shipped">Shipped</span></td>
+                <td><span class="courier-label">Evri</span></td>
+                <td><span style="font-size:11px; color:var(--color-success);">✓ Done</span></td>
+                <td><div class="action-cell"><button class="action-btn">⋮</button></div></td>
+              </tr>
+
+              <!-- Row 9 -->
+              <tr class="grid-row">
+                <td><div class="checkbox-cell"><div class="ch-box"></div></div></td>
+                <td><span class="ch-badge" style="background:rgba(243,89,36,0.12);color:#F35924;">Etsy</span></td>
+                <td><span class="order-id-cell">#ET-8472884</span></td>
+                <td style="color:var(--color-text); font-size:12.5px;">Amelia Johnson</td>
+                <td><span class="value-cell">£67.50</span></td>
+                <td><span class="order-status-badge stat-cancelled">Cancelled</span></td>
+                <td><span class="courier-label" style="color:var(--color-text-subtle);">—</span></td>
+                <td><span style="font-size:11px; color:var(--color-text-subtle);">—</span></td>
+                <td><div class="action-cell"><button class="action-btn">⋮</button></div></td>
+              </tr>
+
+              <!-- Row 10 -->
+              <tr class="grid-row">
+                <td><div class="checkbox-cell"><div class="ch-box"></div></div></td>
+                <td><span class="ch-badge" style="background:rgba(255,174,0,0.12);color:#FFAE00;">eBay</span></td>
+                <td><span class="order-id-cell">#EB-2847358</span></td>
+                <td style="color:var(--color-text); font-size:12.5px;">Liam Williams</td>
+                <td><span class="value-cell">£19.99</span></td>
+                <td><span class="order-status-badge stat-processing">Processing</span></td>
+                <td><span class="courier-label">Royal Mail</span></td>
+                <td>
+                  <div class="sla-mini">
+                    <div class="sla-mini-ring">
+                      <svg width="24" height="24" viewBox="0 0 24 24"><circle cx="12" cy="12" r="9" fill="none" stroke="rgba(74,158,110,0.25)" stroke-width="2.5"/><circle cx="12" cy="12" r="9" fill="none" stroke="#4A9E6E" stroke-width="2.5" stroke-dasharray="56.55" stroke-dashoffset="18" stroke-linecap="round" transform="rotate(-90 12 12)"/></svg>
+                      <div class="sla-mini-val" style="color:#4A9E6E;">28h</div>
+                    </div>
+                  </div>
+                </td>
+                <td><div class="action-cell"><button class="action-btn">⋮</button></div></td>
+              </tr>
+
+              <!-- Row 11 -->
+              <tr class="grid-row">
+                <td><div class="checkbox-cell"><div class="ch-box"></div></div></td>
+                <td><span class="ch-badge" style="background:rgba(105,201,208,0.12);color:#69C9D0;">TikTok</span></td>
+                <td><span class="order-id-cell">#TT-0192809</span></td>
+                <td style="color:var(--color-text); font-size:12.5px;">Sophie Martin</td>
+                <td><span class="value-cell">£134.00</span></td>
+                <td><span class="order-status-badge stat-shipped">Shipped</span></td>
+                <td><span class="courier-label">DPD</span></td>
+                <td><span style="font-size:11px; color:var(--color-success);">✓ Done</span></td>
+                <td><div class="action-cell"><button class="action-btn">⋮</button></div></td>
+              </tr>
+
+              <!-- Row 12 -->
+              <tr class="grid-row">
+                <td><div class="checkbox-cell"><div class="ch-box"></div></div></td>
+                <td><span class="ch-badge" style="background:rgba(255,174,0,0.12);color:#FFAE00;">eBay</span></td>
+                <td><span class="order-id-cell">#EB-2847342</span></td>
+                <td style="color:var(--color-text); font-size:12.5px;">George Anderson</td>
+                <td><span class="value-cell">£52.00</span></td>
+                <td><span class="order-status-badge stat-returned" style="background:rgba(212,107,107,0.15);color:#D46B6B;">Returned</span></td>
+                <td><span class="courier-label">Royal Mail</span></td>
+                <td><span style="font-size:11px; color:var(--color-text-subtle);">—</span></td>
+                <td><div class="action-cell"><button class="action-btn">⋮</button></div></td>
+              </tr>
+
+              <!-- Row 13 -->
+              <tr class="grid-row">
+                <td><div class="checkbox-cell"><div class="ch-box"></div></div></td>
+                <td><span class="ch-badge" style="background:rgba(9,183,117,0.12);color:#09B775;">Vinted</span></td>
+                <td><span class="order-id-cell">#VT-3847238</span></td>
+                <td style="color:var(--color-text); font-size:12.5px;">Ella Robinson</td>
+                <td><span class="value-cell">£6.00</span></td>
+                <td><span class="order-status-badge stat-shipped">Shipped</span></td>
+                <td><span class="courier-label">Evri</span></td>
+                <td><span style="font-size:11px; color:var(--color-success);">✓ Done</span></td>
+                <td><div class="action-cell"><button class="action-btn">⋮</button></div></td>
+              </tr>
+
+              <!-- Row 14 -->
+              <tr class="grid-row">
+                <td><div class="checkbox-cell"><div class="ch-box"></div></div></td>
+                <td><span class="ch-badge" style="background:rgba(243,89,36,0.12);color:#F35924;">Etsy</span></td>
+                <td><span class="order-id-cell">#ET-8472861</span></td>
+                <td style="color:var(--color-text); font-size:12.5px;">Harry Wilson</td>
+                <td><span class="value-cell">£88.00</span></td>
+                <td><span class="order-status-badge stat-processing">Processing</span></td>
+                <td><span class="courier-label">DHL</span></td>
+                <td>
+                  <div class="sla-mini">
+                    <div class="sla-mini-ring">
+                      <svg width="24" height="24" viewBox="0 0 24 24"><circle cx="12" cy="12" r="9" fill="none" stroke="rgba(74,158,110,0.25)" stroke-width="2.5"/><circle cx="12" cy="12" r="9" fill="none" stroke="#4A9E6E" stroke-width="2.5" stroke-dasharray="56.55" stroke-dashoffset="8" stroke-linecap="round" transform="rotate(-90 12 12)"/></svg>
+                      <div class="sla-mini-val" style="color:#4A9E6E;">48h</div>
+                    </div>
+                  </div>
+                </td>
+                <td><div class="action-cell"><button class="action-btn">⋮</button></div></td>
+              </tr>
+
+              <!-- Row 15 -->
+              <tr class="grid-row">
+                <td><div class="checkbox-cell"><div class="ch-box"></div></div></td>
+                <td><span class="ch-badge" style="background:rgba(255,174,0,0.12);color:#FFAE00;">eBay</span></td>
+                <td><span class="order-id-cell">#EB-2847329</span></td>
+                <td style="color:var(--color-text); font-size:12.5px;">Grace Taylor</td>
+                <td><span class="value-cell">£320.00</span></td>
+                <td><span class="order-status-badge stat-processing">Processing</span></td>
+                <td><span class="courier-label">DPD</span></td>
+                <td>
+                  <div class="sla-mini">
+                    <div class="sla-mini-ring">
+                      <svg width="24" height="24" viewBox="0 0 24 24"><circle cx="12" cy="12" r="9" fill="none" stroke="rgba(212,135,44,0.25)" stroke-width="2.5"/><circle cx="12" cy="12" r="9" fill="none" stroke="#D4872C" stroke-width="2.5" stroke-dasharray="56.55" stroke-dashoffset="32" stroke-linecap="round" transform="rotate(-90 12 12)"/></svg>
+                      <div class="sla-mini-val" style="color:#D4872C;">14h</div>
+                    </div>
+                  </div>
+                </td>
+                <td><div class="action-cell"><button class="action-btn">⋮</button></div></td>
+              </tr>
+
+            </tbody>
+          </table>
+        </div>
+
+        <!-- Pagination footer -->
+        <div class="grid-footer">
+          <span class="page-info">Showing 1–15 of 2,847 orders</span>
+          <div class="page-nav">
+            <button class="page-btn">‹</button>
+            <button class="page-btn active">1</button>
+            <button class="page-btn">2</button>
+            <button class="page-btn">3</button>
+            <span style="display:flex; align-items:center; padding:0 4px; font-size:12px; color:var(--color-text-subtle);">...</span>
+            <button class="page-btn">190</button>
+            <button class="page-btn">›</button>
+          </div>
+        </div>
+      </div>
+
+    </div>
+  </div>
+</div>
+
+</body>
+</html>

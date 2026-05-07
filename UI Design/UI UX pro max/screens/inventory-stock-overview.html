@@ -1,0 +1,418 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Stock Overview — Inventory — Synergia360</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Geist:wght@300;400;500;600;700&family=Inter:wght@300;400;500;600&family=Geist+Mono:wght@400;500&display=swap" rel="stylesheet">
+<script src="https://cdn.tailwindcss.com"></script>
+<style>
+  :root {
+    --color-bg: #141414;
+    --color-surface: #1E1E1E;
+    --color-surface-raised: #252525;
+    --color-border: #383838;
+    --color-border-active: #5A5A5A;
+    --color-text: #F2F2F2;
+    --color-text-muted: #999999;
+    --color-text-subtle: #666666;
+    --color-accent: #C4972A;
+    --color-accent-dim: #8B6914;
+    --color-accent-glow: rgba(196,151,42,0.15);
+    --color-success: #4A9E6E;
+    --color-warning: #D4872C;
+    --color-danger: #8B3A3A;
+    --color-info: #3A6B8B;
+  }
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  body { background: var(--color-bg); color: var(--color-text); font-family: 'Inter', sans-serif; font-size: 14px; min-height: 100vh; display: flex; }
+  h1,h2,h3,h4,h5 { font-family: 'Geist', sans-serif; }
+  .mono { font-family: 'Geist Mono', monospace; }
+  .sidebar { width: 240px; min-height: 100vh; background: var(--color-surface); border-right: 1px solid var(--color-border); display: flex; flex-direction: column; flex-shrink: 0; position: fixed; top: 0; left: 0; bottom: 0; z-index: 50; }
+  .sidebar-logo { padding: 20px 20px 16px; border-bottom: 1px solid var(--color-border); display: flex; align-items: center; gap: 10px; }
+  .logo-mark { width: 32px; height: 32px; border-radius: 8px; background: linear-gradient(135deg, var(--color-accent), var(--color-accent-dim)); display: flex; align-items: center; justify-content: center; }
+  .sidebar-nav { flex: 1; padding: 12px 0; overflow-y: auto; }
+  .nav-item { display: flex; align-items: center; gap: 10px; padding: 8px 16px; color: var(--color-text-muted); cursor: pointer; border-left: 2px solid transparent; font-size: 13.5px; transition: all 0.15s; }
+  .nav-item:hover { background: rgba(255,255,255,0.04); color: var(--color-text); }
+  .nav-item.active { color: var(--color-accent); border-left-color: var(--color-accent); background: var(--color-accent-glow); font-weight: 500; }
+  .nav-section { padding: 8px 12px 4px; font-size: 10px; font-weight: 600; letter-spacing: 0.1em; text-transform: uppercase; color: var(--color-text-subtle); }
+  .nav-icon { width: 16px; height: 16px; flex-shrink: 0; }
+  .sidebar-footer { padding: 16px; border-top: 1px solid var(--color-border); }
+  .main { margin-left: 240px; flex: 1; display: flex; flex-direction: column; }
+  .topbar { height: 60px; background: var(--color-surface); border-bottom: 1px solid var(--color-border); display: flex; align-items: center; padding: 0 24px; gap: 12px; position: sticky; top: 0; z-index: 40; }
+  .btn { display: inline-flex; align-items: center; gap: 6px; padding: 7px 14px; border-radius: 6px; font-size: 13px; font-weight: 500; cursor: pointer; transition: all 0.15s; border: none; font-family: 'Inter', sans-serif; }
+  .btn-gold { background: var(--color-accent); color: #0A0A0A; }
+  .btn-outline { background: transparent; border: 1px solid var(--color-border); color: var(--color-text-muted); }
+  .btn-outline:hover { border-color: var(--color-border-active); color: var(--color-text); }
+  .btn-sm { padding: 5px 10px; font-size: 12px; }
+  .content { flex: 1; display: flex; flex-direction: column; padding: 0; overflow: hidden; }
+  /* KPI Row */
+  .kpi-row { display: grid; grid-template-columns: repeat(5, 1fr); gap: 0; border-bottom: 1px solid var(--color-border); }
+  .kpi-card { padding: 18px 22px; border-right: 1px solid var(--color-border); background: var(--color-surface); }
+  .kpi-card:last-child { border-right: none; }
+  .kpi-label { font-size: 11px; font-weight: 600; text-transform: uppercase; letter-spacing: 0.08em; color: var(--color-text-subtle); margin-bottom: 8px; }
+  .kpi-value { font-family: 'Geist', sans-serif; font-size: 28px; font-weight: 700; line-height: 1; }
+  .kpi-sub { font-size: 11px; color: var(--color-text-subtle); margin-top: 4px; }
+  .kpi-trend { font-size: 11.5px; margin-top: 4px; display: flex; align-items: center; gap: 3px; }
+  /* Filter bar */
+  .filter-bar { padding: 12px 24px; border-bottom: 1px solid var(--color-border); display: flex; gap: 10px; align-items: center; background: var(--color-bg); }
+  .select-input { background: var(--color-surface); border: 1px solid var(--color-border); color: var(--color-text-muted); padding: 6px 10px; border-radius: 6px; font-size: 13px; cursor: pointer; font-family: 'Inter', sans-serif; }
+  .search-input { flex: 1; max-width: 280px; background: var(--color-surface); border: 1px solid var(--color-border); color: var(--color-text); padding: 6px 12px; border-radius: 6px; font-size: 13px; font-family: 'Inter', sans-serif; outline: none; }
+  .search-input:focus { border-color: var(--color-accent); }
+  .search-input::placeholder { color: var(--color-text-subtle); }
+  /* Table */
+  .table-wrap { flex: 1; overflow-y: auto; }
+  .data-table { width: 100%; border-collapse: collapse; }
+  .data-table th { font-size: 11px; font-weight: 600; text-transform: uppercase; letter-spacing: 0.07em; color: var(--color-text-subtle); padding: 10px 16px; text-align: left; border-bottom: 1px solid var(--color-border); background: var(--color-surface); position: sticky; top: 0; z-index: 10; white-space: nowrap; }
+  .data-table th.num { text-align: right; }
+  .data-table td { padding: 11px 16px; border-bottom: 1px solid rgba(56,56,56,0.5); font-size: 13px; vertical-align: middle; white-space: nowrap; }
+  .data-table tr:hover td { background: rgba(255,255,255,0.02); }
+  .data-table tr:last-child td { border-bottom: none; }
+  .data-table td.num { text-align: right; font-family: 'Geist Mono', monospace; font-size: 12.5px; }
+  /* Status chip */
+  .chip { display: inline-flex; align-items: center; gap: 4px; padding: 3px 9px; border-radius: 4px; font-size: 11px; font-weight: 600; letter-spacing: 0.04em; }
+  .chip-green { background: rgba(74,158,110,0.15); color: var(--color-success); border: 1px solid rgba(74,158,110,0.25); }
+  .chip-amber { background: rgba(212,135,44,0.15); color: var(--color-warning); border: 1px solid rgba(212,135,44,0.25); }
+  .chip-red { background: rgba(139,58,58,0.2); color: #C87878; border: 1px solid rgba(139,58,58,0.3); }
+  .chip-dot { width: 5px; height: 5px; border-radius: 50%; }
+  /* Location badge */
+  .loc-badge { font-family: 'Geist Mono', monospace; font-size: 11px; padding: 2px 6px; border-radius: 3px; background: var(--color-surface-raised); border: 1px solid var(--color-border); color: var(--color-text-subtle); }
+  /* Mini bar */
+  .mini-bar-track { width: 60px; height: 4px; background: var(--color-surface-raised); border-radius: 2px; display: inline-block; overflow: hidden; }
+  .mini-bar-fill { height: 100%; border-radius: 2px; }
+</style>
+</head>
+<body>
+<!-- SIDEBAR -->
+<aside class="sidebar">
+  <div class="sidebar-logo">
+    <div class="logo-mark"><svg width="18" height="18" viewBox="0 0 18 18" fill="none"><circle cx="9" cy="9" r="6" stroke="#141414" stroke-width="2"/><path d="M6 9h6M9 6v6" stroke="#141414" stroke-width="1.5" stroke-linecap="round"/></svg></div>
+    <div><div style="font-family:'Geist',sans-serif;font-size:14px;font-weight:700;">Synergia360</div><div style="font-size:10px;color:var(--color-text-subtle);">Multichannel OS</div></div>
+  </div>
+  <nav class="sidebar-nav">
+    <div class="nav-section">Operations</div>
+    <div class="nav-item"><svg class="nav-icon" viewBox="0 0 16 16" fill="none"><rect x="1" y="1" width="6" height="6" rx="1" stroke="currentColor" stroke-width="1.2"/><rect x="9" y="1" width="6" height="6" rx="1" stroke="currentColor" stroke-width="1.2"/><rect x="1" y="9" width="6" height="6" rx="1" stroke="currentColor" stroke-width="1.2"/><rect x="9" y="9" width="6" height="6" rx="1" stroke="currentColor" stroke-width="1.2"/></svg>Dashboard</div>
+    <div class="nav-item"><svg class="nav-icon" viewBox="0 0 16 16" fill="none"><path d="M2 3h12M2 8h12M2 13h7" stroke="currentColor" stroke-width="1.2" stroke-linecap="round"/></svg>Orders</div>
+    <div class="nav-item"><svg class="nav-icon" viewBox="0 0 16 16" fill="none"><rect x="2" y="2" width="12" height="12" rx="2" stroke="currentColor" stroke-width="1.2"/></svg>Listings</div>
+    <div class="nav-item active"><svg class="nav-icon" viewBox="0 0 16 16" fill="none"><path d="M2 12V6l6-4 6 4v6" stroke="currentColor" stroke-width="1.2" stroke-linejoin="round"/><rect x="6" y="9" width="4" height="7" rx="0.5" stroke="currentColor" stroke-width="1.2"/></svg>Inventory</div>
+    <div class="nav-item"><svg class="nav-icon" viewBox="0 0 16 16" fill="none"><circle cx="8" cy="5" r="3" stroke="currentColor" stroke-width="1.2"/><path d="M2 14c0-3.314 2.686-6 6-6s6 2.686 6 6" stroke="currentColor" stroke-width="1.2" stroke-linecap="round"/></svg>Suppliers</div>
+    <div class="nav-item"><svg class="nav-icon" viewBox="0 0 16 16" fill="none"><circle cx="6" cy="5" r="2.5" stroke="currentColor" stroke-width="1.2"/><circle cx="11" cy="8" r="2.5" stroke="currentColor" stroke-width="1.2"/></svg>Customers</div>
+    <div class="nav-item"><svg class="nav-icon" viewBox="0 0 16 16" fill="none"><path d="M2 2l4 4m8-4l-4 4M2 14l4-4m8 4l-4-4" stroke="currentColor" stroke-width="1.2" stroke-linecap="round"/></svg>Returns</div>
+    <div class="nav-item"><svg class="nav-icon" viewBox="0 0 16 16" fill="none"><path d="M3 8h10M10 5l3 3-3 3" stroke="currentColor" stroke-width="1.2" stroke-linecap="round" stroke-linejoin="round"/></svg>Shipping</div>
+    <div class="nav-section">Finance & Insight</div>
+    <div class="nav-item"><svg class="nav-icon" viewBox="0 0 16 16" fill="none"><path d="M8 1v14M4 10l4-4 4 4" stroke="currentColor" stroke-width="1.2" stroke-linecap="round" stroke-linejoin="round"/></svg>Finance</div>
+    <div class="nav-item"><svg class="nav-icon" viewBox="0 0 16 16" fill="none"><path d="M2 12l3-3 3 2 3-5 3 2" stroke="currentColor" stroke-width="1.2" stroke-linecap="round" stroke-linejoin="round"/></svg>Reports</div>
+    <div class="nav-item"><svg class="nav-icon" viewBox="0 0 16 16" fill="none"><circle cx="8" cy="8" r="6" stroke="currentColor" stroke-width="1.2"/></svg>Research</div>
+    <div class="nav-section">Catalogue</div>
+    <div class="nav-item"><svg class="nav-icon" viewBox="0 0 16 16" fill="none"><rect x="2" y="2" width="5" height="5" rx="1" stroke="currentColor" stroke-width="1.2"/><rect x="9" y="2" width="5" height="5" rx="1" stroke="currentColor" stroke-width="1.2"/><rect x="2" y="9" width="5" height="5" rx="1" stroke="currentColor" stroke-width="1.2"/><rect x="9" y="9" width="5" height="5" rx="1" stroke="currentColor" stroke-width="1.2"/></svg>Catalogue</div>
+    <div class="nav-item"><svg class="nav-icon" viewBox="0 0 16 16" fill="none"><path d="M2 4h12v9a1 1 0 01-1 1H3a1 1 0 01-1-1V4z" stroke="currentColor" stroke-width="1.2"/></svg>Channels</div>
+    <div class="nav-item"><svg class="nav-icon" viewBox="0 0 16 16" fill="none"><path d="M2 12V4l6-2 6 2v8l-6 2-6-2z" stroke="currentColor" stroke-width="1.2" stroke-linejoin="round"/></svg>Forecasting</div>
+    <div class="nav-item"><svg class="nav-icon" viewBox="0 0 16 16" fill="none"><path d="M14 10.667A2 2 0 0112 12H5l-3 2V4a2 2 0 012-2h8a2 2 0 012 2v6.667z" stroke="currentColor" stroke-width="1.2" stroke-linejoin="round"/></svg>Messaging</div>
+    <div class="nav-item"><svg class="nav-icon" viewBox="0 0 16 16" fill="none"><circle cx="8" cy="8" r="2" stroke="currentColor" stroke-width="1.2"/><path d="M8 1v2M8 13v2M1 8h2M13 8h2" stroke="currentColor" stroke-width="1.2" stroke-linecap="round"/></svg>Settings</div>
+  </nav>
+  <div class="sidebar-footer">
+    <div style="display:flex;align-items:center;gap:8px;">
+      <div style="width:28px;height:28px;border-radius:50%;background:linear-gradient(135deg,var(--color-accent),var(--color-accent-dim));display:flex;align-items:center;justify-content:center;font-size:11px;font-weight:700;color:#0A0A0A;">JH</div>
+      <div><div style="font-size:12px;font-weight:500;">James Harrington</div><div style="font-size:10.5px;color:var(--color-text-subtle);">Admin</div></div>
+    </div>
+  </div>
+</aside>
+
+<!-- MAIN -->
+<div class="main">
+  <div class="topbar">
+    <span style="font-family:'Geist',sans-serif;font-size:18px;font-weight:600;">Stock Overview</span>
+    <div style="flex:1;"></div>
+    <button class="btn btn-outline btn-sm">
+      <svg width="12" height="12" viewBox="0 0 12 12" fill="none"><path d="M1 9l5-7 5 7H1z" stroke="currentColor" stroke-width="1.1" stroke-linejoin="round"/></svg>
+      Export CSV
+    </button>
+    <button class="btn btn-outline btn-sm">Stock Adjustment</button>
+    <button class="btn btn-gold">
+      <svg width="13" height="13" viewBox="0 0 13 13" fill="none"><path d="M6.5 1v11M1 6.5h11" stroke="currentColor" stroke-width="1.4" stroke-linecap="round"/></svg>
+      New Stock Take
+    </button>
+  </div>
+
+  <div class="content">
+    <!-- KPI Row -->
+    <div class="kpi-row">
+      <div class="kpi-card">
+        <div class="kpi-label">Total SKUs</div>
+        <div class="kpi-value">4,847</div>
+        <div class="kpi-sub">across 2 warehouses</div>
+      </div>
+      <div class="kpi-card">
+        <div class="kpi-label">Total Units</div>
+        <div class="kpi-value">23,481</div>
+        <div class="kpi-trend" style="color:var(--color-success);">
+          <svg width="10" height="10" viewBox="0 0 10 10" fill="none"><path d="M2 8l3-5 5 5" stroke="currentColor" stroke-width="1.2" stroke-linecap="round" stroke-linejoin="round"/></svg>
+          +2.4% vs last week
+        </div>
+      </div>
+      <div class="kpi-card">
+        <div class="kpi-label">Stock Value</div>
+        <div class="kpi-value">£284,920</div>
+        <div class="kpi-trend" style="color:var(--color-success);">
+          <svg width="10" height="10" viewBox="0 0 10 10" fill="none"><path d="M2 8l3-5 5 5" stroke="currentColor" stroke-width="1.2" stroke-linecap="round" stroke-linejoin="round"/></svg>
+          +£8,240 vs last week
+        </div>
+      </div>
+      <div class="kpi-card" style="border-color:rgba(212,135,44,0.3);background:rgba(212,135,44,0.04);">
+        <div class="kpi-label" style="color:var(--color-warning);">Below Reorder</div>
+        <div class="kpi-value" style="color:var(--color-warning);">47</div>
+        <div class="kpi-sub" style="color:var(--color-warning);opacity:0.7;">requires attention</div>
+      </div>
+      <div class="kpi-card" style="border-color:rgba(139,58,58,0.3);background:rgba(139,58,58,0.04);">
+        <div class="kpi-label" style="color:#C87878;">Out of Stock</div>
+        <div class="kpi-value" style="color:#C87878;">12</div>
+        <div class="kpi-sub" style="color:#C87878;opacity:0.7;">active listings paused</div>
+      </div>
+    </div>
+
+    <!-- Filter Bar -->
+    <div class="filter-bar">
+      <select class="select-input">
+        <option>All Warehouses</option>
+        <option>Main Warehouse</option>
+        <option>Unit 2 — Manchester</option>
+        <option>3PL — DHL Fulfilment</option>
+      </select>
+      <select class="select-input">
+        <option>All Categories</option>
+        <option>Clothing &amp; Accessories</option>
+        <option>Home &amp; Garden</option>
+        <option>Electronics</option>
+      </select>
+      <select class="select-input">
+        <option>All Stock Status</option>
+        <option>In Stock</option>
+        <option>Low Stock</option>
+        <option>Out of Stock</option>
+        <option>Below Reorder</option>
+      </select>
+      <input class="search-input" placeholder="Search SKU, title, location…">
+      <div style="margin-left:auto;font-size:12px;color:var(--color-text-subtle);">Showing <strong style="color:var(--color-text);">15</strong> of 4,847 SKUs</div>
+    </div>
+
+    <!-- Data Table -->
+    <div class="table-wrap">
+      <table class="data-table">
+        <thead>
+          <tr>
+            <th>SKU</th>
+            <th>Product Name</th>
+            <th>Warehouse</th>
+            <th>Location</th>
+            <th class="num">On Hand</th>
+            <th class="num">Allocated</th>
+            <th class="num">Available</th>
+            <th class="num">Reorder Pt.</th>
+            <th>Status</th>
+            <th>Actions</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td><span class="mono" style="font-size:12px;color:var(--color-accent);">PLW-001-TAN</span></td>
+            <td><div style="font-weight:500;">Premium Leather Wallet</div><div style="font-size:11px;color:var(--color-text-subtle);">Tan — Men's Wallets</div></td>
+            <td><span style="font-size:12px;">Main WH</span></td>
+            <td><span class="loc-badge">A-12-3</span></td>
+            <td class="num">47</td>
+            <td class="num" style="color:var(--color-text-muted);">12</td>
+            <td class="num" style="color:var(--color-success);font-weight:600;">35</td>
+            <td class="num" style="color:var(--color-text-subtle);">20</td>
+            <td><span class="chip chip-green"><span class="chip-dot" style="background:var(--color-success);"></span>IN STOCK</span></td>
+            <td>
+              <div style="display:flex;gap:4px;">
+                <button class="btn btn-outline btn-sm">Adjust</button>
+                <button class="btn btn-outline btn-sm">Move</button>
+              </div>
+            </td>
+          </tr>
+          <tr>
+            <td><span class="mono" style="font-size:12px;color:var(--color-warning);">DENIM-M-BLU</span></td>
+            <td><div style="font-weight:500;">Denim Jacket Med Blue</div><div style="font-size:11px;color:var(--color-text-subtle);">Medium — Jackets</div></td>
+            <td><span style="font-size:12px;">Main WH</span></td>
+            <td><span class="loc-badge">B-04-1</span></td>
+            <td class="num">8</td>
+            <td class="num" style="color:var(--color-text-muted);">3</td>
+            <td class="num" style="color:var(--color-warning);font-weight:600;">5</td>
+            <td class="num" style="color:var(--color-text-subtle);">10</td>
+            <td><span class="chip chip-amber"><span class="chip-dot" style="background:var(--color-warning);"></span>LOW STOCK</span></td>
+            <td>
+              <div style="display:flex;gap:4px;">
+                <button class="btn btn-outline btn-sm">Adjust</button>
+                <button class="btn btn-gold btn-sm">Reorder</button>
+              </div>
+            </td>
+          </tr>
+          <tr style="background:rgba(139,58,58,0.04);">
+            <td><span class="mono" style="font-size:12px;color:#C87878;">CER-MUG-WHT</span></td>
+            <td><div style="font-weight:500;">Ceramic Mug White</div><div style="font-size:11px;color:var(--color-text-subtle);">White — Homewares</div></td>
+            <td><span style="font-size:12px;">Unit 2</span></td>
+            <td><span class="loc-badge">C-08-2</span></td>
+            <td class="num" style="color:#C87878;">0</td>
+            <td class="num" style="color:var(--color-text-muted);">0</td>
+            <td class="num" style="color:#C87878;font-weight:600;">0</td>
+            <td class="num" style="color:var(--color-text-subtle);">25</td>
+            <td><span class="chip chip-red"><span class="chip-dot" style="background:#C87878;"></span>OUT OF STOCK</span></td>
+            <td>
+              <div style="display:flex;gap:4px;">
+                <button class="btn btn-outline btn-sm">Adjust</button>
+                <button class="btn btn-gold btn-sm">Reorder</button>
+              </div>
+            </td>
+          </tr>
+          <tr>
+            <td><span class="mono" style="font-size:12px;color:var(--color-accent);">BAM-PHN-STD</span></td>
+            <td><div style="font-weight:500;">Bamboo Phone Stand</div><div style="font-size:11px;color:var(--color-text-subtle);">Natural — Desk Accessories</div></td>
+            <td><span style="font-size:12px;">Main WH</span></td>
+            <td><span class="loc-badge">D-02-5</span></td>
+            <td class="num">134</td>
+            <td class="num" style="color:var(--color-text-muted);">22</td>
+            <td class="num" style="color:var(--color-success);font-weight:600;">112</td>
+            <td class="num" style="color:var(--color-text-subtle);">30</td>
+            <td><span class="chip chip-green"><span class="chip-dot" style="background:var(--color-success);"></span>IN STOCK</span></td>
+            <td><div style="display:flex;gap:4px;"><button class="btn btn-outline btn-sm">Adjust</button><button class="btn btn-outline btn-sm">Move</button></div></td>
+          </tr>
+          <tr>
+            <td><span class="mono" style="font-size:12px;color:var(--color-accent);">MRN-BNE-GRY</span></td>
+            <td><div style="font-weight:500;">Merino Wool Beanie Grey</div><div style="font-size:11px;color:var(--color-text-subtle);">One Size — Headwear</div></td>
+            <td><span style="font-size:12px;">Main WH</span></td>
+            <td><span class="loc-badge">E-11-2</span></td>
+            <td class="num">67</td>
+            <td class="num" style="color:var(--color-text-muted);">8</td>
+            <td class="num" style="color:var(--color-success);font-weight:600;">59</td>
+            <td class="num" style="color:var(--color-text-subtle);">20</td>
+            <td><span class="chip chip-green"><span class="chip-dot" style="background:var(--color-success);"></span>IN STOCK</span></td>
+            <td><div style="display:flex;gap:4px;"><button class="btn btn-outline btn-sm">Adjust</button><button class="btn btn-outline btn-sm">Move</button></div></td>
+          </tr>
+          <tr>
+            <td><span class="mono" style="font-size:12px;color:var(--color-warning);">CH-002-BLK</span></td>
+            <td><div style="font-weight:500;">Leather Card Holder Black</div><div style="font-size:11px;color:var(--color-text-subtle);">Black — Wallets</div></td>
+            <td><span style="font-size:12px;">Main WH</span></td>
+            <td><span class="loc-badge">A-14-1</span></td>
+            <td class="num">11</td>
+            <td class="num" style="color:var(--color-text-muted);">4</td>
+            <td class="num" style="color:var(--color-warning);font-weight:600;">7</td>
+            <td class="num" style="color:var(--color-text-subtle);">15</td>
+            <td><span class="chip chip-amber"><span class="chip-dot" style="background:var(--color-warning);"></span>LOW STOCK</span></td>
+            <td><div style="display:flex;gap:4px;"><button class="btn btn-outline btn-sm">Adjust</button><button class="btn btn-gold btn-sm">Reorder</button></div></td>
+          </tr>
+          <tr>
+            <td><span class="mono" style="font-size:12px;color:var(--color-accent);">WB-SS-750-BLU</span></td>
+            <td><div style="font-weight:500;">Stainless Steel Water Bottle</div><div style="font-size:11px;color:var(--color-text-subtle);">750ml Blue — Sports</div></td>
+            <td><span style="font-size:12px;">Unit 2</span></td>
+            <td><span class="loc-badge">F-03-7</span></td>
+            <td class="num">203</td>
+            <td class="num" style="color:var(--color-text-muted);">41</td>
+            <td class="num" style="color:var(--color-success);font-weight:600;">162</td>
+            <td class="num" style="color:var(--color-text-subtle);">50</td>
+            <td><span class="chip chip-green"><span class="chip-dot" style="background:var(--color-success);"></span>IN STOCK</span></td>
+            <td><div style="display:flex;gap:4px;"><button class="btn btn-outline btn-sm">Adjust</button><button class="btn btn-outline btn-sm">Move</button></div></td>
+          </tr>
+          <tr style="background:rgba(139,58,58,0.04);">
+            <td><span class="mono" style="font-size:12px;color:#C87878;">JBX-VLV-RED</span></td>
+            <td><div style="font-weight:500;">Velvet Jewellery Box Red</div><div style="font-size:11px;color:var(--color-text-subtle);">Red — Storage</div></td>
+            <td><span style="font-size:12px;">Main WH</span></td>
+            <td><span class="loc-badge">G-07-3</span></td>
+            <td class="num" style="color:#C87878;">0</td>
+            <td class="num" style="color:var(--color-text-muted);">0</td>
+            <td class="num" style="color:#C87878;font-weight:600;">0</td>
+            <td class="num" style="color:var(--color-text-subtle);">10</td>
+            <td><span class="chip chip-red"><span class="chip-dot" style="background:#C87878;"></span>OUT OF STOCK</span></td>
+            <td><div style="display:flex;gap:4px;"><button class="btn btn-outline btn-sm">Adjust</button><button class="btn btn-gold btn-sm">Reorder</button></div></td>
+          </tr>
+          <tr>
+            <td><span class="mono" style="font-size:12px;color:var(--color-accent);">PLNT-MCR-NAT</span></td>
+            <td><div style="font-weight:500;">Macramé Plant Hanger</div><div style="font-size:11px;color:var(--color-text-subtle);">Natural — Home Décor</div></td>
+            <td><span style="font-size:12px;">Unit 2</span></td>
+            <td><span class="loc-badge">H-01-4</span></td>
+            <td class="num">88</td>
+            <td class="num" style="color:var(--color-text-muted);">14</td>
+            <td class="num" style="color:var(--color-success);font-weight:600;">74</td>
+            <td class="num" style="color:var(--color-text-subtle);">20</td>
+            <td><span class="chip chip-green"><span class="chip-dot" style="background:var(--color-success);"></span>IN STOCK</span></td>
+            <td><div style="display:flex;gap:4px;"><button class="btn btn-outline btn-sm">Adjust</button><button class="btn btn-outline btn-sm">Move</button></div></td>
+          </tr>
+          <tr>
+            <td><span class="mono" style="font-size:12px;color:var(--color-accent);">BLT-ART-BRN</span></td>
+            <td><div style="font-weight:500;">Artisan Leather Belt Brown</div><div style="font-size:11px;color:var(--color-text-subtle);">32" — Belts</div></td>
+            <td><span style="font-size:12px;">Main WH</span></td>
+            <td><span class="loc-badge">A-09-2</span></td>
+            <td class="num">34</td>
+            <td class="num" style="color:var(--color-text-muted);">6</td>
+            <td class="num" style="color:var(--color-success);font-weight:600;">28</td>
+            <td class="num" style="color:var(--color-text-subtle);">15</td>
+            <td><span class="chip chip-green"><span class="chip-dot" style="background:var(--color-success);"></span>IN STOCK</span></td>
+            <td><div style="display:flex;gap:4px;"><button class="btn btn-outline btn-sm">Adjust</button><button class="btn btn-outline btn-sm">Move</button></div></td>
+          </tr>
+          <tr>
+            <td><span class="mono" style="font-size:12px;color:var(--color-warning);">PSPT-CVR-BLK</span></td>
+            <td><div style="font-weight:500;">Personalised Passport Cover</div><div style="font-size:11px;color:var(--color-text-subtle);">Black — Travel</div></td>
+            <td><span style="font-size:12px;">3PL DHL</span></td>
+            <td><span class="loc-badge">P-44-A</span></td>
+            <td class="num">9</td>
+            <td class="num" style="color:var(--color-text-muted);">2</td>
+            <td class="num" style="color:var(--color-warning);font-weight:600;">7</td>
+            <td class="num" style="color:var(--color-text-subtle);">12</td>
+            <td><span class="chip chip-amber"><span class="chip-dot" style="background:var(--color-warning);"></span>LOW STOCK</span></td>
+            <td><div style="display:flex;gap:4px;"><button class="btn btn-outline btn-sm">Adjust</button><button class="btn btn-gold btn-sm">Reorder</button></div></td>
+          </tr>
+          <tr>
+            <td><span class="mono" style="font-size:12px;color:var(--color-accent);">BAG-WKD-OLV</span></td>
+            <td><div style="font-weight:500;">Waxed Canvas Weekender Bag</div><div style="font-size:11px;color:var(--color-text-subtle);">Olive — Bags</div></td>
+            <td><span style="font-size:12px;">Main WH</span></td>
+            <td><span class="loc-badge">B-12-8</span></td>
+            <td class="num">19</td>
+            <td class="num" style="color:var(--color-text-muted);">5</td>
+            <td class="num" style="color:var(--color-success);font-weight:600;">14</td>
+            <td class="num" style="color:var(--color-text-subtle);">10</td>
+            <td><span class="chip chip-green"><span class="chip-dot" style="background:var(--color-success);"></span>IN STOCK</span></td>
+            <td><div style="display:flex;gap:4px;"><button class="btn btn-outline btn-sm">Adjust</button><button class="btn btn-outline btn-sm">Move</button></div></td>
+          </tr>
+          <tr style="background:rgba(139,58,58,0.04);">
+            <td><span class="mono" style="font-size:12px;color:#C87878;">JWL-PND-SLV</span></td>
+            <td><div style="font-weight:500;">Silver Pendant Necklace</div><div style="font-size:11px;color:var(--color-text-subtle);">925 Silver — Jewellery</div></td>
+            <td><span style="font-size:12px;">Main WH</span></td>
+            <td><span class="loc-badge">J-01-1</span></td>
+            <td class="num" style="color:#C87878;">0</td>
+            <td class="num" style="color:var(--color-text-muted);">0</td>
+            <td class="num" style="color:#C87878;font-weight:600;">0</td>
+            <td class="num" style="color:var(--color-text-subtle);">5</td>
+            <td><span class="chip chip-red"><span class="chip-dot" style="background:#C87878;"></span>OUT OF STOCK</span></td>
+            <td><div style="display:flex;gap:4px;"><button class="btn btn-outline btn-sm">Adjust</button><button class="btn btn-gold btn-sm">Reorder</button></div></td>
+          </tr>
+          <tr>
+            <td><span class="mono" style="font-size:12px;color:var(--color-accent);">MAT-CRK-SET4</span></td>
+            <td><div style="font-weight:500;">Cork Table Mat Set of 4</div><div style="font-size:11px;color:var(--color-text-subtle);">Natural — Kitchen</div></td>
+            <td><span style="font-size:12px;">Unit 2</span></td>
+            <td><span class="loc-badge">K-06-3</span></td>
+            <td class="num">54</td>
+            <td class="num" style="color:var(--color-text-muted);">9</td>
+            <td class="num" style="color:var(--color-success);font-weight:600;">45</td>
+            <td class="num" style="color:var(--color-text-subtle);">20</td>
+            <td><span class="chip chip-green"><span class="chip-dot" style="background:var(--color-success);"></span>IN STOCK</span></td>
+            <td><div style="display:flex;gap:4px;"><button class="btn btn-outline btn-sm">Adjust</button><button class="btn btn-outline btn-sm">Move</button></div></td>
+          </tr>
+          <tr>
+            <td><span class="mono" style="font-size:12px;color:var(--color-warning);">KR-045-TAN</span></td>
+            <td><div style="font-weight:500;">Leather Key Fob Holder Tan</div><div style="font-size:11px;color:var(--color-text-subtle);">Tan — Key Accessories</div></td>
+            <td><span style="font-size:12px;">Main WH</span></td>
+            <td><span class="loc-badge">A-16-2</span></td>
+            <td class="num">47</td>
+            <td class="num" style="color:var(--color-text-muted);">5</td>
+            <td class="num" style="color:var(--color-warning);font-weight:600;">42</td>
+            <td class="num" style="color:var(--color-text-subtle);">50</td>
+            <td><span class="chip chip-amber"><span class="chip-dot" style="background:var(--color-warning);"></span>LOW STOCK</span></td>
+            <td><div style="display:flex;gap:4px;"><button class="btn btn-outline btn-sm">Adjust</button><button class="btn btn-gold btn-sm">Reorder</button></div></td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+</div>
+</body>
+</html>

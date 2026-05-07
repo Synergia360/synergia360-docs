@@ -1,0 +1,1417 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Synergia360 — UI Mockup Index</title>
+  <link rel="stylesheet" href="shared.css">
+  <script src="https://unpkg.com/lucide@latest"></script>
+  <style>
+    body {
+      background: var(--color-bg);
+      min-height: 100vh;
+      padding: 0;
+    }
+
+    /* ── Hero ─────────────────────────────────────────── */
+    .hero {
+      background: var(--color-surface);
+      border-bottom: 1px solid var(--color-border);
+      padding: 48px 64px 40px;
+      position: relative;
+      overflow: hidden;
+    }
+    .hero::before {
+      content: '';
+      position: absolute;
+      top: -80px;
+      right: -80px;
+      width: 500px;
+      height: 500px;
+      background: radial-gradient(circle, rgba(196,151,42,0.12) 0%, transparent 70%);
+      pointer-events: none;
+    }
+    .hero::after {
+      content: '';
+      position: absolute;
+      bottom: -60px;
+      left: 240px;
+      width: 300px;
+      height: 300px;
+      background: radial-gradient(circle, rgba(196,151,42,0.05) 0%, transparent 70%);
+      pointer-events: none;
+    }
+    .hero-inner { max-width: 1440px; margin: 0 auto; position: relative; }
+    .hero-eyebrow {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      margin-bottom: 20px;
+    }
+    .hero-logo {
+      width: 40px; height: 40px;
+      background: linear-gradient(135deg, var(--color-accent) 0%, var(--color-accent-dim) 100%);
+      border-radius: 10px;
+      display: flex; align-items: center; justify-content: center;
+      font-family: var(--font-heading); font-weight: 800; font-size: 20px;
+      color: #141414; box-shadow: var(--shadow-accent);
+      letter-spacing: -0.04em;
+    }
+    .hero-brand {
+      font-family: var(--font-heading); font-size: 18px; font-weight: 600;
+      color: var(--color-text); letter-spacing: -0.02em;
+    }
+    .hero h1 {
+      font-family: var(--font-heading);
+      font-size: clamp(32px, 4vw, 52px);
+      font-weight: 800; color: var(--color-text);
+      letter-spacing: -0.035em; line-height: 1.1;
+      margin-bottom: 12px;
+    }
+    .hero h1 span { color: var(--color-accent); }
+    .hero p {
+      font-size: 16px; color: var(--color-text-muted);
+      max-width: 520px; line-height: 1.65; margin-bottom: 28px;
+    }
+    .hero-meta {
+      display: flex; align-items: center; gap: 24px; flex-wrap: wrap;
+    }
+    .hero-meta-item {
+      display: flex; align-items: center; gap: 6px;
+      font-size: 12px; color: var(--color-text-muted);
+    }
+    .hero-meta-item i { width: 14px; height: 14px; color: var(--color-accent); }
+    .hero-stat { font-weight: 700; color: var(--color-text); font-size: 13px; }
+
+    /* ── Main ─────────────────────────────────────────── */
+    .main { max-width: 1440px; margin: 0 auto; padding: 40px 64px 80px; }
+
+    /* ── Quick Stats ──────────────────────────────────── */
+    .quick-stats {
+      display: grid; grid-template-columns: repeat(4, 1fr); gap: 0;
+      margin-bottom: 48px;
+      background: var(--color-surface);
+      border: 1px solid var(--color-border);
+      border-radius: var(--radius-xl);
+      overflow: hidden;
+    }
+    .qs-item {
+      display: flex; flex-direction: column; align-items: center; gap: 4px;
+      padding: 24px 16px; text-align: center;
+      border-right: 1px solid var(--color-border);
+    }
+    .qs-item:last-child { border-right: none; }
+    .qs-value {
+      font-family: var(--font-heading); font-size: 36px; font-weight: 800;
+      color: var(--color-accent); letter-spacing: -0.05em; line-height: 1;
+    }
+    .qs-label {
+      font-size: 11px; color: var(--color-text-muted); font-weight: 500;
+      text-transform: uppercase; letter-spacing: 0.06em;
+    }
+
+    /* ── Section ──────────────────────────────────────── */
+    .section { margin-bottom: 52px; }
+    .section-header {
+      display: flex; align-items: center; gap: 12px;
+      margin-bottom: 20px; padding-bottom: 14px;
+      border-bottom: 1px solid var(--color-border);
+    }
+    .section-icon {
+      width: 32px; height: 32px; border-radius: var(--radius-md);
+      display: flex; align-items: center; justify-content: center;
+      background: var(--color-accent-glow); color: var(--color-accent); flex-shrink: 0;
+    }
+    .section-icon i { width: 16px; height: 16px; }
+    .section-title {
+      font-family: var(--font-heading); font-size: 16px; font-weight: 700;
+      color: var(--color-text); letter-spacing: -0.015em;
+    }
+    .section-count {
+      margin-inline-start: auto; font-size: 11px; color: var(--color-text-subtle); font-weight: 500;
+    }
+
+    /* ── Screen Cards Grid ────────────────────────────── */
+    .screens-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(256px, 1fr));
+      gap: 12px;
+    }
+
+    /* ── Screen Card ──────────────────────────────────── */
+    .screen-card {
+      background: var(--color-surface);
+      border: 1px solid var(--color-border);
+      border-radius: var(--radius-lg);
+      overflow: hidden;
+      text-decoration: none;
+      color: inherit;
+      transition: border-color 0.15s, box-shadow 0.15s, transform 0.15s;
+      display: flex; flex-direction: column; cursor: pointer;
+    }
+    .screen-card:hover {
+      border-color: var(--color-accent-dim);
+      box-shadow: 0 0 0 1px var(--color-accent-dim), 0 8px 28px rgba(0,0,0,0.45);
+      transform: translateY(-2px);
+    }
+
+    /* Thumbnail */
+    .screen-thumb {
+      height: 144px;
+      background: var(--color-surface-raised);
+      position: relative; overflow: hidden; flex-shrink: 0;
+      border-bottom: 1px solid var(--color-border);
+    }
+    .screen-card.featured .screen-thumb {
+      background: linear-gradient(135deg, rgba(196,151,42,0.08) 0%, var(--color-surface-raised) 100%);
+    }
+
+    /* Mini OS chrome */
+    .t-bar {
+      height: 10px; background: var(--color-surface);
+      border-bottom: 1px solid var(--color-border);
+      display: flex; align-items: center; padding: 0 6px; gap: 3px;
+    }
+    .t-dot { width: 4px; height: 4px; border-radius: 50%; }
+    .t-dot-r { background: #E05555; }
+    .t-dot-a { background: var(--color-warning); }
+    .t-dot-g { background: var(--color-success); }
+
+    .t-body { display: flex; height: calc(144px - 11px); }
+    .t-sb {
+      width: 28px; background: var(--color-surface);
+      border-right: 1px solid var(--color-border);
+      padding: 5px; display: flex; flex-direction: column; gap: 3px;
+    }
+    .t-nd { height: 3px; border-radius: 2px; background: var(--color-border); }
+    .t-nd.active { background: var(--color-accent); width: 70%; }
+    .t-main { flex: 1; padding: 6px; display: flex; flex-direction: column; gap: 3.5px; }
+    .t-row { height: 7px; border-radius: 2px; background: var(--color-border); }
+    .t-row.gold  { background: rgba(196,151,42,0.35); }
+    .t-row.red   { background: rgba(224,85,85,0.25); }
+    .t-row.green { background: rgba(74,158,110,0.25); }
+    .t-row.amber { background: rgba(212,135,44,0.2); }
+    .t-row.w100  { width: 100%; }
+    .t-row.w70   { width: 70%; }
+    .t-row.w50   { width: 50%; }
+    .t-row.w35   { width: 35%; }
+    .t-card {
+      height: 28px; background: rgba(255,255,255,0.04);
+      border: 1px solid var(--color-border); border-radius: 3px;
+    }
+    .t-kpi-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 3px; }
+    .t-kpi { height: 22px; background: rgba(255,255,255,0.035); border: 1px solid var(--color-border); border-radius: 3px; }
+    .t-bars { display: flex; align-items: flex-end; gap: 2px; height: 38px; }
+    .t-bar-item {
+      flex: 1; background: rgba(196,151,42,0.2); border-radius: 2px 2px 0 0;
+      align-self: flex-end;
+    }
+    .t-bar-item.bright { background: rgba(196,151,42,0.45); }
+    .t-input {
+      height: 7px; border: 1px solid var(--color-border);
+      border-radius: 2px; background: var(--color-surface-raised);
+    }
+    .t-input.focus { border-color: var(--color-accent); }
+    .t-btn { height: 8px; border-radius: 2px; background: var(--color-accent); width: 40%; }
+
+    /* Auth thumb (full-width, no sidebar) */
+    .t-auth {
+      display: flex; flex-direction: column; align-items: center;
+      justify-content: center; height: calc(144px - 11px); gap: 5px; padding: 10px;
+    }
+    .t-auth-card {
+      background: var(--color-surface); border: 1px solid var(--color-border);
+      border-radius: 5px; width: 84px; padding: 8px;
+      display: flex; flex-direction: column; gap: 3px;
+    }
+    .t-auth-logo {
+      width: 14px; height: 14px; background: var(--color-accent);
+      border-radius: 3px; margin-bottom: 3px;
+    }
+
+    /* Card body */
+    .sc-body { padding: 14px 16px; flex: 1; display: flex; flex-direction: column; gap: 5px; }
+    .sc-title { font-size: 13px; font-weight: 600; color: var(--color-text); letter-spacing: -0.01em; }
+    .sc-desc { font-size: 11.5px; color: var(--color-text-muted); line-height: 1.5; flex: 1; }
+    .sc-foot {
+      display: flex; align-items: center; justify-content: space-between; margin-top: 8px;
+    }
+    .sc-tag {
+      font-size: 10px; font-weight: 600; text-transform: uppercase; letter-spacing: 0.06em;
+      color: var(--color-text-subtle); background: rgba(255,255,255,0.04);
+      padding: 2px 6px; border-radius: 3px;
+    }
+    .sc-link {
+      display: flex; align-items: center; gap: 4px;
+      font-size: 11.5px; font-weight: 600; color: var(--color-accent);
+      transition: gap 0.1s;
+    }
+    .screen-card:hover .sc-link { gap: 7px; }
+    .sc-link i { width: 12px; height: 12px; }
+
+    /* ── Footer ───────────────────────────────────────── */
+    .footer {
+      background: var(--color-surface); border-top: 1px solid var(--color-border);
+      padding: 24px 64px;
+      display: flex; align-items: center; justify-content: space-between; gap: 16px;
+    }
+    .footer-brand {
+      display: flex; align-items: center; gap: 8px;
+      font-size: 13px; color: var(--color-text-muted);
+    }
+    .footer-brand strong { color: var(--color-accent); }
+    .footer-meta { font-size: 11px; color: var(--color-text-subtle); }
+
+    @media (max-width: 900px) {
+      .hero { padding: 32px 24px 28px; }
+      .main { padding: 28px 24px 60px; }
+      .footer { padding: 20px 24px; flex-direction: column; align-items: flex-start; }
+      .quick-stats { grid-template-columns: repeat(2,1fr); }
+    }
+  </style>
+</head>
+<body>
+
+  <!-- ═══════ HERO ═══════ -->
+  <header class="hero">
+    <div class="hero-inner">
+      <div class="hero-eyebrow">
+        <div class="hero-logo">S</div>
+        <span class="hero-brand">Synergia360</span>
+        <span class="badge badge-accent" style="margin-inline-start:8px">v2.0 · UI Mockup Index</span>
+      </div>
+      <h1>Multichannel Marketplace<br><span>Management Platform</span></h1>
+      <p>Complete UI mockup library for Synergia360 — a dark luxury SaaS platform for UK sellers managing eBay, TikTok Shop, Vinted, Etsy, and Amazon from a single workspace.</p>
+      <div class="hero-meta">
+        <div class="hero-meta-item">
+          <i data-lucide="layers"></i>
+          <span class="hero-stat">47</span>&nbsp;screens
+        </div>
+        <div class="hero-meta-item">
+          <i data-lucide="palette"></i>
+          Dark luxury design system
+        </div>
+        <div class="hero-meta-item">
+          <i data-lucide="shopping-bag"></i>
+          5 marketplace channels
+        </div>
+        <div class="hero-meta-item">
+          <i data-lucide="pound-sterling"></i>
+          UK seller context · GBP
+        </div>
+      </div>
+    </div>
+  </header>
+
+  <main class="main">
+
+    <!-- Quick Stats -->
+    <div class="quick-stats">
+      <div class="qs-item"><div class="qs-value">14</div><div class="qs-label">Sections</div></div>
+      <div class="qs-item"><div class="qs-value">47</div><div class="qs-label">Screens</div></div>
+      <div class="qs-item"><div class="qs-value">5</div><div class="qs-label">Channels</div></div>
+      <div class="qs-item"><div class="qs-value">1</div><div class="qs-label">Design system</div></div>
+    </div>
+
+    <!-- ═══ DESIGN SYSTEM ═══ -->
+    <section class="section">
+      <div class="section-header">
+        <div class="section-icon"><i data-lucide="sparkles"></i></div>
+        <h2 class="section-title">Design System</h2>
+        <span class="section-count">1 file</span>
+      </div>
+      <div class="screens-grid">
+        <a href="screens/design-system.html" class="screen-card featured">
+          <div class="screen-thumb">
+            <div class="t-bar"><div class="t-dot t-dot-r"></div><div class="t-dot t-dot-a"></div><div class="t-dot t-dot-g"></div></div>
+            <div class="t-body">
+              <div class="t-sb"><div class="t-nd active"></div><div class="t-nd"></div><div class="t-nd"></div></div>
+              <div class="t-main">
+                <div style="display:flex;gap:3px;flex-wrap:wrap;margin-bottom:3px">
+                  <div style="width:13px;height:13px;border-radius:2px;background:var(--color-accent)"></div>
+                  <div style="width:13px;height:13px;border-radius:2px;background:var(--color-success)"></div>
+                  <div style="width:13px;height:13px;border-radius:2px;background:var(--color-warning)"></div>
+                  <div style="width:13px;height:13px;border-radius:2px;background:#E05555"></div>
+                  <div style="width:13px;height:13px;border-radius:2px;background:var(--color-info)"></div>
+                  <div style="width:13px;height:13px;border-radius:2px;background:var(--color-admin)"></div>
+                </div>
+                <div class="t-row gold w100"></div>
+                <div class="t-row w70"></div>
+                <div style="display:flex;gap:3px;margin-top:2px">
+                  <div style="height:9px;flex:1;border-radius:2px;background:var(--color-accent)"></div>
+                  <div style="height:9px;flex:1;border-radius:2px;background:var(--color-surface-raised);border:1px solid var(--color-border)"></div>
+                  <div style="height:9px;flex:1;border-radius:2px;background:rgba(139,58,58,0.35)"></div>
+                </div>
+                <div class="t-bars" style="margin-top:4px">
+                  <div class="t-bar-item" style="height:55%"></div>
+                  <div class="t-bar-item bright" style="height:78%"></div>
+                  <div class="t-bar-item" style="height:42%"></div>
+                  <div class="t-bar-item bright" style="height:90%"></div>
+                  <div class="t-bar-item" style="height:60%"></div>
+                  <div class="t-bar-item" style="height:48%"></div>
+                </div>
+              </div>
+            </div>
+          </div>
+          <div class="sc-body">
+            <div class="sc-title">Design System Spec</div>
+            <div class="sc-desc">Complete token reference — colors, typography, buttons, inputs, badges, spacing, radius, SLA gauges, skeleton loaders, and status indicators.</div>
+            <div class="sc-foot"><span class="sc-tag">Reference</span><span class="sc-link">View <i data-lucide="arrow-right"></i></span></div>
+          </div>
+        </a>
+      </div>
+    </section>
+
+    <!-- ═══ AUTH & ONBOARDING ═══ -->
+    <section class="section">
+      <div class="section-header">
+        <div class="section-icon"><i data-lucide="lock"></i></div>
+        <h2 class="section-title">Authentication &amp; Onboarding</h2>
+        <span class="section-count">4 screens</span>
+      </div>
+      <div class="screens-grid">
+
+        <a href="screens/auth-login.html" class="screen-card">
+          <div class="screen-thumb">
+            <div class="t-bar"><div class="t-dot t-dot-r"></div><div class="t-dot t-dot-a"></div><div class="t-dot t-dot-g"></div></div>
+            <div class="t-auth">
+              <div class="t-auth-card">
+                <div class="t-auth-logo"></div>
+                <div class="t-input"></div><div class="t-input focus"></div>
+                <div class="t-btn"></div>
+              </div>
+            </div>
+          </div>
+          <div class="sc-body">
+            <div class="sc-title">Sign In</div>
+            <div class="sc-desc">Email &amp; password login with 2FA option. Full-page dark luxury layout with brand glow effect.</div>
+            <div class="sc-foot"><span class="sc-tag">Auth</span><span class="sc-link">View <i data-lucide="arrow-right"></i></span></div>
+          </div>
+        </a>
+
+        <a href="screens/auth-signup.html" class="screen-card">
+          <div class="screen-thumb">
+            <div class="t-bar"><div class="t-dot t-dot-r"></div><div class="t-dot t-dot-a"></div><div class="t-dot t-dot-g"></div></div>
+            <div class="t-auth">
+              <div class="t-auth-card">
+                <div class="t-auth-logo"></div>
+                <div class="t-input"></div><div class="t-input"></div><div class="t-input focus"></div>
+                <div class="t-btn"></div>
+              </div>
+            </div>
+          </div>
+          <div class="sc-body">
+            <div class="sc-title">Create Account</div>
+            <div class="sc-desc">New seller registration with plan selection and channel connection prompts.</div>
+            <div class="sc-foot"><span class="sc-tag">Auth</span><span class="sc-link">View <i data-lucide="arrow-right"></i></span></div>
+          </div>
+        </a>
+
+        <a href="screens/onboarding-channels.html" class="screen-card">
+          <div class="screen-thumb">
+            <div class="t-bar"><div class="t-dot t-dot-r"></div><div class="t-dot t-dot-a"></div><div class="t-dot t-dot-g"></div></div>
+            <div class="t-auth">
+              <div style="display:flex;gap:5px;flex-wrap:wrap;justify-content:center;max-width:120px">
+                <div style="width:34px;height:22px;background:rgba(255,174,0,0.15);border:1px solid rgba(255,174,0,0.4);border-radius:3px;display:flex;align-items:center;justify-content:center;font-size:5.5px;color:#FFAE00;font-weight:700">eBay</div>
+                <div style="width:34px;height:22px;background:rgba(105,201,208,0.15);border:1px solid rgba(105,201,208,0.4);border-radius:3px;display:flex;align-items:center;justify-content:center;font-size:5px;color:#69C9D0;font-weight:700">TikTok</div>
+                <div style="width:34px;height:22px;background:rgba(9,183,117,0.15);border:1px solid rgba(9,183,117,0.4);border-radius:3px;display:flex;align-items:center;justify-content:center;font-size:5.5px;color:#09B775;font-weight:700">Vinted</div>
+                <div style="width:34px;height:22px;background:rgba(243,89,36,0.15);border:1px solid rgba(243,89,36,0.4);border-radius:3px;display:flex;align-items:center;justify-content:center;font-size:5.5px;color:#F35924;font-weight:700">Etsy</div>
+                <div style="width:34px;height:22px;background:rgba(255,153,0,0.12);border:1px solid rgba(255,153,0,0.35);border-radius:3px;display:flex;align-items:center;justify-content:center;font-size:5px;color:#FF9900;font-weight:700">Amazon</div>
+              </div>
+            </div>
+          </div>
+          <div class="sc-body">
+            <div class="sc-title">Channel Connection</div>
+            <div class="sc-desc">Step-by-step wizard to connect eBay, TikTok Shop, Vinted, Etsy, and Amazon marketplaces.</div>
+            <div class="sc-foot"><span class="sc-tag">Onboarding</span><span class="sc-link">View <i data-lucide="arrow-right"></i></span></div>
+          </div>
+        </a>
+
+        <a href="screens/onboarding-complete.html" class="screen-card">
+          <div class="screen-thumb">
+            <div class="t-bar"><div class="t-dot t-dot-r"></div><div class="t-dot t-dot-a"></div><div class="t-dot t-dot-g"></div></div>
+            <div class="t-auth">
+              <div style="display:flex;flex-direction:column;align-items:center;gap:8px">
+                <div style="width:26px;height:26px;background:var(--color-success);border-radius:50%;display:flex;align-items:center;justify-content:center;color:#141414;font-weight:900;font-size:13px">✓</div>
+                <div style="width:72px;height:6px;background:var(--color-accent);border-radius:3px"></div>
+                <div style="width:52px;height:4px;background:var(--color-border);border-radius:2px"></div>
+              </div>
+            </div>
+          </div>
+          <div class="sc-body">
+            <div class="sc-title">Onboarding Complete</div>
+            <div class="sc-desc">Success confirmation with workspace summary and first-action prompts to get started.</div>
+            <div class="sc-foot"><span class="sc-tag">Onboarding</span><span class="sc-link">View <i data-lucide="arrow-right"></i></span></div>
+          </div>
+        </a>
+
+      </div>
+    </section>
+
+    <!-- ═══ DASHBOARD ═══ -->
+    <section class="section">
+      <div class="section-header">
+        <div class="section-icon"><i data-lucide="layout-dashboard"></i></div>
+        <h2 class="section-title">Main Dashboard</h2>
+        <span class="section-count">2 screens</span>
+      </div>
+      <div class="screens-grid">
+
+        <a href="screens/dashboard-home.html" class="screen-card">
+          <div class="screen-thumb">
+            <div class="t-bar"><div class="t-dot t-dot-r"></div><div class="t-dot t-dot-a"></div><div class="t-dot t-dot-g"></div></div>
+            <div class="t-body">
+              <div class="t-sb"><div class="t-nd active"></div><div class="t-nd"></div><div class="t-nd"></div><div class="t-nd"></div><div class="t-nd"></div></div>
+              <div class="t-main">
+                <div class="t-kpi-grid"><div class="t-kpi"></div><div class="t-kpi"></div><div class="t-kpi"></div><div class="t-kpi"></div></div>
+                <div class="t-bars" style="margin-top:5px">
+                  <div class="t-bar-item" style="height:52%"></div>
+                  <div class="t-bar-item bright" style="height:72%"></div>
+                  <div class="t-bar-item" style="height:38%"></div>
+                  <div class="t-bar-item bright" style="height:88%"></div>
+                  <div class="t-bar-item" style="height:60%"></div>
+                  <div class="t-bar-item" style="height:74%"></div>
+                </div>
+              </div>
+            </div>
+          </div>
+          <div class="sc-body">
+            <div class="sc-title">Dashboard Home</div>
+            <div class="sc-desc">Revenue overview, orders today, active listings, and top channels with live activity feed.</div>
+            <div class="sc-foot"><span class="sc-tag">Dashboard</span><span class="sc-link">View <i data-lucide="arrow-right"></i></span></div>
+          </div>
+        </a>
+
+        <a href="screens/dashboard-alerts.html" class="screen-card">
+          <div class="screen-thumb">
+            <div class="t-bar"><div class="t-dot t-dot-r"></div><div class="t-dot t-dot-a"></div><div class="t-dot t-dot-g"></div></div>
+            <div class="t-body">
+              <div class="t-sb"><div class="t-nd"></div><div class="t-nd active"></div><div class="t-nd"></div></div>
+              <div class="t-main">
+                <div class="t-row red w100"></div>
+                <div class="t-row w100"></div>
+                <div class="t-row w100"></div>
+                <div class="t-row amber w70"></div>
+                <div class="t-row w100"></div>
+                <div class="t-row red w50"></div>
+              </div>
+            </div>
+          </div>
+          <div class="sc-body">
+            <div class="sc-title">Alerts &amp; Notifications</div>
+            <div class="sc-desc">Urgent alerts panel — SLA breaches, stock-outs, channel errors, and escalation queue.</div>
+            <div class="sc-foot"><span class="sc-tag">Dashboard</span><span class="sc-link">View <i data-lucide="arrow-right"></i></span></div>
+          </div>
+        </a>
+
+      </div>
+    </section>
+
+    <!-- ═══ ORDER MANAGEMENT ═══ -->
+    <section class="section">
+      <div class="section-header">
+        <div class="section-icon"><i data-lucide="package"></i></div>
+        <h2 class="section-title">Order Management</h2>
+        <span class="section-count">4 screens</span>
+      </div>
+      <div class="screens-grid">
+
+        <a href="screens/orders-list.html" class="screen-card">
+          <div class="screen-thumb">
+            <div class="t-bar"><div class="t-dot t-dot-r"></div><div class="t-dot t-dot-a"></div><div class="t-dot t-dot-g"></div></div>
+            <div class="t-body">
+              <div class="t-sb"><div class="t-nd"></div><div class="t-nd active"></div><div class="t-nd"></div></div>
+              <div class="t-main">
+                <div style="height:9px;background:rgba(255,255,255,0.06);border-radius:2px;width:100%;margin-bottom:3px"></div>
+                <div class="t-row w100"></div><div class="t-row w100"></div><div class="t-row amber w100"></div><div class="t-row w100"></div><div class="t-row w100"></div>
+              </div>
+            </div>
+          </div>
+          <div class="sc-body">
+            <div class="sc-title">Orders List</div>
+            <div class="sc-desc">Full order table with channel filter, status badges, bulk actions, and SLA countdown timers.</div>
+            <div class="sc-foot"><span class="sc-tag">Orders</span><span class="sc-link">View <i data-lucide="arrow-right"></i></span></div>
+          </div>
+        </a>
+
+        <a href="screens/order-detail.html" class="screen-card">
+          <div class="screen-thumb">
+            <div class="t-bar"><div class="t-dot t-dot-r"></div><div class="t-dot t-dot-a"></div><div class="t-dot t-dot-g"></div></div>
+            <div class="t-body">
+              <div class="t-sb"><div class="t-nd"></div><div class="t-nd active"></div></div>
+              <div class="t-main">
+                <div class="t-row gold w100"></div>
+                <div class="t-card"></div>
+                <div class="t-kpi-grid"><div class="t-kpi"></div><div class="t-kpi"></div></div>
+              </div>
+            </div>
+          </div>
+          <div class="sc-body">
+            <div class="sc-title">Order Detail</div>
+            <div class="sc-desc">Full order view with buyer info, line items, timeline, shipping actions, and message thread.</div>
+            <div class="sc-foot"><span class="sc-tag">Orders</span><span class="sc-link">View <i data-lucide="arrow-right"></i></span></div>
+          </div>
+        </a>
+
+        <a href="screens/order-shipment.html" class="screen-card">
+          <div class="screen-thumb">
+            <div class="t-bar"><div class="t-dot t-dot-r"></div><div class="t-dot t-dot-a"></div><div class="t-dot t-dot-g"></div></div>
+            <div class="t-body">
+              <div class="t-sb"><div class="t-nd"></div><div class="t-nd active"></div></div>
+              <div class="t-main">
+                <div class="t-row gold w100" style="height:10px;border-radius:3px;opacity:0.55"></div>
+                <div style="display:flex;gap:3px;margin-top:2px">
+                  <div style="flex:1;height:20px;background:rgba(255,255,255,0.04);border:1px solid var(--color-border);border-radius:3px"></div>
+                  <div style="flex:1;height:20px;background:rgba(255,255,255,0.04);border:1px solid var(--color-border);border-radius:3px"></div>
+                </div>
+                <div class="t-row w100"></div>
+                <div class="t-btn" style="width:55%"></div>
+              </div>
+            </div>
+          </div>
+          <div class="sc-body">
+            <div class="sc-title">Shipment &amp; Labels</div>
+            <div class="sc-desc">Carrier selection, label generation, tracking upload, and bulk fulfilment for Royal Mail / DPD / Evri.</div>
+            <div class="sc-foot"><span class="sc-tag">Orders</span><span class="sc-link">View <i data-lucide="arrow-right"></i></span></div>
+          </div>
+        </a>
+
+        <a href="screens/orders-batch.html" class="screen-card">
+          <div class="screen-thumb">
+            <div class="t-bar"><div class="t-dot t-dot-r"></div><div class="t-dot t-dot-a"></div><div class="t-dot t-dot-g"></div></div>
+            <div class="t-body">
+              <div class="t-sb"><div class="t-nd"></div><div class="t-nd active"></div></div>
+              <div class="t-main">
+                <div class="t-row gold w70" style="height:6px"></div>
+                <div class="t-row w100"></div><div class="t-row w100"></div><div class="t-row w100"></div>
+                <div class="t-btn" style="width:65%;margin-top:4px"></div>
+              </div>
+            </div>
+          </div>
+          <div class="sc-body">
+            <div class="sc-title">Batch Processing</div>
+            <div class="sc-desc">Bulk order processing queue — multi-select, batch ship, print picking slips, export to CSV.</div>
+            <div class="sc-foot"><span class="sc-tag">Orders</span><span class="sc-link">View <i data-lucide="arrow-right"></i></span></div>
+          </div>
+        </a>
+
+      </div>
+    </section>
+
+    <!-- ═══ PRODUCT CATALOGUE ═══ -->
+    <section class="section">
+      <div class="section-header">
+        <div class="section-icon"><i data-lucide="tag"></i></div>
+        <h2 class="section-title">Product Catalogue</h2>
+        <span class="section-count">3 screens</span>
+      </div>
+      <div class="screens-grid">
+
+        <a href="screens/catalogue-list.html" class="screen-card">
+          <div class="screen-thumb">
+            <div class="t-bar"><div class="t-dot t-dot-r"></div><div class="t-dot t-dot-a"></div><div class="t-dot t-dot-g"></div></div>
+            <div class="t-body">
+              <div class="t-sb"><div class="t-nd"></div><div class="t-nd"></div><div class="t-nd active"></div></div>
+              <div class="t-main">
+                <div class="t-kpi-grid">
+                  <div style="height:30px;background:rgba(255,255,255,0.05);border:1px solid var(--color-border);border-radius:3px"></div>
+                  <div style="height:30px;background:rgba(255,255,255,0.05);border:1px solid var(--color-border);border-radius:3px"></div>
+                  <div style="height:30px;background:rgba(255,255,255,0.05);border:1px solid var(--color-border);border-radius:3px"></div>
+                  <div style="height:30px;background:rgba(255,255,255,0.05);border:1px solid var(--color-border);border-radius:3px"></div>
+                </div>
+                <div class="t-row w100" style="margin-top:3px"></div><div class="t-row w70"></div>
+              </div>
+            </div>
+          </div>
+          <div class="sc-body">
+            <div class="sc-title">Product List</div>
+            <div class="sc-desc">Master catalogue with grid/list toggle, category filter, channel sync status, and bulk edit.</div>
+            <div class="sc-foot"><span class="sc-tag">Catalogue</span><span class="sc-link">View <i data-lucide="arrow-right"></i></span></div>
+          </div>
+        </a>
+
+        <a href="screens/product-detail.html" class="screen-card">
+          <div class="screen-thumb">
+            <div class="t-bar"><div class="t-dot t-dot-r"></div><div class="t-dot t-dot-a"></div><div class="t-dot t-dot-g"></div></div>
+            <div class="t-body">
+              <div class="t-sb"><div class="t-nd"></div><div class="t-nd"></div><div class="t-nd active"></div></div>
+              <div class="t-main">
+                <div style="display:flex;gap:4px;margin-bottom:4px">
+                  <div style="width:34px;height:34px;background:rgba(255,255,255,0.07);border-radius:3px;flex-shrink:0"></div>
+                  <div style="flex:1;display:flex;flex-direction:column;gap:3px;padding-top:4px">
+                    <div class="t-row w100"></div><div class="t-row w70"></div>
+                  </div>
+                </div>
+                <div class="t-row w100"></div><div class="t-row w100"></div><div class="t-row w35"></div>
+              </div>
+            </div>
+          </div>
+          <div class="sc-body">
+            <div class="sc-title">Product Detail / Editor</div>
+            <div class="sc-desc">Full product editor with images, variants, pricing per channel, description, and listing sync status.</div>
+            <div class="sc-foot"><span class="sc-tag">Catalogue</span><span class="sc-link">View <i data-lucide="arrow-right"></i></span></div>
+          </div>
+        </a>
+
+        <a href="screens/product-import.html" class="screen-card">
+          <div class="screen-thumb">
+            <div class="t-bar"><div class="t-dot t-dot-r"></div><div class="t-dot t-dot-a"></div><div class="t-dot t-dot-g"></div></div>
+            <div class="t-body">
+              <div class="t-sb"><div class="t-nd"></div><div class="t-nd"></div><div class="t-nd active"></div></div>
+              <div class="t-main">
+                <div style="height:42px;background:rgba(196,151,42,0.06);border:1.5px dashed rgba(196,151,42,0.3);border-radius:4px;display:flex;align-items:center;justify-content:center;margin-bottom:4px">
+                  <div style="width:16px;height:16px;background:var(--color-accent);border-radius:2px;opacity:0.55"></div>
+                </div>
+                <div class="t-row w100"></div>
+                <div class="t-btn" style="width:50%;margin-top:3px"></div>
+              </div>
+            </div>
+          </div>
+          <div class="sc-body">
+            <div class="sc-title">CSV Import / Bulk Upload</div>
+            <div class="sc-desc">Drag-and-drop CSV import with column mapping, validation errors, and preview table.</div>
+            <div class="sc-foot"><span class="sc-tag">Catalogue</span><span class="sc-link">View <i data-lucide="arrow-right"></i></span></div>
+          </div>
+        </a>
+
+      </div>
+    </section>
+
+    <!-- ═══ INVENTORY ═══ -->
+    <section class="section">
+      <div class="section-header">
+        <div class="section-icon"><i data-lucide="boxes"></i></div>
+        <h2 class="section-title">Inventory Management</h2>
+        <span class="section-count">3 screens</span>
+      </div>
+      <div class="screens-grid">
+
+        <a href="screens/inventory-overview.html" class="screen-card">
+          <div class="screen-thumb">
+            <div class="t-bar"><div class="t-dot t-dot-r"></div><div class="t-dot t-dot-a"></div><div class="t-dot t-dot-g"></div></div>
+            <div class="t-body">
+              <div class="t-sb"><div class="t-nd"></div><div class="t-nd"></div><div class="t-nd"></div><div class="t-nd active"></div></div>
+              <div class="t-main">
+                <div class="t-kpi-grid"><div class="t-kpi"></div><div class="t-kpi"></div></div>
+                <div class="t-row w100" style="margin-top:4px"></div>
+                <div class="t-row w100"></div>
+                <div class="t-row red w100"></div>
+                <div class="t-row w100"></div>
+              </div>
+            </div>
+          </div>
+          <div class="sc-body">
+            <div class="sc-title">Stock Overview</div>
+            <div class="sc-desc">Stock levels across all channels with low-stock alerts, reorder suggestions, and location tracking.</div>
+            <div class="sc-foot"><span class="sc-tag">Inventory</span><span class="sc-link">View <i data-lucide="arrow-right"></i></span></div>
+          </div>
+        </a>
+
+        <a href="screens/inventory-adjust.html" class="screen-card">
+          <div class="screen-thumb">
+            <div class="t-bar"><div class="t-dot t-dot-r"></div><div class="t-dot t-dot-a"></div><div class="t-dot t-dot-g"></div></div>
+            <div class="t-body">
+              <div class="t-sb"><div class="t-nd"></div><div class="t-nd"></div><div class="t-nd"></div><div class="t-nd active"></div></div>
+              <div class="t-main">
+                <div class="t-row w100"></div>
+                <div style="display:flex;gap:3px;margin-top:2px">
+                  <div class="t-input" style="height:8px;flex:1"></div>
+                  <div class="t-input" style="height:8px;width:28px"></div>
+                </div>
+                <div class="t-row w100" style="margin-top:2px"></div>
+                <div class="t-btn" style="width:55%;margin-top:4px"></div>
+              </div>
+            </div>
+          </div>
+          <div class="sc-body">
+            <div class="sc-title">Stock Adjustment</div>
+            <div class="sc-desc">Manual stock correction with reason codes, audit trail, and multi-location support.</div>
+            <div class="sc-foot"><span class="sc-tag">Inventory</span><span class="sc-link">View <i data-lucide="arrow-right"></i></span></div>
+          </div>
+        </a>
+
+        <a href="screens/inventory-locations.html" class="screen-card">
+          <div class="screen-thumb">
+            <div class="t-bar"><div class="t-dot t-dot-r"></div><div class="t-dot t-dot-a"></div><div class="t-dot t-dot-g"></div></div>
+            <div class="t-body">
+              <div class="t-sb"><div class="t-nd"></div><div class="t-nd"></div><div class="t-nd"></div><div class="t-nd active"></div></div>
+              <div class="t-main">
+                <div class="t-kpi-grid">
+                  <div style="height:24px;background:rgba(74,158,110,0.1);border:1px solid rgba(74,158,110,0.25);border-radius:3px"></div>
+                  <div style="height:24px;background:rgba(255,255,255,0.04);border:1px solid var(--color-border);border-radius:3px"></div>
+                </div>
+                <div class="t-row w100" style="margin-top:4px"></div><div class="t-row w100"></div>
+              </div>
+            </div>
+          </div>
+          <div class="sc-body">
+            <div class="sc-title">Warehouse Locations</div>
+            <div class="sc-desc">Location/bin management for multi-location warehouses, FBA, and 3PL integrations.</div>
+            <div class="sc-foot"><span class="sc-tag">Inventory</span><span class="sc-link">View <i data-lucide="arrow-right"></i></span></div>
+          </div>
+        </a>
+
+      </div>
+    </section>
+
+    <!-- ═══ CHANNELS & LISTINGS ═══ -->
+    <section class="section">
+      <div class="section-header">
+        <div class="section-icon"><i data-lucide="radio"></i></div>
+        <h2 class="section-title">Channels &amp; Listings</h2>
+        <span class="section-count">3 screens</span>
+      </div>
+      <div class="screens-grid">
+
+        <a href="screens/channels-overview.html" class="screen-card">
+          <div class="screen-thumb">
+            <div class="t-bar"><div class="t-dot t-dot-r"></div><div class="t-dot t-dot-a"></div><div class="t-dot t-dot-g"></div></div>
+            <div class="t-body">
+              <div class="t-sb"><div class="t-nd"></div><div class="t-nd"></div><div class="t-nd"></div><div class="t-nd"></div><div class="t-nd active"></div></div>
+              <div class="t-main">
+                <div style="display:flex;flex-direction:column;gap:3px">
+                  <div style="height:14px;background:rgba(255,174,0,0.1);border:1px solid rgba(255,174,0,0.3);border-radius:3px"></div>
+                  <div style="height:14px;background:rgba(105,201,208,0.1);border:1px solid rgba(105,201,208,0.3);border-radius:3px"></div>
+                  <div style="height:14px;background:rgba(9,183,117,0.1);border:1px solid rgba(9,183,117,0.3);border-radius:3px"></div>
+                  <div style="height:14px;background:rgba(243,89,36,0.1);border:1px solid rgba(243,89,36,0.3);border-radius:3px"></div>
+                  <div style="height:14px;background:rgba(255,153,0,0.1);border:1px solid rgba(255,153,0,0.3);border-radius:3px"></div>
+                </div>
+              </div>
+            </div>
+          </div>
+          <div class="sc-body">
+            <div class="sc-title">Channels Overview</div>
+            <div class="sc-desc">Health dashboard for all connected channels — sync status, rate limits, errors, and revenue split.</div>
+            <div class="sc-foot"><span class="sc-tag">Channels</span><span class="sc-link">View <i data-lucide="arrow-right"></i></span></div>
+          </div>
+        </a>
+
+        <a href="screens/listings-manager.html" class="screen-card">
+          <div class="screen-thumb">
+            <div class="t-bar"><div class="t-dot t-dot-r"></div><div class="t-dot t-dot-a"></div><div class="t-dot t-dot-g"></div></div>
+            <div class="t-body">
+              <div class="t-sb"><div class="t-nd"></div><div class="t-nd"></div><div class="t-nd"></div><div class="t-nd"></div><div class="t-nd active"></div></div>
+              <div class="t-main">
+                <div class="t-row w100"></div><div class="t-row w100"></div><div class="t-row w100"></div>
+                <div class="t-row amber w100"></div><div class="t-row w100"></div>
+              </div>
+            </div>
+          </div>
+          <div class="sc-body">
+            <div class="sc-title">Listings Manager</div>
+            <div class="sc-desc">Manage active listings per channel, fix errors, reprice, end, or relist from a unified table.</div>
+            <div class="sc-foot"><span class="sc-tag">Channels</span><span class="sc-link">View <i data-lucide="arrow-right"></i></span></div>
+          </div>
+        </a>
+
+        <a href="screens/pricing-rules.html" class="screen-card">
+          <div class="screen-thumb">
+            <div class="t-bar"><div class="t-dot t-dot-r"></div><div class="t-dot t-dot-a"></div><div class="t-dot t-dot-g"></div></div>
+            <div class="t-body">
+              <div class="t-sb"><div class="t-nd"></div><div class="t-nd"></div><div class="t-nd"></div><div class="t-nd active"></div></div>
+              <div class="t-main">
+                <div class="t-row gold w100"></div>
+                <div class="t-card"></div>
+                <div class="t-card" style="opacity:0.55"></div>
+              </div>
+            </div>
+          </div>
+          <div class="sc-body">
+            <div class="sc-title">Pricing Rules</div>
+            <div class="sc-desc">Rule-based repricer — cost floor, margin targets, competitor-matched pricing per channel.</div>
+            <div class="sc-foot"><span class="sc-tag">Channels</span><span class="sc-link">View <i data-lucide="arrow-right"></i></span></div>
+          </div>
+        </a>
+
+      </div>
+    </section>
+
+    <!-- ═══ RETURNS & DISPUTES ═══ -->
+    <section class="section">
+      <div class="section-header">
+        <div class="section-icon"><i data-lucide="rotate-ccw"></i></div>
+        <h2 class="section-title">Returns &amp; Disputes</h2>
+        <span class="section-count">3 screens</span>
+      </div>
+      <div class="screens-grid">
+
+        <a href="screens/returns-list.html" class="screen-card">
+          <div class="screen-thumb">
+            <div class="t-bar"><div class="t-dot t-dot-r"></div><div class="t-dot t-dot-a"></div><div class="t-dot t-dot-g"></div></div>
+            <div class="t-body">
+              <div class="t-sb"><div class="t-nd"></div><div class="t-nd"></div><div class="t-nd"></div><div class="t-nd active"></div></div>
+              <div class="t-main">
+                <div class="t-row red w100"></div>
+                <div class="t-row w100"></div>
+                <div class="t-row amber w100"></div>
+                <div class="t-row w100"></div>
+                <div class="t-row red w70"></div>
+              </div>
+            </div>
+          </div>
+          <div class="sc-body">
+            <div class="sc-title">Returns Queue</div>
+            <div class="sc-desc">Incoming returns with reason, condition grading, refund or relist decision, and buyer communication.</div>
+            <div class="sc-foot"><span class="sc-tag">Returns</span><span class="sc-link">View <i data-lucide="arrow-right"></i></span></div>
+          </div>
+        </a>
+
+        <a href="screens/return-detail.html" class="screen-card">
+          <div class="screen-thumb">
+            <div class="t-bar"><div class="t-dot t-dot-r"></div><div class="t-dot t-dot-a"></div><div class="t-dot t-dot-g"></div></div>
+            <div class="t-body">
+              <div class="t-sb"><div class="t-nd"></div><div class="t-nd"></div><div class="t-nd active"></div></div>
+              <div class="t-main">
+                <div class="t-row gold w100"></div>
+                <div class="t-card"></div>
+                <div style="display:flex;gap:3px;margin-top:2px">
+                  <div style="height:10px;flex:1;background:rgba(224,85,85,0.2);border-radius:2px"></div>
+                  <div style="height:10px;flex:1;background:rgba(74,158,110,0.2);border-radius:2px"></div>
+                </div>
+              </div>
+            </div>
+          </div>
+          <div class="sc-body">
+            <div class="sc-title">Return Detail</div>
+            <div class="sc-desc">Individual return case with item condition photos, refund calculator, and resolution workflow.</div>
+            <div class="sc-foot"><span class="sc-tag">Returns</span><span class="sc-link">View <i data-lucide="arrow-right"></i></span></div>
+          </div>
+        </a>
+
+        <a href="screens/disputes.html" class="screen-card">
+          <div class="screen-thumb">
+            <div class="t-bar"><div class="t-dot t-dot-r"></div><div class="t-dot t-dot-a"></div><div class="t-dot t-dot-g"></div></div>
+            <div class="t-body">
+              <div class="t-sb"><div class="t-nd"></div><div class="t-nd"></div><div class="t-nd active"></div></div>
+              <div class="t-main">
+                <div class="t-row red w100" style="height:8px;border-radius:2px"></div>
+                <div class="t-row w100" style="margin-top:4px"></div>
+                <div class="t-row w100"></div>
+                <div class="t-row red w100"></div>
+                <div class="t-row w70"></div>
+              </div>
+            </div>
+          </div>
+          <div class="sc-body">
+            <div class="sc-title">Disputes &amp; Escalations</div>
+            <div class="sc-desc">eBay cases, PayPal disputes, and Etsy escalations with SLA countdown and evidence upload.</div>
+            <div class="sc-foot"><span class="sc-tag">Returns</span><span class="sc-link">View <i data-lucide="arrow-right"></i></span></div>
+          </div>
+        </a>
+
+      </div>
+    </section>
+
+    <!-- ═══ FINANCE ═══ -->
+    <section class="section">
+      <div class="section-header">
+        <div class="section-icon"><i data-lucide="pound-sterling"></i></div>
+        <h2 class="section-title">Finance</h2>
+        <span class="section-count">3 screens</span>
+      </div>
+      <div class="screens-grid">
+
+        <a href="screens/finance-overview.html" class="screen-card">
+          <div class="screen-thumb">
+            <div class="t-bar"><div class="t-dot t-dot-r"></div><div class="t-dot t-dot-a"></div><div class="t-dot t-dot-g"></div></div>
+            <div class="t-body">
+              <div class="t-sb"><div class="t-nd"></div><div class="t-nd active"></div></div>
+              <div class="t-main">
+                <div class="t-row gold w100" style="height:9px;border-radius:3px"></div>
+                <div class="t-bars" style="margin-top:5px">
+                  <div class="t-bar-item" style="height:48%"></div>
+                  <div class="t-bar-item" style="height:62%"></div>
+                  <div class="t-bar-item bright" style="height:78%"></div>
+                  <div class="t-bar-item" style="height:55%"></div>
+                  <div class="t-bar-item bright" style="height:92%"></div>
+                  <div class="t-bar-item" style="height:70%"></div>
+                </div>
+                <div class="t-kpi-grid" style="margin-top:3px"><div class="t-kpi"></div><div class="t-kpi"></div></div>
+              </div>
+            </div>
+          </div>
+          <div class="sc-body">
+            <div class="sc-title">Finance Overview</div>
+            <div class="sc-desc">P&amp;L summary, channel fees breakdown, VAT liability, payout schedule, and GBP cashflow chart.</div>
+            <div class="sc-foot"><span class="sc-tag">Finance</span><span class="sc-link">View <i data-lucide="arrow-right"></i></span></div>
+          </div>
+        </a>
+
+        <a href="screens/finance-transactions.html" class="screen-card">
+          <div class="screen-thumb">
+            <div class="t-bar"><div class="t-dot t-dot-r"></div><div class="t-dot t-dot-a"></div><div class="t-dot t-dot-g"></div></div>
+            <div class="t-body">
+              <div class="t-sb"><div class="t-nd"></div><div class="t-nd active"></div></div>
+              <div class="t-main">
+                <div class="t-row w100"></div>
+                <div class="t-row green w100"></div>
+                <div class="t-row w100"></div>
+                <div class="t-row red w100"></div>
+                <div class="t-row w100"></div>
+                <div class="t-row green w100"></div>
+              </div>
+            </div>
+          </div>
+          <div class="sc-body">
+            <div class="sc-title">Transactions Ledger</div>
+            <div class="sc-desc">Full transaction history across channels — sales, fees, refunds, and payouts with export to CSV/Xero.</div>
+            <div class="sc-foot"><span class="sc-tag">Finance</span><span class="sc-link">View <i data-lucide="arrow-right"></i></span></div>
+          </div>
+        </a>
+
+        <a href="screens/finance-fees.html" class="screen-card">
+          <div class="screen-thumb">
+            <div class="t-bar"><div class="t-dot t-dot-r"></div><div class="t-dot t-dot-a"></div><div class="t-dot t-dot-g"></div></div>
+            <div class="t-body">
+              <div class="t-sb"><div class="t-nd"></div><div class="t-nd active"></div></div>
+              <div class="t-main">
+                <div style="display:flex;align-items:flex-end;gap:2px;height:44px">
+                  <div style="flex:1;height:62%;background:rgba(255,174,0,0.25);border-radius:2px 2px 0 0"></div>
+                  <div style="flex:1;height:42%;background:rgba(105,201,208,0.2);border-radius:2px 2px 0 0"></div>
+                  <div style="flex:1;height:28%;background:rgba(9,183,117,0.2);border-radius:2px 2px 0 0"></div>
+                  <div style="flex:1;height:20%;background:rgba(243,89,36,0.2);border-radius:2px 2px 0 0"></div>
+                  <div style="flex:1;height:38%;background:rgba(255,153,0,0.2);border-radius:2px 2px 0 0"></div>
+                </div>
+                <div class="t-row w100" style="margin-top:3px"></div><div class="t-row w70"></div>
+              </div>
+            </div>
+          </div>
+          <div class="sc-body">
+            <div class="sc-title">Channel Fees Analyser</div>
+            <div class="sc-desc">Fee breakdown by channel — selling fees, FVF, insertion fees, and payment processing per item.</div>
+            <div class="sc-foot"><span class="sc-tag">Finance</span><span class="sc-link">View <i data-lucide="arrow-right"></i></span></div>
+          </div>
+        </a>
+
+      </div>
+    </section>
+
+    <!-- ═══ ANALYTICS ═══ -->
+    <section class="section">
+      <div class="section-header">
+        <div class="section-icon"><i data-lucide="bar-chart-3"></i></div>
+        <h2 class="section-title">Analytics &amp; Reports</h2>
+        <span class="section-count">3 screens</span>
+      </div>
+      <div class="screens-grid">
+
+        <a href="screens/analytics-sales.html" class="screen-card">
+          <div class="screen-thumb">
+            <div class="t-bar"><div class="t-dot t-dot-r"></div><div class="t-dot t-dot-a"></div><div class="t-dot t-dot-g"></div></div>
+            <div class="t-body">
+              <div class="t-sb"><div class="t-nd"></div><div class="t-nd active"></div></div>
+              <div class="t-main">
+                <div class="t-bars">
+                  <div class="t-bar-item" style="height:42%"></div>
+                  <div class="t-bar-item bright" style="height:60%"></div>
+                  <div class="t-bar-item" style="height:50%"></div>
+                  <div class="t-bar-item bright" style="height:78%"></div>
+                  <div class="t-bar-item" style="height:64%"></div>
+                  <div class="t-bar-item bright" style="height:88%"></div>
+                  <div class="t-bar-item" style="height:55%"></div>
+                </div>
+                <div class="t-kpi-grid" style="margin-top:4px"><div class="t-kpi"></div><div class="t-kpi"></div><div class="t-kpi"></div><div class="t-kpi"></div></div>
+              </div>
+            </div>
+          </div>
+          <div class="sc-body">
+            <div class="sc-title">Sales Analytics</div>
+            <div class="sc-desc">Revenue trend charts, top products, channel contribution, and conversion rates by date range.</div>
+            <div class="sc-foot"><span class="sc-tag">Analytics</span><span class="sc-link">View <i data-lucide="arrow-right"></i></span></div>
+          </div>
+        </a>
+
+        <a href="screens/analytics-performance.html" class="screen-card">
+          <div class="screen-thumb">
+            <div class="t-bar"><div class="t-dot t-dot-r"></div><div class="t-dot t-dot-a"></div><div class="t-dot t-dot-g"></div></div>
+            <div class="t-body">
+              <div class="t-sb"><div class="t-nd"></div><div class="t-nd active"></div></div>
+              <div class="t-main">
+                <div style="display:flex;align-items:center;gap:6px;margin-bottom:5px">
+                  <div style="width:24px;height:24px;border-radius:50%;border:3px solid var(--color-accent);flex-shrink:0"></div>
+                  <div style="flex:1;display:flex;flex-direction:column;gap:2px">
+                    <div class="t-row w100"></div><div class="t-row w70"></div>
+                  </div>
+                </div>
+                <div class="t-row w100"></div><div class="t-row w100"></div><div class="t-row w100"></div>
+              </div>
+            </div>
+          </div>
+          <div class="sc-body">
+            <div class="sc-title">Seller Performance</div>
+            <div class="sc-desc">Defect rates, late shipment %, feedback score, and seller level metrics across all channels.</div>
+            <div class="sc-foot"><span class="sc-tag">Analytics</span><span class="sc-link">View <i data-lucide="arrow-right"></i></span></div>
+          </div>
+        </a>
+
+        <a href="screens/reports-export.html" class="screen-card">
+          <div class="screen-thumb">
+            <div class="t-bar"><div class="t-dot t-dot-r"></div><div class="t-dot t-dot-a"></div><div class="t-dot t-dot-g"></div></div>
+            <div class="t-body">
+              <div class="t-sb"><div class="t-nd"></div><div class="t-nd active"></div></div>
+              <div class="t-main">
+                <div class="t-row w100"></div>
+                <div class="t-card"></div>
+                <div class="t-card" style="opacity:0.6"></div>
+                <div class="t-btn" style="width:55%;margin-top:4px"></div>
+              </div>
+            </div>
+          </div>
+          <div class="sc-body">
+            <div class="sc-title">Report Builder &amp; Export</div>
+            <div class="sc-desc">Custom report builder with scheduled email delivery — CSV, PDF, and Xero-compatible formats.</div>
+            <div class="sc-foot"><span class="sc-tag">Analytics</span><span class="sc-link">View <i data-lucide="arrow-right"></i></span></div>
+          </div>
+        </a>
+
+      </div>
+    </section>
+
+    <!-- ═══ SETTINGS & ADMIN ═══ -->
+    <section class="section">
+      <div class="section-header">
+        <div class="section-icon"><i data-lucide="settings-2"></i></div>
+        <h2 class="section-title">Settings &amp; Admin</h2>
+        <span class="section-count">4 screens</span>
+      </div>
+      <div class="screens-grid">
+
+        <a href="screens/settings-account.html" class="screen-card">
+          <div class="screen-thumb">
+            <div class="t-bar"><div class="t-dot t-dot-r"></div><div class="t-dot t-dot-a"></div><div class="t-dot t-dot-g"></div></div>
+            <div class="t-body">
+              <div class="t-sb"><div class="t-nd active"></div></div>
+              <div class="t-main">
+                <div style="display:flex;gap:5px;align-items:center;margin-bottom:5px">
+                  <div style="width:18px;height:18px;border-radius:50%;background:var(--color-accent);opacity:0.65;flex-shrink:0"></div>
+                  <div class="t-row w100"></div>
+                </div>
+                <div class="t-input"></div><div class="t-input"></div><div class="t-input focus" style="margin-top:3px"></div>
+                <div class="t-btn" style="margin-top:4px"></div>
+              </div>
+            </div>
+          </div>
+          <div class="sc-body">
+            <div class="sc-title">Account Settings</div>
+            <div class="sc-desc">Company profile, seller name, business address, VAT number, and notification preferences.</div>
+            <div class="sc-foot"><span class="sc-tag">Settings</span><span class="sc-link">View <i data-lucide="arrow-right"></i></span></div>
+          </div>
+        </a>
+
+        <a href="screens/settings-team.html" class="screen-card">
+          <div class="screen-thumb">
+            <div class="t-bar"><div class="t-dot t-dot-r"></div><div class="t-dot t-dot-a"></div><div class="t-dot t-dot-g"></div></div>
+            <div class="t-body">
+              <div class="t-sb"><div class="t-nd active"></div></div>
+              <div class="t-main">
+                <div class="t-row w100"></div><div class="t-row w100"></div><div class="t-row w100"></div>
+                <div style="height:7px;background:rgba(196,151,42,0.2);border-radius:2px;width:40%;margin-top:5px;border:1px solid rgba(196,151,42,0.35)"></div>
+              </div>
+            </div>
+          </div>
+          <div class="sc-body">
+            <div class="sc-title">Team Members</div>
+            <div class="sc-desc">User management with role assignments (Admin, Manager, Picker), invite flow, and 2FA status.</div>
+            <div class="sc-foot"><span class="sc-tag">Settings</span><span class="sc-link">View <i data-lucide="arrow-right"></i></span></div>
+          </div>
+        </a>
+
+        <a href="screens/settings-billing.html" class="screen-card">
+          <div class="screen-thumb">
+            <div class="t-bar"><div class="t-dot t-dot-r"></div><div class="t-dot t-dot-a"></div><div class="t-dot t-dot-g"></div></div>
+            <div class="t-body">
+              <div class="t-sb"><div class="t-nd active"></div></div>
+              <div class="t-main">
+                <div style="height:26px;background:rgba(196,151,42,0.07);border:1px solid rgba(196,151,42,0.2);border-radius:3px;display:flex;align-items:center;padding:0 5px;gap:3px;margin-bottom:4px">
+                  <div style="width:12px;height:8px;background:rgba(196,151,42,0.4);border-radius:1px"></div>
+                  <div class="t-row w70"></div>
+                </div>
+                <div class="t-row w100"></div><div class="t-row w100"></div>
+              </div>
+            </div>
+          </div>
+          <div class="sc-body">
+            <div class="sc-title">Billing &amp; Subscription</div>
+            <div class="sc-desc">Plan management, payment method, invoice history, and usage-based billing breakdown.</div>
+            <div class="sc-foot"><span class="sc-tag">Settings</span><span class="sc-link">View <i data-lucide="arrow-right"></i></span></div>
+          </div>
+        </a>
+
+        <a href="screens/admin-platform.html" class="screen-card">
+          <div class="screen-thumb" style="background:linear-gradient(135deg,rgba(123,94,167,0.07) 0%,var(--color-surface-raised) 100%)">
+            <div class="t-bar"><div class="t-dot t-dot-r"></div><div class="t-dot t-dot-a"></div><div class="t-dot t-dot-g"></div></div>
+            <div class="t-body">
+              <div class="t-sb"><div class="t-nd" style="background:rgba(123,94,167,0.5)"></div><div class="t-nd" style="background:rgba(123,94,167,0.8)"></div></div>
+              <div class="t-main">
+                <div class="t-kpi-grid"><div class="t-kpi" style="border-color:rgba(123,94,167,0.25)"></div><div class="t-kpi" style="border-color:rgba(123,94,167,0.25)"></div></div>
+                <div class="t-row w100" style="margin-top:4px"></div><div class="t-row w100"></div>
+              </div>
+            </div>
+          </div>
+          <div class="sc-body">
+            <div class="sc-title">Platform Admin <span class="badge badge-admin" style="font-size:9px;padding:1px 5px;vertical-align:middle;margin-inline-start:4px">Admin</span></div>
+            <div class="sc-desc">Superadmin panel — tenant management, feature flags, usage monitoring, and system health.</div>
+            <div class="sc-foot"><span class="sc-tag">Admin</span><span class="sc-link">View <i data-lucide="arrow-right"></i></span></div>
+          </div>
+        </a>
+
+      </div>
+    </section>
+
+    <!-- ═══ COMPLEX COMPONENTS ═══ -->
+    <section class="section">
+      <div class="section-header">
+        <div class="section-icon"><i data-lucide="component"></i></div>
+        <h2 class="section-title">Complex Components</h2>
+        <span class="section-count">4 screens</span>
+      </div>
+      <div class="screens-grid">
+
+        <a href="screens/components-command-palette.html" class="screen-card">
+          <div class="screen-thumb">
+            <div class="t-bar"><div class="t-dot t-dot-r"></div><div class="t-dot t-dot-a"></div><div class="t-dot t-dot-g"></div></div>
+            <div class="t-body" style="align-items:center;justify-content:center;padding:8px">
+              <div style="width:100%;background:var(--color-surface);border:1px solid var(--color-border-active);border-radius:5px;padding:5px">
+                <div class="t-input focus" style="height:8px;margin-bottom:4px"></div>
+                <div class="t-row w100"></div>
+                <div class="t-row" style="background:rgba(196,151,42,0.12);width:100%;margin-top:2px"></div>
+                <div class="t-row w100" style="margin-top:2px"></div>
+              </div>
+            </div>
+          </div>
+          <div class="sc-body">
+            <div class="sc-title">Command Palette (⌘K)</div>
+            <div class="sc-desc">Global quick-action search — navigate to order, create listing, jump to product by SKU or title.</div>
+            <div class="sc-foot"><span class="sc-tag">Component</span><span class="sc-link">View <i data-lucide="arrow-right"></i></span></div>
+          </div>
+        </a>
+
+        <a href="screens/components-bulk-editor.html" class="screen-card">
+          <div class="screen-thumb">
+            <div class="t-bar"><div class="t-dot t-dot-r"></div><div class="t-dot t-dot-a"></div><div class="t-dot t-dot-g"></div></div>
+            <div class="t-body">
+              <div class="t-sb"><div class="t-nd active"></div></div>
+              <div class="t-main">
+                <div style="height:7px;background:rgba(196,151,42,0.15);border-radius:2px;margin-bottom:4px;border:1px solid rgba(196,151,42,0.3)"></div>
+                <div style="border:1px solid var(--color-border);border-radius:3px;overflow:hidden">
+                  <div style="height:6px;background:var(--color-surface-raised);border-bottom:1px solid var(--color-border)"></div>
+                  <div class="t-row w100" style="margin:2px 3px;width:calc(100% - 6px)"></div>
+                  <div class="t-row w100" style="margin:2px 3px;width:calc(100% - 6px)"></div>
+                  <div class="t-row w100" style="margin:2px 3px;width:calc(100% - 6px)"></div>
+                </div>
+              </div>
+            </div>
+          </div>
+          <div class="sc-body">
+            <div class="sc-title">Bulk Editor</div>
+            <div class="sc-desc">Spreadsheet-style inline editor for mass price updates, stock changes, and description edits.</div>
+            <div class="sc-foot"><span class="sc-tag">Component</span><span class="sc-link">View <i data-lucide="arrow-right"></i></span></div>
+          </div>
+        </a>
+
+        <a href="screens/components-activity-feed.html" class="screen-card">
+          <div class="screen-thumb">
+            <div class="t-bar"><div class="t-dot t-dot-r"></div><div class="t-dot t-dot-a"></div><div class="t-dot t-dot-g"></div></div>
+            <div class="t-body">
+              <div class="t-sb"><div class="t-nd active"></div></div>
+              <div class="t-main">
+                <div style="display:flex;flex-direction:column;gap:5px">
+                  <div style="display:flex;gap:4px;align-items:center"><div style="width:5px;height:5px;border-radius:50%;background:var(--color-success);flex-shrink:0"></div><div class="t-row w100"></div></div>
+                  <div style="display:flex;gap:4px;align-items:center"><div style="width:5px;height:5px;border-radius:50%;background:var(--color-accent);flex-shrink:0"></div><div class="t-row w70"></div></div>
+                  <div style="display:flex;gap:4px;align-items:center"><div style="width:5px;height:5px;border-radius:50%;background:#E05555;flex-shrink:0"></div><div class="t-row w100"></div></div>
+                  <div style="display:flex;gap:4px;align-items:center"><div style="width:5px;height:5px;border-radius:50%;background:var(--color-success);flex-shrink:0"></div><div class="t-row w50"></div></div>
+                  <div style="display:flex;gap:4px;align-items:center"><div style="width:5px;height:5px;border-radius:50%;background:var(--color-warning);flex-shrink:0"></div><div class="t-row w100"></div></div>
+                </div>
+              </div>
+            </div>
+          </div>
+          <div class="sc-body">
+            <div class="sc-title">Activity Feed</div>
+            <div class="sc-desc">Real-time event timeline — order placed, listing synced, stock adjusted, dispute opened.</div>
+            <div class="sc-foot"><span class="sc-tag">Component</span><span class="sc-link">View <i data-lucide="arrow-right"></i></span></div>
+          </div>
+        </a>
+
+        <a href="screens/components-sla-dashboard.html" class="screen-card">
+          <div class="screen-thumb">
+            <div class="t-bar"><div class="t-dot t-dot-r"></div><div class="t-dot t-dot-a"></div><div class="t-dot t-dot-g"></div></div>
+            <div class="t-body" style="align-items:center;justify-content:center;gap:10px;padding:8px">
+              <div style="display:flex;flex-direction:column;align-items:center;gap:3px">
+                <svg width="32" height="32" viewBox="0 0 32 32"><circle cx="16" cy="16" r="12" fill="none" stroke="rgba(56,56,56,0.8)" stroke-width="3.5"/><circle cx="16" cy="16" r="12" fill="none" stroke="#4A9E6E" stroke-width="3.5" stroke-dasharray="56 20" stroke-dashoffset="19" stroke-linecap="round"/></svg>
+                <div style="font-size:7px;color:var(--color-success);font-weight:700">98%</div>
+              </div>
+              <div style="display:flex;flex-direction:column;align-items:center;gap:3px">
+                <svg width="32" height="32" viewBox="0 0 32 32"><circle cx="16" cy="16" r="12" fill="none" stroke="rgba(56,56,56,0.8)" stroke-width="3.5"/><circle cx="16" cy="16" r="12" fill="none" stroke="#D4872C" stroke-width="3.5" stroke-dasharray="44 32" stroke-dashoffset="19" stroke-linecap="round"/></svg>
+                <div style="font-size:7px;color:var(--color-warning);font-weight:700">74%</div>
+              </div>
+              <div style="display:flex;flex-direction:column;align-items:center;gap:3px">
+                <svg width="32" height="32" viewBox="0 0 32 32"><circle cx="16" cy="16" r="12" fill="none" stroke="rgba(56,56,56,0.8)" stroke-width="3.5"/><circle cx="16" cy="16" r="12" fill="none" stroke="#E05555" stroke-width="3.5" stroke-dasharray="22 54" stroke-dashoffset="19" stroke-linecap="round"/></svg>
+                <div style="font-size:7px;color:#E05555;font-weight:700">31%</div>
+              </div>
+            </div>
+          </div>
+          <div class="sc-body">
+            <div class="sc-title">SLA Gauge Dashboard</div>
+            <div class="sc-desc">Ring gauges for order fulfilment, response time, and return resolution SLAs with colour thresholds.</div>
+            <div class="sc-foot"><span class="sc-tag">Component</span><span class="sc-link">View <i data-lucide="arrow-right"></i></span></div>
+          </div>
+        </a>
+
+      </div>
+    </section>
+
+    <!-- ═══ MARKETING SITE ═══ -->
+    <section class="section">
+      <div class="section-header">
+        <div class="section-icon"><i data-lucide="globe"></i></div>
+        <h2 class="section-title">Marketing Site</h2>
+        <span class="section-count">3 screens</span>
+      </div>
+      <div class="screens-grid">
+
+        <a href="screens/marketing-landing.html" class="screen-card">
+          <div class="screen-thumb">
+            <div class="t-bar"><div class="t-dot t-dot-r"></div><div class="t-dot t-dot-a"></div><div class="t-dot t-dot-g"></div></div>
+            <div class="t-body" style="flex-direction:column;padding:8px;gap:5px;justify-content:center">
+              <div class="t-row gold w100" style="height:11px;border-radius:3px"></div>
+              <div class="t-row w70"></div>
+              <div style="display:flex;gap:4px;margin-top:2px">
+                <div class="t-btn" style="height:9px;width:32%"></div>
+                <div style="height:9px;width:26%;border:1px solid var(--color-border-active);border-radius:2px"></div>
+              </div>
+            </div>
+          </div>
+          <div class="sc-body">
+            <div class="sc-title">Marketing Landing Page</div>
+            <div class="sc-desc">Public homepage with hero, feature highlights, channel logos, pricing tiers, and CTA.</div>
+            <div class="sc-foot"><span class="sc-tag">Marketing</span><span class="sc-link">View <i data-lucide="arrow-right"></i></span></div>
+          </div>
+        </a>
+
+        <a href="screens/marketing-pricing.html" class="screen-card">
+          <div class="screen-thumb">
+            <div class="t-bar"><div class="t-dot t-dot-r"></div><div class="t-dot t-dot-a"></div><div class="t-dot t-dot-g"></div></div>
+            <div class="t-body" style="flex-direction:column;padding:8px;gap:3px;justify-content:center">
+              <div style="display:flex;gap:5px;justify-content:center;align-items:flex-end">
+                <div style="width:38px;height:52px;background:rgba(255,255,255,0.04);border:1px solid var(--color-border);border-radius:4px"></div>
+                <div style="width:38px;height:62px;background:rgba(196,151,42,0.07);border:1px solid rgba(196,151,42,0.35);border-radius:4px"></div>
+                <div style="width:38px;height:52px;background:rgba(255,255,255,0.04);border:1px solid var(--color-border);border-radius:4px"></div>
+              </div>
+            </div>
+          </div>
+          <div class="sc-body">
+            <div class="sc-title">Pricing Page</div>
+            <div class="sc-desc">Three-tier pricing with feature comparison table, annual/monthly toggle, and FAQ accordion.</div>
+            <div class="sc-foot"><span class="sc-tag">Marketing</span><span class="sc-link">View <i data-lucide="arrow-right"></i></span></div>
+          </div>
+        </a>
+
+        <a href="screens/marketing-changelog.html" class="screen-card">
+          <div class="screen-thumb">
+            <div class="t-bar"><div class="t-dot t-dot-r"></div><div class="t-dot t-dot-a"></div><div class="t-dot t-dot-g"></div></div>
+            <div class="t-body" style="flex-direction:column;padding:8px;gap:5px;justify-content:center">
+              <div class="t-row gold w100" style="height:7px"></div>
+              <div style="display:flex;align-items:center;gap:5px"><div style="width:5px;height:5px;border-radius:50%;background:var(--color-success)"></div><div class="t-row w100" style="height:5px"></div></div>
+              <div class="t-row w70" style="height:4px"></div>
+              <div class="t-row w100" style="height:4px"></div>
+              <div style="display:flex;align-items:center;gap:5px;margin-top:3px"><div style="width:5px;height:5px;border-radius:50%;background:var(--color-warning)"></div><div class="t-row w100" style="height:5px"></div></div>
+              <div class="t-row w50" style="height:4px"></div>
+            </div>
+          </div>
+          <div class="sc-body">
+            <div class="sc-title">Changelog / What's New</div>
+            <div class="sc-desc">Public release notes with version tags, feature/fix/improvement labels, and timeline layout.</div>
+            <div class="sc-foot"><span class="sc-tag">Marketing</span><span class="sc-link">View <i data-lucide="arrow-right"></i></span></div>
+          </div>
+        </a>
+
+      </div>
+    </section>
+
+    <!-- ═══ WMS MOBILE ═══ -->
+    <section class="section">
+      <div class="section-header">
+        <div class="section-icon"><i data-lucide="smartphone"></i></div>
+        <h2 class="section-title">WMS Mobile App</h2>
+        <span class="section-count">3 screens</span>
+      </div>
+      <div class="screens-grid">
+
+        <a href="screens/mobile-pick-list.html" class="screen-card">
+          <div class="screen-thumb" style="background:linear-gradient(135deg,rgba(58,107,139,0.07) 0%,var(--color-surface-raised) 100%)">
+            <div class="t-bar"><div class="t-dot t-dot-r"></div><div class="t-dot t-dot-a"></div><div class="t-dot t-dot-g"></div></div>
+            <div class="t-body" style="align-items:center;justify-content:center;padding:8px">
+              <div style="width:58px;background:var(--color-surface);border:1px solid var(--color-border);border-radius:7px;overflow:hidden">
+                <div style="height:9px;background:var(--color-surface-raised);border-bottom:1px solid var(--color-border)"></div>
+                <div style="padding:5px;display:flex;flex-direction:column;gap:3px">
+                  <div class="t-row w100"></div><div class="t-row w100"></div><div class="t-row" style="background:rgba(196,151,42,0.2);width:100%"></div><div class="t-row w100"></div>
+                </div>
+              </div>
+            </div>
+          </div>
+          <div class="sc-body">
+            <div class="sc-title">Pick List</div>
+            <div class="sc-desc">Warehouse picker view — location-sorted pick list with barcode scan confirmation and quantity input.</div>
+            <div class="sc-foot"><span class="sc-tag">Mobile WMS</span><span class="sc-link">View <i data-lucide="arrow-right"></i></span></div>
+          </div>
+        </a>
+
+        <a href="screens/mobile-receive.html" class="screen-card">
+          <div class="screen-thumb" style="background:linear-gradient(135deg,rgba(74,158,110,0.07) 0%,var(--color-surface-raised) 100%)">
+            <div class="t-bar"><div class="t-dot t-dot-r"></div><div class="t-dot t-dot-a"></div><div class="t-dot t-dot-g"></div></div>
+            <div class="t-body" style="align-items:center;justify-content:center;padding:8px">
+              <div style="width:58px;background:var(--color-surface);border:1px solid var(--color-border);border-radius:7px;overflow:hidden">
+                <div style="height:9px;background:var(--color-surface-raised);border-bottom:1px solid var(--color-border)"></div>
+                <div style="padding:5px;display:flex;flex-direction:column;gap:3px">
+                  <div style="height:18px;background:rgba(74,158,110,0.1);border:1px solid rgba(74,158,110,0.25);border-radius:3px"></div>
+                  <div class="t-input" style="height:7px"></div>
+                  <div class="t-btn" style="width:100%;height:7px"></div>
+                </div>
+              </div>
+            </div>
+          </div>
+          <div class="sc-body">
+            <div class="sc-title">Goods In / Receiving</div>
+            <div class="sc-desc">PO receiving flow — scan supplier barcode, quantity confirmation, putaway location assignment.</div>
+            <div class="sc-foot"><span class="sc-tag">Mobile WMS</span><span class="sc-link">View <i data-lucide="arrow-right"></i></span></div>
+          </div>
+        </a>
+
+        <a href="screens/mobile-stocktake.html" class="screen-card">
+          <div class="screen-thumb" style="background:linear-gradient(135deg,rgba(212,135,44,0.07) 0%,var(--color-surface-raised) 100%)">
+            <div class="t-bar"><div class="t-dot t-dot-r"></div><div class="t-dot t-dot-a"></div><div class="t-dot t-dot-g"></div></div>
+            <div class="t-body" style="align-items:center;justify-content:center;padding:8px">
+              <div style="width:58px;background:var(--color-surface);border:1px solid var(--color-border);border-radius:7px;overflow:hidden">
+                <div style="height:9px;background:var(--color-surface-raised);border-bottom:1px solid var(--color-border)"></div>
+                <div style="padding:5px;display:flex;flex-direction:column;gap:3px">
+                  <div style="height:6px;background:rgba(212,135,44,0.25);border-radius:2px"></div>
+                  <div class="t-row w100"></div><div class="t-row amber w100"></div><div class="t-row w100"></div>
+                </div>
+              </div>
+            </div>
+          </div>
+          <div class="sc-body">
+            <div class="sc-title">Stocktake / Cycle Count</div>
+            <div class="sc-desc">Zone-based cycle count with blind count mode, variance highlighting, and supervisor approval.</div>
+            <div class="sc-foot"><span class="sc-tag">Mobile WMS</span><span class="sc-link">View <i data-lucide="arrow-right"></i></span></div>
+          </div>
+        </a>
+
+      </div>
+    </section>
+
+  </main>
+
+  <!-- FOOTER -->
+  <footer class="footer">
+    <div class="footer-brand">
+      <div style="width:24px;height:24px;background:linear-gradient(135deg,var(--color-accent),var(--color-accent-dim));border-radius:6px;display:flex;align-items:center;justify-content:center;font-weight:800;font-size:12px;color:#141414;flex-shrink:0">S</div>
+      <strong>Synergia360</strong> · UI Mockup Library v2.0
+    </div>
+    <div class="footer-meta">Static HTML mockups — no backend — UK seller context — GBP</div>
+    <div class="footer-meta">Dark Luxury design system · 5 marketplace channels</div>
+  </footer>
+
+  <script>lucide.createIcons();</script>
+</body>
+</html>

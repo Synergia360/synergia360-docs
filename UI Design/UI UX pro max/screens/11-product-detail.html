@@ -1,0 +1,370 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Wireless Earbuds Pro — Synergia360</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="../shared.css">
+<script src="https://unpkg.com/lucide@latest"></script>
+<style>
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  body { background: var(--color-bg); color: var(--color-text); font-family: 'Inter', sans-serif; font-size: 14px; min-height: 100vh; display: flex; }
+
+  /* ── Sidebar (shared) ── */
+  .sidebar { width: 240px; min-height: 100vh; background: var(--color-surface); border-right: 1px solid var(--color-border); display: flex; flex-direction: column; flex-shrink: 0; position: fixed; top: 0; left: 0; bottom: 0; z-index: 50; }
+  .sidebar-logo { padding: 18px 16px 14px; border-bottom: 1px solid var(--color-border); display: flex; align-items: center; gap: 10px; }
+  .logo-mark { width: 30px; height: 30px; border-radius: 7px; background: linear-gradient(135deg, #C4972A, #8B6914); display: flex; align-items: center; justify-content: center; flex-shrink: 0; }
+  .logo-mark svg { width: 16px; height: 16px; color: #0A0A0A; }
+  .logo-text { font-size: 15px; font-weight: 700; letter-spacing: -0.3px; }
+  .logo-sub { font-size: 10px; color: var(--color-text-subtle); }
+  .sidebar-nav { flex: 1; padding: 10px 0; overflow-y: auto; }
+  .nav-section { padding: 10px 16px 4px; font-size: 10px; font-weight: 600; letter-spacing: 0.1em; text-transform: uppercase; color: var(--color-text-subtle); }
+  .nav-item { display: flex; align-items: center; gap: 10px; padding: 7px 16px; color: var(--color-text-muted); cursor: pointer; border-left: 2px solid transparent; font-size: 13px; transition: all 0.15s; }
+  .nav-item:hover { background: rgba(255,255,255,0.04); color: var(--color-text); }
+  .nav-item.active { color: var(--color-accent); border-left-color: var(--color-accent); background: var(--color-accent-glow); font-weight: 500; }
+  .nav-badge { margin-left: auto; font-size: 10px; background: var(--color-surface-raised); color: var(--color-text-subtle); padding: 1px 6px; border-radius: 10px; border: 1px solid var(--color-border); }
+  .nav-badge.alert { background: rgba(139,58,58,0.2); color: #C87878; border-color: rgba(139,58,58,0.3); }
+  .sidebar-footer { padding: 14px 16px; border-top: 1px solid var(--color-border); display: flex; align-items: center; gap: 10px; }
+  .avatar { width: 30px; height: 30px; border-radius: 50%; background: linear-gradient(135deg, #3A6B8B, #2A4B6B); display: flex; align-items: center; justify-content: center; font-size: 11px; font-weight: 600; flex-shrink: 0; }
+  .avatar-name { font-size: 12px; font-weight: 500; }
+  .avatar-role { font-size: 10px; color: var(--color-text-subtle); }
+
+  /* ── Main ── */
+  .main { margin-left: 240px; flex: 1; display: flex; flex-direction: column; min-height: 100vh; overflow: hidden; }
+
+  /* ── Topbar / breadcrumb ── */
+  .topbar { height: 56px; background: var(--color-surface); border-bottom: 1px solid var(--color-border); display: flex; align-items: center; padding: 0 20px; gap: 8px; position: sticky; top: 0; z-index: 40; }
+  .breadcrumb { display: flex; align-items: center; gap: 6px; font-size: 13px; color: var(--color-text-muted); }
+  .breadcrumb a { color: var(--color-text-muted); text-decoration: none; cursor: pointer; }
+  .breadcrumb a:hover { color: var(--color-accent); }
+  .breadcrumb-sep { color: var(--color-text-subtle); font-size: 12px; }
+  .breadcrumb-current { color: var(--color-text); font-weight: 500; }
+  .topbar-spacer { flex: 1; }
+  .btn { display: inline-flex; align-items: center; gap: 6px; padding: 6px 14px; border-radius: 6px; font-size: 13px; font-weight: 500; cursor: pointer; transition: all 0.15s; border: none; font-family: 'Inter', sans-serif; }
+  .btn-gold { background: var(--color-accent); color: #0A0A0A; }
+  .btn-gold:hover { background: #D4A82E; }
+  .btn-outline { background: transparent; border: 1px solid var(--color-border); color: var(--color-text-muted); }
+  .btn-outline:hover { border-color: var(--color-border-active); color: var(--color-text); }
+
+  /* ── Page body ── */
+  .page-body { flex: 1; overflow-y: auto; padding: 24px; display: flex; flex-direction: column; gap: 24px; }
+
+  /* ── Hero ── */
+  .product-hero { display: grid; grid-template-columns: 40% 60%; gap: 28px; background: var(--color-surface); border: 1px solid var(--color-border); border-radius: 10px; overflow: hidden; }
+  .hero-gallery { padding: 20px; display: flex; flex-direction: column; gap: 12px; }
+  .main-image { border-radius: 8px; overflow: hidden; height: 260px; background: linear-gradient(135deg, #1a2a4a 0%, #2a3a6a 50%, #3A6B8B 100%); display: flex; align-items: center; justify-content: center; position: relative; }
+  .main-image svg { width: 80px; height: 80px; color: rgba(255,255,255,0.2); }
+  .image-dots { display: flex; gap: 8px; justify-content: center; }
+  .img-dot { width: 8px; height: 8px; border-radius: 50%; background: var(--color-border); cursor: pointer; }
+  .img-dot.active { background: var(--color-accent); }
+  .thumb-row { display: flex; gap: 8px; }
+  .thumb { width: 60px; height: 48px; border-radius: 6px; border: 1px solid var(--color-border); cursor: pointer; overflow: hidden; flex-shrink: 0; }
+  .thumb:first-child { border-color: var(--color-accent); }
+  .thumb div { width: 100%; height: 100%; }
+
+  .hero-info { padding: 24px 24px 24px 0; display: flex; flex-direction: column; gap: 14px; }
+  .product-title { font-size: 22px; font-weight: 700; letter-spacing: -0.4px; line-height: 1.2; }
+  .product-sku { font-family: 'Courier New', monospace; font-size: 14px; color: var(--color-accent); font-weight: 600; letter-spacing: 0.05em; }
+  .hero-badges { display: flex; gap: 8px; align-items: center; flex-wrap: wrap; }
+  .badge { display: inline-flex; align-items: center; gap: 4px; padding: 3px 9px; border-radius: 4px; font-size: 12px; font-weight: 500; }
+  .badge-cat { background: var(--color-surface-raised); color: var(--color-text-muted); border: 1px solid var(--color-border); }
+  .badge-active { background: rgba(74,158,110,0.15); color: #5ABD87; }
+  .badge-warning { background: rgba(212,135,44,0.2); color: var(--color-warning); }
+  .badge-danger { background: rgba(139,58,58,0.2); color: #C87878; }
+  .hero-stats { display: grid; grid-template-columns: repeat(3, 1fr); gap: 12px; padding: 16px; background: var(--color-bg); border-radius: 8px; }
+  .stat-item { text-align: center; }
+  .stat-value { font-size: 20px; font-weight: 700; }
+  .stat-label { font-size: 11px; color: var(--color-text-muted); margin-top: 2px; }
+  .hero-actions { display: flex; gap: 10px; margin-top: auto; }
+
+  /* ── Tabs ── */
+  .tabs-bar { display: flex; border-bottom: 1px solid var(--color-border); gap: 0; background: var(--color-surface); border-radius: 10px 10px 0 0; overflow: hidden; padding: 0 20px; }
+  .tab { padding: 13px 18px; font-size: 13px; font-weight: 500; color: var(--color-text-muted); cursor: pointer; border-bottom: 2px solid transparent; transition: all 0.15s; white-space: nowrap; }
+  .tab:hover { color: var(--color-text); }
+  .tab.active { color: var(--color-accent); border-bottom-color: var(--color-accent); }
+  .tab-badge { font-size: 10px; background: var(--color-surface-raised); border: 1px solid var(--color-border); color: var(--color-text-subtle); padding: 1px 5px; border-radius: 10px; margin-left: 4px; }
+
+  /* ── Variant Table ── */
+  .section-card { background: var(--color-surface); border: 1px solid var(--color-border); border-radius: 10px; overflow: hidden; }
+  .section-header { padding: 14px 20px; border-bottom: 1px solid var(--color-border); display: flex; align-items: center; gap: 12px; }
+  .section-title { font-size: 14px; font-weight: 600; }
+  .section-spacer { flex: 1; }
+  .data-table { width: 100%; border-collapse: collapse; }
+  .data-table th { padding: 10px 16px; text-align: left; font-size: 11px; font-weight: 600; text-transform: uppercase; letter-spacing: 0.06em; color: var(--color-text-subtle); background: var(--color-bg); border-bottom: 1px solid var(--color-border); white-space: nowrap; }
+  .data-table td { padding: 12px 16px; font-size: 13px; border-bottom: 1px solid rgba(56,56,56,0.5); vertical-align: middle; }
+  .data-table tr:last-child td { border-bottom: none; }
+  .data-table tr:hover td { background: rgba(255,255,255,0.02); }
+  .mono { font-family: 'Courier New', monospace; font-size: 12px; color: var(--color-text-muted); }
+  .price { font-weight: 600; color: var(--color-accent); }
+  .stock-num { font-weight: 600; }
+  .active-dot { width: 8px; height: 8px; border-radius: 50%; background: var(--color-success); display: inline-block; }
+  .color-chip { display: inline-flex; align-items: center; gap: 6px; }
+  .chip { width: 12px; height: 12px; border-radius: 50%; flex-shrink: 0; }
+</style>
+</head>
+<body>
+
+<!-- ═══ SIDEBAR ═══ -->
+<aside class="sidebar">
+  <div class="sidebar-logo">
+    <div class="logo-mark">
+      <svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="2"><path d="M8 2L14 5.5V10.5L8 14L2 10.5V5.5L8 2Z"/></svg>
+    </div>
+    <div>
+      <div class="logo-text">Synergia360</div>
+      <div class="logo-sub">Marketplace OS</div>
+    </div>
+  </div>
+  <nav class="sidebar-nav">
+    <div class="nav-section">Workspace</div>
+    <div class="nav-item"><i data-lucide="layout-dashboard" style="width:16px;height:16px"></i> Dashboard</div>
+    <div class="nav-item"><i data-lucide="shopping-bag" style="width:16px;height:16px"></i> Orders<span class="nav-badge alert">12</span></div>
+    <div class="nav-section">Catalogue</div>
+    <div class="nav-item active"><i data-lucide="package" style="width:16px;height:16px"></i> Products</div>
+    <div class="nav-item"><i data-lucide="layers" style="width:16px;height:16px"></i> Variants</div>
+    <div class="nav-item"><i data-lucide="tag" style="width:16px;height:16px"></i> Categories</div>
+    <div class="nav-item"><i data-lucide="users" style="width:16px;height:16px"></i> Suppliers</div>
+    <div class="nav-section">Inventory</div>
+    <div class="nav-item"><i data-lucide="warehouse" style="width:16px;height:16px"></i> Stock Overview</div>
+    <div class="nav-item"><i data-lucide="clipboard-list" style="width:16px;height:16px"></i> Stock Take</div>
+    <div class="nav-item"><i data-lucide="truck" style="width:16px;height:16px"></i> Purchase Orders<span class="nav-badge">4</span></div>
+    <div class="nav-section">Channels</div>
+    <div class="nav-item"><i data-lucide="radio" style="width:16px;height:16px"></i> Channels</div>
+    <div class="nav-item"><i data-lucide="list" style="width:16px;height:16px"></i> Listings</div>
+    <div class="nav-section">Finance</div>
+    <div class="nav-item"><i data-lucide="bar-chart-2" style="width:16px;height:16px"></i> Finance</div>
+    <div class="nav-item"><i data-lucide="rotate-ccw" style="width:16px;height:16px"></i> Returns<span class="nav-badge alert">8</span></div>
+  </nav>
+  <div class="sidebar-footer">
+    <div class="avatar">JM</div>
+    <div style="flex:1">
+      <div class="avatar-name">James Mitchell</div>
+      <div class="avatar-role">Admin</div>
+    </div>
+    <i data-lucide="settings" style="width:14px;height:14px;color:var(--color-text-subtle)"></i>
+  </div>
+</aside>
+
+<!-- ═══ MAIN ═══ -->
+<div class="main">
+  <header class="topbar">
+    <div class="breadcrumb">
+      <a>Catalogue</a>
+      <span class="breadcrumb-sep">›</span>
+      <a>Electronics</a>
+      <span class="breadcrumb-sep">›</span>
+      <a>Headphones</a>
+      <span class="breadcrumb-sep">›</span>
+      <span class="breadcrumb-current">Wireless Earbuds Pro</span>
+    </div>
+    <div class="topbar-spacer"></div>
+    <button class="btn btn-outline" style="gap:5px">
+      <i data-lucide="more-horizontal" style="width:14px;height:14px"></i>
+    </button>
+    <button class="btn btn-outline">
+      <i data-lucide="refresh-cw" style="width:14px;height:14px"></i> Sync Now
+    </button>
+    <button class="btn btn-gold">
+      <i data-lucide="send" style="width:14px;height:14px"></i> Push to Channels
+    </button>
+  </header>
+
+  <div class="page-body">
+
+    <!-- Product Hero -->
+    <div class="product-hero">
+      <!-- Gallery -->
+      <div class="hero-gallery">
+        <div class="main-image">
+          <i data-lucide="headphones"></i>
+          <div style="position:absolute;bottom:12px;right:12px;background:rgba(0,0,0,0.5);border-radius:6px;padding:4px 8px;font-size:11px;color:var(--color-text-muted)">1 / 3</div>
+        </div>
+        <div class="image-dots">
+          <div class="img-dot active"></div>
+          <div class="img-dot"></div>
+          <div class="img-dot"></div>
+        </div>
+        <div class="thumb-row">
+          <div class="thumb"><div style="background:linear-gradient(135deg,#1a2a4a,#3A6B8B)"></div></div>
+          <div class="thumb"><div style="background:linear-gradient(135deg,#2a2a2a,#4a4a4a)"></div></div>
+          <div class="thumb"><div style="background:linear-gradient(135deg,#1a3a1a,#2a5a2a)"></div></div>
+          <div style="width:60px;height:48px;border-radius:6px;border:1px dashed var(--color-border);display:flex;align-items:center;justify-content:center;cursor:pointer">
+            <i data-lucide="plus" style="width:14px;height:14px;color:var(--color-text-subtle)"></i>
+          </div>
+        </div>
+      </div>
+
+      <!-- Product Info -->
+      <div class="hero-info">
+        <div>
+          <div class="product-title">Wireless Earbuds Pro</div>
+          <div class="product-sku" style="margin-top:6px">BLU-001</div>
+        </div>
+
+        <div class="hero-badges">
+          <span class="badge badge-cat">
+            <i data-lucide="tag" style="width:11px;height:11px"></i> Headphones
+          </span>
+          <span class="badge badge-active">
+            <i data-lucide="circle" style="width:8px;height:8px;fill:currentColor"></i> Active
+          </span>
+          <span class="badge" style="background:rgba(196,151,42,0.15);color:var(--color-accent);border:1px solid rgba(196,151,42,0.3)">
+            <i data-lucide="zap" style="width:11px;height:11px"></i> Best Seller
+          </span>
+        </div>
+
+        <div class="hero-stats">
+          <div class="stat-item">
+            <div class="stat-value" style="color:var(--color-success)">247</div>
+            <div class="stat-label">Total Stock</div>
+          </div>
+          <div class="stat-item">
+            <div class="stat-value">3</div>
+            <div class="stat-label">Variants</div>
+          </div>
+          <div class="stat-item">
+            <div class="stat-value" style="color:var(--color-accent)">2</div>
+            <div class="stat-label">Channels</div>
+          </div>
+        </div>
+
+        <div style="display:grid;grid-template-columns:1fr 1fr;gap:12px;padding:14px;background:var(--color-bg);border-radius:8px">
+          <div>
+            <div style="font-size:11px;color:var(--color-text-subtle);margin-bottom:3px">Price Range</div>
+            <div style="font-size:16px;font-weight:700;color:var(--color-accent)">£37.49 – £52.99</div>
+          </div>
+          <div>
+            <div style="font-size:11px;color:var(--color-text-subtle);margin-bottom:3px">Last Synced</div>
+            <div style="font-size:13px;font-weight:500">2 minutes ago</div>
+          </div>
+          <div>
+            <div style="font-size:11px;color:var(--color-text-subtle);margin-bottom:3px">Created</div>
+            <div style="font-size:13px">12 Jan 2026</div>
+          </div>
+          <div>
+            <div style="font-size:11px;color:var(--color-text-subtle);margin-bottom:3px">Supplier</div>
+            <div style="font-size:13px">Shenzhen Electronics</div>
+          </div>
+        </div>
+
+        <div class="hero-actions">
+          <button class="btn btn-gold" style="flex:1;justify-content:center">
+            <i data-lucide="send" style="width:14px;height:14px"></i> Push to Channels
+          </button>
+          <button class="btn btn-outline">
+            <i data-lucide="edit-2" style="width:14px;height:14px"></i> Edit
+          </button>
+          <button class="btn btn-outline">
+            <i data-lucide="copy" style="width:14px;height:14px"></i> Duplicate
+          </button>
+        </div>
+      </div>
+    </div>
+
+    <!-- Tabs -->
+    <div class="section-card">
+      <div class="tabs-bar">
+        <div class="tab">Details</div>
+        <div class="tab active">Variants <span class="tab-badge">3</span></div>
+        <div class="tab">Listings <span class="tab-badge">2</span></div>
+        <div class="tab">Images</div>
+        <div class="tab">BOM</div>
+        <div class="tab">Suppliers</div>
+        <div class="tab">History</div>
+      </div>
+
+      <!-- Variant Tab Content -->
+      <div class="section-header">
+        <div class="section-title">Variant Matrix</div>
+        <div style="font-size:12px;color:var(--color-text-muted)">3 variants · 2 attribute dimensions</div>
+        <div class="section-spacer"></div>
+        <button class="btn btn-outline" style="font-size:12px;padding:5px 11px">
+          <i data-lucide="edit-3" style="width:13px;height:13px"></i> Bulk Edit
+        </button>
+        <button class="btn btn-gold" style="font-size:12px;padding:5px 11px">
+          <i data-lucide="plus" style="width:13px;height:13px"></i> Add Variant
+        </button>
+      </div>
+
+      <table class="data-table">
+        <thead>
+          <tr>
+            <th>Color</th>
+            <th>Storage</th>
+            <th>SKU</th>
+            <th>Price</th>
+            <th>Leeds WH</th>
+            <th>London WH</th>
+            <th>Total</th>
+            <th>Active</th>
+            <th style="width:60px"></th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td>
+              <div class="color-chip">
+                <div class="chip" style="background:#222222;border:1px solid #555"></div>
+                Black
+              </div>
+            </td>
+            <td>16GB</td>
+            <td><span class="mono">BLU-001-BK-16</span></td>
+            <td><span class="price">£37.49</span></td>
+            <td><span class="stock-num">124</span></td>
+            <td><span class="stock-num">45</span></td>
+            <td><span class="stock-num" style="color:var(--color-success)">169</span></td>
+            <td><span class="active-dot"></span></td>
+            <td><button class="btn btn-outline" style="padding:3px 8px;font-size:11px">Edit</button></td>
+          </tr>
+          <tr>
+            <td>
+              <div class="color-chip">
+                <div class="chip" style="background:#f0f0f0;border:1px solid #aaa"></div>
+                White
+              </div>
+            </td>
+            <td>16GB</td>
+            <td><span class="mono">BLU-001-WH-16</span></td>
+            <td><span class="price">£37.49</span></td>
+            <td><span class="stock-num">68</span></td>
+            <td><span class="stock-num">42</span></td>
+            <td><span class="stock-num" style="color:var(--color-success)">110</span></td>
+            <td><span class="active-dot"></span></td>
+            <td><button class="btn btn-outline" style="padding:3px 8px;font-size:11px">Edit</button></td>
+          </tr>
+          <tr>
+            <td>
+              <div class="color-chip">
+                <div class="chip" style="background:#222222;border:1px solid #555"></div>
+                Black
+              </div>
+            </td>
+            <td>32GB</td>
+            <td><span class="mono">BLU-001-BK-32</span></td>
+            <td><span class="price">£52.99</span></td>
+            <td><span class="stock-num" style="color:var(--color-warning)">12</span></td>
+            <td><span class="stock-num" style="color:var(--color-warning)">8</span></td>
+            <td><span class="stock-num" style="color:var(--color-warning)">20</span></td>
+            <td><span class="active-dot"></span></td>
+            <td><button class="btn btn-outline" style="padding:3px 8px;font-size:11px">Edit</button></td>
+          </tr>
+        </tbody>
+      </table>
+
+      <!-- Totals footer -->
+      <div style="padding:12px 16px;border-top:1px solid var(--color-border);display:flex;gap:24px;background:var(--color-bg)">
+        <div style="font-size:12px;color:var(--color-text-muted)">Total Units: <strong style="color:var(--color-text)">299</strong></div>
+        <div style="font-size:12px;color:var(--color-text-muted)">Avg Price: <strong style="color:var(--color-accent)">£42.65</strong></div>
+        <div style="font-size:12px;color:var(--color-text-muted)">Stock Value: <strong style="color:var(--color-text)">£11,211</strong></div>
+      </div>
+    </div>
+
+  </div><!-- /page-body -->
+</div><!-- /main -->
+
+<script>lucide.createIcons();</script>
+</body>
+</html>

@@ -1,0 +1,801 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Dashboard — Synergia360</title>
+  <link rel="stylesheet" href="../shared.css" />
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@300;400;500;600;700;800&family=Inter:wght@300;400;500;600;700&family=Roboto+Mono:wght@400;500;600&display=swap" rel="stylesheet" />
+  <script src="https://unpkg.com/lucide@latest/dist/umd/lucide.min.js"></script>
+  <style>
+    /* ── Dashboard-specific overrides ── */
+    .font-heading { font-family: 'DM Sans', var(--font-heading); }
+    .font-mono    { font-family: 'Roboto Mono', var(--font-mono); }
+
+    /* KPI grid */
+    .kpi-grid {
+      display: grid;
+      grid-template-columns: repeat(6, 1fr);
+      gap: 14px;
+      margin-bottom: 20px;
+    }
+    @media (max-width: 1400px) { .kpi-grid { grid-template-columns: repeat(3, 1fr); } }
+
+    .kpi-card { position: relative; overflow: hidden; }
+    .kpi-card::before {
+      content: '';
+      position: absolute;
+      top: 0; left: 0; right: 0;
+      height: 2px;
+      background: linear-gradient(90deg, transparent, var(--accent-color, var(--color-border)), transparent);
+      opacity: 0.6;
+    }
+    .kpi-card.accent-success::before { --accent-color: var(--color-success); }
+    .kpi-card.accent-warning::before { --accent-color: var(--color-warning); }
+    .kpi-card.accent-danger::before  { --accent-color: #E05555; }
+
+    .kpi-header { display: flex; align-items: center; justify-content: space-between; margin-bottom: 10px; }
+    .kpi-icon {
+      width: 28px; height: 28px;
+      border-radius: var(--radius-sm);
+      display: flex; align-items: center; justify-content: center;
+      background: rgba(255,255,255,0.05);
+    }
+    .kpi-sparkline {
+      height: 28px;
+      display: flex;
+      align-items: flex-end;
+      gap: 2px;
+      margin-top: 8px;
+    }
+    .kpi-sparkline span {
+      flex: 1;
+      border-radius: 1px 1px 0 0;
+      background: var(--color-border);
+      min-width: 3px;
+      transition: background var(--t-fast);
+    }
+    .kpi-sparkline span.hi { background: var(--color-success); opacity: 0.7; }
+    .kpi-sparkline span.warn { background: var(--color-warning); opacity: 0.7; }
+    .kpi-sparkline span.last { background: var(--color-accent); opacity: 0.9; }
+
+    .kpi-delta-text { font-size: 11px; font-weight: 600; display: flex; align-items: center; gap: 3px; }
+    .kpi-delta-text i { width: 12px; height: 12px; }
+
+    /* Main content grid */
+    .dashboard-main {
+      display: grid;
+      grid-template-columns: 1fr 300px;
+      gap: 20px;
+      min-height: 0;
+    }
+    .dashboard-left { display: flex; flex-direction: column; gap: 20px; min-width: 0; }
+    .dashboard-right { display: flex; flex-direction: column; gap: 20px; }
+
+    /* Channel Sync Status */
+    .sync-row {
+      display: grid;
+      grid-template-columns: repeat(4, 1fr);
+      gap: 12px;
+    }
+    .sync-card {
+      background: var(--color-surface);
+      border: 1px solid var(--color-border);
+      border-radius: var(--radius-md);
+      padding: 14px 16px;
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      transition: border-color var(--t-fast);
+    }
+    .sync-card:hover { border-color: var(--color-border-active); }
+    .channel-logo {
+      width: 36px; height: 36px;
+      border-radius: var(--radius-sm);
+      display: flex; align-items: center; justify-content: center;
+      font-size: 13px; font-weight: 700;
+      flex-shrink: 0;
+    }
+    .ch-logo-ebay    { background: rgba(255,174,0,0.15);   color: #FFAE00; }
+    .ch-logo-tiktok  { background: rgba(105,201,208,0.15); color: #69C9D0; }
+    .ch-logo-vinted  { background: rgba(9,183,117,0.15);   color: #09B775; }
+    .ch-logo-etsy    { background: rgba(243,89,36,0.15);   color: #F35924; }
+
+    .sync-info { flex: 1; min-width: 0; }
+    .sync-name { font-size: 13px; font-weight: 600; color: var(--color-text); }
+    .sync-time { font-size: 11px; color: var(--color-text-subtle); margin-top: 1px; }
+    .sync-dot {
+      width: 8px; height: 8px;
+      border-radius: 50%;
+      flex-shrink: 0;
+    }
+    .sync-dot.ok   { background: var(--color-success); box-shadow: 0 0 6px rgba(74,158,110,0.5); }
+    .sync-dot.warn { background: var(--color-warning); box-shadow: 0 0 6px rgba(212,135,44,0.5); animation: pulse-warn 1.5s infinite; }
+    @keyframes pulse-warn { 0%,100%{opacity:1} 50%{opacity:0.4} }
+
+    /* Order Feed Table */
+    .order-feed-table { width: 100%; border-collapse: collapse; font-size: 12.5px; }
+    .order-feed-table th {
+      padding: 8px 12px;
+      font-size: 10px; font-weight: 600;
+      text-transform: uppercase; letter-spacing: 0.06em;
+      color: var(--color-text-subtle);
+      border-bottom: 1px solid var(--color-border);
+      text-align: left;
+      white-space: nowrap;
+    }
+    .order-feed-table td {
+      padding: 10px 12px;
+      border-bottom: 1px solid rgba(56,56,56,0.4);
+      vertical-align: middle;
+      color: var(--color-text);
+    }
+    .order-feed-table tr:last-child td { border-bottom: none; }
+    .order-feed-table tbody tr { transition: background var(--t-fast); cursor: pointer; }
+    .order-feed-table tbody tr:hover td { background: rgba(255,255,255,0.025); }
+
+    /* Live indicator */
+    .live-dot {
+      width: 7px; height: 7px;
+      border-radius: 50%;
+      background: var(--color-success);
+      box-shadow: 0 0 0 0 rgba(74,158,110,0.4);
+      animation: live-pulse 2s infinite;
+      display: inline-block;
+    }
+    @keyframes live-pulse {
+      0%   { box-shadow: 0 0 0 0 rgba(74,158,110,0.5); }
+      70%  { box-shadow: 0 0 0 5px rgba(74,158,110,0); }
+      100% { box-shadow: 0 0 0 0 rgba(74,158,110,0); }
+    }
+
+    /* SLA Gauges */
+    .sla-list { display: flex; flex-direction: column; gap: 12px; }
+    .sla-item {
+      background: var(--color-surface-raised);
+      border: 1px solid var(--color-border);
+      border-radius: var(--radius-md);
+      padding: 12px 16px;
+      display: flex;
+      align-items: center;
+      gap: 14px;
+    }
+    .sla-gauge {
+      position: relative;
+      width: 40px; height: 40px;
+      flex-shrink: 0;
+    }
+    .sla-gauge svg { transform: rotate(-90deg); }
+    .sla-gauge .gauge-track { fill: none; stroke: var(--color-border); stroke-width: 3.5; }
+    .sla-gauge .gauge-fill  { fill: none; stroke-width: 3.5; stroke-linecap: round; transition: stroke-dasharray var(--t-slow); }
+    .sla-gauge .gauge-label {
+      position: absolute; inset: 0;
+      display: flex; align-items: center; justify-content: center;
+      font-size: 9px; font-weight: 700;
+      transform: none;
+    }
+    .sla-info { flex: 1; min-width: 0; }
+    .sla-order-id { font-family: 'Roboto Mono', monospace; font-size: 11px; color: var(--color-text-muted); }
+    .sla-buyer    { font-size: 13px; font-weight: 500; color: var(--color-text); }
+    .sla-deadline { font-size: 11px; color: var(--color-text-subtle); margin-top: 1px; }
+
+    /* Reorder alerts */
+    .reorder-item {
+      background: var(--color-surface-raised);
+      border: 1px solid var(--color-border);
+      border-radius: var(--radius-md);
+      padding: 12px 14px;
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      transition: border-color var(--t-fast);
+    }
+    .reorder-item:hover { border-color: var(--color-warning); }
+    .reorder-stock-bar {
+      width: 3px;
+      height: 36px;
+      border-radius: 2px;
+      flex-shrink: 0;
+    }
+    .reorder-sku  { font-family: 'Roboto Mono', monospace; font-size: 10px; color: var(--color-text-subtle); }
+    .reorder-name { font-size: 12.5px; font-weight: 500; color: var(--color-text); margin-top: 1px; }
+    .reorder-days {
+      font-size: 11px;
+      font-weight: 600;
+      padding: 2px 7px;
+      border-radius: 10px;
+      white-space: nowrap;
+    }
+    .days-critical  { background: rgba(139,58,58,0.2); color: #E05555; }
+    .days-warn      { background: rgba(212,135,44,0.15); color: var(--color-warning); }
+    .days-ok        { background: rgba(74,158,110,0.12); color: var(--color-success); }
+
+    /* FAB Bar */
+    .fab-bar {
+      position: fixed;
+      bottom: 24px;
+      right: 24px;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      background: var(--color-surface-raised);
+      border: 1px solid var(--color-border-active);
+      border-radius: 40px;
+      padding: 8px 16px;
+      box-shadow: var(--shadow-raised);
+      z-index: 100;
+    }
+    .fab-btn {
+      display: flex; align-items: center; gap: 6px;
+      padding: 7px 13px;
+      border-radius: 20px;
+      font-size: 12.5px; font-weight: 500;
+      cursor: pointer; border: none;
+      transition: all var(--t-fast);
+      white-space: nowrap;
+    }
+    .fab-btn i { width: 14px; height: 14px; }
+    .fab-primary { background: var(--color-accent); color: #141414; font-weight: 600; }
+    .fab-primary:hover { background: #D4A830; box-shadow: 0 0 12px rgba(196,151,42,0.3); }
+    .fab-ghost { background: transparent; color: var(--color-text-muted); border: 1px solid var(--color-border); }
+    .fab-ghost:hover { border-color: var(--color-border-active); color: var(--color-text); background: rgba(255,255,255,0.04); }
+    .fab-divider { width: 1px; height: 24px; background: var(--color-border); margin: 0 4px; }
+
+    /* Channel icon mini */
+    .ch-mini {
+      width: 20px; height: 20px;
+      border-radius: 3px;
+      font-size: 9px; font-weight: 800;
+      display: inline-flex; align-items: center; justify-content: center;
+      flex-shrink: 0;
+      letter-spacing: 0;
+    }
+    .section-header {
+      display: flex; align-items: center; justify-content: space-between;
+      margin-bottom: 14px;
+    }
+    .section-title {
+      font-family: 'DM Sans', sans-serif;
+      font-size: 14px; font-weight: 600;
+      color: var(--color-text);
+      display: flex; align-items: center; gap: 8px;
+    }
+  </style>
+</head>
+<body>
+<div class="app-shell">
+
+  <!-- ═══ SIDEBAR ═══ -->
+  <aside class="sidebar">
+    <div class="sidebar-logo">
+      <div class="logo-mark">S</div>
+      <span class="logo-text font-heading">Synergia</span>
+    </div>
+    <nav class="sidebar-nav">
+      <a class="nav-item active" href="06-main-dashboard.html"><i data-lucide="layout-dashboard"></i>Dashboard</a>
+      <a class="nav-item" href="07-order-queue.html"><i data-lucide="shopping-bag"></i>Orders<span class="nav-badge">14</span></a>
+      <a class="nav-item" href="#"><i data-lucide="tag"></i>Listings</a>
+      <a class="nav-item" href="#"><i data-lucide="archive"></i>Inventory<span class="nav-badge-warning">7</span></a>
+      <a class="nav-item" href="#"><i data-lucide="truck"></i>Suppliers</a>
+      <a class="nav-item" href="#"><i data-lucide="users"></i>Customers</a>
+      <a class="nav-item" href="#"><i data-lucide="refresh-ccw"></i>Returns<span class="nav-badge" style="background:rgba(212,135,44,0.2);color:var(--color-warning);">8</span></a>
+      <a class="nav-item" href="#"><i data-lucide="package"></i>Shipping</a>
+      <a class="nav-item" href="#"><i data-lucide="banknote"></i>Finance</a>
+      <a class="nav-item" href="#"><i data-lucide="bar-chart-3"></i>Reports</a>
+      <a class="nav-item" href="#"><i data-lucide="search"></i>Research</a>
+      <a class="nav-item" href="10-product-list.html"><i data-lucide="book-open"></i>Catalogue</a>
+      <a class="nav-item" href="#"><i data-lucide="radio"></i>Channels</a>
+      <a class="nav-item" href="#"><i data-lucide="trending-up"></i>Forecasting</a>
+      <a class="nav-item" href="#"><i data-lucide="message-square"></i>Messaging</a>
+      <a class="nav-item" href="#"><i data-lucide="settings"></i>Settings</a>
+    </nav>
+    <div class="sidebar-footer">
+      <div class="sidebar-user">
+        <div class="user-avatar">JM</div>
+        <div class="user-info">
+          <div class="user-name">James Mitchell</div>
+          <div class="user-company">Digital Perception Ltd</div>
+        </div>
+      </div>
+    </div>
+  </aside>
+
+  <!-- ═══ MAIN COLUMN ═══ -->
+  <div class="main-col">
+
+    <!-- Top Bar -->
+    <header class="topbar">
+      <button class="company-switcher">
+        <i data-lucide="building-2" style="width:14px;height:14px;color:var(--color-accent);"></i>
+        Digital Perception Ltd
+        <i data-lucide="chevrons-up-down" style="width:13px;height:13px;color:var(--color-text-subtle);"></i>
+      </button>
+      <div class="topbar-spacer"></div>
+      <button class="cmd-k-btn">
+        <i data-lucide="search" style="width:13px;height:13px;"></i>
+        Search anything…
+        <span class="kbd">⌘K</span>
+      </button>
+      <button class="topbar-icon-btn">
+        <i data-lucide="bell" style="width:16px;height:16px;"></i>
+        <span class="topbar-badge">3</span>
+      </button>
+      <button class="topbar-icon-btn">
+        <i data-lucide="help-circle" style="width:16px;height:16px;"></i>
+      </button>
+      <div class="topbar-avatar">JM</div>
+      <button class="btn btn-ghost btn-xs" style="color:var(--color-text-subtle);font-size:11px;">EN-GB</button>
+    </header>
+
+    <!-- Content -->
+    <main class="content-area">
+
+      <!-- Page Header -->
+      <div class="page-header">
+        <div>
+          <h1 class="page-title font-heading">Good morning, James <span style="opacity:0.4;">☀</span></h1>
+          <p class="page-subtitle">Wednesday, 7 May 2026 · 4 channels active · Last sync 2 min ago</p>
+        </div>
+        <div style="display:flex;gap:8px;align-items:center;">
+          <button class="btn btn-secondary btn-sm"><i data-lucide="calendar"></i>Today</button>
+          <button class="btn btn-secondary btn-sm"><i data-lucide="download"></i>Export</button>
+          <button class="btn btn-primary btn-sm"><i data-lucide="plus"></i>New Order</button>
+        </div>
+      </div>
+
+      <!-- KPI Grid -->
+      <div class="kpi-grid">
+
+        <!-- Today's Orders -->
+        <div class="kpi-card accent-success">
+          <div class="kpi-header">
+            <span class="kpi-label">Today's Orders</span>
+            <div class="kpi-icon"><i data-lucide="shopping-cart" style="width:14px;height:14px;color:var(--color-success);"></i></div>
+          </div>
+          <div class="kpi-value font-heading">247</div>
+          <div class="kpi-delta-text up"><i data-lucide="trending-up"></i>+12% vs yesterday</div>
+          <div class="kpi-sparkline">
+            <span style="height:40%"></span><span style="height:55%"></span><span style="height:45%"></span>
+            <span style="height:60%"></span><span style="height:50%"></span><span style="height:70%"></span>
+            <span style="height:65%"></span><span class="last" style="height:88%"></span>
+          </div>
+        </div>
+
+        <!-- Revenue -->
+        <div class="kpi-card accent-success">
+          <div class="kpi-header">
+            <span class="kpi-label">Revenue</span>
+            <div class="kpi-icon"><i data-lucide="pound-sterling" style="width:14px;height:14px;color:var(--color-accent);"></i></div>
+          </div>
+          <div class="kpi-value font-heading" style="font-size:24px;">£18,420</div>
+          <div class="kpi-delta-text up"><i data-lucide="trending-up"></i>+8.3% vs yesterday</div>
+          <div class="kpi-sparkline">
+            <span style="height:50%"></span><span style="height:60%"></span><span style="height:48%"></span>
+            <span style="height:72%"></span><span style="height:65%"></span><span style="height:80%"></span>
+            <span style="height:74%"></span><span class="last" style="height:92%"></span>
+          </div>
+        </div>
+
+        <!-- Units Shipped -->
+        <div class="kpi-card accent-danger">
+          <div class="kpi-header">
+            <span class="kpi-label">Units Shipped</span>
+            <div class="kpi-icon"><i data-lucide="package-check" style="width:14px;height:14px;color:#E05555;"></i></div>
+          </div>
+          <div class="kpi-value font-heading">183</div>
+          <div class="kpi-delta-text down"><i data-lucide="trending-down"></i>−2% vs yesterday</div>
+          <div class="kpi-sparkline">
+            <span style="height:75%"></span><span style="height:68%"></span><span style="height:82%"></span>
+            <span style="height:70%"></span><span style="height:78%"></span><span style="height:62%"></span>
+            <span style="height:58%"></span><span class="last" style="height:55%" style="background:#E05555;opacity:0.7;"></span>
+          </div>
+        </div>
+
+        <!-- Open Returns -->
+        <div class="kpi-card accent-warning">
+          <div class="kpi-header">
+            <span class="kpi-label">Open Returns</span>
+            <div class="kpi-icon"><i data-lucide="refresh-ccw" style="width:14px;height:14px;color:var(--color-warning);"></i></div>
+          </div>
+          <div class="kpi-value font-heading">14</div>
+          <div class="kpi-delta-text" style="color:var(--color-warning);"><i data-lucide="arrow-up"></i>+3 today</div>
+          <div style="margin-top:10px;">
+            <span class="badge badge-warning">Needs attention</span>
+          </div>
+        </div>
+
+        <!-- Low Stock Alerts -->
+        <div class="kpi-card accent-warning">
+          <div class="kpi-header">
+            <span class="kpi-label">Low Stock Alerts</span>
+            <div class="kpi-icon"><i data-lucide="alert-triangle" style="width:14px;height:14px;color:var(--color-warning);"></i></div>
+          </div>
+          <div class="kpi-value font-heading">7</div>
+          <div class="kpi-delta-text" style="color:var(--color-text-subtle);">No change</div>
+          <div style="margin-top:10px;">
+            <span class="badge badge-warning">7 SKUs below threshold</span>
+          </div>
+        </div>
+
+        <!-- Active Listings -->
+        <div class="kpi-card accent-success">
+          <div class="kpi-header">
+            <span class="kpi-label">Active Listings</span>
+            <div class="kpi-icon"><i data-lucide="tag" style="width:14px;height:14px;color:var(--color-success);"></i></div>
+          </div>
+          <div class="kpi-value font-heading" style="font-size:26px;">2,841</div>
+          <div class="kpi-delta-text up"><i data-lucide="trending-up"></i>+23 this week</div>
+          <div class="kpi-sparkline">
+            <span style="height:82%"></span><span style="height:84%"></span><span style="height:86%"></span>
+            <span style="height:85%"></span><span style="height:88%"></span><span style="height:90%"></span>
+            <span style="height:92%"></span><span class="last" style="height:95%"></span>
+          </div>
+        </div>
+
+      </div><!-- /kpi-grid -->
+
+      <!-- Channel Sync Status -->
+      <div style="margin-bottom:20px;">
+        <div class="section-header">
+          <span class="section-title"><i data-lucide="radio" style="width:15px;height:15px;color:var(--color-accent);"></i>Channel Sync Status</span>
+          <button class="btn btn-ghost btn-xs">View all channels <i data-lucide="chevron-right" style="width:12px;height:12px;"></i></button>
+        </div>
+        <div class="sync-row">
+          <div class="sync-card">
+            <div class="channel-logo ch-logo-ebay">eB</div>
+            <div class="sync-info">
+              <div class="sync-name">eBay UK</div>
+              <div class="sync-time">2 min ago · 1,247 listings</div>
+            </div>
+            <div class="sync-dot ok"></div>
+          </div>
+          <div class="sync-card">
+            <div class="channel-logo ch-logo-tiktok">TT</div>
+            <div class="sync-info">
+              <div class="sync-name">TikTok Shop</div>
+              <div class="sync-time">5 min ago · 843 listings</div>
+            </div>
+            <div class="sync-dot ok"></div>
+          </div>
+          <div class="sync-card" style="border-color:rgba(212,135,44,0.35);">
+            <div class="channel-logo ch-logo-vinted">Vi</div>
+            <div class="sync-info">
+              <div class="sync-name">Vinted</div>
+              <div class="sync-time" style="color:var(--color-warning);">Syncing… 412/856 done</div>
+            </div>
+            <div class="sync-dot warn"></div>
+          </div>
+          <div class="sync-card">
+            <div class="channel-logo ch-logo-etsy">Et</div>
+            <div class="sync-info">
+              <div class="sync-name">Etsy</div>
+              <div class="sync-time">1 min ago · 339 listings</div>
+            </div>
+            <div class="sync-dot ok"></div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Main Two-Column -->
+      <div class="dashboard-main">
+
+        <!-- LEFT: Order Feed + SLA -->
+        <div class="dashboard-left">
+
+          <!-- Live Order Feed -->
+          <div class="card" style="padding:0;overflow:hidden;">
+            <div style="padding:16px 20px 0;display:flex;align-items:center;justify-content:space-between;">
+              <span class="section-title">
+                <span class="live-dot"></span>
+                Live Order Feed
+                <span class="badge badge-success" style="font-size:10px;">LIVE</span>
+              </span>
+              <div style="display:flex;gap:6px;">
+                <button class="btn btn-ghost btn-xs">Filter</button>
+                <button class="btn btn-ghost btn-xs" style="color:var(--color-accent);">View all</button>
+              </div>
+            </div>
+            <div style="padding:12px 0 0;overflow-x:auto;">
+              <table class="order-feed-table">
+                <thead>
+                  <tr>
+                    <th>Channel</th>
+                    <th>Order ID</th>
+                    <th>Buyer</th>
+                    <th>Value</th>
+                    <th>Status</th>
+                    <th>Time</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  <tr>
+                    <td><span class="ch-mini ch-ebay" style="background:rgba(255,174,0,0.15);color:#FFAE00;">eB</span></td>
+                    <td><span class="font-mono" style="color:var(--color-text-muted);font-size:11px;">#EB-2024-8847</span></td>
+                    <td>Sarah Mitchell</td>
+                    <td style="font-weight:600;">£47.99</td>
+                    <td><span class="badge badge-warning">Processing</span></td>
+                    <td style="color:var(--color-text-muted);font-size:11px;">2 min ago</td>
+                  </tr>
+                  <tr>
+                    <td><span class="ch-mini" style="background:rgba(105,201,208,0.15);color:#69C9D0;font-size:8px;font-weight:800;">TT</span></td>
+                    <td><span class="font-mono" style="color:var(--color-text-muted);font-size:11px;">#TK-9921</span></td>
+                    <td>James Chen</td>
+                    <td style="font-weight:600;">£89.00</td>
+                    <td><span class="badge badge-info">Awaiting Despatch</span></td>
+                    <td style="color:var(--color-text-muted);font-size:11px;">5 min ago</td>
+                  </tr>
+                  <tr>
+                    <td><span class="ch-mini" style="background:rgba(9,183,117,0.15);color:#09B775;">Vi</span></td>
+                    <td><span class="font-mono" style="color:var(--color-text-muted);font-size:11px;">#VT-4432</span></td>
+                    <td>Emma Thompson</td>
+                    <td style="font-weight:600;">£23.50</td>
+                    <td><span class="badge badge-success">Shipped</span></td>
+                    <td style="color:var(--color-text-muted);font-size:11px;">8 min ago</td>
+                  </tr>
+                  <tr>
+                    <td><span class="ch-mini ch-ebay" style="background:rgba(255,174,0,0.15);color:#FFAE00;">eB</span></td>
+                    <td><span class="font-mono" style="color:var(--color-text-muted);font-size:11px;">#EB-2024-8831</span></td>
+                    <td>Michael Brown</td>
+                    <td style="font-weight:600;">£156.00</td>
+                    <td><span class="badge badge-info">Awaiting Despatch</span></td>
+                    <td style="color:var(--color-text-muted);font-size:11px;">11 min ago</td>
+                  </tr>
+                  <tr>
+                    <td><span class="ch-mini" style="background:rgba(243,89,36,0.15);color:#F35924;">Et</span></td>
+                    <td><span class="font-mono" style="color:var(--color-text-muted);font-size:11px;">#ET-4421</span></td>
+                    <td>Rebecca Davies</td>
+                    <td style="font-weight:600;">£34.99</td>
+                    <td><span class="badge badge-danger">On Hold</span></td>
+                    <td style="color:var(--color-text-muted);font-size:11px;">14 min ago</td>
+                  </tr>
+                  <tr>
+                    <td><span class="ch-mini" style="background:rgba(105,201,208,0.15);color:#69C9D0;font-size:8px;font-weight:800;">TT</span></td>
+                    <td><span class="font-mono" style="color:var(--color-text-muted);font-size:11px;">#TK-9905</span></td>
+                    <td>Oliver Patel</td>
+                    <td style="font-weight:600;">£67.50</td>
+                    <td><span class="badge badge-warning">Processing</span></td>
+                    <td style="color:var(--color-text-muted);font-size:11px;">17 min ago</td>
+                  </tr>
+                  <tr>
+                    <td><span class="ch-mini ch-ebay" style="background:rgba(255,174,0,0.15);color:#FFAE00;">eB</span></td>
+                    <td><span class="font-mono" style="color:var(--color-text-muted);font-size:11px;">#EB-2024-8819</span></td>
+                    <td>Charlotte Wilson</td>
+                    <td style="font-weight:600;">£212.00</td>
+                    <td><span class="badge badge-success">Shipped</span></td>
+                    <td style="color:var(--color-text-muted);font-size:11px;">23 min ago</td>
+                  </tr>
+                  <tr>
+                    <td><span class="ch-mini" style="background:rgba(9,183,117,0.15);color:#09B775;">Vi</span></td>
+                    <td><span class="font-mono" style="color:var(--color-text-muted);font-size:11px;">#VT-4401</span></td>
+                    <td>William Jones</td>
+                    <td style="font-weight:600;">£18.00</td>
+                    <td><span class="badge badge-success">Shipped</span></td>
+                    <td style="color:var(--color-text-muted);font-size:11px;">31 min ago</td>
+                  </tr>
+                  <tr>
+                    <td><span class="ch-mini" style="background:rgba(243,89,36,0.15);color:#F35924;">Et</span></td>
+                    <td><span class="font-mono" style="color:var(--color-text-muted);font-size:11px;">#ET-4409</span></td>
+                    <td>Amelia Robinson</td>
+                    <td style="font-weight:600;">£78.00</td>
+                    <td><span class="badge badge-info">Awaiting Despatch</span></td>
+                    <td style="color:var(--color-text-muted);font-size:11px;">38 min ago</td>
+                  </tr>
+                </tbody>
+              </table>
+            </div>
+            <div style="padding:12px 20px;border-top:1px solid var(--color-border);display:flex;align-items:center;justify-content:space-between;">
+              <span style="font-size:11px;color:var(--color-text-subtle);">Showing 9 of 247 orders today</span>
+              <button class="btn btn-ghost btn-xs" style="color:var(--color-accent);">View all orders →</button>
+            </div>
+          </div>
+
+          <!-- SLA Warnings -->
+          <div class="card">
+            <div class="section-header">
+              <span class="section-title" style="color:var(--color-warning);">
+                <i data-lucide="clock" style="width:15px;height:15px;"></i>
+                SLA Warnings
+                <span class="badge badge-warning">3 approaching</span>
+              </span>
+              <button class="btn btn-ghost btn-xs">Manage all</button>
+            </div>
+            <div class="sla-list">
+              <!-- SLA Item 1 — Red (critical) -->
+              <div class="sla-item" style="border-color:rgba(224,85,85,0.35);">
+                <div class="sla-gauge">
+                  <svg viewBox="0 0 40 40" width="40" height="40">
+                    <circle class="gauge-track" cx="20" cy="20" r="16" />
+                    <circle class="gauge-fill" cx="20" cy="20" r="16"
+                      stroke="#E05555"
+                      stroke-dasharray="22 79"
+                      stroke-dashoffset="0" />
+                  </svg>
+                  <div class="gauge-label" style="color:#E05555;">3h</div>
+                </div>
+                <div class="sla-info">
+                  <div class="sla-order-id">#EB-2024-8831 · eBay UK</div>
+                  <div class="sla-buyer">Michael Brown — £156.00</div>
+                  <div class="sla-deadline">Despatch by 17:00 · <strong style="color:#E05555;">3h 14m remaining</strong></div>
+                </div>
+                <button class="btn btn-sm" style="background:rgba(224,85,85,0.12);border-color:rgba(224,85,85,0.35);color:#E05555;">Despatch Now</button>
+              </div>
+              <!-- SLA Item 2 — Amber -->
+              <div class="sla-item" style="border-color:rgba(212,135,44,0.3);">
+                <div class="sla-gauge">
+                  <svg viewBox="0 0 40 40" width="40" height="40">
+                    <circle class="gauge-track" cx="20" cy="20" r="16" />
+                    <circle class="gauge-fill" cx="20" cy="20" r="16"
+                      stroke="var(--color-warning)"
+                      stroke-dasharray="40 61"
+                      stroke-dashoffset="0" />
+                  </svg>
+                  <div class="gauge-label" style="color:var(--color-warning);">5h</div>
+                </div>
+                <div class="sla-info">
+                  <div class="sla-order-id">#TK-9921 · TikTok Shop</div>
+                  <div class="sla-buyer">James Chen — £89.00</div>
+                  <div class="sla-deadline">Despatch by 19:00 · <strong style="color:var(--color-warning);">5h 07m remaining</strong></div>
+                </div>
+                <button class="btn btn-secondary btn-sm">View Order</button>
+              </div>
+              <!-- SLA Item 3 — Amber -->
+              <div class="sla-item" style="border-color:rgba(212,135,44,0.25);">
+                <div class="sla-gauge">
+                  <svg viewBox="0 0 40 40" width="40" height="40">
+                    <circle class="gauge-track" cx="20" cy="20" r="16" />
+                    <circle class="gauge-fill" cx="20" cy="20" r="16"
+                      stroke="var(--color-warning)"
+                      stroke-dasharray="50 51"
+                      stroke-dashoffset="0" />
+                  </svg>
+                  <div class="gauge-label" style="color:var(--color-warning);">8h</div>
+                </div>
+                <div class="sla-info">
+                  <div class="sla-order-id">#ET-4409 · Etsy</div>
+                  <div class="sla-buyer">Amelia Robinson — £78.00</div>
+                  <div class="sla-deadline">Despatch by 22:00 · <strong style="color:var(--color-warning);">8h 22m remaining</strong></div>
+                </div>
+                <button class="btn btn-secondary btn-sm">View Order</button>
+              </div>
+            </div>
+          </div>
+
+        </div><!-- /dashboard-left -->
+
+        <!-- RIGHT: Reorder Alerts -->
+        <div class="dashboard-right">
+
+          <div class="card" style="flex:1;">
+            <div class="section-header">
+              <span class="section-title">
+                <i data-lucide="alert-triangle" style="width:15px;height:15px;color:var(--color-warning);"></i>
+                Reorder Alerts
+              </span>
+              <button class="btn btn-ghost btn-xs">All alerts</button>
+            </div>
+            <div style="display:flex;flex-direction:column;gap:8px;">
+
+              <div class="reorder-item">
+                <div class="reorder-stock-bar" style="background:#E05555;"></div>
+                <div style="flex:1;min-width:0;">
+                  <div class="reorder-sku">BLSC-0012</div>
+                  <div class="reorder-name">Bluetooth Speaker Black</div>
+                  <div style="font-size:11px;color:var(--color-text-subtle);margin-top:2px;">8 units · eBay, TikTok</div>
+                </div>
+                <div style="display:flex;flex-direction:column;align-items:flex-end;gap:4px;">
+                  <span class="reorder-days days-critical">3 days</span>
+                  <button class="btn btn-primary btn-xs">Create PO</button>
+                </div>
+              </div>
+
+              <div class="reorder-item">
+                <div class="reorder-stock-bar" style="background:#E05555;"></div>
+                <div style="flex:1;min-width:0;">
+                  <div class="reorder-sku">WHDP-0089</div>
+                  <div class="reorder-name">Wireless Headphones Studio</div>
+                  <div style="font-size:11px;color:var(--color-text-subtle);margin-top:2px;">3 units · All channels</div>
+                </div>
+                <div style="display:flex;flex-direction:column;align-items:flex-end;gap:4px;">
+                  <span class="reorder-days days-critical">2 days</span>
+                  <button class="btn btn-primary btn-xs">Create PO</button>
+                </div>
+              </div>
+
+              <div class="reorder-item">
+                <div class="reorder-stock-bar" style="background:var(--color-warning);"></div>
+                <div style="flex:1;min-width:0;">
+                  <div class="reorder-sku">PCHG-0234</div>
+                  <div class="reorder-name">Portable Charger 20000mAh</div>
+                  <div style="font-size:11px;color:var(--color-text-subtle);margin-top:2px;">14 units · eBay</div>
+                </div>
+                <div style="display:flex;flex-direction:column;align-items:flex-end;gap:4px;">
+                  <span class="reorder-days days-warn">6 days</span>
+                  <button class="btn btn-accent-outline btn-xs">Create PO</button>
+                </div>
+              </div>
+
+              <div class="reorder-item">
+                <div class="reorder-stock-bar" style="background:var(--color-warning);"></div>
+                <div style="flex:1;min-width:0;">
+                  <div class="reorder-sku">USBH-0441</div>
+                  <div class="reorder-name">USB-C Hub 7-in-1</div>
+                  <div style="font-size:11px;color:var(--color-text-subtle);margin-top:2px;">6 units · TikTok, Etsy</div>
+                </div>
+                <div style="display:flex;flex-direction:column;align-items:flex-end;gap:4px;">
+                  <span class="reorder-days days-warn">8 days</span>
+                  <button class="btn btn-accent-outline btn-xs">Create PO</button>
+                </div>
+              </div>
+
+              <div class="reorder-item">
+                <div class="reorder-stock-bar" style="background:var(--color-accent);"></div>
+                <div style="flex:1;min-width:0;">
+                  <div class="reorder-sku">SMRT-0078</div>
+                  <div class="reorder-name">Smart Watch Band 44mm</div>
+                  <div style="font-size:11px;color:var(--color-text-subtle);margin-top:2px;">22 units · Vinted</div>
+                </div>
+                <div style="display:flex;flex-direction:column;align-items:flex-end;gap:4px;">
+                  <span class="reorder-days days-ok">12 days</span>
+                  <button class="btn btn-ghost btn-xs">Create PO</button>
+                </div>
+              </div>
+
+            </div>
+            <div style="margin-top:14px;padding-top:14px;border-top:1px solid var(--color-border);display:flex;justify-content:center;">
+              <button class="btn btn-secondary btn-sm" style="width:100%;justify-content:center;">
+                <i data-lucide="list"></i>View all 7 alerts
+              </button>
+            </div>
+          </div>
+
+          <!-- Quick Stats Card -->
+          <div class="card">
+            <div class="card-header">
+              <span class="card-title">Today's Performance</span>
+              <span class="badge badge-muted">vs. Mon</span>
+            </div>
+            <div style="display:flex;flex-direction:column;gap:10px;">
+              <div style="display:flex;justify-content:space-between;align-items:center;">
+                <span style="font-size:12px;color:var(--color-text-muted);">Avg Order Value</span>
+                <span style="font-size:13px;font-weight:600;color:var(--color-text);">£74.57</span>
+              </div>
+              <div style="display:flex;justify-content:space-between;align-items:center;">
+                <span style="font-size:12px;color:var(--color-text-muted);">Conversion Rate</span>
+                <span style="font-size:13px;font-weight:600;color:var(--color-success);">3.8%</span>
+              </div>
+              <div style="display:flex;justify-content:space-between;align-items:center;">
+                <span style="font-size:12px;color:var(--color-text-muted);">Cancelled Orders</span>
+                <span style="font-size:13px;font-weight:600;color:#E05555;">4</span>
+              </div>
+              <div style="display:flex;justify-content:space-between;align-items:center;">
+                <span style="font-size:12px;color:var(--color-text-muted);">Refund Requests</span>
+                <span style="font-size:13px;font-weight:600;color:var(--color-warning);">6</span>
+              </div>
+              <div style="display:flex;justify-content:space-between;align-items:center;">
+                <span style="font-size:12px;color:var(--color-text-muted);">Late Despatch Risk</span>
+                <span style="font-size:13px;font-weight:600;color:#E05555;">3 orders</span>
+              </div>
+            </div>
+          </div>
+
+        </div><!-- /dashboard-right -->
+      </div><!-- /dashboard-main -->
+
+    </main>
+  </div>
+</div>
+
+<!-- FAB Bar -->
+<div class="fab-bar">
+  <button class="fab-btn fab-primary"><i data-lucide="plus"></i>New Order</button>
+  <div class="fab-divider"></div>
+  <button class="fab-btn fab-ghost"><i data-lucide="tag"></i>New Listing</button>
+  <button class="fab-btn fab-ghost"><i data-lucide="printer"></i>Print Labels</button>
+  <button class="fab-btn fab-ghost"><i data-lucide="scan"></i>Scan Item</button>
+</div>
+
+<script>lucide.createIcons();</script>
+</body>
+</html>

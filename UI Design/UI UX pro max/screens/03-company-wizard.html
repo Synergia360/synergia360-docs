@@ -1,0 +1,397 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Synergia — Company Setup</title>
+  <link rel="stylesheet" href="../shared.css">
+  <style>
+    body {
+      min-height: 100vh;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      background: var(--color-bg);
+      background-image:
+        radial-gradient(ellipse 700px 400px at 50% 0%, rgba(196,151,42,0.05) 0%, transparent 70%);
+    }
+
+    .wizard-wrap {
+      width: 100%;
+      max-width: 620px;
+      padding: 24px 16px;
+    }
+
+    .wizard-top {
+      text-align: center;
+      margin-bottom: 28px;
+    }
+
+    .wizard-logo {
+      display: inline-flex;
+      align-items: center;
+      gap: 10px;
+      margin-bottom: 8px;
+    }
+
+    .wordmark-icon {
+      width: 32px;
+      height: 32px;
+      background: linear-gradient(135deg, var(--color-accent) 0%, var(--color-accent-dim) 100%);
+      border-radius: 8px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-weight: 800;
+      font-size: 16px;
+      color: #141414;
+    }
+
+    .wordmark-text {
+      font-size: 18px;
+      font-weight: 700;
+      color: var(--color-accent);
+    }
+
+    .wizard-card {
+      background: var(--color-surface);
+      border: 1px solid var(--color-border);
+      border-radius: var(--radius-lg);
+      padding: 36px 40px;
+      box-shadow: 0 8px 48px rgba(0,0,0,0.6);
+    }
+
+    /* Stepper */
+    .stepper {
+      display: flex;
+      align-items: flex-start;
+      gap: 0;
+      margin-bottom: 36px;
+    }
+
+    .step-item {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      flex: 1;
+      position: relative;
+    }
+
+    .step-item:not(:last-child)::after {
+      content: '';
+      position: absolute;
+      top: 16px;
+      left: 50%;
+      width: 100%;
+      height: 1px;
+      background: var(--color-border);
+      z-index: 0;
+    }
+
+    .step-item.completed:not(:last-child)::after,
+    .step-item.active:not(:last-child)::after {
+      background: var(--color-accent-dim);
+    }
+
+    .step-node {
+      width: 32px;
+      height: 32px;
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 12px;
+      font-weight: 700;
+      position: relative;
+      z-index: 1;
+      border: 2px solid var(--color-border);
+      background: var(--color-surface);
+      color: var(--color-text-subtle);
+      transition: all 0.2s;
+    }
+
+    .step-item.completed .step-node {
+      background: var(--color-accent);
+      border-color: var(--color-accent);
+      color: #141414;
+    }
+
+    .step-item.active .step-node {
+      border-color: var(--color-accent);
+      background: var(--color-accent-glow);
+      color: var(--color-accent);
+      box-shadow: 0 0 0 4px rgba(196,151,42,0.12);
+    }
+
+    .step-label {
+      margin-top: 8px;
+      font-size: 11.5px;
+      font-weight: 500;
+      color: var(--color-text-subtle);
+      text-align: center;
+    }
+
+    .step-item.active .step-label { color: var(--color-accent); font-weight: 600; }
+    .step-item.completed .step-label { color: var(--color-text-muted); }
+
+    .step-sublabel {
+      font-size: 10px;
+      color: var(--color-text-subtle);
+      margin-top: 2px;
+    }
+
+    /* Step content */
+    .step-heading {
+      font-size: 20px;
+      font-weight: 700;
+      color: var(--color-text);
+      letter-spacing: -0.02em;
+      margin-bottom: 4px;
+    }
+
+    .step-sub {
+      font-size: 13.5px;
+      color: var(--color-text-muted);
+      margin-bottom: 28px;
+    }
+
+    /* Locale toggle */
+    .toggle-group {
+      display: flex;
+      background: var(--color-surface-raised);
+      border: 1px solid var(--color-border);
+      border-radius: var(--radius-md);
+      overflow: hidden;
+      margin-bottom: 20px;
+    }
+
+    .toggle-option {
+      flex: 1;
+      padding: 10px 16px;
+      text-align: center;
+      font-size: 13.5px;
+      font-weight: 500;
+      color: var(--color-text-muted);
+      cursor: pointer;
+      transition: all 0.15s;
+      border: none;
+      background: transparent;
+      font-family: var(--font-body);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 8px;
+    }
+
+    .toggle-option.active {
+      background: var(--color-accent-glow);
+      color: var(--color-accent);
+      border-bottom: 2px solid var(--color-accent);
+    }
+
+    .form-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 16px;
+    }
+
+    .select-field {
+      width: 100%;
+      background: var(--color-surface-raised);
+      border: 1px solid var(--color-border);
+      border-radius: var(--radius-md);
+      padding: 10px 14px;
+      color: var(--color-text);
+      font-size: 14px;
+      font-family: var(--font-body);
+      transition: border-color 0.15s;
+      outline: none;
+      appearance: none;
+      -webkit-appearance: none;
+      background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' viewBox='0 0 24 24' fill='none' stroke='%23666666' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpolyline points='6 9 12 15 18 9'/%3E%3C/svg%3E");
+      background-repeat: no-repeat;
+      background-position: right 12px center;
+      padding-right: 36px;
+      cursor: pointer;
+    }
+
+    .select-field:focus {
+      border-color: var(--color-accent);
+      box-shadow: 0 0 0 3px var(--color-accent-glow);
+    }
+
+    .select-field option { background: #252525; }
+
+    .wizard-footer {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      margin-top: 32px;
+      padding-top: 20px;
+      border-top: 1px solid var(--color-border);
+    }
+
+    .skip-link {
+      font-size: 12.5px;
+      color: var(--color-text-subtle);
+      text-decoration: none;
+      transition: color 0.15s;
+    }
+
+    .skip-link:hover { color: var(--color-text-muted); }
+
+    .wizard-actions {
+      display: flex;
+      gap: 10px;
+      align-items: center;
+    }
+
+    .step-counter {
+      font-size: 12px;
+      color: var(--color-text-subtle);
+      margin-right: 4px;
+    }
+
+    .locale-flag {
+      font-size: 16px;
+      line-height: 1;
+    }
+
+    .hint-text {
+      font-size: 11.5px;
+      color: var(--color-text-subtle);
+      margin-top: 6px;
+      display: flex;
+      align-items: center;
+      gap: 5px;
+    }
+  </style>
+</head>
+<body>
+  <div class="wizard-wrap">
+
+    <div class="wizard-top">
+      <div class="wizard-logo">
+        <div class="wordmark-icon">S</div>
+        <span class="wordmark-text">Synergia</span>
+      </div>
+    </div>
+
+    <div class="wizard-card">
+
+      <!-- Stepper -->
+      <div class="stepper">
+        <!-- Step 1: Completed -->
+        <div class="step-item completed">
+          <div class="step-node">
+            <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg>
+          </div>
+          <div class="step-label">Company Details</div>
+          <div class="step-sublabel">Completed</div>
+        </div>
+
+        <!-- Step 2: Active -->
+        <div class="step-item active">
+          <div class="step-node">2</div>
+          <div class="step-label">Preferences</div>
+          <div class="step-sublabel">In progress</div>
+        </div>
+
+        <!-- Step 3: Upcoming -->
+        <div class="step-item">
+          <div class="step-node">3</div>
+          <div class="step-label">Choose Plan</div>
+          <div class="step-sublabel">Upcoming</div>
+        </div>
+      </div>
+
+      <!-- Step 2 content -->
+      <h2 class="step-heading">Set your preferences</h2>
+      <p class="step-sub">Configure your locale, currency, and timezone. These can be changed later in Settings.</p>
+
+      <!-- Language toggle -->
+      <div class="input-group">
+        <label class="input-label">Display Language</label>
+        <div class="toggle-group">
+          <button class="toggle-option active">
+            <span class="locale-flag">🇬🇧</span>
+            English (UK)
+          </button>
+          <button class="toggle-option">
+            <span class="locale-flag">🇵🇰</span>
+            اردو (Urdu)
+          </button>
+        </div>
+        <div class="hint-text">
+          <svg xmlns="http://www.w3.org/2000/svg" width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/></svg>
+          More languages coming soon including Arabic, French, and German
+        </div>
+      </div>
+
+      <!-- Grid: currency + date format -->
+      <div class="form-grid">
+        <div class="input-group" style="margin-bottom:0;">
+          <label class="input-label">Base Currency</label>
+          <select class="select-field">
+            <option selected>GBP — British Pound £</option>
+            <option>USD — US Dollar $</option>
+            <option>EUR — Euro €</option>
+            <option>CAD — Canadian Dollar $</option>
+            <option>AUD — Australian Dollar $</option>
+          </select>
+        </div>
+        <div class="input-group" style="margin-bottom:0;">
+          <label class="input-label">Date Format</label>
+          <select class="select-field">
+            <option selected>DD/MM/YYYY (UK)</option>
+            <option>MM/DD/YYYY (US)</option>
+            <option>YYYY-MM-DD (ISO)</option>
+          </select>
+        </div>
+      </div>
+
+      <!-- Timezone -->
+      <div class="input-group" style="margin-top:16px;">
+        <label class="input-label">Timezone</label>
+        <select class="select-field">
+          <option selected>Europe/London (GMT+0 / BST+1)</option>
+          <option>America/New_York (EST/EDT)</option>
+          <option>America/Los_Angeles (PST/PDT)</option>
+          <option>Asia/Dubai (GST+4)</option>
+          <option>Asia/Karachi (PKT+5)</option>
+        </select>
+        <div class="hint-text">
+          <svg xmlns="http://www.w3.org/2000/svg" width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/></svg>
+          Current time: <strong style="color:var(--color-text-muted);">Wed 07 May 2026, 14:23 BST</strong>
+        </div>
+      </div>
+
+      <!-- VAT registration -->
+      <div class="input-group">
+        <label class="input-label">VAT Registration Number <span style="color:var(--color-text-subtle);font-weight:400;text-transform:none;letter-spacing:0;">(optional)</span></label>
+        <input type="text" class="input-field" placeholder="GB 123 4567 89" style="font-family:var(--font-mono);">
+      </div>
+
+      <!-- Footer -->
+      <div class="wizard-footer">
+        <a href="#" class="skip-link">Skip — start free</a>
+        <div class="wizard-actions">
+          <span class="step-counter">Step 2 of 3</span>
+          <button class="btn btn-outline btn-sm">
+            <svg xmlns="http://www.w3.org/2000/svg" width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="15 18 9 12 15 6"/></svg>
+            Back
+          </button>
+          <button class="btn btn-primary btn-sm">
+            Continue
+            <svg xmlns="http://www.w3.org/2000/svg" width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="9 18 15 12 9 6"/></svg>
+          </button>
+        </div>
+      </div>
+
+    </div>
+  </div>
+
+  <script src="https://unpkg.com/lucide@latest"></script>
+  <script>lucide.createIcons();</script>
+</body>
+</html>

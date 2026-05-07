@@ -1,0 +1,1487 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Design System — Synergia360</title>
+  <link rel="stylesheet" href="../shared.css">
+  <style>
+    /* ─── Page-specific overrides ───────────────────────────── */
+    body { background: var(--color-bg, #141414); }
+
+    /* DS section wrapper */
+    .ds-section {
+      margin-bottom: 56px;
+    }
+
+    .ds-section-title {
+      font-family: 'Geist', 'Inter', sans-serif;
+      font-size: 11px;
+      font-weight: 700;
+      letter-spacing: 0.1em;
+      text-transform: uppercase;
+      color: var(--color-accent, #C4972A);
+      margin-bottom: 20px;
+      display: flex;
+      align-items: center;
+      gap: 12px;
+    }
+
+    .ds-section-title::after {
+      content: '';
+      flex: 1;
+      height: 1px;
+      background: var(--color-border, #383838);
+    }
+
+    .ds-section-heading {
+      font-family: 'Geist', 'Inter', sans-serif;
+      font-size: 22px;
+      font-weight: 700;
+      letter-spacing: -0.02em;
+      color: var(--color-text, #F2F2F2);
+      margin-bottom: 6px;
+    }
+
+    /* ─── Colour swatches ───────────────────────────────────── */
+    .swatches-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(160px, 1fr));
+      gap: 12px;
+    }
+
+    .swatch-card {
+      border-radius: 10px;
+      overflow: hidden;
+      border: 1px solid var(--color-border, #383838);
+      background: var(--color-surface, #1E1E1E);
+    }
+
+    .swatch-colour {
+      height: 72px;
+      position: relative;
+    }
+
+    .swatch-info {
+      padding: 10px 12px;
+      display: flex;
+      flex-direction: column;
+      gap: 3px;
+    }
+
+    .swatch-var {
+      font-family: 'Geist Mono', monospace;
+      font-size: 10px;
+      color: var(--color-accent, #C4972A);
+      letter-spacing: 0;
+    }
+
+    .swatch-hex {
+      font-family: 'Geist Mono', monospace;
+      font-size: 12px;
+      font-weight: 600;
+      color: var(--color-text, #F2F2F2);
+    }
+
+    .swatch-use {
+      font-size: 10px;
+      color: var(--color-text-subtle, #666666);
+      line-height: 1.4;
+    }
+
+    /* ─── Typography ────────────────────────────────────────── */
+    .type-row {
+      display: flex;
+      align-items: baseline;
+      gap: 24px;
+      padding: 18px 0;
+      border-bottom: 1px solid var(--color-border, #383838);
+    }
+
+    .type-row:first-child { padding-top: 0; }
+    .type-row:last-child  { border-bottom: none; }
+
+    .type-meta {
+      width: 140px;
+      flex-shrink: 0;
+    }
+
+    .type-meta-name {
+      font-size: 11px;
+      font-weight: 600;
+      color: var(--color-text-muted, #999999);
+      font-family: 'Geist Mono', monospace;
+    }
+
+    .type-meta-spec {
+      font-size: 10px;
+      color: var(--color-text-subtle, #666666);
+      margin-top: 2px;
+      line-height: 1.4;
+    }
+
+    .type-sample {
+      flex: 1;
+      color: var(--color-text, #F2F2F2);
+    }
+
+    /* ─── Component rows ────────────────────────────────────── */
+    .component-row {
+      display: flex;
+      align-items: center;
+      flex-wrap: wrap;
+      gap: 12px;
+      padding: 20px 0;
+      border-bottom: 1px solid var(--color-border, #383838);
+    }
+
+    .component-row:first-child { padding-top: 0; }
+    .component-row:last-child  { border-bottom: none; }
+
+    .component-row-label {
+      width: 120px;
+      flex-shrink: 0;
+      font-size: 11px;
+      font-weight: 600;
+      color: var(--color-text-subtle, #666666);
+      text-transform: uppercase;
+      letter-spacing: 0.06em;
+    }
+
+    .component-row-items {
+      display: flex;
+      align-items: center;
+      flex-wrap: wrap;
+      gap: 10px;
+    }
+
+    /* ─── Spacing ruler ─────────────────────────────────────── */
+    .spacing-row {
+      display: flex;
+      align-items: flex-end;
+      gap: 16px;
+      flex-wrap: wrap;
+    }
+
+    .spacing-item {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 8px;
+    }
+
+    .spacing-block {
+      background: linear-gradient(135deg, rgba(196,151,42,0.2), rgba(196,151,42,0.05));
+      border: 1px solid rgba(196,151,42,0.25);
+      border-radius: 3px;
+      width: 100%;
+      min-width: 4px;
+    }
+
+    .spacing-label {
+      font-family: 'Geist Mono', monospace;
+      font-size: 10px;
+      color: var(--color-text-subtle, #666666);
+      white-space: nowrap;
+    }
+
+    .spacing-px {
+      font-size: 11px;
+      font-weight: 700;
+      color: var(--color-accent, #C4972A);
+      font-family: 'Geist Mono', monospace;
+    }
+
+    /* ─── Radius demos ──────────────────────────────────────── */
+    .radius-row {
+      display: flex;
+      align-items: center;
+      gap: 20px;
+      flex-wrap: wrap;
+    }
+
+    .radius-item {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 10px;
+    }
+
+    .radius-box {
+      width: 64px;
+      height: 64px;
+      background: var(--color-surface-raised, #252525);
+      border: 1px solid var(--color-border-active, #5A5A5A);
+    }
+
+    .radius-meta {
+      font-size: 10px;
+      text-align: center;
+      color: var(--color-text-subtle, #666666);
+      font-family: 'Geist Mono', monospace;
+    }
+
+    /* ─── DataGrid density demo ─────────────────────────────── */
+    .density-demo {
+      background: var(--color-surface, #1E1E1E);
+      border: 1px solid var(--color-border, #383838);
+      border-radius: 10px;
+      overflow: hidden;
+      margin-bottom: 16px;
+    }
+
+    .density-label {
+      padding: 8px 16px;
+      background: var(--color-surface-raised, #252525);
+      border-bottom: 1px solid var(--color-border, #383838);
+      font-size: 10px;
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: 0.08em;
+      color: var(--color-text-subtle, #666666);
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+
+    .density-label span {
+      font-family: 'Geist Mono', monospace;
+      color: var(--color-accent, #C4972A);
+    }
+
+    /* Motion card */
+    .motion-card {
+      background: var(--color-surface, #1E1E1E);
+      border: 1px solid var(--color-border, #383838);
+      border-radius: 10px;
+      padding: 20px;
+      flex: 1;
+      min-width: 200px;
+    }
+
+    .motion-name {
+      font-family: 'Geist Mono', monospace;
+      font-size: 12px;
+      color: var(--color-accent, #C4972A);
+      margin-bottom: 6px;
+    }
+
+    .motion-value {
+      font-family: 'Geist Mono', monospace;
+      font-size: 10px;
+      color: var(--color-text-muted, #999999);
+      margin-bottom: 12px;
+      word-break: break-all;
+    }
+
+    .motion-desc {
+      font-size: 12px;
+      color: var(--color-text-subtle, #666666);
+      line-height: 1.5;
+    }
+
+    /* Focus ring demo */
+    .focus-demo {
+      display: flex;
+      align-items: center;
+      gap: 24px;
+      flex-wrap: wrap;
+    }
+
+    .focus-example {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 8px;
+    }
+
+    .focus-example-label {
+      font-size: 10px;
+      font-weight: 600;
+      text-transform: uppercase;
+      letter-spacing: 0.06em;
+      color: var(--color-text-subtle, #666666);
+    }
+
+    /* Mono specimen */
+    .mono-specimen {
+      background: var(--color-surface-raised, #252525);
+      border: 1px solid var(--color-border, #383838);
+      border-radius: 8px;
+      padding: 20px 24px;
+      font-family: 'Geist Mono', monospace;
+    }
+
+    .mono-specimen .line {
+      display: flex;
+      gap: 16px;
+      align-items: center;
+      padding: 4px 0;
+    }
+
+    .mono-specimen .line-num {
+      color: var(--color-text-subtle, #666666);
+      font-size: 12px;
+      min-width: 20px;
+      text-align: right;
+    }
+
+    .mono-specimen .line-code {
+      font-size: 13px;
+      color: var(--color-text, #F2F2F2);
+    }
+
+    .mono-specimen .kw   { color: #C4972A; }
+    .mono-specimen .fn   { color: #5B9DC8; }
+    .mono-specimen .str  { color: #4A9E6E; }
+    .mono-specimen .num  { color: #D4872C; }
+    .mono-specimen .cmt  { color: #666666; font-style: italic; }
+
+    /* State annotation badge */
+    .state-label {
+      font-size: 9px;
+      font-weight: 700;
+      letter-spacing: 0.08em;
+      text-transform: uppercase;
+      color: var(--color-text-subtle, #666666);
+      text-align: center;
+      margin-top: 4px;
+    }
+
+    .state-item {
+      display: flex;
+      flex-direction: column;
+      align-items: stretch;
+      gap: 4px;
+    }
+  </style>
+</head>
+<body>
+
+<!-- ═══════════════════════════════════════════════════════════
+     APP SHELL
+════════════════════════════════════════════════════════════ -->
+<div class="app-shell">
+
+  <!-- ─── Sidebar ──────────────────────────────────────────── -->
+  <aside class="sidebar">
+    <div class="sidebar-logo">
+      <div class="logo-mark">
+        <svg width="18" height="18" viewBox="0 0 28 28" fill="none">
+          <path d="M20 7H10C8.343 7 7 8.343 7 10s1.343 3 3 3h8c1.657 0 3 1.343 3 3s-1.343 3-3 3H8" stroke="#141414" stroke-width="2.5" stroke-linecap="round"/>
+        </svg>
+      </div>
+      <span class="logo-text">Synergia360</span>
+    </div>
+
+    <nav class="sidebar-nav">
+      <div class="nav-section-label">Overview</div>
+      <a href="../index.html" class="nav-item">
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="7" height="7"/><rect x="14" y="3" width="7" height="7"/><rect x="14" y="14" width="7" height="7"/><rect x="3" y="14" width="7" height="7"/></svg>
+        <span>Suite Index</span>
+      </a>
+      <a href="design-system.html" class="nav-item active">
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="3"/><path d="M12 1v4M12 19v4M4.22 4.22l2.83 2.83M16.95 16.95l2.83 2.83M1 12h4M19 12h4"/></svg>
+        <span>Design System</span>
+      </a>
+
+      <div class="nav-section-label" style="margin-top:8px">App Screens</div>
+      <a href="dashboard.html" class="nav-item">
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="22 12 18 12 15 21 9 3 6 12 2 12"/></svg>
+        <span>Dashboard</span>
+      </a>
+      <a href="orders-list.html" class="nav-item">
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M6 2 3 6v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2V6l-3-4z"/></svg>
+        <span>Orders</span>
+      </a>
+      <a href="catalogue-list.html" class="nav-item">
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/></svg>
+        <span>Catalogue</span>
+      </a>
+      <a href="inventory-list.html" class="nav-item">
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M20.59 13.41l-7.17 7.17a2 2 0 0 1-2.83 0L2 12V2h10l8.59 8.59a2 2 0 0 1 0 2.82z"/></svg>
+        <span>Inventory</span>
+      </a>
+      <a href="channels-overview.html" class="nav-item">
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="18" cy="5" r="3"/><circle cx="6" cy="12" r="3"/><circle cx="18" cy="19" r="3"/><line x1="8.59" y1="13.51" x2="15.42" y2="17.49"/><line x1="15.41" y1="6.51" x2="8.59" y2="10.49"/></svg>
+        <span>Channels</span>
+      </a>
+      <a href="returns-list.html" class="nav-item">
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="1 4 1 10 7 10"/><path d="M3.51 15a9 9 0 1 0 .49-3.5"/></svg>
+        <span>Returns</span>
+      </a>
+      <a href="analytics-sales.html" class="nav-item">
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="18" y1="20" x2="18" y2="10"/><line x1="12" y1="20" x2="12" y2="4"/><line x1="6" y1="20" x2="6" y2="14"/></svg>
+        <span>Analytics</span>
+      </a>
+      <a href="settings-account.html" class="nav-item">
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1-2.83 2.83l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-4 0v-.09A1.65 1.65 0 0 0 9 19.4"/></svg>
+        <span>Settings</span>
+      </a>
+    </nav>
+
+    <div class="sidebar-footer">
+      <div class="sidebar-user">
+        <div class="user-avatar">AS</div>
+        <div class="user-info">
+          <div class="user-name">Amir Shah</div>
+          <div class="user-company">Digital Perception</div>
+        </div>
+      </div>
+    </div>
+  </aside>
+
+  <!-- ─── Main column ───────────────────────────────────────── -->
+  <div class="main-col">
+
+    <!-- Topbar -->
+    <div class="topbar">
+      <div style="display:flex;align-items:center;gap:8px">
+        <span class="breadcrumb-sep" style="font-size:12px;color:var(--color-text-muted)">Suite</span>
+        <span style="font-size:12px;color:var(--color-text-subtle)">/</span>
+        <span style="font-size:13px;font-weight:600;color:var(--color-text)">Design System</span>
+      </div>
+      <div class="topbar-spacer"></div>
+      <div style="display:flex;align-items:center;gap:6px">
+        <span class="badge badge-accent" style="font-size:10px">DS-01</span>
+        <span class="badge badge-success" style="font-size:10px">Reference</span>
+      </div>
+      <div class="topbar-icon-btn" data-tooltip="Back to index">
+        <a href="../index.html" style="color:inherit;display:flex">
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/></svg>
+        </a>
+      </div>
+    </div>
+
+    <!-- ─── Content ──────────────────────────────────────────── -->
+    <div class="content-area">
+      <div style="max-width:1200px;margin:0 auto;padding-bottom:48px">
+
+        <!-- Page header -->
+        <div style="margin-bottom:48px;padding-bottom:32px;border-bottom:1px solid var(--color-border)">
+          <div style="display:flex;align-items:flex-start;justify-content:space-between;gap:16px;flex-wrap:wrap">
+            <div>
+              <div style="font-size:11px;font-weight:700;letter-spacing:0.1em;text-transform:uppercase;color:var(--color-accent);margin-bottom:10px">Design System</div>
+              <h1 style="font-family:'Geist','Inter',sans-serif;font-size:32px;font-weight:800;letter-spacing:-0.03em;color:var(--color-text);line-height:1;margin-bottom:10px">Synergia360<br><span style="color:var(--color-accent)">Token Reference</span></h1>
+              <p style="font-size:14px;color:var(--color-text-muted);max-width:520px;line-height:1.65">Complete design token system, typography scale, component primitives, and motion guide. Every screen in the mockup suite is built from these foundations.</p>
+            </div>
+            <div style="display:flex;flex-direction:column;gap:8px;align-items:flex-end">
+              <span class="badge badge-accent">v1.0</span>
+              <span style="font-size:11px;color:var(--color-text-subtle);font-family:'Geist Mono',monospace">shared.css</span>
+            </div>
+          </div>
+        </div>
+
+
+        <!-- ═══ 1. COLOUR PALETTE ═══════════════════════════ -->
+        <section class="ds-section">
+          <div class="ds-section-title">01 — Colour Palette</div>
+
+          <!-- Surfaces -->
+          <div style="margin-bottom:10px;font-size:12px;font-weight:600;color:var(--color-text-muted);letter-spacing:0.04em;text-transform:uppercase">Surfaces</div>
+          <div class="swatches-grid" style="margin-bottom:24px">
+
+            <div class="swatch-card">
+              <div class="swatch-colour" style="background:#141414;border-bottom:1px solid #252525"></div>
+              <div class="swatch-info">
+                <span class="swatch-var">--color-bg</span>
+                <span class="swatch-hex">#141414</span>
+                <span class="swatch-use">Page background. Deepest level.</span>
+              </div>
+            </div>
+
+            <div class="swatch-card">
+              <div class="swatch-colour" style="background:#1E1E1E"></div>
+              <div class="swatch-info">
+                <span class="swatch-var">--color-surface</span>
+                <span class="swatch-hex">#1E1E1E</span>
+                <span class="swatch-use">Cards, sidebar, top bar panels.</span>
+              </div>
+            </div>
+
+            <div class="swatch-card">
+              <div class="swatch-colour" style="background:#252525"></div>
+              <div class="swatch-info">
+                <span class="swatch-var">--color-surface-raised</span>
+                <span class="swatch-hex">#252525</span>
+                <span class="swatch-use">Raised cards, input backgrounds.</span>
+              </div>
+            </div>
+
+            <div class="swatch-card">
+              <div class="swatch-colour" style="background:#383838"></div>
+              <div class="swatch-info">
+                <span class="swatch-var">--color-border</span>
+                <span class="swatch-hex">#383838</span>
+                <span class="swatch-use">Default dividers and outlines.</span>
+              </div>
+            </div>
+
+            <div class="swatch-card">
+              <div class="swatch-colour" style="background:#5A5A5A"></div>
+              <div class="swatch-info">
+                <span class="swatch-var">--color-border-active</span>
+                <span class="swatch-hex">#5A5A5A</span>
+                <span class="swatch-use">Hover / focus border state.</span>
+              </div>
+            </div>
+          </div>
+
+          <!-- Text -->
+          <div style="margin-bottom:10px;font-size:12px;font-weight:600;color:var(--color-text-muted);letter-spacing:0.04em;text-transform:uppercase">Typography</div>
+          <div class="swatches-grid" style="margin-bottom:24px">
+
+            <div class="swatch-card">
+              <div class="swatch-colour" style="background:#F2F2F2;display:flex;align-items:center;justify-content:center">
+                <span style="font-size:24px;font-weight:700;color:#141414;font-family:'Geist',sans-serif">Aa</span>
+              </div>
+              <div class="swatch-info">
+                <span class="swatch-var">--color-text</span>
+                <span class="swatch-hex">#F2F2F2</span>
+                <span class="swatch-use">Primary text on dark surfaces.</span>
+              </div>
+            </div>
+
+            <div class="swatch-card">
+              <div class="swatch-colour" style="background:#999999;display:flex;align-items:center;justify-content:center">
+                <span style="font-size:24px;font-weight:700;color:#141414;font-family:'Geist',sans-serif">Aa</span>
+              </div>
+              <div class="swatch-info">
+                <span class="swatch-var">--color-text-muted</span>
+                <span class="swatch-hex">#999999</span>
+                <span class="swatch-use">Supporting labels, descriptions.</span>
+              </div>
+            </div>
+
+            <div class="swatch-card">
+              <div class="swatch-colour" style="background:#666666;display:flex;align-items:center;justify-content:center">
+                <span style="font-size:24px;font-weight:700;color:#141414;font-family:'Geist',sans-serif">Aa</span>
+              </div>
+              <div class="swatch-info">
+                <span class="swatch-var">--color-text-subtle</span>
+                <span class="swatch-hex">#666666</span>
+                <span class="swatch-use">Placeholders, section labels.</span>
+              </div>
+            </div>
+          </div>
+
+          <!-- Accent -->
+          <div style="margin-bottom:10px;font-size:12px;font-weight:600;color:var(--color-text-muted);letter-spacing:0.04em;text-transform:uppercase">Brand Accent — Warm Gold</div>
+          <div class="swatches-grid" style="margin-bottom:24px">
+
+            <div class="swatch-card" style="border-color:rgba(196,151,42,0.3)">
+              <div class="swatch-colour" style="background:#C4972A;display:flex;align-items:center;justify-content:center">
+                <span style="font-size:11px;font-weight:700;color:#141414;font-family:'Geist Mono',monospace">PRIMARY</span>
+              </div>
+              <div class="swatch-info">
+                <span class="swatch-var">--color-accent</span>
+                <span class="swatch-hex">#C4972A</span>
+                <span class="swatch-use">Active nav, primary buttons, key highlights.</span>
+              </div>
+            </div>
+
+            <div class="swatch-card">
+              <div class="swatch-colour" style="background:#8B6914"></div>
+              <div class="swatch-info">
+                <span class="swatch-var">--color-accent-dim</span>
+                <span class="swatch-hex">#8B6914</span>
+                <span class="swatch-use">Gradient ends, muted gold states.</span>
+              </div>
+            </div>
+
+            <div class="swatch-card">
+              <div class="swatch-colour" style="background:rgba(196,151,42,0.15);display:flex;align-items:center;justify-content:center;border-bottom:1px solid rgba(196,151,42,0.2)">
+                <span style="font-size:11px;color:#C4972A;font-family:'Geist Mono',monospace">rgba 15%</span>
+              </div>
+              <div class="swatch-info">
+                <span class="swatch-var">--color-accent-glow</span>
+                <span class="swatch-hex">rgba(196,151,42,0.15)</span>
+                <span class="swatch-use">Active nav bg, focus rings, glows.</span>
+              </div>
+            </div>
+          </div>
+
+          <!-- Semantic -->
+          <div style="margin-bottom:10px;font-size:12px;font-weight:600;color:var(--color-text-muted);letter-spacing:0.04em;text-transform:uppercase">Semantic Colours</div>
+          <div class="swatches-grid" style="margin-bottom:24px">
+
+            <div class="swatch-card" style="border-color:rgba(74,158,110,0.25)">
+              <div class="swatch-colour" style="background:#4A9E6E"></div>
+              <div class="swatch-info">
+                <span class="swatch-var">--color-success</span>
+                <span class="swatch-hex">#4A9E6E</span>
+                <span class="swatch-use">Fulfilled, synced, positive delta.</span>
+              </div>
+            </div>
+
+            <div class="swatch-card" style="border-color:rgba(212,135,44,0.25)">
+              <div class="swatch-colour" style="background:#D4872C"></div>
+              <div class="swatch-info">
+                <span class="swatch-var">--color-warning</span>
+                <span class="swatch-hex">#D4872C</span>
+                <span class="swatch-use">SLA at risk, low stock, caution.</span>
+              </div>
+            </div>
+
+            <div class="swatch-card" style="border-color:rgba(139,58,58,0.3)">
+              <div class="swatch-colour" style="background:#8B3A3A"></div>
+              <div class="swatch-info">
+                <span class="swatch-var">--color-danger</span>
+                <span class="swatch-hex">#8B3A3A</span>
+                <span class="swatch-use">SLA breach, errors, cancelled. Dark red.</span>
+              </div>
+            </div>
+
+            <div class="swatch-card" style="border-color:rgba(58,107,139,0.25)">
+              <div class="swatch-colour" style="background:#3A6B8B"></div>
+              <div class="swatch-info">
+                <span class="swatch-var">--color-info</span>
+                <span class="swatch-hex">#3A6B8B</span>
+                <span class="swatch-use">Informational, in-transit, neutral.</span>
+              </div>
+            </div>
+
+            <div class="swatch-card" style="border-color:rgba(123,94,167,0.25)">
+              <div class="swatch-colour" style="background:#7B5EA7"></div>
+              <div class="swatch-info">
+                <span class="swatch-var">--color-admin</span>
+                <span class="swatch-hex">#7B5EA7</span>
+                <span class="swatch-use">Platform admin / superuser only.</span>
+              </div>
+            </div>
+          </div>
+        </section>
+
+
+        <!-- ═══ 2. TYPOGRAPHY ═══════════════════════════════ -->
+        <section class="ds-section">
+          <div class="ds-section-title">02 — Typography</div>
+
+          <!-- Font families -->
+          <div class="grid grid-3" style="margin-bottom:28px;gap:12px">
+            <div class="card-raised" style="padding:20px">
+              <div style="font-size:10px;font-weight:700;letter-spacing:0.1em;text-transform:uppercase;color:var(--color-text-subtle);margin-bottom:12px">Heading — Geist</div>
+              <div style="font-family:'Geist','Inter',sans-serif;font-size:22px;font-weight:700;letter-spacing:-0.02em;color:var(--color-text);margin-bottom:6px">The quick brown fox</div>
+              <div style="font-family:'Geist','Inter',sans-serif;font-size:14px;font-weight:400;color:var(--color-text-muted)">ABCDEFGHIJKLMNOPQRSTUVWXYZ<br>abcdefghijklmnopqrstuvwxyz<br>0123456789 !@£$%^&*()</div>
+            </div>
+            <div class="card-raised" style="padding:20px">
+              <div style="font-size:10px;font-weight:700;letter-spacing:0.1em;text-transform:uppercase;color:var(--color-text-subtle);margin-bottom:12px">Body — Inter</div>
+              <div style="font-family:'Inter',sans-serif;font-size:15px;font-weight:400;color:var(--color-text);margin-bottom:6px;line-height:1.6">Multichannel commerce management platform. Orders · Listings · Inventory · Finance.</div>
+              <div style="font-family:'Inter',sans-serif;font-size:12px;color:var(--color-text-muted)">ABCDEFGHIJKLMNOPQRSTUVWXYZ<br>abcdefghijklmnopqrstuvwxyz<br>0123456789 !@£$%^&*()</div>
+            </div>
+            <div class="card-raised" style="padding:20px">
+              <div style="font-size:10px;font-weight:700;letter-spacing:0.1em;text-transform:uppercase;color:var(--color-text-subtle);margin-bottom:12px">Mono — Geist Mono</div>
+              <div style="font-family:'Geist Mono',monospace;font-size:13px;color:var(--color-accent);margin-bottom:6px">ORD-2024-08341<br>SKU: SYN-00419-BLK<br>£1,284.00 GBP</div>
+              <div style="font-family:'Geist Mono',monospace;font-size:11px;color:var(--color-text-muted)">Used for: order IDs, SKUs,<br>prices, tracking numbers,<br>code snippets.</div>
+            </div>
+          </div>
+
+          <!-- Type scale -->
+          <div class="card-raised" style="padding:24px">
+            <div style="font-size:10px;font-weight:700;letter-spacing:0.08em;text-transform:uppercase;color:var(--color-text-subtle);margin-bottom:20px">Type Scale — Fluid (clamp)</div>
+
+            <div class="type-row">
+              <div class="type-meta">
+                <div class="type-meta-name">text-4xl</div>
+                <div class="type-meta-spec">clamp(2.25rem – 3.5rem)<br>Heading / Hero</div>
+              </div>
+              <div class="type-sample" style="font-family:'Geist',sans-serif;font-size:clamp(2.25rem,1.75rem + 2.5vw,3.5rem);font-weight:800;letter-spacing:-0.03em;line-height:1">Dashboard</div>
+            </div>
+
+            <div class="type-row">
+              <div class="type-meta">
+                <div class="type-meta-name">text-3xl</div>
+                <div class="type-meta-spec">clamp(1.875rem – 2.5rem)<br>Page Title</div>
+              </div>
+              <div class="type-sample" style="font-family:'Geist',sans-serif;font-size:clamp(1.875rem,1.5rem + 1.875vw,2.5rem);font-weight:700;letter-spacing:-0.025em;line-height:1.1">Order Management</div>
+            </div>
+
+            <div class="type-row">
+              <div class="type-meta">
+                <div class="type-meta-name">text-2xl</div>
+                <div class="type-meta-spec">clamp(1.5rem – 2rem)<br>Section Heading</div>
+              </div>
+              <div class="type-sample" style="font-family:'Geist',sans-serif;font-size:clamp(1.5rem,1.3rem + 1vw,2rem);font-weight:700;letter-spacing:-0.02em">Product Catalogue</div>
+            </div>
+
+            <div class="type-row">
+              <div class="type-meta">
+                <div class="type-meta-name">text-xl</div>
+                <div class="type-meta-spec">clamp(1.25rem – 1.5rem)<br>Card Heading</div>
+              </div>
+              <div class="type-sample" style="font-family:'Geist',sans-serif;font-size:clamp(1.25rem,1.15rem + 0.5vw,1.5rem);font-weight:600;letter-spacing:-0.015em">Revenue Overview</div>
+            </div>
+
+            <div class="type-row">
+              <div class="type-meta">
+                <div class="type-meta-name">text-lg</div>
+                <div class="type-meta-spec">clamp(1.125rem – 1.25rem)<br>Sub-heading</div>
+              </div>
+              <div class="type-sample" style="font-size:clamp(1.125rem,1.05rem + 0.38vw,1.25rem);font-weight:600">Pending Dispatch — 47 orders</div>
+            </div>
+
+            <div class="type-row">
+              <div class="type-meta">
+                <div class="type-meta-name">text-base</div>
+                <div class="type-meta-spec">clamp(0.875rem – 1rem)<br>UI Default Body</div>
+              </div>
+              <div class="type-sample" style="font-size:clamp(0.875rem,0.84rem + 0.18vw,1rem)">Order #ORD-2024-08341 was dispatched via Royal Mail 1st Class Tracked at 14:32 UTC.</div>
+            </div>
+
+            <div class="type-row">
+              <div class="type-meta">
+                <div class="type-meta-name">text-sm</div>
+                <div class="type-meta-spec">clamp(0.75rem – 0.875rem)<br>Labels, table cells</div>
+              </div>
+              <div class="type-sample" style="font-size:clamp(0.75rem,0.72rem + 0.15vw,0.875rem);color:var(--color-text-muted)">Showing 1–50 of 1,284 orders · Filtered by: Pending, eBay UK</div>
+            </div>
+
+            <div class="type-row">
+              <div class="type-meta">
+                <div class="type-meta-name">text-xs</div>
+                <div class="type-meta-spec">clamp(0.625rem – 0.75rem)<br>Badges, captions</div>
+              </div>
+              <div class="type-sample" style="font-size:clamp(0.625rem,0.58rem + 0.22vw,0.75rem);color:var(--color-text-subtle);font-weight:600;letter-spacing:0.04em;text-transform:uppercase">ORDER ID · SKU · CHANNEL · SLA STATUS</div>
+            </div>
+          </div>
+        </section>
+
+
+        <!-- ═══ 3. BUTTONS ══════════════════════════════════ -->
+        <section class="ds-section">
+          <div class="ds-section-title">03 — Buttons</div>
+          <div class="card-raised" style="padding:24px">
+
+            <div class="component-row">
+              <div class="component-row-label">Primary</div>
+              <div class="component-row-items">
+                <div class="state-item">
+                  <button class="btn btn-primary">
+                    <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
+                    Create Order
+                  </button>
+                  <div class="state-label">Default</div>
+                </div>
+                <div class="state-item">
+                  <button class="btn btn-primary" style="background:#D4A830;border-color:#D4A830;box-shadow:0 0 16px rgba(196,151,42,0.35)">Hover State</button>
+                  <div class="state-label">Hover</div>
+                </div>
+                <div class="state-item">
+                  <button class="btn btn-primary" style="outline:2px solid #C4972A;outline-offset:2px;box-shadow:0 0 0 4px rgba(196,151,42,0.2)">Focused</button>
+                  <div class="state-label">Focus</div>
+                </div>
+                <div class="state-item">
+                  <button class="btn btn-primary" disabled>Disabled</button>
+                  <div class="state-label">Disabled</div>
+                </div>
+                <div class="state-item">
+                  <button class="btn btn-primary btn-lg">Large CTA</button>
+                  <div class="state-label">btn-lg</div>
+                </div>
+                <div class="state-item">
+                  <button class="btn btn-primary btn-sm">Small</button>
+                  <div class="state-label">btn-sm</div>
+                </div>
+              </div>
+            </div>
+
+            <div class="component-row">
+              <div class="component-row-label">Secondary</div>
+              <div class="component-row-items">
+                <div class="state-item">
+                  <button class="btn btn-secondary">Export CSV</button>
+                  <div class="state-label">Default</div>
+                </div>
+                <div class="state-item">
+                  <button class="btn btn-secondary" style="border-color:var(--color-accent);color:var(--color-accent)">Hover</button>
+                  <div class="state-label">Hover</div>
+                </div>
+                <div class="state-item">
+                  <button class="btn btn-secondary" style="outline:2px solid #C4972A;outline-offset:2px">Focus</button>
+                  <div class="state-label">Focus</div>
+                </div>
+                <div class="state-item">
+                  <button class="btn btn-secondary" disabled>Disabled</button>
+                  <div class="state-label">Disabled</div>
+                </div>
+              </div>
+            </div>
+
+            <div class="component-row">
+              <div class="component-row-label">Danger</div>
+              <div class="component-row-items">
+                <div class="state-item">
+                  <button class="btn btn-danger">Cancel Order</button>
+                  <div class="state-label">Default</div>
+                </div>
+                <div class="state-item">
+                  <button class="btn btn-danger" style="background:rgba(139,58,58,0.35);border-color:#E05555">Hover</button>
+                  <div class="state-label">Hover</div>
+                </div>
+                <div class="state-item">
+                  <button class="btn btn-danger" style="outline:2px solid #E05555;outline-offset:2px">Focus</button>
+                  <div class="state-label">Focus</div>
+                </div>
+              </div>
+            </div>
+
+            <div class="component-row">
+              <div class="component-row-label">Ghost</div>
+              <div class="component-row-items">
+                <div class="state-item">
+                  <button class="btn btn-ghost">View Details</button>
+                  <div class="state-label">Default</div>
+                </div>
+                <div class="state-item">
+                  <button class="btn btn-ghost" style="background:rgba(255,255,255,0.06);color:var(--color-text)">Hover</button>
+                  <div class="state-label">Hover</div>
+                </div>
+              </div>
+            </div>
+
+            <div class="component-row" style="border-bottom:none">
+              <div class="component-row-label">Accent Outline</div>
+              <div class="component-row-items">
+                <div class="state-item">
+                  <button class="btn btn-accent-outline">Connect Channel</button>
+                  <div class="state-label">Default</div>
+                </div>
+                <div class="state-item">
+                  <button class="btn btn-accent-outline" style="background:var(--color-accent-glow);border-color:var(--color-accent)">Hover</button>
+                  <div class="state-label">Hover</div>
+                </div>
+              </div>
+            </div>
+
+          </div>
+        </section>
+
+
+        <!-- ═══ 4. INPUTS ═══════════════════════════════════ -->
+        <section class="ds-section">
+          <div class="ds-section-title">04 — Input Fields</div>
+          <div class="card-raised" style="padding:24px">
+            <div class="grid grid-2" style="gap:20px">
+
+              <div>
+                <label class="input-label">Default</label>
+                <input class="input-field" type="text" placeholder="Search orders, SKUs…">
+                <div style="font-size:10px;color:var(--color-text-subtle);margin-top:6px;font-family:'Geist Mono',monospace">border: 1px solid #383838</div>
+              </div>
+
+              <div>
+                <label class="input-label">Focus State</label>
+                <input class="input-field" type="text" value="ORD-2024-08341" style="border-color:var(--color-accent);box-shadow:0 0 0 3px var(--color-accent-glow)">
+                <div style="font-size:10px;color:var(--color-accent);margin-top:6px;font-family:'Geist Mono',monospace">border: 1px solid #C4972A + glow</div>
+              </div>
+
+              <div>
+                <label class="input-label">Error State</label>
+                <input class="input-field error" type="text" value="invalid@">
+                <div class="input-error-msg">Please enter a valid email address</div>
+              </div>
+
+              <div>
+                <label class="input-label">Disabled</label>
+                <input class="input-field" type="text" value="Read only value" disabled>
+                <div style="font-size:10px;color:var(--color-text-subtle);margin-top:6px;font-family:'Geist Mono',monospace">opacity: 0.5; cursor: not-allowed</div>
+              </div>
+
+              <div>
+                <label class="input-label">Select</label>
+                <select class="select-field">
+                  <option>All Channels</option>
+                  <option selected>eBay UK</option>
+                  <option>Vinted</option>
+                  <option>Etsy</option>
+                </select>
+              </div>
+
+              <div>
+                <label class="input-label">Search with icon</label>
+                <div class="search-input-wrap">
+                  <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
+                  <input class="input-field" type="text" placeholder="Search products, orders…">
+                </div>
+              </div>
+
+            </div>
+          </div>
+        </section>
+
+
+        <!-- ═══ 5. BADGES ═══════════════════════════════════ -->
+        <section class="ds-section">
+          <div class="ds-section-title">05 — Badges &amp; Status</div>
+          <div class="card-raised" style="padding:24px">
+
+            <div class="component-row">
+              <div class="component-row-label">Semantic</div>
+              <div class="component-row-items">
+                <span class="badge badge-success">Fulfilled</span>
+                <span class="badge badge-warning">At Risk</span>
+                <span class="badge badge-danger">SLA Breach</span>
+                <span class="badge badge-info">In Transit</span>
+                <span class="badge badge-accent">Syncing</span>
+                <span class="badge badge-muted">Archived</span>
+                <span class="badge badge-admin">Admin</span>
+              </div>
+            </div>
+
+            <div class="component-row">
+              <div class="component-row-label">With dot</div>
+              <div class="component-row-items">
+                <span style="display:inline-flex;align-items:center;gap:6px;padding:2px 8px;border-radius:9999px;font-size:11px;font-weight:600;background:rgba(74,158,110,0.15);color:#4A9E6E;border:1px solid rgba(74,158,110,0.25)"><span style="width:6px;height:6px;border-radius:50%;background:#4A9E6E;display:inline-block"></span>Live</span>
+                <span style="display:inline-flex;align-items:center;gap:6px;padding:2px 8px;border-radius:9999px;font-size:11px;font-weight:600;background:rgba(212,135,44,0.15);color:#D4872C;border:1px solid rgba(212,135,44,0.25)"><span style="width:6px;height:6px;border-radius:50%;background:#D4872C;display:inline-block"></span>Pending</span>
+                <span style="display:inline-flex;align-items:center;gap:6px;padding:2px 8px;border-radius:9999px;font-size:11px;font-weight:600;background:rgba(139,58,58,0.2);color:#C04040;border:1px solid rgba(139,58,58,0.3)"><span style="width:6px;height:6px;border-radius:50%;background:#C04040;display:inline-block"></span>Error</span>
+                <span style="display:inline-flex;align-items:center;gap:6px;padding:2px 8px;border-radius:9999px;font-size:11px;font-weight:600;background:rgba(196,151,42,0.1);color:#C4972A;border:1px solid rgba(196,151,42,0.2)"><span style="width:6px;height:6px;border-radius:50%;background:#C4972A;display:inline-block"></span>Syncing</span>
+              </div>
+            </div>
+
+            <div class="component-row">
+              <div class="component-row-label">Channels</div>
+              <div class="component-row-items">
+                <span class="channel-badge ch-ebay">eBay</span>
+                <span class="channel-badge ch-vinted">Vinted</span>
+                <span class="channel-badge ch-etsy">Etsy</span>
+                <span class="channel-badge ch-tiktok">TikTok Shop</span>
+                <span class="channel-badge ch-amazon">Amazon</span>
+                <span class="channel-badge ch-shopify">Shopify</span>
+              </div>
+            </div>
+
+            <div class="component-row" style="border-bottom:none">
+              <div class="component-row-label">Status dots</div>
+              <div class="component-row-items">
+                <div style="display:flex;align-items:center;gap:6px;font-size:12px;color:var(--color-text-muted)">
+                  <span class="status-dot green"></span> Connected
+                </div>
+                <div style="display:flex;align-items:center;gap:6px;font-size:12px;color:var(--color-text-muted)">
+                  <span class="status-dot amber"></span> Degraded
+                </div>
+                <div style="display:flex;align-items:center;gap:6px;font-size:12px;color:var(--color-text-muted)">
+                  <span class="status-dot red"></span> Offline
+                </div>
+              </div>
+            </div>
+          </div>
+        </section>
+
+
+        <!-- ═══ 6. CHECKBOXES, TOGGLES, RADIO ═══════════════ -->
+        <section class="ds-section">
+          <div class="ds-section-title">06 — Form Controls</div>
+          <div class="card-raised" style="padding:24px">
+            <div class="grid grid-3" style="gap:32px">
+
+              <div>
+                <div style="font-size:10px;font-weight:700;letter-spacing:0.08em;text-transform:uppercase;color:var(--color-text-subtle);margin-bottom:16px">Checkboxes</div>
+                <div style="display:flex;flex-direction:column;gap:12px">
+                  <label class="checkbox-label">
+                    <input type="checkbox"> Unchecked
+                  </label>
+                  <label class="checkbox-label">
+                    <input type="checkbox" checked> Checked (gold)
+                  </label>
+                  <label class="checkbox-label">
+                    <input type="checkbox" disabled> Disabled
+                  </label>
+                  <label class="checkbox-label" style="color:var(--color-accent)">
+                    <input type="checkbox" checked style="accent-color:var(--color-accent)">
+                    <span style="color:var(--color-text-muted)">Active row selected</span>
+                  </label>
+                </div>
+              </div>
+
+              <div>
+                <div style="font-size:10px;font-weight:700;letter-spacing:0.08em;text-transform:uppercase;color:var(--color-text-subtle);margin-bottom:16px">Toggles</div>
+                <div style="display:flex;flex-direction:column;gap:14px">
+                  <div class="toggle-wrap">
+                    <label class="toggle">
+                      <input type="checkbox">
+                      <span class="toggle-slider"></span>
+                    </label>
+                    <span style="font-size:13px;color:var(--color-text-muted)">Off</span>
+                  </div>
+                  <div class="toggle-wrap">
+                    <label class="toggle">
+                      <input type="checkbox" checked>
+                      <span class="toggle-slider"></span>
+                    </label>
+                    <span style="font-size:13px;color:var(--color-text-muted)">On (gold)</span>
+                  </div>
+                  <div class="toggle-wrap">
+                    <label class="toggle">
+                      <input type="checkbox" disabled>
+                      <span class="toggle-slider" style="opacity:0.4"></span>
+                    </label>
+                    <span style="font-size:13px;color:var(--color-text-subtle)">Disabled</span>
+                  </div>
+                </div>
+              </div>
+
+              <div>
+                <div style="font-size:10px;font-weight:700;letter-spacing:0.08em;text-transform:uppercase;color:var(--color-text-subtle);margin-bottom:16px">Radio Buttons</div>
+                <div style="display:flex;flex-direction:column;gap:12px">
+                  <label style="display:flex;align-items:center;gap:8px;cursor:pointer;font-size:13px;color:var(--color-text-muted)">
+                    <input type="radio" name="demo" style="accent-color:var(--color-accent)"> Standard
+                  </label>
+                  <label style="display:flex;align-items:center;gap:8px;cursor:pointer;font-size:13px;color:var(--color-text-muted)">
+                    <input type="radio" name="demo" checked style="accent-color:var(--color-accent)"> Expedited (selected)
+                  </label>
+                  <label style="display:flex;align-items:center;gap:8px;cursor:pointer;font-size:13px;color:var(--color-text-muted)">
+                    <input type="radio" name="demo" style="accent-color:var(--color-accent)"> Next Day
+                  </label>
+                </div>
+              </div>
+
+            </div>
+          </div>
+        </section>
+
+
+        <!-- ═══ 7. SPACING SCALE ════════════════════════════ -->
+        <section class="ds-section">
+          <div class="ds-section-title">07 — Spacing Scale</div>
+          <div class="card-raised" style="padding:24px">
+            <div class="spacing-row">
+              <div class="spacing-item">
+                <div class="spacing-block" style="width:4px;height:4px"></div>
+                <div class="spacing-px">4px</div>
+                <div class="spacing-label">--space-1</div>
+              </div>
+              <div class="spacing-item">
+                <div class="spacing-block" style="width:8px;height:8px"></div>
+                <div class="spacing-px">8px</div>
+                <div class="spacing-label">--space-2</div>
+              </div>
+              <div class="spacing-item">
+                <div class="spacing-block" style="width:12px;height:12px"></div>
+                <div class="spacing-px">12px</div>
+                <div class="spacing-label">--space-3</div>
+              </div>
+              <div class="spacing-item">
+                <div class="spacing-block" style="width:16px;height:16px"></div>
+                <div class="spacing-px">16px</div>
+                <div class="spacing-label">--space-4</div>
+              </div>
+              <div class="spacing-item">
+                <div class="spacing-block" style="width:20px;height:20px"></div>
+                <div class="spacing-px">20px</div>
+                <div class="spacing-label">--space-5</div>
+              </div>
+              <div class="spacing-item">
+                <div class="spacing-block" style="width:24px;height:24px"></div>
+                <div class="spacing-px">24px</div>
+                <div class="spacing-label">--space-6</div>
+              </div>
+              <div class="spacing-item">
+                <div class="spacing-block" style="width:32px;height:32px"></div>
+                <div class="spacing-px">32px</div>
+                <div class="spacing-label">--space-8</div>
+              </div>
+              <div class="spacing-item">
+                <div class="spacing-block" style="width:40px;height:40px"></div>
+                <div class="spacing-px">40px</div>
+                <div class="spacing-label">--space-10</div>
+              </div>
+              <div class="spacing-item">
+                <div class="spacing-block" style="width:48px;height:48px"></div>
+                <div class="spacing-px">48px</div>
+                <div class="spacing-label">--space-12</div>
+              </div>
+              <div class="spacing-item">
+                <div class="spacing-block" style="width:64px;height:64px"></div>
+                <div class="spacing-px">64px</div>
+                <div class="spacing-label">--space-16</div>
+              </div>
+              <div class="spacing-item">
+                <div class="spacing-block" style="width:96px;height:96px"></div>
+                <div class="spacing-px">96px</div>
+                <div class="spacing-label">--space-24</div>
+              </div>
+            </div>
+          </div>
+        </section>
+
+
+        <!-- ═══ 8. BORDER RADIUS ═══════════════════════════ -->
+        <section class="ds-section">
+          <div class="ds-section-title">08 — Border Radius</div>
+          <div class="card-raised" style="padding:24px">
+            <div class="radius-row">
+              <div class="radius-item">
+                <div class="radius-box" style="border-radius:4px"></div>
+                <div class="radius-meta">--radius-sm<br>4px<br>Badges, tags</div>
+              </div>
+              <div class="radius-item">
+                <div class="radius-box" style="border-radius:8px"></div>
+                <div class="radius-meta">--radius-md<br>8px<br>Buttons, inputs, nav items</div>
+              </div>
+              <div class="radius-item">
+                <div class="radius-box" style="border-radius:12px"></div>
+                <div class="radius-meta">--radius-lg<br>12px<br>Cards, panels, tables</div>
+              </div>
+              <div class="radius-item">
+                <div class="radius-box" style="border-radius:16px"></div>
+                <div class="radius-meta">--radius-xl<br>16px<br>Modals, drawers</div>
+              </div>
+              <div class="radius-item">
+                <div class="radius-box" style="border-radius:9999px;width:80px;height:32px"></div>
+                <div class="radius-meta">--radius-full<br>9999px<br>Pills, chips, toggles</div>
+              </div>
+            </div>
+          </div>
+        </section>
+
+
+        <!-- ═══ 9. DATAGRID DENSITY ════════════════════════ -->
+        <section class="ds-section">
+          <div class="ds-section-title">09 — DataGrid Density</div>
+
+          <div class="density-demo">
+            <div class="density-label">Compact — <span>32px rows</span></div>
+            <table class="datagrid" style="font-size:12px">
+              <thead><tr>
+                <th style="width:40px"><input type="checkbox"></th>
+                <th>Order ID</th>
+                <th>Buyer</th>
+                <th>Channel</th>
+                <th>Total</th>
+                <th>Status</th>
+              </tr></thead>
+              <tbody>
+                <tr class="datagrid-row"><td><input type="checkbox"></td><td style="font-family:'Geist Mono',monospace;color:var(--color-accent);font-size:11px">ORD-08341</td><td>Sophie Williams</td><td><span class="channel-badge ch-ebay" style="font-size:10px">eBay</span></td><td style="font-family:'Geist Mono',monospace">£84.00</td><td><span class="badge badge-warning" style="font-size:10px">Pending</span></td></tr>
+                <tr class="datagrid-row"><td><input type="checkbox"></td><td style="font-family:'Geist Mono',monospace;color:var(--color-accent);font-size:11px">ORD-08342</td><td>James Thornton</td><td><span class="channel-badge ch-vinted" style="font-size:10px">Vinted</span></td><td style="font-family:'Geist Mono',monospace">£31.50</td><td><span class="badge badge-success" style="font-size:10px">Fulfilled</span></td></tr>
+                <tr class="datagrid-row"><td><input type="checkbox"></td><td style="font-family:'Geist Mono',monospace;color:var(--color-accent);font-size:11px">ORD-08343</td><td>Priya Mehta</td><td><span class="channel-badge ch-etsy" style="font-size:10px">Etsy</span></td><td style="font-family:'Geist Mono',monospace">£120.00</td><td><span class="badge badge-danger" style="font-size:10px">Breach</span></td></tr>
+              </tbody>
+            </table>
+          </div>
+
+          <div class="density-demo">
+            <div class="density-label">Normal — <span>40px rows</span></div>
+            <table class="datagrid">
+              <thead><tr>
+                <th style="width:40px"><input type="checkbox"></th>
+                <th>Order ID</th>
+                <th>Buyer</th>
+                <th>Channel</th>
+                <th>Total</th>
+                <th>Status</th>
+              </tr></thead>
+              <tbody>
+                <tr class="datagrid-row"><td><input type="checkbox"></td><td style="font-family:'Geist Mono',monospace;color:var(--color-accent);font-size:12px">ORD-08341</td><td>Sophie Williams</td><td><span class="channel-badge ch-ebay">eBay</span></td><td style="font-family:'Geist Mono',monospace">£84.00</td><td><span class="badge badge-warning">Pending</span></td></tr>
+                <tr class="datagrid-row"><td><input type="checkbox"></td><td style="font-family:'Geist Mono',monospace;color:var(--color-accent);font-size:12px">ORD-08342</td><td>James Thornton</td><td><span class="channel-badge ch-vinted">Vinted</span></td><td style="font-family:'Geist Mono',monospace">£31.50</td><td><span class="badge badge-success">Fulfilled</span></td></tr>
+                <tr class="datagrid-row"><td><input type="checkbox"></td><td style="font-family:'Geist Mono',monospace;color:var(--color-accent);font-size:12px">ORD-08343</td><td>Priya Mehta</td><td><span class="channel-badge ch-etsy">Etsy</span></td><td style="font-family:'Geist Mono',monospace">£120.00</td><td><span class="badge badge-danger">Breach</span></td></tr>
+              </tbody>
+            </table>
+          </div>
+
+          <div class="density-demo">
+            <div class="density-label">Relaxed — <span>52px rows</span></div>
+            <table class="datagrid">
+              <thead><tr>
+                <th style="width:40px"><input type="checkbox"></th>
+                <th>Order ID</th>
+                <th>Buyer</th>
+                <th>Channel</th>
+                <th>Total</th>
+                <th>Status</th>
+              </tr></thead>
+              <tbody>
+                <tr class="datagrid-row" style="height:52px"><td><input type="checkbox"></td>
+                  <td>
+                    <div style="font-family:'Geist Mono',monospace;color:var(--color-accent);font-size:12px">ORD-08341</div>
+                    <div style="font-size:11px;color:var(--color-text-subtle)">2 items · eBay UK</div>
+                  </td>
+                  <td>
+                    <div style="font-size:13px;color:var(--color-text)">Sophie Williams</div>
+                    <div style="font-size:11px;color:var(--color-text-subtle)">London, UK</div>
+                  </td>
+                  <td><span class="channel-badge ch-ebay">eBay</span></td>
+                  <td>
+                    <div style="font-family:'Geist Mono',monospace;color:var(--color-text)">£84.00</div>
+                    <div style="font-size:11px;color:var(--color-text-subtle)">+£4.80 shipping</div>
+                  </td>
+                  <td><span class="badge badge-warning">Pending</span></td>
+                </tr>
+                <tr class="datagrid-row" style="height:52px"><td><input type="checkbox"></td>
+                  <td>
+                    <div style="font-family:'Geist Mono',monospace;color:var(--color-accent);font-size:12px">ORD-08342</div>
+                    <div style="font-size:11px;color:var(--color-text-subtle)">1 item · Vinted UK</div>
+                  </td>
+                  <td>
+                    <div style="font-size:13px;color:var(--color-text)">James Thornton</div>
+                    <div style="font-size:11px;color:var(--color-text-subtle)">Manchester, UK</div>
+                  </td>
+                  <td><span class="channel-badge ch-vinted">Vinted</span></td>
+                  <td>
+                    <div style="font-family:'Geist Mono',monospace;color:var(--color-text)">£31.50</div>
+                    <div style="font-size:11px;color:var(--color-text-subtle)">Free shipping</div>
+                  </td>
+                  <td><span class="badge badge-success">Fulfilled</span></td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+        </section>
+
+
+        <!-- ═══ 10. SKELETON LOADING ════════════════════════ -->
+        <section class="ds-section">
+          <div class="ds-section-title">10 — Skeleton Loading</div>
+          <div class="card-raised" style="padding:24px">
+            <div class="grid grid-2" style="gap:20px">
+
+              <div>
+                <div style="font-size:10px;font-weight:700;letter-spacing:0.08em;text-transform:uppercase;color:var(--color-text-subtle);margin-bottom:12px">Card skeleton</div>
+                <div style="background:var(--color-surface);border:1px solid var(--color-border);border-radius:10px;padding:20px;display:flex;flex-direction:column;gap:10px">
+                  <div class="skeleton skeleton-text skeleton-title" style="width:60%"></div>
+                  <div class="skeleton skeleton-text" style="width:100%"></div>
+                  <div class="skeleton skeleton-text" style="width:80%"></div>
+                  <div class="skeleton skeleton-text" style="width:90%"></div>
+                  <div style="display:flex;gap:8px;margin-top:4px">
+                    <div class="skeleton" style="height:28px;width:80px;border-radius:6px"></div>
+                    <div class="skeleton" style="height:28px;width:60px;border-radius:6px"></div>
+                  </div>
+                </div>
+              </div>
+
+              <div>
+                <div style="font-size:10px;font-weight:700;letter-spacing:0.08em;text-transform:uppercase;color:var(--color-text-subtle);margin-bottom:12px">Table skeleton</div>
+                <div style="background:var(--color-surface);border:1px solid var(--color-border);border-radius:10px;overflow:hidden">
+                  <div style="padding:10px 16px;background:var(--color-surface-raised);border-bottom:1px solid var(--color-border);display:flex;gap:16px">
+                    <div class="skeleton skeleton-text" style="width:80px;height:10px"></div>
+                    <div class="skeleton skeleton-text" style="width:120px;height:10px"></div>
+                    <div class="skeleton skeleton-text" style="width:60px;height:10px;margin-left:auto"></div>
+                  </div>
+                  <div style="padding:12px 16px;border-bottom:1px solid rgba(56,56,56,0.5);display:flex;gap:16px;align-items:center">
+                    <div class="skeleton skeleton-avatar" style="width:24px;height:24px"></div>
+                    <div class="skeleton skeleton-text" style="flex:1;height:12px"></div>
+                    <div class="skeleton skeleton-text" style="width:60px;height:12px"></div>
+                  </div>
+                  <div style="padding:12px 16px;border-bottom:1px solid rgba(56,56,56,0.5);display:flex;gap:16px;align-items:center">
+                    <div class="skeleton skeleton-avatar" style="width:24px;height:24px"></div>
+                    <div class="skeleton skeleton-text" style="flex:1;height:12px"></div>
+                    <div class="skeleton skeleton-text" style="width:60px;height:12px"></div>
+                  </div>
+                  <div style="padding:12px 16px;display:flex;gap:16px;align-items:center">
+                    <div class="skeleton skeleton-avatar" style="width:24px;height:24px"></div>
+                    <div class="skeleton skeleton-text" style="width:50%;height:12px"></div>
+                    <div class="skeleton skeleton-text" style="width:60px;height:12px;margin-left:auto"></div>
+                  </div>
+                </div>
+              </div>
+
+            </div>
+          </div>
+        </section>
+
+
+        <!-- ═══ 11. SLA GAUGE RING ══════════════════════════ -->
+        <section class="ds-section">
+          <div class="ds-section-title">11 — SLA Gauge Ring</div>
+          <div class="card-raised" style="padding:24px">
+            <div style="display:flex;gap:40px;flex-wrap:wrap;align-items:center">
+
+              <!-- Safe: 87% -->
+              <div style="text-align:center">
+                <div class="sla-ring-wrap">
+                  <svg width="96" height="96" viewBox="0 0 96 96">
+                    <circle class="sla-ring-wrap" cx="48" cy="48" r="36" fill="none" stroke="#383838" stroke-width="5" transform="rotate(-90 48 48)"/>
+                    <circle cx="48" cy="48" r="36" fill="none" stroke="#4A9E6E" stroke-width="5" stroke-linecap="round"
+                      stroke-dasharray="226.2" stroke-dashoffset="29.4"
+                      transform="rotate(-90 48 48)"/>
+                  </svg>
+                  <div class="sla-ring-label">
+                    <div class="sla-ring-value">87%</div>
+                    <div class="sla-ring-caption">SLA</div>
+                  </div>
+                </div>
+                <div style="font-size:11px;color:var(--color-success);margin-top:8px;font-weight:600">Safe</div>
+                <div style="font-size:10px;color:var(--color-text-subtle)">stroke: #4A9E6E</div>
+              </div>
+
+              <!-- Warning: 61% -->
+              <div style="text-align:center">
+                <div class="sla-ring-wrap">
+                  <svg width="96" height="96" viewBox="0 0 96 96">
+                    <circle cx="48" cy="48" r="36" fill="none" stroke="#383838" stroke-width="5" transform="rotate(-90 48 48)"/>
+                    <circle cx="48" cy="48" r="36" fill="none" stroke="#D4872C" stroke-width="5" stroke-linecap="round"
+                      stroke-dasharray="226.2" stroke-dashoffset="88.2"
+                      transform="rotate(-90 48 48)"/>
+                  </svg>
+                  <div class="sla-ring-label">
+                    <div class="sla-ring-value">61%</div>
+                    <div class="sla-ring-caption">SLA</div>
+                  </div>
+                </div>
+                <div style="font-size:11px;color:var(--color-warning);margin-top:8px;font-weight:600">At Risk</div>
+                <div style="font-size:10px;color:var(--color-text-subtle)">stroke: #D4872C</div>
+              </div>
+
+              <!-- Breach: 38% -->
+              <div style="text-align:center">
+                <div class="sla-ring-wrap">
+                  <svg width="96" height="96" viewBox="0 0 96 96">
+                    <circle cx="48" cy="48" r="36" fill="none" stroke="#383838" stroke-width="5" transform="rotate(-90 48 48)"/>
+                    <circle cx="48" cy="48" r="36" fill="none" stroke="#C04040" stroke-width="5" stroke-linecap="round"
+                      stroke-dasharray="226.2" stroke-dashoffset="140.2"
+                      transform="rotate(-90 48 48)"/>
+                  </svg>
+                  <div class="sla-ring-label">
+                    <div class="sla-ring-value" style="color:#C04040">38%</div>
+                    <div class="sla-ring-caption">SLA</div>
+                  </div>
+                </div>
+                <div style="font-size:11px;color:#C04040;margin-top:8px;font-weight:600">Breach</div>
+                <div style="font-size:10px;color:var(--color-text-subtle)">stroke: #C04040</div>
+              </div>
+
+              <!-- Gold: 95% -->
+              <div style="text-align:center">
+                <div class="sla-ring-wrap">
+                  <svg width="96" height="96" viewBox="0 0 96 96">
+                    <circle cx="48" cy="48" r="36" fill="none" stroke="#383838" stroke-width="5" transform="rotate(-90 48 48)"/>
+                    <circle cx="48" cy="48" r="36" fill="none" stroke="#C4972A" stroke-width="5" stroke-linecap="round"
+                      stroke-dasharray="226.2" stroke-dashoffset="11.3"
+                      transform="rotate(-90 48 48)"/>
+                  </svg>
+                  <div class="sla-ring-label">
+                    <div class="sla-ring-value" style="color:var(--color-accent)">95%</div>
+                    <div class="sla-ring-caption">Score</div>
+                  </div>
+                </div>
+                <div style="font-size:11px;color:var(--color-accent);margin-top:8px;font-weight:600">Gold — KPI</div>
+                <div style="font-size:10px;color:var(--color-text-subtle)">stroke: #C4972A</div>
+              </div>
+
+              <!-- Large: 74% -->
+              <div style="text-align:center">
+                <div class="sla-ring-wrap">
+                  <svg width="128" height="128" viewBox="0 0 128 128">
+                    <circle cx="64" cy="64" r="52" fill="none" stroke="#383838" stroke-width="6" transform="rotate(-90 64 64)"/>
+                    <circle cx="64" cy="64" r="52" fill="none" stroke="#D4872C" stroke-width="6" stroke-linecap="round"
+                      stroke-dasharray="326.7" stroke-dashoffset="84.9"
+                      transform="rotate(-90 64 64)"/>
+                  </svg>
+                  <div class="sla-ring-label">
+                    <div class="sla-ring-value" style="font-size:22px">74%</div>
+                    <div class="sla-ring-caption">On-Time</div>
+                  </div>
+                </div>
+                <div style="font-size:11px;color:var(--color-warning);margin-top:8px;font-weight:600">Large variant</div>
+                <div style="font-size:10px;color:var(--color-text-subtle)">128px · r=52</div>
+              </div>
+
+            </div>
+          </div>
+        </section>
+
+
+        <!-- ═══ 12. FOCUS RING ══════════════════════════════ -->
+        <section class="ds-section">
+          <div class="ds-section-title">12 — Focus Ring</div>
+          <div class="card-raised" style="padding:24px">
+            <div class="focus-demo">
+              <div class="focus-example">
+                <button class="btn btn-primary" style="outline:2px solid #C4972A;outline-offset:2px;box-shadow:0 0 0 4px rgba(196,151,42,0.2)">Primary Button</button>
+                <div class="focus-example-label">Primary focus</div>
+              </div>
+              <div class="focus-example">
+                <button class="btn btn-secondary" style="outline:2px solid #C4972A;outline-offset:2px">Secondary Button</button>
+                <div class="focus-example-label">Secondary focus</div>
+              </div>
+              <div class="focus-example">
+                <input class="input-field" type="text" value="Focused input" style="border-color:#C4972A;box-shadow:0 0 0 3px rgba(196,151,42,0.15);outline:none">
+                <div class="focus-example-label">Input focus</div>
+              </div>
+              <div class="focus-example">
+                <a href="#" style="color:var(--color-accent);outline:2px solid #C4972A;outline-offset:2px;border-radius:2px;padding:0 2px" onclick="return false">Link focus</a>
+                <div class="focus-example-label">Link focus</div>
+              </div>
+            </div>
+            <div style="margin-top:16px;padding:12px 16px;background:rgba(196,151,42,0.06);border:1px solid rgba(196,151,42,0.15);border-radius:8px">
+              <code style="font-family:'Geist Mono',monospace;font-size:12px;color:var(--color-text-muted)">:focus-visible { outline: 2px solid #C4972A; outline-offset: 2px; box-shadow: 0 0 0 4px rgba(196,151,42,0.15); }</code>
+            </div>
+          </div>
+        </section>
+
+
+        <!-- ═══ 13. MOTION GUIDE ════════════════════════════ -->
+        <section class="ds-section">
+          <div class="ds-section-title">13 — Motion Guide</div>
+          <div class="card-raised" style="padding:24px">
+            <div style="display:flex;gap:12px;flex-wrap:wrap;margin-bottom:20px">
+
+              <div class="motion-card">
+                <div class="motion-name">Fast — 100ms</div>
+                <div class="motion-value">--t-fast: 0.1s ease</div>
+                <div class="motion-desc">Hover states, colour transitions, icon colour changes. Imperceptible but prevents flicker.</div>
+              </div>
+
+              <div class="motion-card">
+                <div class="motion-name">Normal — 200ms</div>
+                <div class="motion-value">--t-normal: 0.2s ease</div>
+                <div class="motion-desc">Sidebar collapse, dropdown open, slide panels. Feels responsive.</div>
+              </div>
+
+              <div class="motion-card">
+                <div class="motion-name">Slow — 300ms</div>
+                <div class="motion-value">--t-slow: 0.3s ease</div>
+                <div class="motion-desc">Modal entry, page transitions, SLA ring fill. Deliberate, communicates state change.</div>
+              </div>
+
+            </div>
+
+            <!-- Entry animation description -->
+            <div style="border-top:1px solid var(--color-border);padding-top:20px">
+              <div style="font-size:10px;font-weight:700;letter-spacing:0.08em;text-transform:uppercase;color:var(--color-text-subtle);margin-bottom:12px">Standard Entry Animation</div>
+              <div style="display:flex;gap:16px;flex-wrap:wrap;align-items:center">
+                <div style="flex:1;min-width:200px">
+                  <div style="font-size:13px;color:var(--color-text-muted);line-height:1.7">
+                    Elements entering the viewport use <strong style="color:var(--color-text)">fade-in + translateY(4px → 0)</strong> at 250ms with <code style="font-family:'Geist Mono',monospace;color:var(--color-accent);font-size:12px">ease</code> easing. Cards animate in sequence with 40ms stagger when multiple appear simultaneously.
+                  </div>
+                </div>
+                <div style="flex-shrink:0">
+                  <div class="mono-specimen" style="font-size:11px">
+                    <div class="line"><span class="line-num">1</span><span class="line-code"><span class="kw">@keyframes</span> <span class="fn">fadeIn</span> {</span></div>
+                    <div class="line"><span class="line-num">2</span><span class="line-code">&nbsp;&nbsp;<span class="kw">from</span> { opacity: <span class="num">0</span>; transform: translateY(<span class="num">4px</span>); }</span></div>
+                    <div class="line"><span class="line-num">3</span><span class="line-code">&nbsp;&nbsp;<span class="kw">to</span>   { opacity: <span class="num">1</span>; transform: translateY(<span class="num">0</span>); }</span></div>
+                    <div class="line"><span class="line-num">4</span><span class="line-code">}</span></div>
+                    <div class="line"><span class="line-num">5</span><span class="line-code"><span class="cmt">/* 250ms, animation-fill-mode: both */</span></span></div>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+          </div>
+        </section>
+
+
+        <!-- ═══ 14. MONO SPECIMEN ═══════════════════════════ -->
+        <section class="ds-section">
+          <div class="ds-section-title">14 — Geist Mono Specimen</div>
+          <div class="card-raised" style="padding:24px">
+            <div style="font-size:10px;font-weight:700;letter-spacing:0.08em;text-transform:uppercase;color:var(--color-text-subtle);margin-bottom:16px">Used for: Order IDs · SKUs · Prices · Tracking numbers · Code</div>
+            <div class="mono-specimen">
+              <div class="line"><span class="line-num">—</span><span class="line-code"><span class="cmt">// Order identifiers</span></span></div>
+              <div class="line"><span class="line-num">—</span><span class="line-code"><span class="kw">ORD</span>-2024-08341 &nbsp; <span class="kw">ORD</span>-2024-08342 &nbsp; <span class="kw">ORD</span>-2024-08343</span></div>
+              <div class="line" style="margin-top:8px"><span class="line-num">—</span><span class="line-code"><span class="cmt">// SKUs</span></span></div>
+              <div class="line"><span class="line-num">—</span><span class="line-code"><span class="str">SYN-00419-BLK-M</span> &nbsp; <span class="str">SYN-00420-WHT-L</span> &nbsp; <span class="str">SYN-BUNDLE-003</span></span></div>
+              <div class="line" style="margin-top:8px"><span class="line-num">—</span><span class="line-code"><span class="cmt">// Prices (tabular-nums, font-variant-numeric)</span></span></div>
+              <div class="line"><span class="line-num">—</span><span class="line-code"><span class="num">£1,284.00</span> &nbsp; <span class="num">£84.50</span> &nbsp; <span class="num">€231.00</span> &nbsp; <span class="num">$4,120.80</span></span></div>
+              <div class="line" style="margin-top:8px"><span class="line-num">—</span><span class="line-code"><span class="cmt">// Tracking numbers</span></span></div>
+              <div class="line"><span class="line-num">—</span><span class="line-code">JD000034520000001234 &nbsp; 1Z999AA10123456784</span></div>
+              <div class="line" style="margin-top:8px"><span class="line-num">—</span><span class="line-code"><span class="cmt">// ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789</span></span></div>
+            </div>
+          </div>
+        </section>
+
+      </div><!-- /max-width -->
+    </div><!-- /content-area -->
+  </div><!-- /main-col -->
+</div><!-- /app-shell -->
+
+</body>
+</html>

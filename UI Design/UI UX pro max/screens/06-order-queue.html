@@ -1,0 +1,808 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Synergia — Order Queue</title>
+  <link rel="stylesheet" href="../shared.css">
+  <style>
+    /* Filter bar */
+    .filter-bar {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      padding: 12px 20px;
+      border-bottom: 1px solid var(--color-border);
+      background: var(--color-surface);
+      flex-wrap: wrap;
+    }
+
+    .filter-select {
+      background: var(--color-surface-raised);
+      border: 1px solid var(--color-border);
+      border-radius: var(--radius-md);
+      padding: 6px 10px;
+      color: var(--color-text-muted);
+      font-size: 12.5px;
+      font-family: var(--font-body);
+      cursor: pointer;
+      outline: none;
+      appearance: none;
+      -webkit-appearance: none;
+      padding-right: 24px;
+      background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='10' height='10' viewBox='0 0 24 24' fill='none' stroke='%23666' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpolyline points='6 9 12 15 18 9'/%3E%3C/svg%3E");
+      background-repeat: no-repeat;
+      background-position: right 8px center;
+      transition: border-color 0.15s;
+    }
+
+    .filter-select:focus { border-color: var(--color-accent); }
+    .filter-select option { background: #252525; }
+
+    .filter-search {
+      flex: 1;
+      min-width: 180px;
+      max-width: 280px;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      background: var(--color-surface-raised);
+      border: 1px solid var(--color-border);
+      border-radius: var(--radius-md);
+      padding: 6px 10px;
+      transition: border-color 0.15s;
+    }
+
+    .filter-search:focus-within { border-color: var(--color-accent); }
+
+    .filter-search input {
+      background: transparent;
+      border: none;
+      outline: none;
+      color: var(--color-text);
+      font-size: 12.5px;
+      font-family: var(--font-body);
+      flex: 1;
+    }
+
+    .filter-search input::placeholder { color: var(--color-text-subtle); }
+
+    .density-toggle {
+      display: flex;
+      background: var(--color-surface-raised);
+      border: 1px solid var(--color-border);
+      border-radius: var(--radius-md);
+      overflow: hidden;
+    }
+
+    .density-btn {
+      padding: 6px 10px;
+      font-size: 11.5px;
+      color: var(--color-text-muted);
+      cursor: pointer;
+      border: none;
+      background: transparent;
+      font-family: var(--font-body);
+      transition: all 0.1s;
+    }
+
+    .density-btn.active {
+      background: var(--color-accent-glow);
+      color: var(--color-accent);
+    }
+
+    /* Bulk action bar */
+    .bulk-bar {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      padding: 10px 20px;
+      background: rgba(196,151,42,0.06);
+      border-bottom: 1px solid rgba(196,151,42,0.2);
+      font-size: 13px;
+    }
+
+    .bulk-count {
+      font-weight: 600;
+      color: var(--color-accent);
+      flex-shrink: 0;
+    }
+
+    .bulk-sep {
+      width: 1px;
+      height: 16px;
+      background: var(--color-border);
+    }
+
+    .bulk-action {
+      color: var(--color-text-muted);
+      cursor: pointer;
+      font-size: 12.5px;
+      font-weight: 500;
+      background: none;
+      border: none;
+      font-family: var(--font-body);
+      padding: 4px 8px;
+      border-radius: var(--radius-sm);
+      transition: all 0.1s;
+      display: flex;
+      align-items: center;
+      gap: 5px;
+    }
+
+    .bulk-action:hover {
+      background: rgba(255,255,255,0.06);
+      color: var(--color-text);
+    }
+
+    .deselect-link {
+      margin-left: auto;
+      color: var(--color-text-subtle);
+      font-size: 12px;
+      cursor: pointer;
+      background: none;
+      border: none;
+      font-family: var(--font-body);
+      transition: color 0.1s;
+    }
+
+    .deselect-link:hover { color: var(--color-text-muted); }
+
+    /* Data table */
+    .data-table-wrap {
+      flex: 1;
+      overflow-y: auto;
+      overflow-x: auto;
+    }
+
+    .data-table {
+      width: 100%;
+      border-collapse: collapse;
+      min-width: 900px;
+    }
+
+    .data-table thead tr {
+      position: sticky;
+      top: 0;
+      z-index: 5;
+      background: var(--color-surface);
+    }
+
+    .data-table th {
+      padding: 9px 12px;
+      text-align: left;
+      font-size: 10.5px;
+      font-weight: 600;
+      text-transform: uppercase;
+      letter-spacing: 0.06em;
+      color: var(--color-text-subtle);
+      border-bottom: 1px solid var(--color-border);
+      white-space: nowrap;
+      cursor: pointer;
+      user-select: none;
+    }
+
+    .data-table th:hover { color: var(--color-text-muted); }
+
+    .data-table td {
+      padding: 10px 12px;
+      border-bottom: 1px solid rgba(56,56,56,0.5);
+      font-size: 12.5px;
+      color: var(--color-text-muted);
+      vertical-align: middle;
+      white-space: nowrap;
+    }
+
+    .data-table tbody tr {
+      transition: background 0.08s;
+      cursor: pointer;
+    }
+
+    .data-table tbody tr:hover td { background: rgba(255,255,255,0.025); }
+    .data-table tbody tr:last-child td { border-bottom: none; }
+
+    .data-table tbody tr.selected td {
+      background: rgba(196,151,42,0.07);
+    }
+
+    .data-table tbody tr.selected:hover td {
+      background: rgba(196,151,42,0.1);
+    }
+
+    .order-link {
+      font-family: var(--font-mono);
+      font-size: 12px;
+      color: var(--color-accent);
+      font-weight: 500;
+      text-decoration: none;
+    }
+
+    .order-link:hover { text-decoration: underline; }
+
+    .sla-ring-cell {
+      display: flex;
+      align-items: center;
+      gap: 6px;
+    }
+
+    .sla-text {
+      font-size: 12px;
+      font-weight: 600;
+    }
+
+    /* Row actions */
+    .row-actions {
+      display: flex;
+      gap: 4px;
+      opacity: 0;
+      transition: opacity 0.1s;
+    }
+
+    .data-table tbody tr:hover .row-actions { opacity: 1; }
+
+    .row-action-btn {
+      width: 24px;
+      height: 24px;
+      border-radius: 4px;
+      border: 1px solid var(--color-border);
+      background: var(--color-surface-raised);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      cursor: pointer;
+      color: var(--color-text-subtle);
+      transition: all 0.1s;
+    }
+
+    .row-action-btn:hover {
+      border-color: var(--color-border-active);
+      color: var(--color-text);
+    }
+
+    /* Pagination */
+    .pagination-bar {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 12px 20px;
+      border-top: 1px solid var(--color-border);
+      background: var(--color-surface);
+      font-size: 12.5px;
+      color: var(--color-text-muted);
+    }
+
+    .pagination-btns {
+      display: flex;
+      gap: 4px;
+      align-items: center;
+    }
+
+    .page-btn {
+      width: 28px;
+      height: 28px;
+      border-radius: 4px;
+      border: 1px solid var(--color-border);
+      background: var(--color-surface-raised);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      cursor: pointer;
+      font-size: 12px;
+      color: var(--color-text-muted);
+      font-family: var(--font-body);
+      transition: all 0.1s;
+    }
+
+    .page-btn.active {
+      background: var(--color-accent-glow);
+      border-color: var(--color-accent-dim);
+      color: var(--color-accent);
+      font-weight: 600;
+    }
+
+    .page-btn:hover:not(.active) {
+      border-color: var(--color-border-active);
+      color: var(--color-text);
+    }
+
+    input[type="checkbox"] {
+      width: 14px;
+      height: 14px;
+      accent-color: var(--color-accent);
+      cursor: pointer;
+    }
+  </style>
+</head>
+<body>
+  <div class="app-shell">
+
+    <!-- Sidebar -->
+    <aside class="sidebar">
+      <div class="sidebar-logo">
+        <div class="logo-mark">S</div>
+        <span class="logo-text">Synergia</span>
+      </div>
+      <nav class="sidebar-nav">
+        <a class="nav-item" href="05-main-dashboard.html"><svg xmlns="http://www.w3.org/2000/svg" width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="7" height="7"/><rect x="14" y="3" width="7" height="7"/><rect x="14" y="14" width="7" height="7"/><rect x="3" y="14" width="7" height="7"/></svg>Dashboard</a>
+        <a class="nav-item active" href="#"><svg xmlns="http://www.w3.org/2000/svg" width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M6 2L3 6v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2V6l-3-4z"/><line x1="3" y1="6" x2="21" y2="6"/><path d="M16 10a4 4 0 0 1-8 0"/></svg>Orders<span class="nav-badge">14</span></a>
+        <a class="nav-item" href="#"><svg xmlns="http://www.w3.org/2000/svg" width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M20.59 13.41l-7.17 7.17a2 2 0 0 1-2.83 0L2 12V2h10l8.59 8.59a2 2 0 0 1 0 2.82z"/><line x1="7" y1="7" x2="7.01" y2="7"/></svg>Listings</a>
+        <a class="nav-item" href="#"><svg xmlns="http://www.w3.org/2000/svg" width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="8" y1="6" x2="21" y2="6"/><line x1="8" y1="12" x2="21" y2="12"/><line x1="8" y1="18" x2="21" y2="18"/><line x1="3" y1="6" x2="3.01" y2="6"/><line x1="3" y1="12" x2="3.01" y2="12"/><line x1="3" y1="18" x2="3.01" y2="18"/></svg>Inventory<span class="nav-badge">14</span></a>
+        <a class="nav-item" href="#"><svg xmlns="http://www.w3.org/2000/svg" width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/></svg>Suppliers</a>
+        <a class="nav-item" href="#"><svg xmlns="http://www.w3.org/2000/svg" width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg>Customers</a>
+        <a class="nav-item" href="#"><svg xmlns="http://www.w3.org/2000/svg" width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="1 4 1 10 7 10"/><path d="M3.51 15a9 9 0 1 0 .49-3.51"/></svg>Returns<span class="nav-badge" style="background:rgba(212,135,44,0.2);color:var(--color-warning);">8</span></a>
+        <a class="nav-item" href="#"><svg xmlns="http://www.w3.org/2000/svg" width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="1" y="3" width="15" height="13"/><polygon points="16 8 20 8 23 11 23 16 16 16 16 8"/><circle cx="5.5" cy="18.5" r="2.5"/><circle cx="18.5" cy="18.5" r="2.5"/></svg>Shipping</a>
+        <a class="nav-item" href="#"><svg xmlns="http://www.w3.org/2000/svg" width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="12" y1="1" x2="12" y2="23"/><path d="M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6"/></svg>Finance</a>
+        <a class="nav-item" href="#"><svg xmlns="http://www.w3.org/2000/svg" width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="18" y1="20" x2="18" y2="10"/><line x1="12" y1="20" x2="12" y2="4"/><line x1="6" y1="20" x2="6" y2="14"/></svg>Reports</a>
+        <a class="nav-item" href="#"><svg xmlns="http://www.w3.org/2000/svg" width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>Research</a>
+        <a class="nav-item" href="#"><svg xmlns="http://www.w3.org/2000/svg" width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="3"/><path d="M19.07 4.93l-1.41 1.41A9 9 0 1 0 20 12h-2"/></svg>Settings</a>
+      </nav>
+      <div class="sidebar-footer">
+        <div class="sidebar-user">
+          <div class="user-avatar">JM</div>
+          <div class="user-info">
+            <div class="user-name">James Mitchell</div>
+            <div class="user-company">Digital Perception Ltd</div>
+          </div>
+        </div>
+      </div>
+    </aside>
+
+    <!-- Main -->
+    <div class="main-col">
+      <!-- Topbar -->
+      <div class="topbar">
+        <button class="cmd-k-btn" style="min-width:180px;">
+          <svg xmlns="http://www.w3.org/2000/svg" width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
+          Search orders…
+          <span style="margin-left:auto;" class="kbd">⌘K</span>
+        </button>
+        <div class="topbar-spacer"></div>
+        <div class="topbar-icon-btn">
+          <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M18 8A6 6 0 0 0 6 8c0 7-3 9-3 9h18s-3-2-3-9"/><path d="M13.73 21a2 2 0 0 1-3.46 0"/></svg>
+          <div class="topbar-badge">3</div>
+        </div>
+        <div class="topbar-avatar">JM</div>
+      </div>
+
+      <!-- Page header -->
+      <div style="display:flex;align-items:center;justify-content:space-between;padding:16px 20px 0;">
+        <div>
+          <div class="page-title">Orders</div>
+          <div style="font-size:12px;color:var(--color-text-muted);margin-top:2px;">147 orders today · 14 require action</div>
+        </div>
+        <div style="display:flex;gap:8px;">
+          <button class="btn btn-outline btn-sm">
+            <svg xmlns="http://www.w3.org/2000/svg" width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="6 9 6 2 18 2 18 9"/><path d="M6 18H4a2 2 0 0 1-2-2v-5a2 2 0 0 1 2-2h16a2 2 0 0 1 2 2v5a2 2 0 0 1-2 2h-2"/><rect x="6" y="14" width="12" height="8"/></svg>
+            Print All Labels
+          </button>
+          <button class="btn btn-primary btn-sm">
+            <svg xmlns="http://www.w3.org/2000/svg" width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
+            New Order
+          </button>
+        </div>
+      </div>
+
+      <!-- Filter bar -->
+      <div class="filter-bar">
+        <select class="filter-select">
+          <option>All Channels</option>
+          <option>eBay UK</option>
+          <option>TikTok Shop</option>
+          <option>Vinted</option>
+          <option>Etsy</option>
+        </select>
+        <select class="filter-select">
+          <option>All Statuses</option>
+          <option>Processing</option>
+          <option>Awaiting Payment</option>
+          <option>Shipped</option>
+          <option>On Hold</option>
+          <option>Cancelled</option>
+        </select>
+        <select class="filter-select">
+          <option>Date: Today</option>
+          <option>Last 7 days</option>
+          <option>Last 30 days</option>
+          <option>Custom range</option>
+        </select>
+        <select class="filter-select">
+          <option>All Couriers</option>
+          <option>Royal Mail</option>
+          <option>DPD</option>
+          <option>Evri</option>
+          <option>DHL</option>
+        </select>
+        <div class="filter-search">
+          <svg xmlns="http://www.w3.org/2000/svg" width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="var(--color-text-subtle)" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
+          <input type="text" placeholder="Search by order ID, buyer…">
+        </div>
+        <div style="margin-left:auto;display:flex;gap:8px;align-items:center;">
+          <div class="density-toggle">
+            <button class="density-btn active">Compact</button>
+            <button class="density-btn">Normal</button>
+            <button class="density-btn">Relaxed</button>
+          </div>
+          <button class="topbar-icon-btn" title="Configure columns">
+            <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="8" y1="6" x2="21" y2="6"/><line x1="8" y1="12" x2="21" y2="12"/><line x1="8" y1="18" x2="21" y2="18"/><line x1="3" y1="6" x2="3.01" y2="6"/><line x1="3" y1="12" x2="3.01" y2="12"/><line x1="3" y1="18" x2="3.01" y2="18"/></svg>
+          </button>
+        </div>
+      </div>
+
+      <!-- Bulk action bar (3 selected) -->
+      <div class="bulk-bar">
+        <span class="bulk-count">3 selected</span>
+        <div class="bulk-sep"></div>
+        <button class="bulk-action">
+          <svg xmlns="http://www.w3.org/2000/svg" width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="6 9 6 2 18 2 18 9"/><path d="M6 18H4a2 2 0 0 1-2-2v-5a2 2 0 0 1 2-2h16a2 2 0 0 1 2 2v5a2 2 0 0 1-2 2h-2"/><rect x="6" y="14" width="12" height="8"/></svg>
+          Print Labels
+        </button>
+        <button class="bulk-action">
+          <svg xmlns="http://www.w3.org/2000/svg" width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="1" y="3" width="15" height="13"/><polygon points="16 8 20 8 23 11 23 16 16 16 16 8"/><circle cx="5.5" cy="18.5" r="2.5"/><circle cx="18.5" cy="18.5" r="2.5"/></svg>
+          Assign Courier
+        </button>
+        <button class="bulk-action">
+          <svg xmlns="http://www.w3.org/2000/svg" width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg>
+          Mark Shipped
+        </button>
+        <button class="deselect-link">Deselect All</button>
+      </div>
+
+      <!-- Data table -->
+      <div class="data-table-wrap">
+        <table class="data-table">
+          <thead>
+            <tr>
+              <th style="width:36px;"><input type="checkbox"></th>
+              <th>Channel</th>
+              <th>Order ID ↑</th>
+              <th>Buyer</th>
+              <th style="text-align:right;">Value</th>
+              <th>Status</th>
+              <th>Courier</th>
+              <th>SLA</th>
+              <th style="width:60px;"></th>
+            </tr>
+          </thead>
+          <tbody>
+
+            <!-- Row 1 - selected -->
+            <tr class="selected">
+              <td><input type="checkbox" checked></td>
+              <td><span class="badge ch-ebay" style="font-size:10px;">eBay</span></td>
+              <td><a href="07-order-detail.html" class="order-link">SYN-20847</a></td>
+              <td style="color:var(--color-text);">Sarah Mitchell</td>
+              <td style="text-align:right;font-weight:600;color:var(--color-text);">£47.99</td>
+              <td><span class="badge badge-info" style="font-size:10px;">Processing</span></td>
+              <td style="font-size:12px;">Royal Mail 1st</td>
+              <td>
+                <div class="sla-ring-cell">
+                  <svg width="20" height="20" viewBox="0 0 20 20">
+                    <circle cx="10" cy="10" r="7" fill="none" stroke="rgba(56,56,56,0.8)" stroke-width="2.5"/>
+                    <circle cx="10" cy="10" r="7" fill="none" stroke="#4A9E6E" stroke-width="2.5" stroke-dasharray="44" stroke-dashoffset="10" stroke-linecap="round" transform="rotate(-90 10 10)"/>
+                  </svg>
+                  <span class="sla-text" style="color:var(--color-success);">22h</span>
+                </div>
+              </td>
+              <td>
+                <div class="row-actions">
+                  <button class="row-action-btn" title="More actions">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="5" r="1"/><circle cx="12" cy="12" r="1"/><circle cx="12" cy="19" r="1"/></svg>
+                  </button>
+                </div>
+              </td>
+            </tr>
+
+            <!-- Row 2 - selected -->
+            <tr class="selected">
+              <td><input type="checkbox" checked></td>
+              <td><span class="badge ch-tiktok" style="font-size:10px;">TikTok</span></td>
+              <td><a href="#" class="order-link">SYN-20848</a></td>
+              <td style="color:var(--color-text);">James Okafor</td>
+              <td style="text-align:right;font-weight:600;color:var(--color-text);">£23.50</td>
+              <td><span class="badge badge-warning" style="font-size:10px;">Await Pay</span></td>
+              <td style="font-size:12px;color:var(--color-text-subtle);">—</td>
+              <td><span style="font-size:12px;color:var(--color-text-subtle);">—</span></td>
+              <td><div class="row-actions"><button class="row-action-btn"><svg xmlns="http://www.w3.org/2000/svg" width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="5" r="1"/><circle cx="12" cy="12" r="1"/><circle cx="12" cy="19" r="1"/></svg></button></div></td>
+            </tr>
+
+            <!-- Row 3 - selected -->
+            <tr class="selected">
+              <td><input type="checkbox" checked></td>
+              <td><span class="badge ch-ebay" style="font-size:10px;">eBay</span></td>
+              <td><a href="#" class="order-link">SYN-20849</a></td>
+              <td style="color:var(--color-text);">Priya Sharma</td>
+              <td style="text-align:right;font-weight:600;color:var(--color-text);">£156.00</td>
+              <td><span class="badge badge-success" style="font-size:10px;">Shipped</span></td>
+              <td style="font-size:12px;">DPD Next Day</td>
+              <td><span class="sla-text" style="color:var(--color-success);font-size:12px;">Done ✓</span></td>
+              <td><div class="row-actions"><button class="row-action-btn"><svg xmlns="http://www.w3.org/2000/svg" width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="5" r="1"/><circle cx="12" cy="12" r="1"/><circle cx="12" cy="19" r="1"/></svg></button></div></td>
+            </tr>
+
+            <!-- Row 4 -->
+            <tr>
+              <td><input type="checkbox"></td>
+              <td><span class="badge ch-vinted" style="font-size:10px;">Vinted</span></td>
+              <td><a href="#" class="order-link">SYN-20850</a></td>
+              <td style="color:var(--color-text);">Tom Baker</td>
+              <td style="text-align:right;font-weight:600;color:var(--color-text);">£34.00</td>
+              <td><span class="badge badge-info" style="font-size:10px;">Processing</span></td>
+              <td style="font-size:12px;">Evri</td>
+              <td>
+                <div class="sla-ring-cell">
+                  <svg width="20" height="20" viewBox="0 0 20 20">
+                    <circle cx="10" cy="10" r="7" fill="none" stroke="rgba(56,56,56,0.8)" stroke-width="2.5"/>
+                    <circle cx="10" cy="10" r="7" fill="none" stroke="#E05555" stroke-width="2.5" stroke-dasharray="44" stroke-dashoffset="37" stroke-linecap="round" transform="rotate(-90 10 10)"/>
+                  </svg>
+                  <span class="sla-text" style="color:#E05555;">4h</span>
+                </div>
+              </td>
+              <td><div class="row-actions"><button class="row-action-btn"><svg xmlns="http://www.w3.org/2000/svg" width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="5" r="1"/><circle cx="12" cy="12" r="1"/><circle cx="12" cy="19" r="1"/></svg></button></div></td>
+            </tr>
+
+            <!-- Row 5 -->
+            <tr>
+              <td><input type="checkbox"></td>
+              <td><span class="badge ch-ebay" style="font-size:10px;">eBay</span></td>
+              <td><a href="#" class="order-link">SYN-20851</a></td>
+              <td style="color:var(--color-text);">Lucy Chen</td>
+              <td style="text-align:right;font-weight:600;color:var(--color-text);">£89.99</td>
+              <td><span class="badge badge-warning" style="font-size:10px;">On Hold</span></td>
+              <td style="font-size:12px;color:var(--color-text-subtle);">—</td>
+              <td><span style="font-size:12px;color:var(--color-text-subtle);">—</span></td>
+              <td><div class="row-actions"><button class="row-action-btn"><svg xmlns="http://www.w3.org/2000/svg" width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="5" r="1"/><circle cx="12" cy="12" r="1"/><circle cx="12" cy="19" r="1"/></svg></button></div></td>
+            </tr>
+
+            <!-- Row 6 -->
+            <tr>
+              <td><input type="checkbox"></td>
+              <td><span class="badge ch-tiktok" style="font-size:10px;">TikTok</span></td>
+              <td><a href="#" class="order-link">SYN-20852</a></td>
+              <td style="color:var(--color-text);">Fatima Al-Rashid</td>
+              <td style="text-align:right;font-weight:600;color:var(--color-text);">£67.00</td>
+              <td><span class="badge badge-info" style="font-size:10px;">Processing</span></td>
+              <td style="font-size:12px;">DPD Next Day</td>
+              <td>
+                <div class="sla-ring-cell">
+                  <svg width="20" height="20" viewBox="0 0 20 20">
+                    <circle cx="10" cy="10" r="7" fill="none" stroke="rgba(56,56,56,0.8)" stroke-width="2.5"/>
+                    <circle cx="10" cy="10" r="7" fill="none" stroke="#D4872C" stroke-width="2.5" stroke-dasharray="44" stroke-dashoffset="32" stroke-linecap="round" transform="rotate(-90 10 10)"/>
+                  </svg>
+                  <span class="sla-text" style="color:var(--color-warning);">9h</span>
+                </div>
+              </td>
+              <td><div class="row-actions"><button class="row-action-btn"><svg xmlns="http://www.w3.org/2000/svg" width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="5" r="1"/><circle cx="12" cy="12" r="1"/><circle cx="12" cy="19" r="1"/></svg></button></div></td>
+            </tr>
+
+            <!-- Row 7 -->
+            <tr>
+              <td><input type="checkbox"></td>
+              <td><span class="badge ch-ebay" style="font-size:10px;">eBay</span></td>
+              <td><a href="#" class="order-link">SYN-20853</a></td>
+              <td style="color:var(--color-text);">Ravi Patel</td>
+              <td style="text-align:right;font-weight:600;color:var(--color-text);">£22.49</td>
+              <td><span class="badge badge-success" style="font-size:10px;">Shipped</span></td>
+              <td style="font-size:12px;">Royal Mail 2nd</td>
+              <td><span class="sla-text" style="color:var(--color-success);font-size:12px;">Done ✓</span></td>
+              <td><div class="row-actions"><button class="row-action-btn"><svg xmlns="http://www.w3.org/2000/svg" width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="5" r="1"/><circle cx="12" cy="12" r="1"/><circle cx="12" cy="19" r="1"/></svg></button></div></td>
+            </tr>
+
+            <!-- Row 8 -->
+            <tr>
+              <td><input type="checkbox"></td>
+              <td><span class="badge ch-vinted" style="font-size:10px;">Vinted</span></td>
+              <td><a href="#" class="order-link">SYN-20854</a></td>
+              <td style="color:var(--color-text);">Eleanor Hughes</td>
+              <td style="text-align:right;font-weight:600;color:var(--color-text);">£14.99</td>
+              <td><span class="badge badge-info" style="font-size:10px;">Processing</span></td>
+              <td style="font-size:12px;">Evri</td>
+              <td>
+                <div class="sla-ring-cell">
+                  <svg width="20" height="20" viewBox="0 0 20 20">
+                    <circle cx="10" cy="10" r="7" fill="none" stroke="rgba(56,56,56,0.8)" stroke-width="2.5"/>
+                    <circle cx="10" cy="10" r="7" fill="none" stroke="#4A9E6E" stroke-width="2.5" stroke-dasharray="44" stroke-dashoffset="13" stroke-linecap="round" transform="rotate(-90 10 10)"/>
+                  </svg>
+                  <span class="sla-text" style="color:var(--color-success);">18h</span>
+                </div>
+              </td>
+              <td><div class="row-actions"><button class="row-action-btn"><svg xmlns="http://www.w3.org/2000/svg" width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="5" r="1"/><circle cx="12" cy="12" r="1"/><circle cx="12" cy="19" r="1"/></svg></button></div></td>
+            </tr>
+
+            <!-- Row 9 -->
+            <tr>
+              <td><input type="checkbox"></td>
+              <td><span class="badge ch-ebay" style="font-size:10px;">eBay</span></td>
+              <td><a href="#" class="order-link">SYN-20855</a></td>
+              <td style="color:var(--color-text);">Marcus Thompson</td>
+              <td style="text-align:right;font-weight:600;color:var(--color-text);">£112.00</td>
+              <td><span class="badge badge-muted" style="font-size:10px;">Cancelled</span></td>
+              <td style="font-size:12px;color:var(--color-text-subtle);">—</td>
+              <td><span style="font-size:12px;color:var(--color-text-subtle);">—</span></td>
+              <td><div class="row-actions"><button class="row-action-btn"><svg xmlns="http://www.w3.org/2000/svg" width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="5" r="1"/><circle cx="12" cy="12" r="1"/><circle cx="12" cy="19" r="1"/></svg></button></div></td>
+            </tr>
+
+            <!-- Row 10 -->
+            <tr>
+              <td><input type="checkbox"></td>
+              <td><span class="badge ch-tiktok" style="font-size:10px;">TikTok</span></td>
+              <td><a href="#" class="order-link">SYN-20856</a></td>
+              <td style="color:var(--color-text);">Amelia Foster</td>
+              <td style="text-align:right;font-weight:600;color:var(--color-text);">£56.49</td>
+              <td><span class="badge badge-info" style="font-size:10px;">Processing</span></td>
+              <td style="font-size:12px;">Royal Mail 1st</td>
+              <td>
+                <div class="sla-ring-cell">
+                  <svg width="20" height="20" viewBox="0 0 20 20">
+                    <circle cx="10" cy="10" r="7" fill="none" stroke="rgba(56,56,56,0.8)" stroke-width="2.5"/>
+                    <circle cx="10" cy="10" r="7" fill="none" stroke="#4A9E6E" stroke-width="2.5" stroke-dasharray="44" stroke-dashoffset="7" stroke-linecap="round" transform="rotate(-90 10 10)"/>
+                  </svg>
+                  <span class="sla-text" style="color:var(--color-success);">31h</span>
+                </div>
+              </td>
+              <td><div class="row-actions"><button class="row-action-btn"><svg xmlns="http://www.w3.org/2000/svg" width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="5" r="1"/><circle cx="12" cy="12" r="1"/><circle cx="12" cy="19" r="1"/></svg></button></div></td>
+            </tr>
+
+            <!-- Row 11 -->
+            <tr>
+              <td><input type="checkbox"></td>
+              <td><span class="badge ch-ebay" style="font-size:10px;">eBay</span></td>
+              <td><a href="#" class="order-link">SYN-20857</a></td>
+              <td style="color:var(--color-text);">Oliver Davies</td>
+              <td style="text-align:right;font-weight:600;color:var(--color-text);">£33.00</td>
+              <td><span class="badge badge-success" style="font-size:10px;">Shipped</span></td>
+              <td style="font-size:12px;">DPD</td>
+              <td><span class="sla-text" style="color:var(--color-success);font-size:12px;">Done ✓</span></td>
+              <td><div class="row-actions"><button class="row-action-btn"><svg xmlns="http://www.w3.org/2000/svg" width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="5" r="1"/><circle cx="12" cy="12" r="1"/><circle cx="12" cy="19" r="1"/></svg></button></div></td>
+            </tr>
+
+            <!-- Row 12 -->
+            <tr>
+              <td><input type="checkbox"></td>
+              <td><span class="badge ch-vinted" style="font-size:10px;">Vinted</span></td>
+              <td><a href="#" class="order-link">SYN-20858</a></td>
+              <td style="color:var(--color-text);">Charlotte Wilson</td>
+              <td style="text-align:right;font-weight:600;color:var(--color-text);">£19.99</td>
+              <td><span class="badge badge-warning" style="font-size:10px;">Await Pay</span></td>
+              <td style="font-size:12px;color:var(--color-text-subtle);">—</td>
+              <td><span style="font-size:12px;color:var(--color-text-subtle);">—</span></td>
+              <td><div class="row-actions"><button class="row-action-btn"><svg xmlns="http://www.w3.org/2000/svg" width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="5" r="1"/><circle cx="12" cy="12" r="1"/><circle cx="12" cy="19" r="1"/></svg></button></div></td>
+            </tr>
+
+            <!-- Row 13 -->
+            <tr>
+              <td><input type="checkbox"></td>
+              <td><span class="badge ch-ebay" style="font-size:10px;">eBay</span></td>
+              <td><a href="#" class="order-link">SYN-20859</a></td>
+              <td style="color:var(--color-text);">Noah Williams</td>
+              <td style="text-align:right;font-weight:600;color:var(--color-text);">£78.50</td>
+              <td><span class="badge badge-info" style="font-size:10px;">Processing</span></td>
+              <td style="font-size:12px;">Royal Mail 1st</td>
+              <td>
+                <div class="sla-ring-cell">
+                  <svg width="20" height="20" viewBox="0 0 20 20">
+                    <circle cx="10" cy="10" r="7" fill="none" stroke="rgba(56,56,56,0.8)" stroke-width="2.5"/>
+                    <circle cx="10" cy="10" r="7" fill="none" stroke="#D4872C" stroke-width="2.5" stroke-dasharray="44" stroke-dashoffset="35" stroke-linecap="round" transform="rotate(-90 10 10)"/>
+                  </svg>
+                  <span class="sla-text" style="color:var(--color-warning);">6h</span>
+                </div>
+              </td>
+              <td><div class="row-actions"><button class="row-action-btn"><svg xmlns="http://www.w3.org/2000/svg" width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="5" r="1"/><circle cx="12" cy="12" r="1"/><circle cx="12" cy="19" r="1"/></svg></button></div></td>
+            </tr>
+
+            <!-- Row 14 -->
+            <tr>
+              <td><input type="checkbox"></td>
+              <td><span class="badge ch-tiktok" style="font-size:10px;">TikTok</span></td>
+              <td><a href="#" class="order-link">SYN-20860</a></td>
+              <td style="color:var(--color-text);">Sophia Brown</td>
+              <td style="text-align:right;font-weight:600;color:var(--color-text);">£45.00</td>
+              <td><span class="badge badge-success" style="font-size:10px;">Shipped</span></td>
+              <td style="font-size:12px;">Evri</td>
+              <td><span class="sla-text" style="color:var(--color-success);font-size:12px;">Done ✓</span></td>
+              <td><div class="row-actions"><button class="row-action-btn"><svg xmlns="http://www.w3.org/2000/svg" width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="5" r="1"/><circle cx="12" cy="12" r="1"/><circle cx="12" cy="19" r="1"/></svg></button></div></td>
+            </tr>
+
+            <!-- Row 15 -->
+            <tr>
+              <td><input type="checkbox"></td>
+              <td><span class="badge ch-ebay" style="font-size:10px;">eBay</span></td>
+              <td><a href="#" class="order-link">SYN-20861</a></td>
+              <td style="color:var(--color-text);">Isla MacDonald</td>
+              <td style="text-align:right;font-weight:600;color:var(--color-text);">£29.99</td>
+              <td><span class="badge badge-info" style="font-size:10px;">Processing</span></td>
+              <td style="font-size:12px;">Royal Mail 1st</td>
+              <td>
+                <div class="sla-ring-cell">
+                  <svg width="20" height="20" viewBox="0 0 20 20">
+                    <circle cx="10" cy="10" r="7" fill="none" stroke="rgba(56,56,56,0.8)" stroke-width="2.5"/>
+                    <circle cx="10" cy="10" r="7" fill="none" stroke="#4A9E6E" stroke-width="2.5" stroke-dasharray="44" stroke-dashoffset="16" stroke-linecap="round" transform="rotate(-90 10 10)"/>
+                  </svg>
+                  <span class="sla-text" style="color:var(--color-success);">15h</span>
+                </div>
+              </td>
+              <td><div class="row-actions"><button class="row-action-btn"><svg xmlns="http://www.w3.org/2000/svg" width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="5" r="1"/><circle cx="12" cy="12" r="1"/><circle cx="12" cy="19" r="1"/></svg></button></div></td>
+            </tr>
+
+            <!-- Row 16 -->
+            <tr>
+              <td><input type="checkbox"></td>
+              <td><span class="badge ch-vinted" style="font-size:10px;">Vinted</span></td>
+              <td><a href="#" class="order-link">SYN-20862</a></td>
+              <td style="color:var(--color-text);">George Campbell</td>
+              <td style="text-align:right;font-weight:600;color:var(--color-text);">£8.99</td>
+              <td><span class="badge badge-success" style="font-size:10px;">Shipped</span></td>
+              <td style="font-size:12px;">Evri</td>
+              <td><span class="sla-text" style="color:var(--color-success);font-size:12px;">Done ✓</span></td>
+              <td><div class="row-actions"><button class="row-action-btn"><svg xmlns="http://www.w3.org/2000/svg" width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="5" r="1"/><circle cx="12" cy="12" r="1"/><circle cx="12" cy="19" r="1"/></svg></button></div></td>
+            </tr>
+
+            <!-- Row 17 -->
+            <tr>
+              <td><input type="checkbox"></td>
+              <td><span class="badge ch-ebay" style="font-size:10px;">eBay</span></td>
+              <td><a href="#" class="order-link">SYN-20863</a></td>
+              <td style="color:var(--color-text);">Mia Robertson</td>
+              <td style="text-align:right;font-weight:600;color:var(--color-text);">£199.00</td>
+              <td><span class="badge badge-info" style="font-size:10px;">Processing</span></td>
+              <td style="font-size:12px;">DPD Next Day</td>
+              <td>
+                <div class="sla-ring-cell">
+                  <svg width="20" height="20" viewBox="0 0 20 20">
+                    <circle cx="10" cy="10" r="7" fill="none" stroke="rgba(56,56,56,0.8)" stroke-width="2.5"/>
+                    <circle cx="10" cy="10" r="7" fill="none" stroke="#4A9E6E" stroke-width="2.5" stroke-dasharray="44" stroke-dashoffset="5" stroke-linecap="round" transform="rotate(-90 10 10)"/>
+                  </svg>
+                  <span class="sla-text" style="color:var(--color-success);">42h</span>
+                </div>
+              </td>
+              <td><div class="row-actions"><button class="row-action-btn"><svg xmlns="http://www.w3.org/2000/svg" width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="5" r="1"/><circle cx="12" cy="12" r="1"/><circle cx="12" cy="19" r="1"/></svg></button></div></td>
+            </tr>
+
+            <!-- Row 18 -->
+            <tr>
+              <td><input type="checkbox"></td>
+              <td><span class="badge ch-tiktok" style="font-size:10px;">TikTok</span></td>
+              <td><a href="#" class="order-link">SYN-20864</a></td>
+              <td style="color:var(--color-text);">Harry Anderson</td>
+              <td style="text-align:right;font-weight:600;color:var(--color-text);">£38.00</td>
+              <td><span class="badge badge-info" style="font-size:10px;">Processing</span></td>
+              <td style="font-size:12px;">Royal Mail 1st</td>
+              <td>
+                <div class="sla-ring-cell">
+                  <svg width="20" height="20" viewBox="0 0 20 20">
+                    <circle cx="10" cy="10" r="7" fill="none" stroke="rgba(56,56,56,0.8)" stroke-width="2.5"/>
+                    <circle cx="10" cy="10" r="7" fill="none" stroke="#D4872C" stroke-width="2.5" stroke-dasharray="44" stroke-dashoffset="30" stroke-linecap="round" transform="rotate(-90 10 10)"/>
+                  </svg>
+                  <span class="sla-text" style="color:var(--color-warning);">11h</span>
+                </div>
+              </td>
+              <td><div class="row-actions"><button class="row-action-btn"><svg xmlns="http://www.w3.org/2000/svg" width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="5" r="1"/><circle cx="12" cy="12" r="1"/><circle cx="12" cy="19" r="1"/></svg></button></div></td>
+            </tr>
+
+          </tbody>
+        </table>
+      </div>
+
+      <!-- Pagination -->
+      <div class="pagination-bar">
+        <span>Showing <strong style="color:var(--color-text);">1–18</strong> of <strong style="color:var(--color-text);">147</strong> orders</span>
+        <div class="pagination-btns">
+          <button class="page-btn" disabled style="opacity:0.4;">
+            <svg xmlns="http://www.w3.org/2000/svg" width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="15 18 9 12 15 6"/></svg>
+          </button>
+          <button class="page-btn active">1</button>
+          <button class="page-btn">2</button>
+          <button class="page-btn">3</button>
+          <span style="color:var(--color-text-subtle);font-size:12px;padding:0 4px;">…</span>
+          <button class="page-btn">9</button>
+          <button class="page-btn">
+            <svg xmlns="http://www.w3.org/2000/svg" width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="9 18 15 12 9 6"/></svg>
+          </button>
+        </div>
+      </div>
+
+    </div>
+  </div>
+
+  <script src="https://unpkg.com/lucide@latest"></script>
+  <script>lucide.createIcons();</script>
+</body>
+</html>
