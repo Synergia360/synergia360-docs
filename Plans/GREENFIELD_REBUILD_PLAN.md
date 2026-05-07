@@ -59,6 +59,7 @@ Synergia is a **multichannel marketplace management + 3PL platform** targeting U
 ### Product Domains (35 active + 2 deferred)
 
 **Foundation**
+
 1. **Multi-tenancy** — `company_id NOT NULL` from schema birth; zero-trust data isolation; 3PL shadow-tenant model (each managed brand is a real `company`, not a row in another table)
 2. **Billing** — Stripe subscriptions, turnover-based tiers including a **free tier for sub-£100K-turnover sellers** (acquisition wedge), usage metering, Customer Portal
 3. **Identity & RBAC** — custom roles per company; action-level permissions (`view/create/edit/delete/export/approve/cancel/assign`); user override chain; platform admin overrides
@@ -67,6 +68,7 @@ Synergia is a **multichannel marketplace management + 3PL platform** targeting U
 6. **Background processing** — Hangfire (recurring/delayed) + Azure Functions (queue consumers); outbox relay; webhook inbox idempotency
 
 **Catalogue & Inventory**
+
 7. **Product catalogue** — products, variants, BOM/kits/combos, structured `product_attributes` (not just channel-specific JSON), images, supplier linkage
 8. **Inventory management** — real-time cross-channel sync; multi-warehouse; FIFO/FEFO; **channel buffer stock rules** (reserve qty per channel, max % allocation per channel)
 9. **Stock take & cycle count** — physical inventory audit workflow; bin-level scan reconciliation; immutable variance ledger
@@ -74,6 +76,7 @@ Synergia is a **multichannel marketplace management + 3PL platform** targeting U
 11. **Smart category management** — hierarchical category tree per company; auto-categorisation rules engine (condition DSL: match by title keywords, SKU pattern, price range, channel, supplier, or product attributes); priority-ordered rules; manual override; bulk re-categorise; category stats (SKU count, average margin)
 
 **Channels**
+
 12. **Marketplace adapter framework** — `MarketplaceAdapter` ABC; capability flags; `StubMarketplaceAdapter` base; **adapter SDKs open-sourced (D11)** alongside Phase 11 — `MarketplaceAdapter` SDK + `CarrierAdapter` SDK + public MCP client released MIT. Internal business logic + Tier-C research stay closed.
 13. **Listing management** — central catalogue → channel push/sync; **per-channel listing templates**; **AI-assisted title/keyword optimisation**; bulk ops; cross-marketplace variation syndication mapping
 14. **Channel onboarding** — "60-second connect" wizard: connect channel → pull existing listings → match to catalogue by SKU → flag unmatched → operator reviews import preview → apply
@@ -81,6 +84,7 @@ Synergia is a **multichannel marketplace management + 3PL platform** targeting U
 16. **Repricing engine** — rule-based competitive repricing (match buy box, beat lowest by X, never below floor); AI-assisted repricing suggestions via MCP layer
 
 **Orders & Fulfilment**
+
 17. **Customers / Buyers** — first-class `customers` entity; address book; repeat-buyer detection; LTV calculation; CRM integration foundation
 18. **Order management** — unified order queue; rule-based routing; **address validation at ingest**; no-code automation engine; operator collaboration (notes/`@mentions`/task assignment per order)
 19. **Returns & disputes** — returns synced from marketplace APIs; operator-initiated returns and cancellations; **AI-assisted return triage** (categorise reasons, flag fraud patterns); RMA queue, stock fate decisions, refund trigger; marketplace case management
@@ -89,11 +93,13 @@ Synergia is a **multichannel marketplace management + 3PL platform** targeting U
 22. **Shipping** — carrier adapters; rate shopping; label generation; tracking relay; insurance & claims (where carrier supports)
 
 **Finance & Operations**
+
 23. **Expense management** — company-level expenses (rent, salaries, software, overheads) and channel-level expenses (marketplace advertising, subscriptions, promotions); recurring and one-off; flexible allocation rules: distribute a company-level expense equally across all active channels, or assign custom percentages to selected channels (percentages must sum to 100); allocated expenses flow into channel P&L and monthly close
 24. **Portfolio management** — operator-defined named groupings of channels for cross-channel P&L reporting and comparative analytics (e.g. "UK Channels" = eBay UK + TikTok Shop UK; "EU Channels" = Amazon DE + Etsy); one channel can belong to multiple portfolios; portfolio-level revenue/margin/expense views; no investor or profit-sharing logic
 25. **Monthly financial closing** — per-company AND per-channel close workflow; operator opens a period, reviews the financial summary, then locks it; locked periods produce an immutable snapshot (`month_closing_snapshots`) that never changes even if underlying order data is corrected; per-channel breakdown within each company close; status flow: OPEN → IN_PROGRESS → PENDING_REVIEW → LOCKED; unlock requires admin permission and writes an audit entry; closing report auto-generated at lock time
 
 **Intelligence**
+
 26. **Demand forecasting** — velocity trending; reorder alerts; stockout prediction; supplier MOQ + lead time + container constraints
 27. **Analytics & reporting** — SKU profitability (fees + COGS + shipping + allocated expenses + return cost); LTV/CAC; channel-level P&L; portfolio P&L; multi-currency normalisation
 28. **Report builder + dashboards** — structured `ReportSpec` engine; **AI authoring** (natural language → spec) via in-app assistant; saved reports re-run without AI tokens; scheduled delivery (email PDF / Slack / webhook); user-built dashboards; 18+ pre-built finance reports in the starter pack
@@ -105,6 +111,7 @@ Synergia is a **multichannel marketplace management + 3PL platform** targeting U
 30. **Messaging** — marketplace message hub; conversation threading; AI draft assist
 
 **Surfaces**
+
 31. **Public marketing website** — `synergia.co.uk` — the front door of the business. Static-first (Astro) for SEO + performance; pages: home, features (per domain), pricing (free tier prominent), for-sellers, for-3PLs, comparisons (vs Linnworks/StoreFEEDER/Veeqo), integrations directory, blog (content marketing), case studies, about, contact / demo request, legal (privacy, terms, DPA, sub-processors, cookies). Sign-up CTAs route to `app.synergia.co.uk`. Lead capture stored in `marketing_leads` table.
 32. **3PL client portal** — scoped portal for 3PL clients (under shadow-tenant model — each managed brand is its own `company` with cross-tenant view permissions for the 3PL operator)
 33. **Public API + webhooks** — REST API; outbound webhook subscriptions; developer docs; first-party TypeScript + Python SDKs
@@ -112,12 +119,14 @@ Synergia is a **multichannel marketplace management + 3PL platform** targeting U
 35. **Public uptime / metrics page** — `status.synergia.co.uk` — transparency: real-time platform status, marketplace sync latency, API rate-limit headroom (trust signal)
 
 **Cross-cutting (not standalone domains)**
+
 - **GDPR / Compliance** — data subject access requests, right to be forgotten, data retention policies, data residency (UK)
 - **Feature flags** (Flagsmith) — kill switches, gradual rollout, A/B per company
 - **Globalisation & Localisation (i18n / l10n)** — codebase architected for any locale from Phase 2; **launch locales: English (`en-GB`) + Urdu (`ur-PK`)**; every UI string extracted to translation keys; locale-aware formatters for dates/numbers/currency; full RTL (right-to-left) support for Urdu — CSS logical properties throughout; Nastaliq font for Urdu rendering; per-user + per-company locale preference; marketing site, app, and mobile app all localised. **Translation method: AI-translated (Claude) + native-speaker human review** — CI gate blocks production deploys if any key is still AI-only.
 - **Locale roadmap post-launch** — additional locales planned in this order: **Hindi (`hi-IN`), Polish (`pl-PL`), Arabic (`ar-SA`, RTL), Romanian (`ro-RO`)**. Reflects UK SME demographics. Each new locale = AI batch translation + native-speaker review + RTL/LTR visual regression on existing screens. New locales ship behind a feature flag for early-access tenants before going GA.
 
 **Deferred to 2027**
+
 - **B2B / wholesale portal** — see `2027-plans/wholesale-portal.md`
 - **Self-serve customer returns portal** — see `2027/DEFERRED_FEATURES.md`
 
