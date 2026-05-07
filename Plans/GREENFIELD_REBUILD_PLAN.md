@@ -15,11 +15,11 @@
   - [Architectural Decisions](#architectural-decisions)
   - [Monorepo Layout](#monorepo-layout)
   - [Domain Layout](#domain-layout)
-- [Step 3 — Canonical Schema](#step-3--canonical-schema-abridged-key-tables)
+- [Step 3 — Schema Feature-Coverage Inventory](#step-3--schema-feature-coverage-inventory)
   - [Global Tables](#global-tables-no-company_id)
   - [Core Tenant Tables](#core-tenant-tables)
   - [Marketing Site Tables](#marketing-site-tables-global--no-company_id-handled-separately-from-tenant-data)
-  - [Schema Additions (2026-05-07 review)](#schema-additions-vs-previous-draft-post-2026-05-07-review)
+  - [Inventory Additions during 2026-05-07 Review](#inventory-additions-during-2026-05-07-review-historical-record-of-plan-doc-edits--not-post-lock-schema-changes)
 - [Step 4 — Documentation System](#step-4--documentation-system)
   - [docs/ Directory Structure](#docs-directory-structure)
   - [PROJECT\_STATUS.md Format](#project_statusmd-format-maintained-every-phase)
@@ -48,6 +48,8 @@
   - [Phase 9 — WMS + Demand Forecasting + Staff Performance (Mobile App)](#phase-9--wms--demand-forecasting--staff-performance-mobile-app)
   - [Phase 10 — No-Code Automation + Repricing + Report Engine + Finance Reports Starter Pack](#phase-10--no-code-automation--repricing--report-engine--finance-reports-starter-pack)
   - [Phase 11 — Marketplace Depth + Messaging Hub + 3PL Client Portal](#phase-11--marketplace-depth--messaging-hub--3pl-client-portal)
+    - [Phase 11a — Launch Blockers](#phase-11a--launch-blockers-required-for-v1-public-launch)
+    - [Phase 11b — Post-Launch Follow-on](#phase-11b--post-launch-follow-on-ships-continuously-after-launch)
 - [🚀 MILESTONE — v1 Public Launch (End of Phase 11)](#-milestone--v1-public-launch-end-of-phase-11)
   - [What v1 Launch Includes (Phases 0–11)](#what-v1-launch-includes-phases-011)
   - [v1 Launch Acceptance Criteria](#v1-launch-acceptance-criteria)
@@ -91,10 +93,36 @@
   - [Market-Leading Differentiators](#market-leading-differentiators)
   - [Deferred Features](#deferred-features)
   - [Locked Decisions (resolved 2026-05-07)](#locked-decisions-resolved-2026-05-07)
+    - [💰 Pricing & Plan Tiers](#-pricing--plan-tiers)
+    - [🤖 AI & MCP](#-ai--mcp)
+    - [📊 Forecasting & Analytics](#-forecasting--analytics)
+    - [🌍 Marketplace & Carrier Adapters](#-marketplace--carrier-adapters)
+    - [📱 Mobile & Native](#-mobile--native)
+    - [🏷️ White-label & Reseller](#-white-label--reseller)
+    - [👤 Customer Data](#-customer-data)
+    - [🌐 Marketing Site](#-marketing-site)
+    - [🌍 Localisation](#-localisation-resolved-earlier)
   - [Deferred (revisit later)](#deferred-revisit-later--explicit-non-decisions)
   - [Open Product Questions](#open-product-questions)
 - [Competitive Positioning Summary](#competitive-positioning-summary)
 - [Ordered Implementation Sequence](#ordered-implementation-sequence)
+  - [Foundation (Phases 0–2)](#foundation-phases-02)
+  - [Identity, Audit, Notifications, Billing (Phase 3)](#identity-audit-notifications-billing-phase-3)
+  - [Catalogue & Foundation Models (Phase 4)](#catalogue--foundation-models-phase-4)
+  - [Channels — Phase 5](#channels--phase-5-ebay-tiktok-shop-vinted-reduced)
+  - [Orders + Customer Operations (Phase 6)](#orders--customer-operations-phase-6)
+  - [Returns, Cancellations, Disputes (Phase 7)](#returns-cancellations-disputes-phase-7)
+  - [Fulfilment & Carriers (Phase 8)](#fulfilment--carriers-phase-8)
+  - [WMS, Forecasting, Cycle Count (Phase 9)](#wms-forecasting-cycle-count-phase-9)
+  - [Automation, Repricing, Analytics, Reporting (Phase 10)](#automation-repricing-analytics-reporting-phase-10)
+  - [Marketplace Depth, Messaging, 3PL, Status (Phase 11)](#marketplace-depth-messaging-3pl-status-phase-11)
+  - [🚀 v1 PUBLIC LAUNCH MILESTONE](#-v1-public-launch-milestone--end-of-phase-11)
+  - [Expansion Adapters (Phase 12)](#expansion-adapters-phase-12--etsy-is-must-ship-to-fill-vinted-scope-gaps)
+  - [AI Layer + Public MCP Beta (Phase 13)](#ai-layer--public-mcp-beta-phase-13)
+  - [Market Intelligence — Tier B (Phase 14)](#market-intelligence--tier-b-phase-14)
+  - [Market Intelligence — Tier C (Phase 15)](#market-intelligence--tier-c-phase-15)
+  - [Storefronts, Dropship (Phase 16)](#storefronts-dropship-phase-16)
+  - [Enterprise, Public API, Public MCP GA (Phase 17)](#enterprise-public-api-public-mcp-ga-phase-17)
 
 ---
 
@@ -330,11 +358,28 @@ Each workflow deploys independently to its own target — a change to `frontend/
 
 ---
 
-## Step 3 — Canonical Schema (abridged, key tables)
+## Step 3 — Schema Feature-Coverage Inventory
 
-All tenant-scoped tables carry `company_id UUID NOT NULL REFERENCES companies(id)` from the first migration. No backfill cycles. No nullable company_id ever.
+> ⚠️ **READ THIS FIRST.** The tables listed in this section are **NOT a schema design**. They are an **inventory** — the minimum surface area Phase 1 must produce a real schema for, derived from the 35 product domains in Step 1 plus features called out in this plan. The actual schema — every table name, every column, every type, every index, every foreign key, every constraint — is **produced from scratch in Phase 1**, driven by Phase 0 research, with this inventory as a coverage checklist (Phase 1 may not finish until every item below has a corresponding decision in `docs/schema-design/SCHEMA.md`).
+>
+> **Why an inventory and not a draft schema:** Drafting tables in this plan invites the team to copy them into migrations without re-validating against the actual API contracts captured in Phase 0. That is exactly the failure mode that produced V1 → V2. The lesson — encoded in Phase 0's schema-first principle — is that schema decisions must be made *after* seeing every external API's data model, not before. So the inventory below is the **what** (what the schema must cover); Phase 0 research is the **how** (how each external system actually shapes its data); Phase 1 is the **single moment** where what + how become the final, complete, locked schema.
+>
+> **What this means in practice:**
+> - The table names below are **provisional**. Phase 1 may rename, merge, split, or replace any of them based on Phase 0 findings.
+> - The column hints below are **starting hypotheses**. Phase 1 may add, drop, retype, or repartition any of them based on Phase 0 findings.
+> - Every column committed to the locked schema must trace back to either (a) a Phase 0 research finding or (b) a feature explicitly named in this plan. Anything else is rejected at review.
+> - **No abridgement.** Phase 1's `docs/schema-design/SCHEMA.md` documents *every* table and *every* column — there is no second "advanced" or "later" schema document. The schema produced in Phase 1 is the schema for the entire phased plan, including features that don't ship until Phase 17.
+> - **The "Schema additions vs. previous draft" section later in this Step is a historical record** of what this inventory itself was missing in earlier drafts of the plan. It is not a list of post-Phase-1 schema changes — those don't exist by design.
 
-> **Schema lock principle:** Every column is captured in Phase 0 research before being added. Phase 1 locks the schema. Phase 2 implements one EF Core baseline migration. Subsequent schema changes go through a new migration **and** a retroactive update to `SCHEMA.md`.
+**Universal invariants — Phase 1 must enforce these on every applicable table:**
+- Every tenant-scoped table carries `company_id UUID NOT NULL REFERENCES companies(id)` from the first migration. No backfill cycles. No nullable `company_id` ever.
+- Every monetary column carries an explicit `currency` (CHAR(3) ISO 4217) plus a base-currency normalised companion column populated using the FX rate at event time.
+- Every external-system reference uses typed columns for known identifiers (e.g. `external_id`, `external_order_line_id`); `external_data JSONB` is reserved only for genuinely platform-specific extras documented in Phase 0 research.
+- Every status enum is sourced from Phase 0 research — never invented.
+- Every mutating table has its idempotency strategy decided in Phase 1 (request-level via `idempotency_keys`, webhook-level via `webhook_inbox`, or N/A with rationale).
+- Every table has rationale comments and an entry in `docs/schema-design/SCHEMA.md` cross-referencing the Phase 0 research finding or plan feature that drove it.
+
+**Schema lock principle (lifted to Phase 1, hardened here):** Phase 1 produces the **complete, final** schema. Phase 2 implements one EF Core baseline migration that exactly matches it. Any schema change after Phase 1 — even a single nullable column — requires a written ADR explaining why Phase 0 research / Phase 1 review missed it, plus an EF Core migration plus a retroactive update to `SCHEMA.md`. Frequent post-lock additions are a signal that Phase 0 / Phase 1 was rushed; treat them as bugs in the planning process, not normal evolution.
 
 ### Global tables (no company_id)
 `users` (with `preferred_locale` column), `companies`, `company_memberships`, `plans`, `plan_features`, `stripe_events`, `carriers`, `carrier_services`, `marketplace_definitions`, `platform_settings`, `audit_log_global`, `currencies`, `fx_rates`, `tax_jurisdictions`, `tax_rates_global`, `notification_event_types` (lookup), `feature_flags_global`, `marketing_leads`, `marketing_form_submissions`, `marketing_newsletter_subscribers`, `supported_locales` (lookup: `en-GB`, `ur-PK`)
@@ -564,9 +609,11 @@ marketing_newsletter_subscribers  — email, subscribed_at, unsubscribed_at, sou
 
 Lead workflow: marketing site form → API endpoint `/api/public/marketing/lead` → write to `marketing_leads` → forward to email + (later) sync to CRM (HubSpot/Pipedrive — Phase 17+ decision).
 
-### Schema additions vs. previous draft (post-2026-05-07 review)
+### Inventory additions during 2026-05-07 review (historical record of plan-doc edits — NOT post-lock schema changes)
 
-The following tables/columns were added during the 2026-05-07 line-by-line audit and **must be in the Phase 1 lock**:
+> 📌 This subsection is **historical**: it records what was missing from the Step 3 *inventory* in earlier drafts of this plan and was added during the 2026-05-07 line-by-line audit. None of this is a "post-Phase-1 schema change" — Phase 1 hasn't run yet. Once Phase 1 produces the locked schema, this section can be archived; it exists now only so reviewers of the plan can see what changed when this plan was last reviewed.
+
+The following inventory items were added on 2026-05-07 and **must be reflected in the Phase 1 schema produced from research**:
 
 | Domain | New tables | Why |
 | --- | --- | --- |
@@ -892,6 +939,7 @@ For each marketplace, document:
 - **Fees / payouts:** fee structure (percentage of sale? fixed? both?), when fees are known (at listing? at sale? at payout?), payout report format and fields
 - **Rate limits:** per-endpoint documented limits, quota window type (daily/rolling/per-second), Retry-After header behaviour, sandbox vs. production limits
 - **External IDs:** how the marketplace identifies listings, orders, and line items — document every ID type (e.g. eBay: `ItemID` + `TransactionID`; Amazon: `ASIN` + `FNSKU` + merchant SKU; TikTok: `product_id` + `sku_id` + `order_id`) and which ones we need to store and index
+- **Mandatory / restricted shipping options:** for each marketplace, document any seller programmes that bypass our carrier rate-shop — e.g. TikTok-managed shipping in some regions, eBay Managed Delivery, Amazon Buy Shipping requirements, Vinted-managed labels. These constrain Phase 8 carrier rate-shopping scope per channel and must be reflected in adapter capability flags. Without this research, Phase 8 will assume rate-shopping applies to all orders and break for marketplaces that mandate their own shipping.
 
 **Carriers to investigate:** Royal Mail (Click & Drop / OBA API), Evri, DPD
 
@@ -951,6 +999,12 @@ _Cost model validation:_
 - ☐ Anthropic pricing confirmed in writing
 - ☐ Plan-tier prices locked with finance
 
+_Legal & data-residency preconditions for AI:_
+- ☐ **Anthropic DPA + Standard Contractual Clauses (SCCs) signed in writing** — Claude API is US-hosted; AI calls in Phase 5+ send tenant data (orders, customer history, product fields, marketplace messages) to the US. UK GDPR requires a data processing agreement with adequate transfer safeguards. Without this, Phase 5 ships an unmitigated GDPR exposure.
+- ☐ Anthropic listed on `synergia.co.uk/legal/sub-processors` (sub-processor disclosure is a contractual requirement for many enterprise customers)
+- ☐ Privacy notice + DPA template updated to reflect AI processing of tenant data — published before Phase 5 first AI feature ships
+- ☐ Tenant-level opt-out path documented (a tenant can request their AI features disabled; required for UK government / NHS / regulated-industry sellers if/when targeted)
+
 _External preconditions resolved:_
 - ☐ Vinted Pro Integrations allowlist applied / confirmed (D5)
 - ☐ Pilot client's active Vinted listing count captured + slot-allocation negotiated if > 500
@@ -973,9 +1027,25 @@ _Sign-off:_
 ---
 
 ### Phase 1 — Schema Design & Lock
-**Goal:** Translate Phase 0 research into a final, peer-reviewed schema. No migration runs until this is signed off. This is the single most important phase in the project.
 
-**Rationale:** The schema is the contract everything else is built on. A column added wrong now costs a migration + data backfill + potential downtime later. Phase 0 research gives us the full picture; Phase 1 turns it into a schema that won't need patching.
+> 🔐 **NON-NEGOTIABLE.** Phase 1 produces the **complete, final schema** for the entire phased plan, including features that don't ship until Phase 17. Every table, every column, every type, every index, every foreign key, every constraint is decided here, in one document, before any code runs. There is no "v2 schema" later in the plan. There is no "we'll add that table when we get to Phase X." If Phase 1 misses something, that is the bug — fix Phase 1, don't paper over it in a later phase.
+
+**Goal:** Produce the complete, locked schema for the platform — every table the plan will ever need — by combining (a) Phase 0 research on every external API and (b) the Step 3 feature-coverage inventory derived from the 35 product domains. No migration runs until this is signed off. This is the single most important phase in the project.
+
+**Two inputs only — no third source of schema:**
+1. **Phase 0 `docs/api-research/*` + `SCHEMA_IMPACT.md`** — every external API contract that ever touches the platform (eBay, TikTok, Vinted, Etsy, Amazon, Shopify, WooCommerce, Royal Mail, Evri, DPD, ShipStation, Stripe, Anthropic, Open Exchange Rates, Keepa, DataForSEO, Google Trends, AliExpress) — driving column types, idempotency keys, status enums, fee timing, ID strategy.
+2. **Step 3 feature-coverage inventory** — the list of domains and capabilities the schema must cover, derived from the 35 product domains in Step 1. This is the *what*; Phase 0 is the *how*.
+
+If a column being considered doesn't trace to one of those two inputs, it is rejected at review.
+
+**Rationale:** The schema is the contract everything else is built on. A column added wrong now costs a migration + data backfill + potential downtime later. The lesson from V1 → V2 is that schema decisions made before research, or schema decisions made incrementally per feature phase, accumulate into a mess. Phase 0 research gives us the full picture *across every external system the platform will ever touch*; Step 3 inventory gives us the full picture *across every feature the platform will ever build*; Phase 1 turns those two pictures into one schema that doesn't need patching.
+
+**Scope discipline — what is and isn't allowed in Phase 1:**
+- ✅ **Allowed:** every table needed for any feature mentioned anywhere in this plan, even features that don't ship until Phase 14 / 15 / 17. Tier-C `market_universal_products`? Yes, in Phase 1. Public-API `api_keys`? Yes, in Phase 1. Phase 17 EDI? If it has a schema impact, yes, in Phase 1.
+- ✅ **Allowed:** schema for features behind feature flags. The flag controls *exposure*; the schema is locked here regardless.
+- ❌ **Forbidden:** "we'll add that table when we get there" — that's how V1 became V2. If a domain in Step 1 needs a table, it's in Phase 1 or it's not in the platform.
+- ❌ **Forbidden:** nullable bolt-ons "for now." Nullable is a deliberate choice with a documented rationale, not a workaround for incomplete thinking.
+- ❌ **Forbidden:** `external_data JSONB` as a dumping ground. Each marketplace's specific fields go into typed columns; JSONB is reserved for documented edge cases only.
 
 **No infrastructure spend this phase.**
 
@@ -984,7 +1054,7 @@ _Sign-off:_
 - **External ID strategy:** how each marketplace's identifiers map to `channel_listings` — document the `external_id` + `external_data JSONB` pattern decision per platform
 - **Webhook inbox design:** idempotency key strategy per platform (where in each payload the idempotency key lives, format, uniqueness guarantee)
 - **Fee capture strategy:** for each marketplace, document exactly what fee data is available via API at what point in the order lifecycle — determines what can go in `order_line_costs` vs. what must be estimated
-- **Currency strategy:** confirm base currency on `companies`, currency tracking on every monetary table, FX rate source (Open Exchange Rates / ECB) and refresh schedule, base-currency normalisation for analytics — all locked here, not bolted on later
+- **Currency strategy:** confirm base currency on `companies`, currency tracking on every monetary table, FX rate source (Open Exchange Rates / ECB) and refresh schedule, base-currency normalisation for analytics — all locked here, not bolted on later. **FX-rate fallback policy locked here too:** if the nightly fetch job fails (provider outage), order ingest uses the most recent stored rate for that (base, target) pair within a 7-day window and writes a `fx_rate_stale_days` marker on the order; orders flag for finance review if the most recent rate is older than 7 days. Never block order ingest on missing FX — store with stale rate + flag, recompute on rate refresh.
 - **Tax strategy:** UK VAT, EU OSS/IOSS, marketplace facilitator rules (eBay/Amazon collect VAT for sub-£135 imports / sub-€150 EU); per-SKU tax codes; jurisdiction-aware tax calculation; document where tax data is captured per marketplace from Phase 0 research
 - **Customer entity strategy:** `customers` as first-class entity (not hidden inside orders); buyer-to-customer matching rules per marketplace (some marketplaces give consistent buyer IDs, some don't); de-duplication strategy
 - **Channel buffer stock model:** decision locked on whether to use `channel_listing_stock_rules` (reserve qty + max %) or simpler global "available_to_channels = stock - buffer"
@@ -1005,17 +1075,42 @@ _Sign-off:_
 
 **Documentation deliverable:** `docs/schema-design/SCHEMA.md` (STATUS: LOCKED); `docs/schema-design/PERMISSION_MATRIX.md`; `docs/schema-design/NOTIFICATION_EVENT_TYPES.md`; `docs/PROJECT_STATUS.md` updated to Phase 1 COMPLETE.
 
-**Lock criteria:** No EF Core baseline migration is created until `docs/schema-design/SCHEMA.md` is marked `STATUS: LOCKED`. Future schema changes require a new EF Core migration AND a retroactive update to `SCHEMA.md` explaining why.
+**Lock criteria (all must be true before STATUS: LOCKED is written):**
 
-**Acceptance criteria:**
-- Every table in the schema has a rationale comment
-- Every external ID type from Phase 0 research appears somewhere in the schema
-- Every webhook payload idempotency key strategy is documented
-- No table has a nullable `company_id`
-- EF Core entity stubs compile cleanly (no logic, just properties)
-- Schema reviewed against: "what happens when we add Amazon?" and "what happens when we add a 4th carrier?" — no structural changes required
+_Coverage:_
+- ☐ Every domain in Step 1 (35 active + 2 deferred) maps to one or more tables in `docs/schema-design/SCHEMA.md` — coverage matrix included in the doc, no domain unmapped
+- ☐ Every item in the Step 3 feature-coverage inventory appears in the schema (or is explicitly marked "intentionally not modelled — no state to persist" with rationale)
+- ☐ Every external API in Phase 0 research has its order / listing / webhook / fee / payout fields mapped to a typed column in the schema; nothing left as "we'll figure out later"
+- ☐ Every status enum across orders / listings / returns / shipments / cases / RTV / stock takes / month closings / imports / research / etc. is enumerated from Phase 0 research, not invented
+- ☐ Every monetary column has its `currency` companion + base-currency normalisation column
+- ☐ Every external-system reference has its idempotency-key strategy documented
+- ☐ Every column has a rationale comment that traces to either a Phase 0 finding or a Step 3 inventory item
 
-**Risks:** Schema review may surface gaps that require going back to Phase 0 research for specific APIs. Budget one iteration loop between Phase 0 and Phase 1 before locking.
+_Hostile-review walkthrough (same scenarios from Phase 0 — schema must require zero structural changes for any of them):_
+- ☐ "What happens when we add Amazon SP-API in Phase 12?" — answer: no new tables, no column additions, capability flags + adapter
+- ☐ "What happens when we add a 4th, 5th, 6th carrier?" — answer: a new row in `carriers`/`carrier_services`, no schema change
+- ☐ "What happens when an EU buyer orders from a UK seller (IOSS / facilitator VAT)?" — answer: `tax_collected_by` and `tax_jurisdiction` columns already cover it
+- ☐ "What happens when a 3PL onboards a 4th brand?" — answer: a new `companies` row + `3pl_relationships` row, no schema change
+- ☐ "What happens when Vinted releases a returns API in 2027?" — answer: capability flag flips on, existing `return_requests` table accepts Vinted entries with its existing columns
+- ☐ "What happens when Phase 17 EDI ships?" — answer: schema already accommodates the partner-identifier and document-tracking shape per Phase 0 research
+- ☐ "What happens when a Tier-C feed adds a new external data source in 2028?" — answer: a new row in `market_data_feeds`, no schema change
+
+_Format:_
+- ☐ EF Core entity class stubs compile cleanly (no logic, just properties + relationships) — they ARE the schema, in C# form
+- ☐ `docs/schema-design/SCHEMA.md` documents every table with: purpose, every column (name, type, nullable, default, rationale), every index, every foreign key, every check constraint
+- ☐ `docs/schema-design/PERMISSION_MATRIX.md` enumerates every `(resource, action)` pair the platform will ever check
+- ☐ `docs/schema-design/NOTIFICATION_EVENT_TYPES.md` enumerates every notification event_type the platform will ever raise
+- ☐ `docs/schema-design/ENUMS.md` enumerates every status enum and its allowed transitions
+
+_Sign-off:_
+- ☐ Architect + founder sign-off recorded in `docs/PROJECT_STATUS.md` ("Phase 1 — APPROVED" with date + signatories) before `STATUS: LOCKED` is written
+- ☐ No EF Core baseline migration is created until the line above is in `PROJECT_STATUS.md`
+
+**Post-lock change rule (enforced from Phase 2 onward):** Any schema change after Phase 1 — adding a table, adding a column (even nullable), changing a type, dropping anything — requires a written ADR (`docs/adr/NNN-schema-change-<slug>.md`) that answers: (1) why was this missed in Phase 0 research? (2) why was it missed in Phase 1 review? (3) why can't the existing schema accommodate the need? (4) what is the migration + backfill plan? PRs that change the schema without an accompanying ADR are blocked by CI. **Frequent post-lock changes are a planning bug, not normal evolution** — if the project is averaging more than one schema-change ADR per phase, stop and run a hostile review of remaining Phase 0 research before continuing.
+
+**Acceptance criteria:** all the lock-criteria checkboxes above are ticked. There are no separate acceptance criteria — Phase 1 acceptance *is* the lock-criteria gate.
+
+**Risks:** Schema review may surface gaps that require going back to Phase 0 research for specific APIs. Budget one iteration loop between Phase 0 and Phase 1 before locking. The temptation to "just lock and fix later" is the single biggest threat to the rebuild — resist it. Better to spend two extra weeks in Phase 1 than two extra months migrating in Phase 8.
 
 ---
 
@@ -1049,6 +1144,9 @@ _Sign-off:_
 - Correlation ID middleware wired; all log lines include `{CorrelationId}` and `{CompanyId}`
 - Azure Monitor alert rules defined in `infra/modules/monitoring.bicep`
 - Idempotency middleware wired; `idempotency_keys` table in baseline migration
+- **Outbox relay Hangfire recurring job** — polls `webhook_outbox` every 30 seconds, dispatches pending events, writes delivery results to `webhook_deliveries`, exponential-backoff retry up to 24h then dead-lettered. The transactional outbox pattern is in the architecture decisions and the schema; the relay job that actually drains it is a Phase 2 deliverable so Phase 3 outbound webhooks (notification webhook channel) work from day one.
+- **Inbox relay Hangfire recurring job** — drains `webhook_inbox` to per-resource handlers (deferred to Phase 5+ when adapters exist; the relay framework + idempotency check ships in Phase 2).
+- **Flagsmith deployed to Container Apps** (self-hosted, free) — `IFeatureFlagService` wired against it; one example flag (`marketing.demo-form-enabled`) demonstrates end-to-end resolution including tenant-scope override. The Reliability section names Flagsmith as the kill-switch / gradual-rollout tool from Phase 2 onward — its actual deploy was previously implicit; now an explicit deliverable.
 - `docs/PROJECT_STATUS.md` updated to Phase 2 COMPLETE
 - ASP.NET Core 8 Web API skeleton with `RequireCompanyScope` middleware/filter wired on every controller
 - EF Core baseline migration implementing the Phase 1 locked schema (`docs/schema-design/SCHEMA.md`) — `dotnet ef migrations add InitialSchema`; every table and column must match the approved schema exactly
@@ -1124,6 +1222,24 @@ _RBAC — action-level permissions_
 - Every API endpoint enforces action-level check via `[RequirePermission("orders", "cancel")]` attribute — not just auth
 - Permission change events written to audit log
 
+_Multi-company session model (3PL precursor — designed in Phase 3, brand-switcher UX ships Phase 11)_
+- A user can hold memberships in multiple `companies` (already in schema via `company_memberships`). Their JWT carries the **active** `company_id` plus a list of all companies they have access to.
+- `RequireCompanyScope` middleware reads the active `company_id` from the token, NOT from a request parameter — preventing privilege escalation by URL fiddling.
+- New endpoint `POST /api/auth/switch-company` mints a new JWT with a different active `company_id` (must be a company the user is a member of OR an active `3pl_relationships` row grants access). Switch is audit-logged.
+- `3pl_relationships` (already in Phase 1 schema) is consulted at company-switch time, so when Phase 11 adds the brand-switcher UI it's pure frontend work — the auth model already supports it.
+- `IUserContext.CurrentCompanyId` is the only sanctioned way to read the active company anywhere in the API code; direct `User.FindFirst("company_id")` is forbidden by an analyzer rule.
+- **Why Phase 3 (and not Phase 11):** Plan previously deferred this until 3PL portal shipped. Retrofitting "which company is the operator currently in?" into the auth middleware at Phase 11 would require touching every controller and worker — an auth refactor right before v1 launch. Designing it in now costs days; deferring it costs weeks at the worst possible moment.
+
+_AI cost enforcement service (precursor for first AI feature in Phase 5)_
+- `IAiCostService` skeleton wired with daily token caps + monthly aggregate ceiling per `(company_id, feature)` — enforced before any Claude call returns from the API layer
+- `ai_usage_records` table writes `(company_id, feature, model, input_tokens, output_tokens, cost_in_base_currency, request_id)` per call
+- Soft warn at 80% of daily cap (toast in UI + email to billing contact); hard cap at 100% returns `429 ai_cap_exceeded` with "upgrade to lift cap" CTA
+- Free tier: zero AI tokens — `IAiCostService` returns `forbidden_on_plan` with link to upgrade
+- Caps configured in `plan_features` table; admin can override per company
+- Hangfire daily job rolls up `ai_usage_records` → `ai.cost_per_tenant_per_feature_per_day` Application Insights custom metric
+- **Why Phase 3 (and not Phase 5):** Phase 5 ships the first AI feature (listing optimisation). Without `IAiCostService` in Phase 3, Phase 5 would launch with no budget guards, and bolt-on cost enforcement is harder than building it in
+- See `Plans/AI_COST_MODEL.md` for the per-feature daily caps to seed
+
 _Audit Log_
 - `audit_log` table: `id`, `company_id`, `user_id`, `actor_type` (user/ai_assistant/system), `action`, `resource_type`, `resource_id`, `old_value JSONB`, `new_value JSONB`, `ip_address`, `user_agent`, `session_id`, `timestamp` — append-only, no updates or deletes ever
 - Every API write operation (POST/PUT/PATCH/DELETE) automatically writes an audit entry via middleware — zero per-endpoint boilerplate
@@ -1136,7 +1252,7 @@ _Notifications_
 - `notification_preferences` table: `(user_id, event_type, channel)` where `channel` ∈ `{in_app, email, webhook}` — defaults to in_app for all, user can opt out per channel per event type
 - `NotificationCentre` component: bell icon in navbar with unread count badge; slide-out drawer grouped by type; mark read/dismiss; "mark all read"
 - `NotificationPreferences` page: per-event-type delivery toggles (in-app / email / webhook / off)
-- Real-time delivery to in-app centre via SignalR (same backplane as WMS — no new service needed until Phase 7)
+- Real-time delivery to in-app centre via SignalR. **Multi-replica scaling decision:** Container Apps consumption scales to multiple replicas under load; in-process SignalR is replica-local and breaks fan-out across replicas. Two acceptable paths — (a) pin API to a single replica until Phase 9 when Azure SignalR Service Standard ships (cheapest, OK for early traffic), or (b) bring Azure SignalR Service forward to Phase 5 alongside the first paying customers and DB upgrade. The plan picks **(a) — pin to single replica through Phase 8**, with an alert if API CPU sustains > 70% for 15 min (signal to fast-track Azure SignalR Service). Documented in `infra/INFRA_OVERVIEW.md`.
 - Email delivery via Azure Communication Services for email-enabled notifications
 - All notification templates customisable per company (subject + body with variable substitution)
 - Initial event types wired in Phase 3: login from new device, role changed, permission changed, subscription status changed
@@ -1146,7 +1262,7 @@ _Billing_
 - Billing UI: plan selector, usage dashboard, upgrade/downgrade flow
 - Platform admin: company list, plan overrides, manual subscription management
 - **Plan tiers locked (D1, D13, D24):**
-  - **Free** — 1 channel, 1 user, 1 warehouse, 100 orders/month, 50 SKUs; ops only; **no AI features**; basic dashboards
+  - **Free** — 1 channel, 1 user, 1 warehouse (or zero — marketplace-fulfilled sellers using FBA / eBay handled fulfilment / TikTok shipping have no physical warehouse and the platform must not require one; `warehouses` is logically optional on free tier), 100 orders/month, 50 SKUs; ops only; **no AI features**; basic dashboards
   - **Starter** — paid baseline; full ops; Tier-A research insights; AI features with low caps
   - **Growth** — multi-user, multi-warehouse, multi-channel; Tier-B Marketplace Research; AI features at standard caps
   - **Scale** — full Tier-C research with monthly Keepa/DataForSEO quota included; higher AI caps; advanced RBAC
@@ -1245,18 +1361,18 @@ _Expense Management setup (NEW)_
 - Expense list view: filterable by date range, category, scope, channel; export to CSV/XLSX
 - Recurring expenses generate `expenses` rows automatically via Hangfire on their recurrence schedule
 
-**Acceptance criteria:**
-- Creating a kit/combo product correctly decrements component stock on sale at the BOM-defined quantities
-- A 6-pack multipack (one product × 6 quantity) correctly decrements 6 from the underlying SKU per sale
+**Acceptance criteria (testable in this phase — channel-dependent flows are seeded with stub channel rows from Phase 2 seed script, not real marketplace channels which arrive in Phase 5):**
+- Creating a kit/combo product, then triggering a stock decrement via test fixture at the BOM-defined quantities, correctly decrements component stock (full marketplace-driven sale flow tested in Phase 6)
+- A 6-pack multipack (one product × 6 quantity) correctly decrements 6 from the underlying SKU when a stub order line is created (full flow tested in Phase 6)
 - Stock movements are immutable; corrections create new movement rows
 - Multi-warehouse stock totals aggregate correctly across locations
 - PO emailed to supplier from platform; status advances through lifecycle on GRN receipt
-- A SKU with `tax_code = Reduced` calculates correctly per UK VAT rates
+- A SKU with `tax_code = Reduced` calculates correctly per UK VAT rates (calculation tested via direct service call; per-order tax-line capture validated in Phase 6)
 - An EUR-denominated PO converts to base GBP correctly using the FX rate at PO date
 - RTV created → stock decremented → supplier credit recorded; distinct from customer return flow
 - Category rule matching "title contains 'charger'" correctly categorises matching products on rule run; manual category override is not overwritten by subsequent rule run
-- Custom-split expense with 60%/40% across two channels writes correct `expense_channel_allocations` rows; allocation percentages enforced to sum to 100 before save
-- Equal-split expense across 3 active channels writes three rows at 33.33% each
+- Custom-split expense with 60%/40% across two channels (stub channels from seed) writes correct `expense_channel_allocations` rows; allocation percentages enforced to sum to 100 before save
+- Equal-split expense across 3 active stub channels writes three rows at 33.33% each (real-channel scenarios re-validated in Phase 5 once real channels exist)
 - Recurring monthly expense fires on the correct calendar date; generates a new `expenses` row; linked to original via `recurrence_parent_id`
 
 **Risks:** FIFO/FEFO lot tracking adds schema complexity; scope to post-MVP if needed. Tax engine complexity grows with EU expansion — keep UK VAT primary in this phase, EU VAT/IOSS in Phase 12 alongside EU expansion. Category rules DSL must be well-documented in `docs/schema-design/` for future condition types to be addable without breaking existing rules.
@@ -1315,7 +1431,17 @@ _Pricing rules — NEW_
 _AI listing optimisation — NEW_
 - AI suggestions panel on every listing: title rewrites, missing keyword detection, image quality scoring (low resolution, missing white background)
 - Suggestions stored in `ai_listing_suggestions`; pending → operator accepts/rejects; accepted suggestions auto-pushed to channel
-- Powered by Claude API (no MCP server required at this phase — direct API call)
+- Powered by Claude API via `IAiClient` abstraction (no MCP server required at this phase — direct API call). **`IAiClient` is vendor-agnostic from day one** — Anthropic is the default implementation; an Azure OpenAI implementation exists as a smoke-tested alternate. Switching providers is config-only. Risk Scenario 4 in `Plans/AI_COST_MODEL.md` (Anthropic price increase) becomes survivable without an emergency refactor.
+- All Claude calls flow through `IAiCostService` (Phase 3) — daily cap + monthly aggregate enforced before API call; free tier returns `forbidden_on_plan`
+
+_Adapter telemetry — Application Insights custom metrics (precondition for Phase 11 status page)_
+- Every adapter (marketplace + carrier) emits structured custom metrics from the moment it ships:
+  - `marketplace.sync_latency_ms{channel, company_id, op}` — latency of listing/order/inventory sync per channel
+  - `marketplace.rate_limit_remaining_pct{channel, company_id}` — rate-limit headroom; sampled per call from response headers where supported, else estimated from token-bucket
+  - `webhook.delivery_lag_ms{channel, company_id, event_type}` — time from external event timestamp → arrival in `webhook_inbox`
+  - `adapter.error_rate_per_min{channel, company_id, error_class}` — rolling per-channel error rate by error class (auth / rate-limit / 5xx / timeout)
+- Metrics written via `ITelemetryClient.TrackMetric` in adapter base class — adapters cannot ship without these; CI gate fails if a new adapter PR doesn't emit the four metrics above
+- These metrics power the Phase 11 public uptime page (`status.synergia.co.uk`). Phase 11 is reading them, not building them — without this Phase 5 deliverable, the status page in Phase 11 has nothing to display per channel
 
 _Imports & Migrations (NEW — major churn-reducer)_
 
@@ -1459,6 +1585,13 @@ _AI return triage (NEW)_
 - Output: suggested decision (approve/reject/investigate), risk score (0–100 — fraud risk indicator), suggested stock fate
 - Stored in `ai_listing_suggestions` analogue table for returns; never auto-actioned, always requires operator confirmation
 - Patterns surfaced: "this buyer has 5 returns in 30 days across all channels — flag for review"
+- **Partial-data guard:** Phase 6 only auto-merges customers on exact email match; fuzzy matches are flagged but not merged until Phase 11's manual merge tool. AI prompt explicitly states "buyer history may be fragmented across channels — do not over-weight an apparent absence of prior returns; flag uncertainty in the rationale when buyer email differs across channels they purchased on." Risk score lower-bounded at 30 when buyer record was created < 30 days ago to avoid false-negative "trusted buyer" calls on freshly-created customer records.
+
+_Vinted graceful-degradation UX (named here, applies anywhere a marketplace lacks a capability)_
+- Adapter capability flag missing → Synergia renders an **`UnavailableCapabilityCard`** component instead of the disabled feature: short explanation ("Vinted does not expose returns via API — manage in Vinted UI") + deep link to the marketplace's own UI for that order/listing/case + last-known status (if any)
+- Applies to: Vinted Returns tab, Vinted Cases tab, Vinted Messaging (Phase 11), Vinted Account Health (Phase 11), Vinted Feedback (Phase 11), Vinted Payouts (Phase 11)
+- Empty-state copy and deep-link URLs documented per marketplace × capability in `docs/api-research/<marketplace>.md` so future capability gaps follow the same pattern
+- Acceptance: opening a Vinted order's Returns tab shows the card with a working deep link (`vinted.com/.../order/<id>`); never a blank screen, never an error
 
 _Cancellations_
 - Cancellation requests synced from marketplace APIs
@@ -1491,6 +1624,8 @@ _Dispute Cases_
 **Goal:** Connect carriers, rate-shop across all of them, generate labels, and relay tracking back to marketplaces.
 
 **Initial carrier integrations: ShipStation + Royal Mail.** Evri and DPD added in Phase 11.
+
+**ShipStation vs. direct adapter decision (locked here):** ShipStation is itself a multi-carrier abstraction that already routes Evri / DPD / many others. The Phase 11 "Evri + DPD direct adapters" work is therefore not net-new coverage — it's a depth-vs-cost trade-off. Decision: **ShipStation is the default path for breadth; direct Evri + DPD adapters in Phase 11 are gated on a measured need** — specifically, if rate-shop accuracy diverges > 5% from carrier portal pricing for high-volume tenants, OR ShipStation label fidelity (returns, dimensional weight, manifest fields) misses a real customer requirement. Without a measured trigger, Phase 11 ships ShipStation-only for Evri/DPD and the "direct adapter" line moves to a deferred-until-justified item. This avoids redundant integration work and keeps Phase 11 leaner. Decision recorded as ADR-NNN.
 
 **Azure infrastructure tier:** No changes from Phase 5. ~£200–280/month.
 
@@ -1602,14 +1737,13 @@ _Dispute Cases_
 - `automation_rules` table stores rules as JSON (trigger + conditions array + actions array)
 - Rule executor runs as PostToolUse hook on order create/update events
 
-- **Repricing engine (NEW):**
-  - Rule-based per-listing: match buy box, beat lowest competitor by X%, hold to floor price, never below COGS + Y% margin
-  - Competitor data sourced from eBay/Amazon API (where available — full implementation depends on Phase 11 marketplace depth)
-  - `repricing_rules` table: rule definition; active/paused; floor price; ceiling price
+- **Repricing engine (NEW) — scoped honestly per phase:**
+  - **Phase 10 capability:** floor / ceiling / margin-floor rules (never below COGS + Y%); manual operator price changes with audit log; AI repricing suggestions (operator-facing, never auto-applied); time-window sale prices; throttle (max N price changes per SKU per day to avoid marketplace velocity penalties); dry-run mode
+  - **Phase 11 capability adds (when full marketplace depth ships):** real-time eBay competitor pricing via Phase 11 eBay full adapter; "match lowest competitor by X%" rule active
+  - **Phase 12 capability adds:** Amazon buy-box-aware rules ("match buy box", "beat buy-box by X%") — Amazon SP-API ships in Phase 12; buy box is primarily an Amazon construct
+  - `repricing_rules` table: rule definition; active/paused; floor price; ceiling price; `competitor_source` enum (`none` / `ebay_api` / `amazon_buybox` / `keepa`) — gates which rules are runnable per phase
   - `repricing_history`: every price change with trigger reason (manual / rule / AI suggestion)
-  - **AI repricing suggestions** via Claude API: "your margin on SKU-X is 8% but BuyBox is at +12%; suggested price = £XX (margin 14%)"
-  - Throttle: max N price changes per SKU per day (avoid marketplace velocity penalties)
-  - Dry-run mode: see what changes would happen without committing
+  - **AI repricing suggestions** via Claude API (via `IAiClient` + `IAiCostService`): "your margin on SKU-X is 8% but the median competitor is at +12%; suggested price = £XX (margin 14%)" — wording adapts to whatever competitor data is available in the current phase
   - Audit log: every repricing action attributed to (rule_id / user_id / ai_assistant)
 
 - **SKU profitability analytics:**
@@ -1652,39 +1786,38 @@ _Monthly Financial Closing workflow (NEW)_
 - **`MonthlyClosePanel` component:** period selector, pre-close checklist, summary table with company/channel columns, lock/unlock button, download PDF, history (past closes with status badges)
 - **Notifications:** notify company admins when a period approaches close-readiness (no open orders in period for > 5 days); notify on lock and unlock
 
-_Finance reports starter pack — 18 pre-built reports shipped with every tenant_
+_Finance reports starter pack — 18 pre-built reports total; **16 ship in Phase 10**, 2 ship in Phase 11 (payout-dependent — payout API data isn't synced until Phase 11 fee reconciliation)_
 
-| # | Report | Group |
-| --- | --- | --- |
-| 1 | Channel P&L | Profitability |
-| 2 | Portfolio P&L comparison | Profitability |
-| 3 | SKU profitability (top/bottom N) | Profitability |
-| 4 | Net margin waterfall (whole business) | Profitability |
-| 5 | Gross margin trend (rolling 30/60/90) | Profitability |
-| 6 | Period-over-period margin comparison | Profitability |
-| 7 | Cash flow (in vs out) | Cash flow |
-| 8 | Marketplace payout schedule | Cash flow |
-| 9 | Open POs (committed spend) | Cash flow |
-| 10 | Expense breakdown by category | Expenses |
-| 11 | Expense allocation by channel | Expenses |
-| 12 | Monthly close summary (locked periods history) | Close |
-| 13 | Stock on hand value | Inventory |
-| 14 | Aged stock (0-30 / 31-60 / 61-90 / 90+) | Inventory |
-| 15 | Slow-moving / dead stock | Inventory |
-| 16 | UK VAT return (VAT100 figures) | Tax |
-| 17 | Marketplace payout reconciliation | Reconciliation |
-| 18 | Refund / return rate + return cost impact | Cross-cutting |
+| # | Report | Group | Ships |
+| --- | --- | --- | --- |
+| 1 | Channel P&L | Profitability | Phase 10 |
+| 2 | Portfolio P&L comparison | Profitability | Phase 10 |
+| 3 | SKU profitability (top/bottom N) | Profitability | Phase 10 |
+| 4 | Net margin waterfall (whole business) | Profitability | Phase 10 |
+| 5 | Gross margin trend (rolling 30/60/90) | Profitability | Phase 10 |
+| 6 | Period-over-period margin comparison | Profitability | Phase 10 |
+| 7 | Cash flow (in vs out) | Cash flow | Phase 10 |
+| 8 | Marketplace payout schedule | Cash flow | **Phase 11** (needs payout API) |
+| 9 | Open POs (committed spend) | Cash flow | Phase 10 |
+| 10 | Expense breakdown by category | Expenses | Phase 10 |
+| 11 | Expense allocation by channel | Expenses | Phase 10 |
+| 12 | Monthly close summary (locked periods history) | Close | Phase 10 |
+| 13 | Stock on hand value | Inventory | Phase 10 |
+| 14 | Aged stock (0-30 / 31-60 / 61-90 / 90+) | Inventory | Phase 10 |
+| 15 | Slow-moving / dead stock | Inventory | Phase 10 |
+| 16 | UK VAT return (VAT100 figures) | Tax | Phase 10 |
+| 17 | Marketplace payout reconciliation | Reconciliation | **Phase 11** (needs payout API) |
+| 18 | Refund / return rate + return cost impact | Cross-cutting | Phase 10 |
 
-Reports stored as global `report_templates` rows; on first tenant load, cloned into `report_definitions` so operators can customise their copy without affecting the template.
+Reports stored as global `report_templates` rows; on first tenant load, cloned into `report_definitions` so operators can customise their copy without affecting the template. The two payout-dependent reports (#8, #17) clone in only after Phase 11 ships — until then operators see only the 16 they can actually populate, avoiding the broken-empty-report experience that destroys trust on day one.
 
 **Acceptance criteria:**
 - An automation rule set up in the UI correctly routes orders without code within 200ms of order creation
 - Test/dry-run mode shows accurate preview against historical orders
 - SKU profitability figures for a SKU match a manually calculated spreadsheet within ±2% (rounding)
 - Materialised view refresh completes in under 60 seconds for 100K order lines
-- Repricing rule "match buy box, floor at £15" correctly adjusts price within 60 seconds of competitor change
-- AI repricing suggestion shown to operator with rationale; never auto-applied without rule or operator confirmation
-- All 18 starter-pack reports load and render correct data within 5 seconds for tenants with 100K orders
+- Phase 10 repricing acceptance: floor / ceiling / margin-floor rule "never below COGS + 10% margin" correctly holds price ≥ COGS × 1.10; throttle "max 4 changes per SKU per day" enforced; AI repricing suggestion shown with rationale and never auto-applied. Buy-box-aware acceptance is **Phase 11 (eBay competitor data)** + **Phase 12 (Amazon buy box)** — not testable in Phase 10
+- All **16 Phase 10 starter-pack reports** load and render correct data within 5 seconds for tenants with 100K orders. Reports #8 (Marketplace payout schedule) and #17 (Marketplace payout reconciliation) ship and pass acceptance in Phase 11
 - A scheduled report delivers a PDF to operator email at the cron time; failures logged in `report_deliveries`
 - Saved report re-runs do not invoke any AI API call (verified by Application Insights metric: `ai.tokens_per_report_run` = 0)
 - UK VAT return report figures match a manually calculated control set within £0.01
@@ -1700,64 +1833,52 @@ Reports stored as global `report_templates` rows; on first tenant load, cloned i
 ### Phase 11 — Marketplace Depth + Messaging Hub + 3PL Client Portal
 **Goal:** eBay and TikTok Shop fully implemented (all adapter capabilities); Vinted at maximum capability the Vinted Pro Integrations API exposes (orders + listings + cancellations + shipping labels + webhooks — full returns / messaging / disputes / health remain in Vinted UI); messaging hub live for eBay + TikTok; 3PL operators can give clients self-serve visibility.
 
+**Scope-risk note:** Phase 11 is the heaviest phase in the plan (full marketplace depth × 3 + carriers + messaging + 3PL + status page + CRM + merge tool + AI digest + marketing case studies). Each is meaningful work. To control launch-blocker risk, deliverables are split into **11a (launch blockers — must ship for v1 public launch)** and **11b (post-launch follow-on — ship as continuous monthly releases after 11a is stable)**. The v1 launch milestone is signed off when 11a is green, not all of 11.
+
 **Azure infrastructure tier:** No changes from Phase 10. ~£380–480/month.
 
-**Deliverables:**
+#### Phase 11a — Launch blockers (required for v1 public launch)
+
 - **eBay full adapter:** orders, fulfilment, cancellations, returns/cases (INR, SNAD, INAD), account health, seller level, feedback (receive + respond), Trading API legacy support, payout sync, reports, competitor pricing, messaging, notifications, subscription management
 - **TikTok Shop full adapter:** orders, fulfilment, returns, cases, creator/affiliate order routing, shop health, messaging
 - **Vinted full adapter (within Vinted Pro Integrations API limits):** order management depth (full ingest, cancel, shipping label, webhooks). Returns / disputes / messaging / account health / feedback / payouts remain operator workflows in Vinted UI — Vinted does not expose these in their API. If Vinted releases additional endpoints post-launch, adapter capability flags toggle on without code changes elsewhere.
-- **Evri + DPD carrier adapters** added to carrier registry alongside ShipStation + Royal Mail
-- Marketplace message hub UI (`ConversationView`): **eBay + TikTok Shop only** at Phase 11; Etsy added Phase 12. Vinted has no messaging API — Vinted buyer messages remain in Vinted UI. Threaded per order; SLA countdown; reply UI ready (AI-assisted reply drafts wired in Phase 13 alongside MCP server)
-- Account health dashboard: **eBay seller level gauges + TikTok Shop health metrics + (Phase 12) Amazon health**; defect rate trends, SLA breach alerts. Vinted shop health is NOT in the Vinted API — operator monitors Vinted health in Vinted UI; Synergia surfaces a placeholder card with a "View in Vinted" link.
-- Marketplace fee reconciliation: payout reports parsed; `order_line_costs` updated with actual fees (replaces estimates from Phase 10)
-- **3PL client portal (shadow-tenant model):**
+- **Evri + DPD carrier coverage** via ShipStation (default — see Phase 8 ShipStation-vs-direct decision). Direct adapters only ship if the measured trigger from Phase 8 fires before launch; otherwise direct adapters move to deferred-until-justified.
+- Marketplace fee reconciliation: payout reports parsed; `order_line_costs` updated with actual fees (replaces estimates from Phase 10) — **prerequisite for the two payout reports below**
+- **Two payout-dependent starter-pack reports activated** (deferred from Phase 10 because they need real payout data): #8 Marketplace payout schedule, #17 Marketplace payout reconciliation. On Phase 11a release, `report_templates` rows for #8 and #17 are cloned into every existing tenant's `report_definitions` automatically.
+- **3PL client portal (shadow-tenant model)** — wires the multi-company session model designed in Phase 3 to a brand-switcher UX:
   - Each 3PL-managed brand is a real `company` (not a row in `threepl_clients`)
   - `3pl_relationships` table: `(operator_company_id, managed_brand_company_id, scope, status)` — defines what the 3PL operator can see in the brand's tenant
   - Brand staff log into their own tenant directly (full feature access scoped to plan tier)
-  - 3PL operator switches between managed brands via a "shop selector" in the top nav (similar to GitHub org switcher)
+  - 3PL operator switches between managed brands via a "shop selector" in the top nav (similar to GitHub org switcher) — backed by Phase 3's `POST /api/auth/switch-company` endpoint, no auth refactor required
   - Branded portal URL per brand: `<brand>.synergia.co.uk` or `app.synergia.co.uk/b/<brand>`
   - **3pl_client_tokens** for read-only API access from external systems
   - **ThreePLClientPortal component:** brand-side dashboard
+- **Public uptime / metrics page** at `status.synergia.co.uk` — consumes the custom App Insights metrics emitted by Phase 5 adapters (`marketplace.sync_latency_ms`, `marketplace.rate_limit_remaining_pct`, `webhook.delivery_lag_ms`, `adapter.error_rate_per_min`); Trust signal for prospects evaluating Synergia
+- Account health dashboard: **eBay seller level gauges + TikTok Shop health metrics**; defect rate trends, SLA breach alerts. Amazon health adds in Phase 12. Vinted shop health is NOT in the Vinted API — operator monitors Vinted health in Vinted UI; Synergia surfaces an `UnavailableCapabilityCard` (per the pattern named in Phase 7) with a "View in Vinted" deep link.
 
-_Public uptime / metrics page (NEW)_
-- Public-facing page at `status.synergia.co.uk` showing: platform uptime, p95 API latency, marketplace sync latency per channel, current rate-limit headroom
-- Powered by Application Insights metrics + `webhook_deliveries` aggregation
-- Trust signal for prospects evaluating Synergia
+_i18n maintenance gate (Phase 11a)_
+- Every new string introduced in Phase 11a (case studies, account-health labels, status-page strings, brand-switcher copy, payout-report titles) goes through the AI-translate + native-Urdu-review pipeline before merge. CI gate from Phase 5 stays active — no key in `en-GB.json` may ship without a human-reviewed `ur-PK.json` entry.
+- Marketing site `synergia.co.uk/ur/` reaches parity with new English pages within the same release.
 
-_Marketing CRM sync (D15) — NEW_
-- Phase 11 wires `marketing_leads` → **HubSpot Free** sync via HubSpot API
-- Background job mirrors lead status; fields mapped: name, email, company, turnover_band, segment, source, status, assigned_to
-- Salesforce / Pipedrive deferred until volume justifies migration
-
-_Customer merge tool (D14) — moved here from Phase 13_
-- Manual merge UI for fuzzy-matched duplicate `customers` records flagged in Phase 6
-- Operator reviews candidate pairs side-by-side; approves merge → orders / addresses / notes consolidate into the kept record; audit trail preserved
-- Bulk merge for tenants with many duplicates from migration
-- **Why moved to Phase 11:** LTV/CAC analytics in Phase 13 depend on clean customer data; merge tool is a precondition, not a co-deliverable. Shipping in Phase 11 gives operators 2 phases of data cleanup before analytics depend on it.
-
-_AI Insights Digest (NEW — moved forward from Phase 13)_
-- Daily / weekly AI-generated summary email per operator
-- Content: yesterday's metrics with anomaly callouts, urgent items needing action (SLA breaches, stockouts, buy-box losses, low margin alerts), AI's recommended priorities for today
-- Operator opt-in per cadence and topic; subject + body templates customisable per company
-- Powered by Claude with structured prompt + the data the operator's role can see
-- Cheap to deliver (one Claude call per operator per day); high retention impact (the email replaces "what should I check?" anxiety)
-
-
-**Acceptance criteria:**
+**Phase 11a acceptance criteria (v1 launch blockers):**
 - eBay case opened in portal → response sent via API → eBay confirms message received
 - Account health metrics refresh on eBay API schedule (daily); alert fires if defect rate exceeds threshold
-- 3PL operator can switch between managed brand tenants in under 1 second; permission scope correctly applied
+- 3PL operator can switch between managed brand tenants in under 1 second; permission scope correctly applied; Phase 3 `switch-company` endpoint logs an audit entry per switch
 - Brand-side staff cannot see other brands managed by the same 3PL operator
 - Status page reflects real-time data within 60 seconds of metric collection
+- Reports #8 + #17 ship and pass acceptance for tenants with payout data
 
-**Risks:** eBay Trading API is being sunset; validate which endpoints require it vs. REST; plan migration path. Shadow-tenant model adds auth complexity — every controller must check `3pl_relationships` when operator scope crosses tenants.
+#### Phase 11b — Post-launch follow-on (ships continuously after launch)
 
-_Marketing site (Phase 11 update)_
-- **Customer case studies** — first 3–5 paying customers featured (with consent); MDX format with structured-data Review/AggregateRating
-- **Status page link** prominent in site footer (`status.synergia.co.uk`)
-- **Pricing page enhanced** with usage-based estimator (turnover slider → recommended plan)
-- **Trust badges**: ISO 27001 progress, GDPR compliant, UK data residency, SOC 2 roadmap
-- **Reviews / social proof** on home page — pulled from G2, Capterra, Trustpilot once tenants leave reviews
+These are valuable but not v1-launch-blocking. Ship in priority order based on customer feedback after launch. Treat each as an independent monthly release.
+
+- **Marketplace message hub UI (`ConversationView`)**: eBay + TikTok Shop. Etsy added Phase 12. Vinted has no messaging API — `UnavailableCapabilityCard` with deep link. Threaded per order; SLA countdown; reply UI ready (AI-assisted reply drafts wired in Phase 13 alongside MCP server). _Why post-launch:_ messaging is a productivity feature; operators can use marketplace UIs for messaging on day one without losing conversion.
+- **Marketing CRM sync (D15)** — `marketing_leads` → HubSpot Free via HubSpot API. Background job mirrors lead status. Salesforce / Pipedrive deferred until volume justifies migration. _Why post-launch:_ CSV export from `marketing_leads` covers the first weeks of leads while sync is built.
+- **Customer merge tool (D14)** — manual merge UI for fuzzy-matched duplicate `customers` records flagged in Phase 6; operator reviews candidate pairs side-by-side; approves merge → orders / addresses / notes consolidate into the kept record; audit trail preserved. Bulk merge for tenants with many duplicates from migration. **Hard requirement:** must ship before Phase 13 LTV/CAC analytics — Phase 13 cannot start until merge tool has been live for ≥ 30 days. The plan previously moved this from Phase 13 to Phase 11 for that reason; staying in 11b honours the same dependency without blocking 11a launch.
+- **AI Insights Digest** — daily / weekly AI-generated summary email per operator. Content: yesterday's metrics with anomaly callouts, urgent items needing action, AI's recommended priorities for today. Operator opt-in per cadence and topic. Powered by Claude (via `IAiClient` + `IAiCostService`) with structured prompt + the data the operator's role can see. Cheap to deliver, high retention impact. _Why post-launch:_ requires several weeks of post-launch data per tenant before "yesterday's anomalies" is meaningful.
+- **Marketing site enhancements** — customer case studies (first 3–5 paying customers, with consent, MDX format with Review/AggregateRating structured data); status page link in site footer; pricing page usage-based estimator (turnover slider → recommended plan); trust badges (ISO 27001 progress, GDPR compliant, UK data residency, SOC 2 roadmap); G2 / Capterra / Trustpilot reviews integration.
+
+**Risks:** eBay Trading API is being sunset; validate which endpoints require it vs. REST; plan migration path. Shadow-tenant model adds auth complexity — but Phase 3 already designed the multi-company session, so Phase 11a is wiring UX to existing primitives, not retrofitting auth. AI Insights Digest content quality is the largest unknown — pilot with 5 tenants for 4 weeks before opening generally.
 
 ---
 
@@ -1795,8 +1916,9 @@ _Marketing site (Phase 11 update)_
 - [ ] Marketing site: 1,000+ unique monthly visitors; 50+ demo requests; 20+ free-tier sign-ups
 - [ ] Public status page live at `status.synergia.co.uk` with real metrics
 - [ ] G2 / Capterra / Trustpilot listings live, ≥ 5 verified reviews each
-- [ ] All 17 acceptance criteria from Phases 2–11 met
+- [ ] All Phase 2–10 acceptance criteria met + **all Phase 11a acceptance criteria** met (Phase 11b deliverables — messaging hub, customer merge tool, AI Insights Digest, CRM sync, marketing case studies — ship as continuous monthly releases post-launch and are NOT v1 launch blockers)
 - [ ] AI cost model validated against actual tenant usage (see `Plans/AI_COST_MODEL.md`)
+- [ ] Anthropic DPA + SCCs signed and Anthropic listed on `synergia.co.uk/legal/sub-processors` (precondition from Phase 0 — verified still in force)
 
 ### Post-Launch Phases (12–17)
 
@@ -1899,12 +2021,21 @@ _Marketplace messaging AI assist (deferred from Phase 11)_
 - AI draft reply suggestions in `ConversationView` now powered by MCP server with full order/buyer/return context
 - Drafts stored in `ai_message_drafts`; operator approves before send
 
+_API key auth (precondition for public MCP read-only beta — minimal subset of Phase 17's full public REST API surface)_
+- `api_keys` table: `(id, company_id, label, key_hash, prefix, scope, created_by, created_at, last_used_at, revoked_at)`; `scope` is one of `read` / `write` (write reserved for Phase 17 GA)
+- API key issuance UI in operator settings: "Create new key" → label + scope → one-time-display of `sk_live_xxxx` (never re-shown); operator copies into Claude Desktop config
+- API-key authentication middleware accepts `Authorization: Bearer sk_live_...`; resolves to `(company_id, scope)`; `RequireCompanyScope` works identically with API-key principal as it does with JWT principal
+- Per-key rate limiting via Redis token bucket; rate counts against the company's daily quota (same bucket as REST API will use in Phase 17)
+- Revocation UI; revoked keys reject within 60 seconds
+- Audit log: every API-key call writes `actor_type = api_key` with the key's label
+- **Why Phase 13 (and not Phase 17):** the public MCP read-only beta below requires API-key auth to exist. Phase 17 generalises this surface (OAuth + scoped tokens + developer portal); the API-key auth shipped here is a small, complete subset that doesn't need to be replaced by Phase 17 — Phase 17 adds OAuth alongside, doesn't supersede
+
 _Public MCP read-only beta (NEW — brought forward from Phase 17)_
 - Publish `synergia-mcp` (read-only) to PyPI alongside internal MCP launch
 - Read scope only: resources accessible (inventory, orders, analytics, etc.), no write tools
-- API key generated from operator settings; pasted into Claude Desktop config
+- Operator generates a `read`-scoped API key from settings (above) and pastes into Claude Desktop config
 - Marketing wedge: *"Your inventory is one Claude Desktop install away."*
-- Phase 17 promotes write scope to GA
+- Phase 17 promotes write scope to GA + adds OAuth tokens for partner integrations
 
 _Product research — Tier A: Insights (NEW)_
 - **Goal:** an AI-driven research surface that uses ONLY tenant's own catalogue, sales, and profitability data — no new external data feeds. Sets up the research workflow that Phases 14 and 15 will deepen.
@@ -2244,8 +2375,8 @@ Pre-release gate:
 | 7 | Returns workflow E2E (marketplace-synced and operator-initiated); cancellations propagation; dispute case round-trip; AI return triage suggestion; RTV separate from customer return |
 | 8 | Carrier rate shopping accuracy; ZPL label round-trip; tracking writeback; manifest submission; void label; insurance line capture |
 | 9 | WMS barcode scan validation; wrong-scan block; offline sync; demand forecast accuracy; cycle count variance & approval flow |
-| 10 | Automation rule engine; profitability calculation vs. manual spreadsheet (with expense allocation); repricing engine velocity throttle; AI repricing suggestions; all 18 starter-pack reports return correct data; UK VAT100 figures match control set; scheduled report PDF email delivery; saved report runs invoke zero AI tokens; monthly close lock produces correct immutable snapshots (company + per-channel); close figures unaffected by post-lock order edits; expense custom split appears correctly in channel P&L; portfolio P&L aggregates without double-counting |
-| 11 | Full marketplace adapter capability tests (eBay + TikTok); Vinted reduced-scope adapter coverage tests (verify capability flags correctly degrade for absent capabilities); messaging hub SLA (eBay + TikTok); 3PL shadow-tenant scoping; account health alert (eBay + TikTok); status page metrics accuracy |
+| 10 | Automation rule engine; profitability calculation vs. manual spreadsheet (with expense allocation); repricing engine — floor / ceiling / margin-floor rules + throttle (NOT buy-box, which is Phase 11/12); AI repricing suggestions; **16 of 18 starter-pack reports** return correct data (the two payout-dependent reports ship + test in Phase 11); UK VAT100 figures match control set; scheduled report PDF email delivery; saved report runs invoke zero AI tokens; monthly close lock produces correct immutable snapshots (company + per-channel); close figures unaffected by post-lock order edits; expense custom split appears correctly in channel P&L; portfolio P&L aggregates without double-counting |
+| 11 | Full marketplace adapter capability tests (eBay + TikTok); Vinted reduced-scope adapter coverage tests (verify capability flags correctly degrade via `UnavailableCapabilityCard` for absent capabilities); 3PL shadow-tenant scoping (uses Phase 3 multi-company session); account health alert (eBay + TikTok); status page metrics accuracy (Phase 5 adapter custom metrics); **2 payout-dependent starter-pack reports** (#8 schedule + #17 reconciliation) populated and accurate; eBay competitor-pricing repricing rule active. Phase 11b deliverables (messaging hub, customer merge tool, AI Insights Digest, CRM sync, marketing case studies) tested in their own monthly release windows post-launch |
 | 12 | Etsy + Amazon SP-API integration tests against sandbox |
 | 13 | Internal MCP tool calls scoped to company; in-app chat E2E; public MCP read-only beta install + auth; AI report authoring spec validity; saved-report re-run consumes 0 AI tokens (App Insights metric); dashboard create-widget-resize flow under 60s; template clone produces fully detached copy; cascading dashboard filter updates all compatible widgets; share link respects expiry + revocation; kiosk mode renders correctly |
 | 14 | Terapeak ingestion accuracy (±5% of seller-hub UI); Niche Explorer ranking under 3s; Listing Tracker change detection within 1 hour; Opportunity Feed > 30% acceptance rate; Research → Action conversion under 10s |
@@ -2272,7 +2403,7 @@ Cost optimisation principles applied throughout:
 | 0–1 | No infrastructure spend — research and schema design only | **£0** |
 | 2–4 | Azure SQL Serverless, Container Apps consumption, SWA Free, GHCR (free), Blob, App Insights free; Redis deferred | **£80–110** |
 | 5–8 | Azure SQL provisioned 2 vCores, SWA Standard (~£7/month), Redis Standard C1, Service Bus Standard, Storage Queues | **£200–270** |
-| 9 | Add Azure SignalR Service Standard 1 unit (WMS real-time) | **£250–330** |
+| 9 | Add Azure SignalR Service Standard 1 unit (WMS real-time) + mobile distribution costs (see below) | **£250–330** + mobile dist |
 | 10–12 | Azure SQL 4 vCores, Azure Front Door Standard | **£380–480** |
 | 13 | 1-year reserved on SQL + Container Apps (35% off), App Insights pay-per-GB with sampling | **£300–380** |
 | 14 | + Tier-B marketplace research workers (background ingestion), additional Service Bus throughput | **£330–410** |
@@ -2281,6 +2412,12 @@ Cost optimisation principles applied throughout:
 | 17 | Azure SQL Business Critical (zone-redundant), secondary region failover, SignalR 2+ units | **£600–800** |
 
 **Dev/Test environment** (separate subscription, non-production): ~£60–80/month at all phases.
+
+**Mobile distribution costs (Phase 9 onward — separate from Azure):**
+- Apple Developer Program — $99 / year (~£80)
+- Google Play Console — $25 one-time (~£20)
+- Expo EAS Build — $19 / month (Hobby) → $99 / month (Production tier) — start on Hobby through pilot, upgrade when build queue / OTA update volume justifies it (~£15–80 / month equivalent)
+- Adds roughly **£25–90 / month** to the Phase 9+ cost lines depending on EAS tier; not Azure but real
 
 ### Performance Engineering
 
@@ -2716,7 +2853,7 @@ The sequencing principle: **research before schema → schema locked before any 
 ### Foundation (Phases 0–2)
 
 1. **External API research** (Phase 0) — `docs/api-research/` for all marketplaces (eBay, TikTok Shop, Vinted, Etsy, Amazon, Shopify, WooCommerce), carriers (ShipStation, Royal Mail, Evri, DPD), and Stripe; `SCHEMA_IMPACT.md` reviewed
-2. **Schema design & lock** (Phase 1) — `docs/schema-design/SCHEMA.md` marked `STATUS: LOCKED`; **multi-currency, VAT, customers, channel buffer, 3PL shadow-tenant decisions all locked here**; EF Core entity stubs approved
+2. **Schema design & lock** (Phase 1) — **complete final schema produced from Phase 0 research + Step 3 feature-coverage inventory**; every table, every column, every index, every foreign key documented in `docs/schema-design/SCHEMA.md` (marked `STATUS: LOCKED`); covers every feature in the plan including those that don't ship until Phase 17; post-lock changes are ADR-gated; EF Core entity stubs approved
 3. **Monorepo + CI/CD** (Phase 2) — `src/Synergia.Api/`, `src/Synergia.Workers/`, `src/Synergia.Mcp/`, `frontend/`, `marketing/`, `mobile/`, `packages/api-types/`, `packages/design-tokens/`, `infra/`, `docs/`; five path-filtered workflows
 4. **Infrastructure** (Phase 2) — Bicep IaC for dev; Docker Compose local stack; App Insights + Key Vault; idempotency middleware; correlation IDs; health checks; budget alert
 5. **Database baseline** (Phase 2) — EF Core baseline migration from locked schema; `dotnet ef migrations list` shows exactly one migration
