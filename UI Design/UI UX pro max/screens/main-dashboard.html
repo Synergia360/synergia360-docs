@@ -1,1147 +1,448 @@
-<!DOCTYPE html>
+<!doctype html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Synergia — Dashboard</title>
-  <link rel="stylesheet" href="../shared.css">
-  <script src="https://cdn.tailwindcss.com"></script>
-  <style>
-    :root {
-      --color-bg: #141414;
-      --color-surface: #1E1E1E;
-      --color-surface-raised: #252525;
-      --color-border: #383838;
-      --color-border-active: #5A5A5A;
-      --color-text: #F2F2F2;
-      --color-text-muted: #999999;
-      --color-text-subtle: #666666;
-      --color-accent: #C4972A;
-      --color-accent-dim: #8B6914;
-      --color-accent-glow: rgba(196,151,42,0.15);
-      --color-success: #4A9E6E;
-      --color-warning: #D4872C;
-      --color-danger: #8B3A3A;
-      --color-info: #3A6B8B;
-    }
-
-    * { box-sizing: border-box; margin: 0; padding: 0; }
-    body { font-family: 'Inter', sans-serif; background: var(--color-bg); color: var(--color-text); -webkit-font-smoothing: antialiased; overflow: hidden; height: 100vh; }
-
-    .app-shell { display: flex; height: 100vh; overflow: hidden; }
-
-    /* ===== SIDEBAR ===== */
-    .sidebar {
-      width: 240px;
-      min-width: 240px;
-      background: var(--color-surface);
-      border-right: 1px solid var(--color-border);
-      display: flex;
-      flex-direction: column;
-      height: 100vh;
-      overflow-y: auto;
-    }
-
-    .sidebar-logo {
-      display: flex;
-      align-items: center;
-      gap: 10px;
-      padding: 18px 20px 16px;
-      border-bottom: 1px solid var(--color-border);
-    }
-
-    .logo-mark {
-      width: 32px;
-      height: 32px;
-      background: linear-gradient(135deg, #C4972A 0%, #8B6914 100%);
-      border-radius: 8px;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      font-size: 16px;
-      font-weight: 800;
-      color: #141414;
-      box-shadow: 0 0 16px rgba(196,151,42,0.3);
-      flex-shrink: 0;
-    }
-
-    .logo-text { font-size: 16px; font-weight: 700; color: var(--color-text); letter-spacing: -0.01em; }
-
-    .sidebar-nav { flex: 1; padding: 10px 0; }
-
-    .nav-section-label {
-      font-size: 9.5px;
-      font-weight: 700;
-      text-transform: uppercase;
-      letter-spacing: 0.1em;
-      color: var(--color-text-subtle);
-      padding: 12px 20px 4px;
-    }
-
-    .nav-item {
-      display: flex;
-      align-items: center;
-      gap: 10px;
-      padding: 7px 20px;
-      color: var(--color-text-muted);
-      text-decoration: none;
-      font-size: 13px;
-      font-weight: 400;
-      position: relative;
-      transition: color 0.12s, background 0.12s;
-      cursor: pointer;
-      border-left: 2px solid transparent;
-    }
-
-    .nav-item:hover { color: var(--color-text); background: rgba(255,255,255,0.03); }
-    .nav-item.active { color: var(--color-accent); border-left-color: var(--color-accent); background: var(--color-accent-glow); font-weight: 500; }
-    .nav-item svg { opacity: 0.65; flex-shrink: 0; }
-    .nav-item.active svg { opacity: 1; }
-
-    .nav-badge-red {
-      margin-left: auto;
-      background: #8B3A3A;
-      color: #FF9999;
-      font-size: 9.5px;
-      font-weight: 700;
-      padding: 1px 6px;
-      border-radius: 8px;
-    }
-
-    .sidebar-footer {
-      padding: 12px 14px;
-      border-top: 1px solid var(--color-border);
-    }
-
-    .sidebar-user {
-      display: flex;
-      align-items: center;
-      gap: 9px;
-      padding: 7px 8px;
-      border-radius: 8px;
-      cursor: pointer;
-    }
-
-    .sidebar-user:hover { background: rgba(255,255,255,0.04); }
-
-    .user-avatar {
-      width: 30px;
-      height: 30px;
-      border-radius: 50%;
-      background: linear-gradient(135deg, var(--color-accent-dim), var(--color-accent));
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      font-size: 11px;
-      font-weight: 700;
-      color: #141414;
-      flex-shrink: 0;
-    }
-
-    .user-name { font-size: 12.5px; font-weight: 500; color: var(--color-text); }
-    .user-role { font-size: 11px; color: var(--color-text-muted); }
-
-    /* ===== MAIN COL ===== */
-    .main-col { flex: 1; display: flex; flex-direction: column; overflow: hidden; }
-
-    /* ===== TOPBAR ===== */
-    .topbar {
-      height: 54px;
-      background: var(--color-surface);
-      border-bottom: 1px solid var(--color-border);
-      display: flex;
-      align-items: center;
-      gap: 10px;
-      padding: 0 20px;
-      flex-shrink: 0;
-    }
-
-    .company-switcher {
-      display: flex;
-      align-items: center;
-      gap: 8px;
-      background: var(--color-surface-raised);
-      border: 1px solid var(--color-border);
-      border-radius: 7px;
-      padding: 5px 12px;
-      cursor: pointer;
-      font-size: 13px;
-      font-weight: 500;
-      color: var(--color-text);
-      transition: border-color 0.15s;
-    }
-
-    .company-switcher:hover { border-color: var(--color-border-active); }
-
-    .company-dot {
-      width: 8px;
-      height: 8px;
-      border-radius: 50%;
-      background: var(--color-success);
-      box-shadow: 0 0 6px rgba(74,158,110,0.6);
-    }
-
-    .topbar-spacer { flex: 1; }
-
-    .cmd-k {
-      display: flex;
-      align-items: center;
-      gap: 8px;
-      background: var(--color-surface-raised);
-      border: 1px solid var(--color-border);
-      border-radius: 7px;
-      padding: 5px 12px;
-      cursor: pointer;
-      color: var(--color-text-subtle);
-      font-size: 12px;
-      transition: all 0.15s;
-      min-width: 160px;
-    }
-
-    .cmd-k:hover { border-color: var(--color-border-active); color: var(--color-text-muted); }
-
-    .kbd {
-      background: var(--color-border);
-      border-radius: 3px;
-      padding: 1px 5px;
-      font-size: 10px;
-      font-family: 'Geist Mono', monospace;
-      color: var(--color-text-subtle);
-      margin-left: auto;
-    }
-
-    .topbar-btn {
-      position: relative;
-      width: 34px;
-      height: 34px;
-      border-radius: 7px;
-      border: 1px solid var(--color-border);
-      background: var(--color-surface-raised);
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      cursor: pointer;
-      color: var(--color-text-muted);
-    }
-
-    .topbar-btn:hover { border-color: var(--color-border-active); color: var(--color-text); }
-
-    .topbar-badge {
-      position: absolute;
-      top: -4px;
-      right: -4px;
-      background: #8B3A3A;
-      color: #FF9999;
-      font-size: 8.5px;
-      font-weight: 700;
-      width: 15px;
-      height: 15px;
-      border-radius: 50%;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      border: 1.5px solid var(--color-surface);
-    }
-
-    .topbar-avatar {
-      width: 30px;
-      height: 30px;
-      border-radius: 50%;
-      background: linear-gradient(135deg, var(--color-accent-dim), var(--color-accent));
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      font-size: 11px;
-      font-weight: 700;
-      color: #141414;
-      cursor: pointer;
-      border: 1.5px solid var(--color-border);
-    }
-
-    /* ===== CONTENT ===== */
-    .content-area {
-      flex: 1;
-      overflow-y: auto;
-      padding: 22px 24px;
-      background: var(--color-bg);
-    }
-
-    .page-header {
-      display: flex;
-      align-items: center;
-      justify-content: space-between;
-      margin-bottom: 20px;
-    }
-
-    .page-title {
-      font-size: 20px;
-      font-weight: 700;
-      color: var(--color-text);
-      letter-spacing: -0.02em;
-    }
-
-    .header-date { font-size: 12.5px; color: var(--color-text-muted); }
-
-    /* ===== KPI CARDS ===== */
-    .kpi-grid { display: grid; grid-template-columns: repeat(6, 1fr); gap: 12px; margin-bottom: 16px; }
-
-    .kpi-card {
-      background: var(--color-surface);
-      border: 1px solid var(--color-border);
-      border-radius: 10px;
-      padding: 16px;
-      position: relative;
-      overflow: hidden;
-      transition: border-color 0.15s;
-    }
-
-    .kpi-card:hover { border-color: var(--color-border-active); }
-
-    .kpi-card::before {
-      content: '';
-      position: absolute;
-      top: 0;
-      left: 0;
-      right: 0;
-      height: 2px;
-      background: linear-gradient(90deg, transparent, transparent);
-    }
-
-    .kpi-card.green::before { background: linear-gradient(90deg, transparent, rgba(74,158,110,0.4), transparent); }
-    .kpi-card.red::before { background: linear-gradient(90deg, transparent, rgba(224,85,85,0.4), transparent); }
-    .kpi-card.amber::before { background: linear-gradient(90deg, transparent, rgba(212,135,44,0.4), transparent); }
-    .kpi-card.gold::before { background: linear-gradient(90deg, transparent, rgba(196,151,42,0.4), transparent); }
-
-    .kpi-label { font-size: 10.5px; font-weight: 600; color: var(--color-text-subtle); text-transform: uppercase; letter-spacing: 0.07em; margin-bottom: 8px; }
-
-    .kpi-value {
-      font-size: 26px;
-      font-weight: 700;
-      font-family: 'Geist Mono', monospace;
-      color: var(--color-text);
-      letter-spacing: -0.02em;
-      line-height: 1;
-      margin-bottom: 8px;
-    }
-
-    .kpi-footer { display: flex; align-items: center; justify-content: space-between; }
-
-    .kpi-change { display: flex; align-items: center; gap: 4px; font-size: 11px; font-weight: 600; }
-    .kpi-change.up { color: var(--color-success); }
-    .kpi-change.down { color: #E05555; }
-    .kpi-change.amber { color: var(--color-warning); }
-    .kpi-change.neutral { color: var(--color-text-muted); }
-
-    /* Sparkline SVGs */
-    .sparkline { margin-top: 6px; }
-
-    /* ===== CHANNEL SYNC ROW ===== */
-    .channel-sync-row {
-      background: var(--color-surface);
-      border: 1px solid var(--color-border);
-      border-radius: 10px;
-      padding: 14px 18px;
-      display: flex;
-      align-items: center;
-      gap: 6px;
-      margin-bottom: 16px;
-    }
-
-    .sync-label { font-size: 12px; font-weight: 600; color: var(--color-text-subtle); text-transform: uppercase; letter-spacing: 0.07em; margin-right: 8px; white-space: nowrap; }
-
-    .channel-pill {
-      display: flex;
-      align-items: center;
-      gap: 7px;
-      background: var(--color-surface-raised);
-      border: 1px solid var(--color-border);
-      border-radius: 6px;
-      padding: 6px 12px;
-      flex: 1;
-      min-width: 0;
-    }
-
-    .channel-logo {
-      width: 22px;
-      height: 22px;
-      border-radius: 5px;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      font-size: 12px;
-      flex-shrink: 0;
-    }
-
-    .ch-ebay-logo { background: rgba(255,174,0,0.12); }
-    .ch-tiktok-logo { background: rgba(105,201,208,0.12); }
-    .ch-vinted-logo { background: rgba(9,183,117,0.12); }
-    .ch-etsy-logo { background: rgba(243,89,36,0.12); }
-
-    .ch-name { font-size: 12px; font-weight: 600; color: var(--color-text); }
-    .ch-time { font-size: 10.5px; color: var(--color-text-subtle); margin-left: auto; }
-
-    .status-dot-sm { width: 7px; height: 7px; border-radius: 50%; flex-shrink: 0; }
-    .dot-green { background: var(--color-success); box-shadow: 0 0 5px rgba(74,158,110,0.7); }
-    .dot-amber { background: var(--color-warning); box-shadow: 0 0 5px rgba(212,135,44,0.7); }
-    .dot-red { background: #E05555; box-shadow: 0 0 5px rgba(224,85,85,0.7); }
-
-    /* ===== BOTTOM ROW ===== */
-    .bottom-row { display: grid; grid-template-columns: 3fr 2fr; gap: 14px; }
-
-    /* Order Feed */
-    .feed-panel {
-      background: var(--color-surface);
-      border: 1px solid var(--color-border);
-      border-radius: 10px;
-      overflow: hidden;
-    }
-
-    .feed-header {
-      padding: 14px 18px;
-      border-bottom: 1px solid var(--color-border);
-      display: flex;
-      align-items: center;
-      gap: 10px;
-      background: var(--color-surface-raised);
-    }
-
-    .feed-title { font-size: 13px; font-weight: 600; color: var(--color-text); }
-
-    .live-dot {
-      width: 8px;
-      height: 8px;
-      border-radius: 50%;
-      background: var(--color-success);
-      animation: liveGlow 2s ease-in-out infinite;
-    }
-
-    @keyframes liveGlow {
-      0%, 100% { box-shadow: 0 0 4px rgba(74,158,110,0.6); }
-      50% { box-shadow: 0 0 10px rgba(74,158,110,0.9), 0 0 20px rgba(74,158,110,0.3); }
-    }
-
-    .feed-body { padding: 4px 0; }
-
-    .order-row {
-      display: flex;
-      align-items: center;
-      gap: 10px;
-      padding: 9px 18px;
-      transition: background 0.12s;
-      cursor: pointer;
-      border-left: 2px solid transparent;
-    }
-
-    .order-row:hover { background: rgba(196,151,42,0.04); border-left-color: rgba(196,151,42,0.2); }
-
-    .ch-badge {
-      font-size: 9.5px;
-      font-weight: 700;
-      padding: 2px 6px;
-      border-radius: 4px;
-      text-transform: uppercase;
-      letter-spacing: 0.04em;
-      white-space: nowrap;
-      flex-shrink: 0;
-    }
-
-    .order-id { font-family: 'Geist Mono', monospace; font-size: 11.5px; color: var(--color-text-muted); flex-shrink: 0; min-width: 96px; }
-    .order-buyer { font-size: 12.5px; color: var(--color-text); flex: 1; min-width: 0; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
-    .order-value { font-size: 13px; font-weight: 600; color: var(--color-text); font-family: 'Geist Mono', monospace; white-space: nowrap; }
-
-    .order-status-badge {
-      font-size: 9.5px;
-      font-weight: 600;
-      padding: 2px 7px;
-      border-radius: 4px;
-      text-transform: uppercase;
-      letter-spacing: 0.03em;
-      white-space: nowrap;
-      flex-shrink: 0;
-    }
-
-    .status-processing { background: rgba(58,107,139,0.2); color: #5B9DC8; }
-    .status-shipped { background: rgba(74,158,110,0.15); color: #4A9E6E; }
-    .status-pending { background: rgba(212,135,44,0.15); color: #D4872C; }
-    .status-cancelled { background: rgba(139,58,58,0.2); color: #E05555; }
-    .status-awaiting { background: rgba(255,255,255,0.06); color: var(--color-text-muted); }
-
-    .order-time { font-size: 10.5px; color: var(--color-text-subtle); white-space: nowrap; flex-shrink: 0; }
-
-    /* Right panels */
-    .right-panels { display: flex; flex-direction: column; gap: 14px; }
-
-    .small-panel {
-      background: var(--color-surface);
-      border: 1px solid var(--color-border);
-      border-radius: 10px;
-      overflow: hidden;
-    }
-
-    .small-panel-header {
-      padding: 12px 16px;
-      border-bottom: 1px solid var(--color-border);
-      background: var(--color-surface-raised);
-      display: flex;
-      align-items: center;
-      justify-content: space-between;
-    }
-
-    .small-panel-title { font-size: 12.5px; font-weight: 600; color: var(--color-text); }
-
-    /* Reorder alerts */
-    .reorder-row {
-      display: flex;
-      align-items: center;
-      gap: 10px;
-      padding: 8px 16px;
-      border-bottom: 1px solid rgba(56,56,56,0.5);
-    }
-
-    .reorder-row:last-child { border-bottom: none; }
-
-    .sku-name { font-size: 12px; color: var(--color-text); flex: 1; min-width: 0; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
-    .days-left { font-size: 11px; font-family: 'Geist Mono', monospace; white-space: nowrap; }
-    .days-critical { color: #E05555; }
-    .days-warning { color: var(--color-warning); }
-    .days-ok { color: var(--color-success); }
-
-    .create-po-btn {
-      font-size: 10px;
-      font-weight: 600;
-      padding: 3px 8px;
-      border-radius: 4px;
-      border: 1px solid var(--color-accent-dim);
-      color: var(--color-accent);
-      background: transparent;
-      cursor: pointer;
-      white-space: nowrap;
-      font-family: 'Inter', sans-serif;
-      transition: all 0.12s;
-    }
-
-    .create-po-btn:hover { background: var(--color-accent-glow); }
-
-    /* SLA Warnings */
-    .sla-row {
-      display: flex;
-      align-items: center;
-      gap: 12px;
-      padding: 8px 16px;
-      border-bottom: 1px solid rgba(56,56,56,0.5);
-    }
-
-    .sla-row:last-child { border-bottom: none; }
-
-    /* SVG ring */
-    .sla-ring {
-      position: relative;
-      width: 36px;
-      height: 36px;
-      flex-shrink: 0;
-    }
-
-    .sla-ring svg { transform: rotate(-90deg); }
-
-    .sla-ring-value {
-      position: absolute;
-      inset: 0;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      font-size: 9px;
-      font-weight: 700;
-      font-family: 'Geist Mono', monospace;
-    }
-
-    .sla-info { flex: 1; min-width: 0; }
-    .sla-order { font-size: 11.5px; font-family: 'Geist Mono', monospace; color: var(--color-text-muted); }
-    .sla-buyer { font-size: 12px; color: var(--color-text); margin-top: 1px; }
-
-    .sla-tag { font-size: 10px; font-weight: 600; padding: 2px 6px; border-radius: 4px; }
-    .sla-critical { background: rgba(139,58,58,0.25); color: #E05555; }
-    .sla-warning { background: rgba(212,135,44,0.2); color: var(--color-warning); }
-
-    /* ===== FAB ===== */
-    .fab-bar {
-      position: fixed;
-      bottom: 24px;
-      right: 24px;
-      display: flex;
-      flex-direction: column;
-      gap: 8px;
-      z-index: 100;
-    }
-
-    .fab-btn {
-      display: flex;
-      align-items: center;
-      gap: 8px;
-      background: var(--color-accent);
-      color: #141414;
-      border: none;
-      border-radius: 10px;
-      padding: 10px 16px;
-      font-size: 12.5px;
-      font-weight: 700;
-      cursor: pointer;
-      font-family: 'Inter', sans-serif;
-      box-shadow: 0 4px 20px rgba(196,151,42,0.3);
-      transition: all 0.15s;
-      white-space: nowrap;
-    }
-
-    .fab-btn:hover { background: #D4A830; box-shadow: 0 6px 28px rgba(196,151,42,0.45); transform: translateY(-1px); }
-
-    .fab-btn.secondary {
-      background: var(--color-surface);
-      color: var(--color-text-muted);
-      border: 1px solid var(--color-border);
-      box-shadow: 0 2px 8px rgba(0,0,0,0.3);
-    }
-
-    .fab-btn.secondary:hover { border-color: var(--color-accent); color: var(--color-accent); background: var(--color-accent-glow); }
-  </style>
+<meta charset="utf-8"/>
+<title>Dashboard — Synergia360</title>
+<meta name="viewport" content="width=device-width, initial-scale=1"/>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=Geist+Mono:wght@400;600&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
+<style>
+:root{
+  --bg:#F8F9FC;--surface:#FFFFFF;--surface-2:#F8FAFF;--border:#E2E8F0;
+  --accent:#4F46E5;--accent-dim:rgba(79,70,229,.08);--accent-light:#EEF2FF;
+  --text:#0F172A;--text-2:#475569;--text-3:#94A3B8;
+  --green:#10B981;--green-dim:rgba(16,185,129,.08);--green-light:#ECFDF5;
+  --red:#EF4444;--red-dim:rgba(239,68,68,.08);--red-light:#FEF2F2;
+  --amber:#F59E0B;--amber-dim:rgba(245,158,11,.08);--amber-light:#FFFBEB;
+  --blue:#3B82F6;--font:'Inter',sans-serif;--mono:'Geist Mono',monospace
+}
+*{box-sizing:border-box;margin:0;padding:0}
+html,body{height:100%}
+body{font-family:var(--font);color:var(--text);background:var(--bg);font-size:14px;line-height:1.5;-webkit-font-smoothing:antialiased}
+.app{display:flex;min-height:100vh}
+
+/* sidebar */
+.sidebar{width:240px;background:#fff;border-right:1px solid var(--border);display:flex;flex-direction:column;flex-shrink:0;position:sticky;top:0;height:100vh;overflow:hidden}
+.sb-logo{padding:18px 20px;border-bottom:1px solid var(--border);display:flex;align-items:center;gap:12px;flex-shrink:0}
+.sb-mark{width:36px;height:36px;background:var(--accent);border-radius:9px;display:grid;place-items:center;color:#fff;font-weight:800;font-size:16px;flex-shrink:0}
+.sb-name{font-weight:700;font-size:15px;color:var(--text)}
+.sb-nav{flex:1;padding:10px;overflow-y:auto}
+.sb-section{font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:.07em;color:var(--text-3);padding:14px 8px 4px;display:block}
+.sb-link{display:flex;align-items:center;gap:10px;padding:8px 10px;border-radius:8px;color:var(--text-2);font-size:13px;font-weight:500;text-decoration:none;border-left:2px solid transparent;margin-bottom:1px;transition:background .15s,color .15s}
+.sb-link:hover{background:#F1F5F9;color:var(--text)}
+.sb-link.active{background:var(--accent-light);color:var(--accent);border-left-color:var(--accent);font-weight:600}
+.sb-link i{width:16px;text-align:center;font-size:13px;color:var(--text-3);flex-shrink:0}
+.sb-link.active i{color:var(--accent)}
+.sb-foot{padding:12px 16px;border-top:1px solid var(--border);display:flex;align-items:center;gap:10px;flex-shrink:0}
+.sb-av{width:34px;height:34px;background:var(--accent-light);border-radius:50%;display:grid;place-items:center;color:var(--accent);font-weight:700;font-size:13px;flex-shrink:0}
+.sb-uname{font-size:13px;font-weight:600;color:var(--text);line-height:1.2}
+.sb-urole{font-size:11px;color:var(--text-3)}
+
+/* TOPBAR */
+.main{display:flex;flex-direction:column;min-width:0}
+.topbar{height:60px;background:#fff;border-bottom:1px solid var(--border);display:flex;align-items:center;padding:0 24px;gap:16px;position:sticky;top:0;z-index:10}
+.crumb{display:flex;align-items:center;gap:8px;font-size:13px;color:var(--text-3)}
+.crumb b{color:var(--text);font-weight:600;font-size:20px;letter-spacing:-.01em}
+.crumb i{font-size:10px}
+.tb-spacer{flex:1}
+.search{display:flex;align-items:center;gap:8px;background:#F8FAFF;border:1px solid var(--border);border-radius:8px;padding:7px 12px;width:280px;color:var(--text-3);font-size:13px;cursor:text}
+.search i{font-size:13px}
+.search .kbd{margin-left:auto;background:#fff;border:1px solid var(--border);border-radius:4px;padding:1px 6px;font-family:var(--mono);font-size:10.5px;color:var(--text-2);font-weight:600}
+.icon-btn{width:36px;height:36px;border-radius:8px;display:grid;place-items:center;color:var(--text-2);background:transparent;border:1px solid transparent;cursor:pointer;position:relative}
+.icon-btn:hover{background:#F1F5F9}
+.icon-btn .dot{position:absolute;top:7px;right:8px;width:8px;height:8px;border-radius:50%;background:var(--red);border:2px solid #fff}
+.tb-divider{width:1px;height:24px;background:var(--border);margin:0 4px}
+.tb-avatar{width:34px;height:34px;border-radius:50%;background:linear-gradient(135deg,#FBBF24,#F59E0B);color:#78350F;display:grid;place-items:center;font-weight:700;font-size:12px;cursor:pointer;border:2px solid #fff;box-shadow:0 0 0 1px var(--border)}
+
+/* CONTENT */
+.content{padding:24px;flex:1}
+.page-head{display:flex;align-items:flex-end;justify-content:space-between;margin-bottom:22px;gap:24px;flex-wrap:wrap}
+.greet h1{font-size:24px;font-weight:700;letter-spacing:-.02em;margin-bottom:4px}
+.greet p{font-size:13px;color:var(--text-2);display:flex;align-items:center;gap:10px}
+.greet p .sep{color:var(--text-3)}
+.greet p i{color:var(--green);font-size:8px}
+.head-actions{display:flex;gap:8px}
+.btn{display:inline-flex;align-items:center;gap:8px;padding:8px 14px;font-family:var(--font);font-size:13px;font-weight:500;border-radius:8px;border:1px solid transparent;cursor:pointer;transition:.15s;background:#fff;color:var(--text-2)}
+.btn-secondary{border-color:var(--border)}
+.btn-secondary:hover{background:#F8FAFF}
+.btn-ai{background:linear-gradient(135deg,#4F46E5,#7C3AED);color:#fff;font-weight:600;border:none;box-shadow:0 1px 3px rgba(79,70,229,.3)}
+.btn-ai:hover{filter:brightness(1.05)}
+
+/* KPI ROW */
+.kpis{display:grid;grid-template-columns:repeat(4,1fr);gap:16px;margin-bottom:20px}
+.kpi{background:#fff;border:1px solid var(--border);border-radius:12px;padding:18px 20px;box-shadow:0 1px 3px rgba(0,0,0,.04);position:relative;overflow:hidden}
+.kpi-head{display:flex;align-items:center;justify-content:space-between;margin-bottom:14px}
+.kpi-label{font-size:12px;color:var(--text-2);font-weight:500;display:flex;align-items:center;gap:8px}
+.kpi-icon{width:28px;height:28px;border-radius:8px;display:grid;place-items:center;font-size:12px}
+.kpi-icon.indigo{background:var(--accent-light);color:var(--accent)}
+.kpi-icon.green{background:var(--green-light);color:#059669}
+.kpi-icon.amber{background:var(--amber-light);color:#D97706}
+.kpi-icon.red{background:var(--red-light);color:#DC2626}
+.kpi-menu{color:var(--text-3);cursor:pointer;font-size:14px}
+.kpi-value{font-size:26px;font-weight:700;letter-spacing:-.02em;font-family:var(--mono);margin-bottom:6px}
+.kpi-value .cur{color:var(--text-3);font-weight:500;font-size:18px;margin-right:2px}
+.kpi-foot{display:flex;align-items:center;gap:6px;font-size:12px;color:var(--text-2)}
+.delta{display:inline-flex;align-items:center;gap:3px;font-weight:600;font-size:12px;padding:2px 7px;border-radius:99px;font-family:var(--mono)}
+.delta.up{background:var(--green-light);color:#059669}
+.delta.down{background:var(--red-light);color:#DC2626}
+.delta i{font-size:9px}
+.spark{position:absolute;right:-2px;bottom:0;height:38px;width:90px;opacity:.55}
+
+/* GRID 2/3 + 1/3 */
+.row{display:grid;grid-template-columns:2fr 1fr;gap:16px;margin-bottom:20px}
+.card{background:#fff;border:1px solid var(--border);border-radius:12px;padding:20px;box-shadow:0 1px 3px rgba(0,0,0,.04)}
+.card-head{display:flex;align-items:center;justify-content:space-between;margin-bottom:6px}
+.card-head h3{font-size:14.5px;font-weight:600;letter-spacing:-.005em}
+.card-head .sub{font-size:12px;color:var(--text-3);margin-top:2px}
+.tabs{display:flex;background:#F1F5F9;border-radius:7px;padding:3px}
+.tabs button{font-family:var(--font);font-size:12px;font-weight:500;padding:5px 11px;border:none;background:transparent;color:var(--text-2);border-radius:5px;cursor:pointer}
+.tabs button.on{background:#fff;color:var(--text);box-shadow:0 1px 2px rgba(0,0,0,.06);font-weight:600}
+
+/* CHART */
+.chart{display:flex;align-items:flex-end;gap:10px;height:200px;margin-top:22px;padding:0 4px;position:relative}
+.bar{flex:1;display:flex;flex-direction:column;align-items:center;gap:8px;cursor:pointer}
+.bar-fill{width:100%;background:linear-gradient(180deg,#C7D2FE 0%,#A5B4FC 100%);border-radius:6px 6px 2px 2px;transition:.2s;position:relative}
+.bar:hover .bar-fill{filter:brightness(.95)}
+.bar.today .bar-fill{background:linear-gradient(180deg,#6366F1 0%,#4F46E5 100%);box-shadow:0 4px 12px rgba(79,70,229,.35)}
+.bar-lab{font-size:10.5px;color:var(--text-3);font-weight:500;font-family:var(--mono)}
+.bar.today .bar-lab{color:var(--accent);font-weight:700}
+.tip{position:absolute;top:-46px;left:50%;transform:translateX(-50%);background:#0F172A;color:#fff;font-size:11px;padding:5px 9px;border-radius:6px;white-space:nowrap;font-family:var(--mono);font-weight:600;box-shadow:0 4px 12px rgba(0,0,0,.15)}
+.tip::after{content:"";position:absolute;top:100%;left:50%;transform:translateX(-50%);border:5px solid transparent;border-top-color:#0F172A}
+.chart-foot{display:flex;justify-content:space-between;font-size:11.5px;color:var(--text-3);margin-top:14px;padding:12px 4px 0;border-top:1px dashed var(--border)}
+.chart-foot b{color:var(--text);font-weight:600;font-family:var(--mono)}
+
+/* DONUT replaced with stacked status */
+.status-list{margin-top:18px;display:flex;flex-direction:column;gap:14px}
+.status-row{display:flex;align-items:center;gap:12px}
+.status-dot{width:10px;height:10px;border-radius:50%;flex-shrink:0}
+.status-dot.amber{background:var(--amber)}
+.status-dot.blue{background:var(--blue)}
+.status-dot.green{background:var(--green)}
+.status-info{flex:1;min-width:0}
+.status-top{display:flex;justify-content:space-between;align-items:baseline;margin-bottom:5px}
+.status-top b{font-size:13px;font-weight:600}
+.status-top span{font-size:13px;font-weight:700;color:var(--text);font-family:var(--mono)}
+.status-track{height:6px;background:#F1F5F9;border-radius:99px;overflow:hidden}
+.status-fill{height:100%;border-radius:99px}
+.status-fill.amber{background:linear-gradient(90deg,#FBBF24,#F59E0B)}
+.status-fill.blue{background:linear-gradient(90deg,#60A5FA,#3B82F6)}
+.status-fill.green{background:linear-gradient(90deg,#34D399,#10B981)}
+.status-meta{font-size:11.5px;color:var(--text-3);margin-top:3px}
+.donut-total{display:flex;align-items:center;justify-content:space-between;padding:14px 16px;margin-top:18px;background:var(--surface-2);border-radius:10px;border:1px solid var(--border)}
+.donut-total .lab{font-size:12px;color:var(--text-2);font-weight:500}
+.donut-total .num{font-family:var(--mono);font-weight:700;font-size:16px}
+
+/* TABLE */
+.tbl{width:100%;border-collapse:collapse;margin-top:14px}
+.tbl th{text-align:left;font-size:11px;font-weight:600;color:var(--text-3);text-transform:uppercase;letter-spacing:.06em;padding:10px 12px 10px 0;border-bottom:1px solid var(--border)}
+.tbl td{padding:13px 12px 13px 0;border-bottom:1px solid #F1F5F9;font-size:13px;color:var(--text)}
+.tbl tr:last-child td{border-bottom:none}
+.tbl tr:hover td{background:#F8FAFF}
+.oid{font-family:var(--mono);font-weight:600;color:var(--accent);font-size:12.5px}
+.ch-pill{display:inline-flex;align-items:center;gap:5px;font-size:11.5px;font-weight:500;padding:3px 8px;border-radius:6px;background:#F1F5F9;color:var(--text-2)}
+.ch-pill.amazon{background:#FFFBEB;color:#92400E}
+.ch-pill.shopify{background:#ECFDF5;color:#065F46}
+.ch-pill.ebay{background:#EEF2FF;color:#3730A3}
+.ch-pill.tiktok{background:#FEF2F2;color:#991B1B}
+.bdg{display:inline-flex;align-items:center;gap:5px;font-size:11px;font-weight:600;padding:3px 9px;border-radius:99px;border:1px solid transparent}
+.bdg.success{background:var(--green-light);color:#047857;border-color:rgba(5,150,105,.18)}
+.bdg.warn{background:var(--amber-light);color:#B45309;border-color:rgba(180,83,9,.18)}
+.bdg.info{background:var(--accent-light);color:var(--accent);border-color:rgba(79,70,229,.18)}
+.bdg.neutral{background:#F1F5F9;color:var(--text-2);border-color:var(--border)}
+.bdg::before{content:"";width:5px;height:5px;border-radius:50%;background:currentColor}
+.sla{font-family:var(--mono);font-size:12px;font-weight:600}
+.sla.good{color:#059669}
+.sla.warn{color:#D97706}
+.sla.bad{color:#DC2626}
+
+/* COPILOT */
+.copilot{background:linear-gradient(160deg,#EEF2FF 0%,#F5F3FF 100%);border:1px solid rgba(79,70,229,.15);border-radius:12px;padding:20px;position:relative;overflow:hidden}
+.copilot::before{content:"";position:absolute;width:160px;height:160px;border-radius:50%;background:radial-gradient(circle,rgba(124,58,237,.18),transparent 70%);right:-50px;top:-50px;pointer-events:none}
+.cp-head{display:flex;align-items:center;gap:10px;margin-bottom:6px;position:relative}
+.cp-bot{width:34px;height:34px;border-radius:9px;background:linear-gradient(135deg,#4F46E5,#7C3AED);color:#fff;display:grid;place-items:center;font-size:14px;box-shadow:0 4px 12px rgba(79,70,229,.35)}
+.cp-title{font-size:14px;font-weight:700;letter-spacing:-.005em}
+.cp-meta{font-size:11px;color:var(--text-2);display:flex;align-items:center;gap:6px}
+.cp-meta i{color:var(--green);font-size:7px}
+.cp-digest{font-size:13px;color:var(--text);line-height:1.65;margin:14px 0;position:relative}
+.cp-digest b{font-weight:600}
+.cp-list{list-style:none;display:flex;flex-direction:column;gap:10px;margin:14px 0;position:relative}
+.cp-list li{display:flex;align-items:flex-start;gap:10px;font-size:12.5px;color:var(--text-2);background:rgba(255,255,255,.6);padding:10px 12px;border-radius:8px;border:1px solid rgba(79,70,229,.08);line-height:1.55}
+.cp-list li i{color:var(--accent);font-size:11px;margin-top:3px;flex-shrink:0}
+.cp-list li b{color:var(--text);font-weight:600}
+.cp-actions{display:flex;gap:8px;margin-top:16px;position:relative}
+.cp-actions .btn-primary{background:var(--accent);color:#fff;border:none;font-weight:600;padding:8px 14px;font-size:12.5px;border-radius:7px;cursor:pointer}
+.cp-actions .btn-primary:hover{background:#4338CA}
+.cp-actions .btn-ghost{background:transparent;color:var(--text-2);border:1px solid var(--border);background:#fff;padding:8px 14px;font-size:12.5px;border-radius:7px;cursor:pointer;font-weight:500}
+
+/* CHANNEL HEALTH */
+.ch-row{display:grid;grid-template-columns:repeat(3,1fr);gap:14px}
+.ch-card{background:#fff;border:1px solid var(--border);border-radius:11px;padding:14px 16px;display:flex;align-items:center;gap:14px;box-shadow:0 1px 3px rgba(0,0,0,.04)}
+.ch-logo{width:38px;height:38px;border-radius:9px;display:grid;place-items:center;font-size:18px;font-weight:800;color:#fff}
+.ch-logo.amazon{background:#232F3E}
+.ch-logo.amazon::after{content:"a";font-style:italic;color:#FF9900}
+.ch-logo.ebay{background:#fff;border:1px solid var(--border);color:transparent;font-size:11px;font-weight:700;letter-spacing:-.5px;padding:0;display:grid;place-items:center}
+.ch-logo.ebay::after{content:"ebay";font-family:var(--font);background:linear-gradient(90deg,#E53238,#F9A20B,#5BA71B,#0064D2);-webkit-background-clip:text;background-clip:text;color:transparent;font-style:italic}
+.ch-logo.shopify{background:#95BF47}
+.ch-logo.shopify::after{content:"S"}
+.ch-meta{flex:1;min-width:0}
+.ch-name{font-size:13.5px;font-weight:600;display:flex;align-items:center;gap:7px}
+.ch-status{width:7px;height:7px;border-radius:50%}
+.ch-status.green{background:var(--green);box-shadow:0 0 0 3px rgba(16,185,129,.18)}
+.ch-status.amber{background:var(--amber);box-shadow:0 0 0 3px rgba(245,158,11,.18)}
+.ch-sub{font-size:11.5px;color:var(--text-3);margin-top:2px}
+.ch-stats{font-family:var(--mono);font-size:11.5px;color:var(--text-2);text-align:right}
+.ch-stats b{color:var(--text);font-weight:700;font-size:13px;display:block}
+</style>
 </head>
 <body>
+<div class="app">
 
-<div class="app-shell">
-
-  <!-- ===== SIDEBAR ===== -->
-  <div class="sidebar">
-    <div class="sidebar-logo">
-      <div class="logo-mark">S</div>
-      <span class="logo-text">Synergia</span>
+  <!-- SIDEBAR -->
+  <aside class="sidebar">
+    <div class="sb-logo">
+      <div class="sb-mark">S</div>
+      <span class="sb-name">Synergia<span style="color:var(--accent)">360</span></span>
     </div>
-
-    <div class="sidebar-nav">
-      <div class="nav-section-label">Workspace</div>
-
-      <a class="nav-item active" href="#">
-        <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="3" width="7" height="7"/><rect x="14" y="3" width="7" height="7"/><rect x="14" y="14" width="7" height="7"/><rect x="3" y="14" width="7" height="7"/></svg>
-        Dashboard
-      </a>
-
-      <a class="nav-item" href="order-queue.html" style="color: var(--color-text-muted);">
-        <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M6 2 3 6v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2V6l-3-4z"/><line x1="3" y1="6" x2="21" y2="6"/><path d="M16 10a4 4 0 0 1-8 0"/></svg>
-        Orders
-        <span class="nav-badge-red">12</span>
-      </a>
-
-      <a class="nav-item" href="#">
-        <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M9 5H7a2 2 0 0 0-2 2v12a2 2 0 0 0 2 2h10a2 2 0 0 0 2-2V7a2 2 0 0 0-2-2h-2"/><rect x="9" y="3" width="6" height="4" rx="2"/><path d="M9 12h6M9 16h4"/></svg>
-        Listings
-      </a>
-
-      <a class="nav-item" href="#">
-        <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="2" y="3" width="20" height="14" rx="2"/><path d="M8 21h8M12 17v4"/></svg>
-        Inventory
-      </a>
-
-      <a class="nav-item" href="#">
-        <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 9h18v10a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V9z"/><path d="m3 9 2.45-4.9A2 2 0 0 1 7.24 3h9.52a2 2 0 0 1 1.8 1.1L21 9"/><path d="M12 3v6"/></svg>
-        Suppliers
-      </a>
-
-      <a class="nav-item" href="#">
-        <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/></svg>
-        Customers
-      </a>
-
-      <a class="nav-item" href="#">
-        <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 12h18M3 6h18M3 18h18"/></svg>
-        Returns
-      </a>
-
-      <div class="nav-section-label" style="margin-top: 4px;">Fulfilment</div>
-
-      <a class="nav-item" href="#">
-        <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="1" y="3" width="15" height="13"/><path d="M16 8h4l3 3v5h-7V8zM5.5 21a2.5 2.5 0 1 0 0-5 2.5 2.5 0 0 0 0 5zM18.5 21a2.5 2.5 0 1 0 0-5 2.5 2.5 0 0 0 0 5z"/></svg>
-        Shipping
-      </a>
-
-      <div class="nav-section-label" style="margin-top: 4px;">Finance</div>
-
-      <a class="nav-item" href="#">
-        <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="2" y="5" width="20" height="14" rx="2"/><line x1="2" y1="10" x2="22" y2="10"/></svg>
-        Finance
-      </a>
-
-      <a class="nav-item" href="#">
-        <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="22 12 18 12 15 21 9 3 6 12 2 12"/></svg>
-        Reports
-      </a>
-
-      <div class="nav-section-label" style="margin-top: 4px;">Intelligence</div>
-
-      <a class="nav-item" href="#">
-        <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="8"/><path d="m21 21-4.35-4.35"/></svg>
-        Research
-      </a>
-
-      <a class="nav-item" href="#">
-        <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 16V8a2 2 0 0 0-1-1.73l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.73l7 4a2 2 0 0 0 2 0l7-4A2 2 0 0 0 21 16z"/></svg>
-        Catalogue
-      </a>
-
-      <a class="nav-item" href="#">
-        <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M13 2L3 14h9l-1 8 10-12h-9l1-8z"/></svg>
-        Channels
-      </a>
-
-      <a class="nav-item" href="#">
-        <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="22 12 18 12 15 21 9 3 6 12 2 12"/></svg>
-        Forecasting
-      </a>
-
-      <a class="nav-item" href="#">
-        <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/></svg>
-        Messaging
-      </a>
-
-      <div class="nav-section-label" style="margin-top: 4px;">Config</div>
-
-      <a class="nav-item" href="#">
-        <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1-2.83 2.83l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-4 0v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83-2.83l.06-.06A1.65 1.65 0 0 0 4.68 15a1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1 0-4h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 2.83-2.83l.06.06A1.65 1.65 0 0 0 9 4.68a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 4 0v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 2.83l-.06.06A1.65 1.65 0 0 0 19.4 9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 0 4h-.09a1.65 1.65 0 0 0-1.51 1z"/></svg>
-        Settings
-      </a>
-    </div>
-
-    <div class="sidebar-footer">
-      <div class="sidebar-user">
-        <div class="user-avatar">AD</div>
-        <div>
-          <div class="user-name">Adam Davies</div>
-          <div class="user-role">Admin · Meridian</div>
-        </div>
+    <nav class="sb-nav">
+      <a href="main-dashboard.html" class="sb-link active"><i class="fa-solid fa-grid-2"></i> Dashboard</a>
+      <a href="command-palette.html" class="sb-link"><i class="fa-solid fa-bolt"></i> Command Center</a>
+      <a href="dashboard-builder.html" class="sb-link"><i class="fa-solid fa-sliders"></i> Dashboard Builder</a>
+      <span class="sb-section">Orders</span>
+      <a href="order-queue.html" class="sb-link"><i class="fa-solid fa-receipt"></i> Order Queue</a>
+      <a href="returns-queue.html" class="sb-link"><i class="fa-solid fa-rotate-left"></i> Returns</a>
+      <a href="shipments-list.html" class="sb-link"><i class="fa-solid fa-truck-fast"></i> Shipments</a>
+      <a href="routing-rules.html" class="sb-link"><i class="fa-solid fa-code-branch"></i> Routing Rules</a>
+      <a href="order-automation.html" class="sb-link"><i class="fa-solid fa-robot"></i> Automation</a>
+      <span class="sb-section">Inventory</span>
+      <a href="inventory-stock-overview.html" class="sb-link"><i class="fa-solid fa-boxes-stacked"></i> Stock</a>
+      <a href="inventory-stock-take.html" class="sb-link"><i class="fa-solid fa-clipboard-check"></i> Stock Take</a>
+      <a href="purchase-orders.html" class="sb-link"><i class="fa-solid fa-cart-plus"></i> Purchase Orders</a>
+      <a href="suppliers-list.html" class="sb-link"><i class="fa-solid fa-industry"></i> Suppliers</a>
+      <span class="sb-section">Catalogue</span>
+      <a href="catalogue-product-list.html" class="sb-link"><i class="fa-solid fa-tag"></i> Products</a>
+      <a href="catalogue-bom-builder.html" class="sb-link"><i class="fa-solid fa-list-tree"></i> BOM Builder</a>
+      <span class="sb-section">Channels</span>
+      <a href="channels-overview.html" class="sb-link"><i class="fa-solid fa-plug"></i> Overview</a>
+      <a href="listing-manager.html" class="sb-link"><i class="fa-solid fa-store"></i> Listings</a>
+      <a href="pricing-rules.html" class="sb-link"><i class="fa-solid fa-pound-sign"></i> Pricing Rules</a>
+      <span class="sb-section">Customers</span>
+      <a href="customers-list.html" class="sb-link"><i class="fa-solid fa-users"></i> Customers</a>
+      <span class="sb-section">Finance</span>
+      <a href="finance-dashboard.html" class="sb-link"><i class="fa-solid fa-chart-pie"></i> Overview</a>
+      <a href="finance-expense-management.html" class="sb-link"><i class="fa-solid fa-file-invoice"></i> Expenses</a>
+      <a href="sku-profitability.html" class="sb-link"><i class="fa-solid fa-chart-bar"></i> SKU Profitability</a>
+      <a href="finance-monthly-close.html" class="sb-link"><i class="fa-solid fa-calendar-check"></i> Monthly Close</a>
+      <span class="sb-section">Reports</span>
+      <a href="reports-library.html" class="sb-link"><i class="fa-solid fa-book"></i> Library</a>
+      <a href="report-builder-ai.html" class="sb-link"><i class="fa-solid fa-wand-magic-sparkles"></i> AI Builder</a>
+      <a href="automation-rule-builder.html" class="sb-link"><i class="fa-solid fa-gears"></i> Automation Rules</a>
+      <span class="sb-section">Settings</span>
+      <a href="settings-team.html" class="sb-link"><i class="fa-solid fa-people-group"></i> Team</a>
+      <a href="settings-rbac.html" class="sb-link"><i class="fa-solid fa-shield-halved"></i> Roles &amp; Permissions</a>
+      <a href="settings-integrations.html" class="sb-link"><i class="fa-solid fa-puzzle-piece"></i> Integrations</a>
+      <a href="settings-billing.html" class="sb-link"><i class="fa-solid fa-credit-card"></i> Billing</a>
+      <a href="settings-notifications.html" class="sb-link"><i class="fa-solid fa-bell"></i> Notifications</a>
+      <a href="settings-locale.html" class="sb-link"><i class="fa-solid fa-earth-europe"></i> Locale &amp; Currency</a>
+      <a href="settings-warehouses.html" class="sb-link"><i class="fa-solid fa-warehouse"></i> Warehouses</a>
+      <a href="settings-api-webhooks.html" class="sb-link"><i class="fa-solid fa-code"></i> API &amp; Webhooks</a>
+    </nav>
+    <div class="sb-foot">
+      <div class="sb-av">JW</div>
+      <div>
+        <div class="sb-uname">James Whitcombe</div>
+        <div class="sb-urole">Owner &middot; Acme Co</div>
       </div>
     </div>
-  </div>
+  </aside>
 
-  <!-- ===== MAIN COL ===== -->
-  <div class="main-col">
+  <!-- MAIN -->
+  <div class="main">
+    <header class="topbar">
+      <div class="crumb"><b>Dashboard</b><i class="fa-solid fa-chevron-right"></i><span>Today</span></div>
+      <div class="tb-spacer"></div>
+      <div class="search"><i class="fa-solid fa-magnifying-glass"></i><span>Search anything...</span><span class="kbd">⌘K</span></div>
+      <button class="icon-btn"><i class="fa-regular fa-bell"></i><span class="dot"></span></button>
+      <div class="tb-divider"></div>
+      <div class="tb-avatar">JW</div>
+    </header>
 
-    <!-- Topbar -->
-    <div class="topbar">
-      <div class="company-switcher">
-        <div class="company-dot"></div>
-        Meridian Trading Ltd
-        <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="m6 9 6 6 6-6"/></svg>
-      </div>
+    <main class="content">
 
-      <div class="topbar-spacer"></div>
-
-      <div class="cmd-k">
-        <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="8"/><path d="m21 21-4.35-4.35"/></svg>
-        <span>Search anything...</span>
-        <span class="kbd">⌘K</span>
-      </div>
-
-      <div class="topbar-btn">
-        <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M18 8A6 6 0 0 0 6 8c0 7-3 9-3 9h18s-3-2-3-9"/><path d="M13.73 21a2 2 0 0 1-3.46 0"/></svg>
-        <div class="topbar-badge">7</div>
-      </div>
-
-      <div class="topbar-avatar">AD</div>
-    </div>
-
-    <!-- Content -->
-    <div class="content-area">
-
-      <div class="page-header">
-        <div>
-          <div class="page-title">Dashboard</div>
-          <div class="header-date" style="margin-top:3px;">Wednesday, 7 May 2026 · UK Trading Day</div>
+      <div class="page-head">
+        <div class="greet">
+          <h1>Good morning, James</h1>
+          <p>Wednesday, 7 May 2026 <span class="sep">·</span> <i class="fa-solid fa-circle"></i> All channels syncing <span class="sep">·</span> Last refresh 14s ago</p>
         </div>
-        <div style="display:flex; gap:8px;">
-          <button style="background: var(--color-surface); border: 1px solid var(--color-border); border-radius:7px; padding:6px 12px; color: var(--color-text-muted); font-size:12px; cursor:pointer; font-family:'Inter',sans-serif; display:flex; align-items:center; gap:6px;">
-            <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="4" width="18" height="18" rx="2" ry="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/></svg>
-            Today
-          </button>
-          <button style="background: var(--color-surface); border: 1px solid var(--color-border); border-radius:7px; padding:6px 12px; color: var(--color-text-muted); font-size:12px; cursor:pointer; font-family:'Inter',sans-serif; display:flex; align-items:center; gap:6px;">
-            <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1-2.83 2.83l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-4 0v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83-2.83l.06-.06A1.65 1.65 0 0 0 4.68 15a1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1 0-4h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 2.83-2.83l.06.06A1.65 1.65 0 0 0 9 4.68a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 4 0v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 2.83l-.06.06A1.65 1.65 0 0 0 19.4 9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 0 4h-.09a1.65 1.65 0 0 0-1.51 1z"/></svg>
-            Customise
-          </button>
+        <div class="head-actions">
+          <button class="btn btn-secondary"><i class="fa-solid fa-calendar-day"></i>Today</button>
+          <button class="btn btn-secondary"><i class="fa-solid fa-arrow-down-to-bracket"></i>Export</button>
+          <button class="btn btn-ai"><i class="fa-solid fa-sparkles"></i>AI Digest available</button>
         </div>
       </div>
 
-      <!-- KPI Cards -->
-      <div class="kpi-grid">
+      <!-- KPIs -->
+      <section class="kpis">
+        <div class="kpi">
+          <div class="kpi-head"><div class="kpi-label"><div class="kpi-icon indigo"><i class="fa-solid fa-pound-sign"></i></div>Total Revenue</div><i class="fa-solid fa-ellipsis kpi-menu"></i></div>
+          <div class="kpi-value"><span class="cur">£</span>84,291</div>
+          <div class="kpi-foot"><span class="delta up"><i class="fa-solid fa-arrow-up"></i>12.4%</span> vs yesterday</div>
+          <svg class="spark" viewBox="0 0 90 38" preserveAspectRatio="none"><path d="M0 28 L15 22 L30 26 L45 14 L60 18 L75 8 L90 12" stroke="#4F46E5" stroke-width="2" fill="none"/><path d="M0 28 L15 22 L30 26 L45 14 L60 18 L75 8 L90 12 L90 38 L0 38 Z" fill="rgba(79,70,229,.12)"/></svg>
+        </div>
+        <div class="kpi">
+          <div class="kpi-head"><div class="kpi-label"><div class="kpi-icon green"><i class="fa-solid fa-receipt"></i></div>Orders Today</div><i class="fa-solid fa-ellipsis kpi-menu"></i></div>
+          <div class="kpi-value">1,247</div>
+          <div class="kpi-foot"><span class="delta up"><i class="fa-solid fa-arrow-up"></i>8.1%</span> vs yesterday</div>
+          <svg class="spark" viewBox="0 0 90 38" preserveAspectRatio="none"><path d="M0 24 L15 28 L30 18 L45 22 L60 14 L75 16 L90 8" stroke="#10B981" stroke-width="2" fill="none"/><path d="M0 24 L15 28 L30 18 L45 22 L60 14 L75 16 L90 8 L90 38 L0 38 Z" fill="rgba(16,185,129,.12)"/></svg>
+        </div>
+        <div class="kpi">
+          <div class="kpi-head"><div class="kpi-label"><div class="kpi-icon amber"><i class="fa-solid fa-bullseye"></i></div>Fulfilment Rate</div><i class="fa-solid fa-ellipsis kpi-menu"></i></div>
+          <div class="kpi-value">97.3<span class="cur" style="font-size:16px">%</span></div>
+          <div class="kpi-foot"><span class="delta up"><i class="fa-solid fa-arrow-up"></i>0.8%</span> 7-day avg</div>
+          <svg class="spark" viewBox="0 0 90 38" preserveAspectRatio="none"><path d="M0 22 L15 18 L30 20 L45 14 L60 16 L75 10 L90 12" stroke="#F59E0B" stroke-width="2" fill="none"/><path d="M0 22 L15 18 L30 20 L45 14 L60 16 L75 10 L90 12 L90 38 L0 38 Z" fill="rgba(245,158,11,.12)"/></svg>
+        </div>
+        <div class="kpi">
+          <div class="kpi-head"><div class="kpi-label"><div class="kpi-icon red"><i class="fa-solid fa-rotate-left"></i></div>Returns Rate</div><i class="fa-solid fa-ellipsis kpi-menu"></i></div>
+          <div class="kpi-value">4.2<span class="cur" style="font-size:16px">%</span></div>
+          <div class="kpi-foot"><span class="delta down"><i class="fa-solid fa-arrow-up"></i>1.1%</span> investigate</div>
+          <svg class="spark" viewBox="0 0 90 38" preserveAspectRatio="none"><path d="M0 26 L15 22 L30 20 L45 18 L60 14 L75 16 L90 10" stroke="#EF4444" stroke-width="2" fill="none"/><path d="M0 26 L15 22 L30 20 L45 18 L60 14 L75 16 L90 10 L90 38 L0 38 Z" fill="rgba(239,68,68,.1)"/></svg>
+        </div>
+      </section>
 
-        <div class="kpi-card green">
-          <div class="kpi-label">Today's Orders</div>
-          <div class="kpi-value">247</div>
-          <div class="kpi-footer">
-            <div class="kpi-change up">
-              <svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3"><path d="M12 19V5M5 12l7-7 7 7"/></svg>
-              +18% vs yesterday
-            </div>
+      <!-- ROW: Chart + Status -->
+      <section class="row">
+        <div class="card">
+          <div class="card-head">
+            <div><h3>Revenue · last 14 days</h3><div class="sub">Total £1.18M · daily avg £84.3k</div></div>
+            <div class="tabs"><button>7D</button><button class="on">14D</button><button>30D</button><button>QTD</button></div>
           </div>
-          <svg class="sparkline" width="100%" height="28" viewBox="0 0 100 28" preserveAspectRatio="none">
-            <polyline points="0,22 10,18 20,20 30,14 40,16 50,10 60,12 70,8 80,6 90,4 100,2" fill="none" stroke="rgba(74,158,110,0.5)" stroke-width="1.5"/>
-            <polyline points="0,22 10,18 20,20 30,14 40,16 50,10 60,12 70,8 80,6 90,4 100,2 100,28 0,28" fill="rgba(74,158,110,0.08)" stroke="none"/>
-          </svg>
-        </div>
-
-        <div class="kpi-card green">
-          <div class="kpi-label">Revenue</div>
-          <div class="kpi-value" style="font-size:20px;">£14,832</div>
-          <div class="kpi-footer">
-            <div class="kpi-change up">
-              <svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3"><path d="M12 19V5M5 12l7-7 7 7"/></svg>
-              +12% vs yesterday
-            </div>
+          <div class="chart">
+            <div class="bar" style="height:60%"><div class="bar-fill" style="height:60%"></div><div class="bar-lab">24</div></div>
+            <div class="bar" style="height:52%"><div class="bar-fill" style="height:52%"></div><div class="bar-lab">25</div></div>
+            <div class="bar" style="height:68%"><div class="bar-fill" style="height:68%"></div><div class="bar-lab">26</div></div>
+            <div class="bar" style="height:45%"><div class="bar-fill" style="height:45%"></div><div class="bar-lab">27</div></div>
+            <div class="bar" style="height:58%"><div class="bar-fill" style="height:58%"></div><div class="bar-lab">28</div></div>
+            <div class="bar" style="height:71%"><div class="bar-fill" style="height:71%"></div><div class="bar-lab">29</div></div>
+            <div class="bar" style="height:64%"><div class="bar-fill" style="height:64%"></div><div class="bar-lab">30</div></div>
+            <div class="bar" style="height:55%"><div class="bar-fill" style="height:55%"></div><div class="bar-lab">1</div></div>
+            <div class="bar" style="height:73%"><div class="bar-fill" style="height:73%"></div><div class="bar-lab">2</div></div>
+            <div class="bar" style="height:80%"><div class="bar-fill" style="height:80%"></div><div class="bar-lab">3</div></div>
+            <div class="bar" style="height:69%"><div class="bar-fill" style="height:69%"></div><div class="bar-lab">4</div></div>
+            <div class="bar" style="height:76%"><div class="bar-fill" style="height:76%"></div><div class="bar-lab">5</div></div>
+            <div class="bar" style="height:83%"><div class="bar-fill" style="height:83%"></div><div class="bar-lab">6</div></div>
+            <div class="bar today" style="height:92%"><div class="tip">£84,291 · today</div><div class="bar-fill" style="height:92%"></div><div class="bar-lab">7</div></div>
           </div>
-          <svg class="sparkline" width="100%" height="28" viewBox="0 0 100 28" preserveAspectRatio="none">
-            <polyline points="0,24 10,20 20,22 30,16 40,14 50,12 60,10 70,8 80,10 90,5 100,3" fill="none" stroke="rgba(74,158,110,0.5)" stroke-width="1.5"/>
-            <polyline points="0,24 10,20 20,22 30,16 40,14 50,12 60,10 70,8 80,10 90,5 100,3 100,28 0,28" fill="rgba(74,158,110,0.08)" stroke="none"/>
-          </svg>
-        </div>
-
-        <div class="kpi-card red">
-          <div class="kpi-label">Units Shipped</div>
-          <div class="kpi-value">189</div>
-          <div class="kpi-footer">
-            <div class="kpi-change down">
-              <svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3"><path d="M12 5v14M5 12l7 7 7-7"/></svg>
-              -3% vs yesterday
-            </div>
-          </div>
-          <svg class="sparkline" width="100%" height="28" viewBox="0 0 100 28" preserveAspectRatio="none">
-            <polyline points="0,8 10,10 20,8 30,10 40,12 50,10 60,14 70,16 80,14 90,18 100,20" fill="none" stroke="rgba(224,85,85,0.5)" stroke-width="1.5"/>
-            <polyline points="0,8 10,10 20,8 30,10 40,12 50,10 60,14 70,16 80,14 90,18 100,20 100,28 0,28" fill="rgba(224,85,85,0.08)" stroke="none"/>
-          </svg>
-        </div>
-
-        <div class="kpi-card amber">
-          <div class="kpi-label">Open Returns</div>
-          <div class="kpi-value">8</div>
-          <div class="kpi-footer">
-            <div class="kpi-change amber">
-              <svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3"><path d="M12 9v4M12 17h.01"/></svg>
-              Needs review
-            </div>
-          </div>
-          <svg class="sparkline" width="100%" height="28" viewBox="0 0 100 28" preserveAspectRatio="none">
-            <polyline points="0,20 10,18 20,16 30,18 40,14 50,16 60,12 70,14 80,10 90,12 100,10" fill="none" stroke="rgba(212,135,44,0.5)" stroke-width="1.5"/>
-            <polyline points="0,20 10,18 20,16 30,18 40,14 50,16 60,12 70,14 80,10 90,12 100,10 100,28 0,28" fill="rgba(212,135,44,0.08)" stroke="none"/>
-          </svg>
-        </div>
-
-        <div class="kpi-card red">
-          <div class="kpi-label">Low Stock Alerts</div>
-          <div class="kpi-value">23</div>
-          <div class="kpi-footer">
-            <div class="kpi-change down">
-              <svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3"><path d="M12 9v4M12 17h.01"/></svg>
-              Action needed
-            </div>
-          </div>
-          <svg class="sparkline" width="100%" height="28" viewBox="0 0 100 28" preserveAspectRatio="none">
-            <polyline points="0,12 10,14 20,12 30,16 40,18 50,20 60,18 70,22 80,20 90,24 100,22" fill="none" stroke="rgba(224,85,85,0.5)" stroke-width="1.5"/>
-            <polyline points="0,12 10,14 20,12 30,16 40,18 50,20 60,18 70,22 80,20 90,24 100,22 100,28 0,28" fill="rgba(224,85,85,0.08)" stroke="none"/>
-          </svg>
-        </div>
-
-        <div class="kpi-card gold">
-          <div class="kpi-label">Active Listings</div>
-          <div class="kpi-value" style="font-size:22px;">1,847</div>
-          <div class="kpi-footer">
-            <div class="kpi-change up" style="color: var(--color-accent);">
-              <svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3"><path d="M12 19V5M5 12l7-7 7 7"/></svg>
-              +4% this week
-            </div>
-          </div>
-          <svg class="sparkline" width="100%" height="28" viewBox="0 0 100 28" preserveAspectRatio="none">
-            <polyline points="0,22 10,20 20,18 30,16 40,14 50,12 60,10 70,8 80,9 90,6 100,4" fill="none" stroke="rgba(196,151,42,0.5)" stroke-width="1.5"/>
-            <polyline points="0,22 10,20 20,18 30,16 40,14 50,12 60,10 70,8 80,9 90,6 100,4 100,28 0,28" fill="rgba(196,151,42,0.08)" stroke="none"/>
-          </svg>
-        </div>
-      </div>
-
-      <!-- Channel Sync Status -->
-      <div class="channel-sync-row">
-        <span class="sync-label">Channel Sync</span>
-
-        <div class="channel-pill">
-          <div class="channel-logo ch-ebay-logo">🛍</div>
-          <span class="ch-name">eBay</span>
-          <div class="status-dot-sm dot-green" style="margin-left:6px;"></div>
-          <span class="ch-time">2 min ago</span>
-        </div>
-
-        <div class="channel-pill">
-          <div class="channel-logo ch-tiktok-logo">🎵</div>
-          <span class="ch-name">TikTok Shop</span>
-          <div class="status-dot-sm dot-green" style="margin-left:6px;"></div>
-          <span class="ch-time">5 min ago</span>
-        </div>
-
-        <div class="channel-pill">
-          <div class="channel-logo ch-vinted-logo">👗</div>
-          <span class="ch-name">Vinted</span>
-          <div class="status-dot-sm dot-amber" style="margin-left:6px;"></div>
-          <span class="ch-time" style="color: var(--color-warning);">23 min ago</span>
-        </div>
-
-        <div class="channel-pill">
-          <div class="channel-logo ch-etsy-logo">🎨</div>
-          <span class="ch-name">Etsy</span>
-          <div class="status-dot-sm dot-green" style="margin-left:6px;"></div>
-          <span class="ch-time">8 min ago</span>
-        </div>
-
-        <button style="display:flex; align-items:center; gap:6px; background: transparent; border: 1px solid var(--color-border); border-radius:6px; padding:6px 12px; color: var(--color-text-subtle); font-size:11.5px; cursor:pointer; font-family:'Inter',sans-serif; white-space:nowrap; margin-left:auto;">
-          <svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21.5 2v6h-6M2.5 22v-6h6M2 11.5a10 10 0 0 1 18.8-4.3M22 12.5a10 10 0 0 1-18.8 4.2"/></svg>
-          Sync all now
-        </button>
-      </div>
-
-      <!-- Bottom row -->
-      <div class="bottom-row">
-
-        <!-- Live Order Feed -->
-        <div class="feed-panel">
-          <div class="feed-header">
-            <div class="live-dot"></div>
-            <span class="feed-title">Live Orders</span>
-            <span style="font-size:11px; color:var(--color-text-subtle); margin-left:4px;">real-time</span>
-            <div style="margin-left:auto; display:flex; gap:8px;">
-              <button style="background:transparent; border:1px solid var(--color-border); border-radius:5px; padding:4px 10px; font-size:11px; color:var(--color-text-muted); cursor:pointer; font-family:'Inter',sans-serif;">Filter</button>
-              <a href="order-queue.html" style="background:transparent; border:1px solid var(--color-border); border-radius:5px; padding:4px 10px; font-size:11px; color:var(--color-text-muted); cursor:pointer; font-family:'Inter',sans-serif; text-decoration:none;">View all →</a>
-            </div>
-          </div>
-          <div class="feed-body">
-
-            <div class="order-row">
-              <span class="ch-badge" style="background:rgba(255,174,0,0.12);color:#FFAE00;">eBay</span>
-              <span class="order-id">#EB-2847391</span>
-              <span class="order-buyer">Sarah Mitchell</span>
-              <span class="order-value">£34.99</span>
-              <span class="order-status-badge status-processing">Processing</span>
-              <span class="order-time">2m ago</span>
-            </div>
-
-            <div class="order-row">
-              <span class="ch-badge" style="background:rgba(105,201,208,0.12);color:#69C9D0;">TikTok</span>
-              <span class="order-id">#TT-0192847</span>
-              <span class="order-buyer">James Cooper</span>
-              <span class="order-value">£89.50</span>
-              <span class="order-status-badge status-awaiting">Awaiting</span>
-              <span class="order-time">4m ago</span>
-            </div>
-
-            <div class="order-row">
-              <span class="ch-badge" style="background:rgba(9,183,117,0.12);color:#09B775;">Vinted</span>
-              <span class="order-id">#VT-3847291</span>
-              <span class="order-buyer">Emma Watson</span>
-              <span class="order-value">£12.00</span>
-              <span class="order-status-badge status-shipped">Shipped</span>
-              <span class="order-time">7m ago</span>
-            </div>
-
-            <div class="order-row">
-              <span class="ch-badge" style="background:rgba(255,174,0,0.12);color:#FFAE00;">eBay</span>
-              <span class="order-id">#EB-2847386</span>
-              <span class="order-buyer">Michael Brown</span>
-              <span class="order-value">£156.00</span>
-              <span class="order-status-badge status-processing">Processing</span>
-              <span class="order-time">11m ago</span>
-            </div>
-
-            <div class="order-row">
-              <span class="ch-badge" style="background:rgba(243,89,36,0.12);color:#F35924;">Etsy</span>
-              <span class="order-id">#ET-8472910</span>
-              <span class="order-buyer">Charlotte Patel</span>
-              <span class="order-value">£42.00</span>
-              <span class="order-status-badge status-shipped">Shipped</span>
-              <span class="order-time">14m ago</span>
-            </div>
-
-            <div class="order-row">
-              <span class="ch-badge" style="background:rgba(105,201,208,0.12);color:#69C9D0;">TikTok</span>
-              <span class="order-id">#TT-0192831</span>
-              <span class="order-buyer">Oliver Hughes</span>
-              <span class="order-value">£24.99</span>
-              <span class="order-status-badge status-pending">Pending</span>
-              <span class="order-time">19m ago</span>
-            </div>
-
-            <div class="order-row">
-              <span class="ch-badge" style="background:rgba(255,174,0,0.12);color:#FFAE00;">eBay</span>
-              <span class="order-id">#EB-2847371</span>
-              <span class="order-buyer">Isabella Clarke</span>
-              <span class="order-value">£278.00</span>
-              <span class="order-status-badge status-processing">Processing</span>
-              <span class="order-time">25m ago</span>
-            </div>
-
-            <div class="order-row">
-              <span class="ch-badge" style="background:rgba(9,183,117,0.12);color:#09B775;">Vinted</span>
-              <span class="order-id">#VT-3847265</span>
-              <span class="order-buyer">Noah Thompson</span>
-              <span class="order-value">£8.50</span>
-              <span class="order-status-badge status-shipped">Shipped</span>
-              <span class="order-time">31m ago</span>
-            </div>
-
-            <div class="order-row">
-              <span class="ch-badge" style="background:rgba(243,89,36,0.12);color:#F35924;">Etsy</span>
-              <span class="order-id">#ET-8472884</span>
-              <span class="order-buyer">Amelia Johnson</span>
-              <span class="order-value">£67.50</span>
-              <span class="order-status-badge status-cancelled">Cancelled</span>
-              <span class="order-time">38m ago</span>
-            </div>
-
+          <div class="chart-foot">
+            <span>Peak <b>£91,402</b> on May 3</span>
+            <span>Forecast EOD <b>£86–92k</b></span>
+            <span>Target <b>£80,000</b> · met ✓</span>
           </div>
         </div>
 
-        <!-- Right: Reorders + SLA -->
-        <div class="right-panels">
-
-          <!-- Reorder Alerts -->
-          <div class="small-panel">
-            <div class="small-panel-header">
-              <div class="small-panel-title">
-                <span style="color:#E05555; margin-right:5px;">●</span> Reorder Alerts
+        <div class="card">
+          <div class="card-head"><div><h3>Order status</h3><div class="sub">Open queue · 1,247 orders</div></div><i class="fa-solid fa-ellipsis kpi-menu"></i></div>
+          <div class="status-list">
+            <div class="status-row">
+              <span class="status-dot amber"></span>
+              <div class="status-info">
+                <div class="status-top"><b>Pending review</b><span>23%</span></div>
+                <div class="status-track"><div class="status-fill amber" style="width:23%"></div></div>
+                <div class="status-meta">287 orders · 12 awaiting payment</div>
               </div>
-              <span style="font-size:11px; color: var(--color-text-subtle);">5 critical SKUs</span>
             </div>
-
-            <div class="reorder-row">
-              <div style="flex:1; min-width:0;">
-                <div class="sku-name">Sony WH-1000XM5 Headphones</div>
-                <div style="font-size:10.5px; font-family:'Geist Mono',monospace; color:var(--color-text-subtle);">SKU-AU-48291</div>
+            <div class="status-row">
+              <span class="status-dot blue"></span>
+              <div class="status-info">
+                <div class="status-top"><b>Processing</b><span>41%</span></div>
+                <div class="status-track"><div class="status-fill blue" style="width:41%"></div></div>
+                <div class="status-meta">511 orders · in pick & pack</div>
               </div>
-              <span class="days-left days-critical">2d left</span>
-              <button class="create-po-btn">+ PO</button>
             </div>
-
-            <div class="reorder-row">
-              <div style="flex:1; min-width:0;">
-                <div class="sku-name">Logitech MX Keys Wireless</div>
-                <div style="font-size:10.5px; font-family:'Geist Mono',monospace; color:var(--color-text-subtle);">SKU-KB-38847</div>
+            <div class="status-row">
+              <span class="status-dot green"></span>
+              <div class="status-info">
+                <div class="status-top"><b>Dispatched</b><span>36%</span></div>
+                <div class="status-track"><div class="status-fill green" style="width:36%"></div></div>
+                <div class="status-meta">449 orders · with carrier</div>
               </div>
-              <span class="days-left days-critical">4d left</span>
-              <button class="create-po-btn">+ PO</button>
-            </div>
-
-            <div class="reorder-row">
-              <div style="flex:1; min-width:0;">
-                <div class="sku-name">Anker 20,000mAh Power Bank</div>
-                <div style="font-size:10.5px; font-family:'Geist Mono',monospace; color:var(--color-text-subtle);">SKU-PB-11029</div>
-              </div>
-              <span class="days-left days-warning">7d left</span>
-              <button class="create-po-btn">+ PO</button>
-            </div>
-
-            <div class="reorder-row">
-              <div style="flex:1; min-width:0;">
-                <div class="sku-name">USB-C Hub 8-in-1 Adapter</div>
-                <div style="font-size:10.5px; font-family:'Geist Mono',monospace; color:var(--color-text-subtle);">SKU-HB-57391</div>
-              </div>
-              <span class="days-left days-warning">9d left</span>
-              <button class="create-po-btn">+ PO</button>
-            </div>
-
-            <div class="reorder-row">
-              <div style="flex:1; min-width:0;">
-                <div class="sku-name">MacBook Air M2 13" Sleeve</div>
-                <div style="font-size:10.5px; font-family:'Geist Mono',monospace; color:var(--color-text-subtle);">SKU-CS-20041</div>
-              </div>
-              <span class="days-left days-ok">14d left</span>
-              <button class="create-po-btn">+ PO</button>
             </div>
           </div>
-
-          <!-- SLA Warnings -->
-          <div class="small-panel">
-            <div class="small-panel-header">
-              <div class="small-panel-title">
-                <span style="color: var(--color-warning); margin-right:5px;">⚡</span> SLA Warnings
-              </div>
-              <span style="font-size:11px; color: #E05555; font-weight:600;">3 at risk</span>
-            </div>
-
-            <!-- SLA Row 1 — critical -->
-            <div class="sla-row">
-              <div class="sla-ring">
-                <svg width="36" height="36" viewBox="0 0 36 36">
-                  <circle cx="18" cy="18" r="15" fill="none" stroke="rgba(139,58,58,0.3)" stroke-width="3"/>
-                  <circle cx="18" cy="18" r="15" fill="none" stroke="#E05555" stroke-width="3"
-                    stroke-dasharray="94.25" stroke-dashoffset="75" stroke-linecap="round"/>
-                </svg>
-                <div class="sla-ring-value" style="color:#E05555;">4h</div>
-              </div>
-              <div class="sla-info">
-                <div class="sla-order">#EB-2847391</div>
-                <div class="sla-buyer">Sarah Mitchell · eBay</div>
-              </div>
-              <span class="sla-tag sla-critical">Critical</span>
-            </div>
-
-            <!-- SLA Row 2 — warning -->
-            <div class="sla-row">
-              <div class="sla-ring">
-                <svg width="36" height="36" viewBox="0 0 36 36">
-                  <circle cx="18" cy="18" r="15" fill="none" stroke="rgba(212,135,44,0.3)" stroke-width="3"/>
-                  <circle cx="18" cy="18" r="15" fill="none" stroke="#D4872C" stroke-width="3"
-                    stroke-dasharray="94.25" stroke-dashoffset="47" stroke-linecap="round"/>
-                </svg>
-                <div class="sla-ring-value" style="color:#D4872C;">11h</div>
-              </div>
-              <div class="sla-info">
-                <div class="sla-order">#TT-0192847</div>
-                <div class="sla-buyer">James Cooper · TikTok</div>
-              </div>
-              <span class="sla-tag sla-warning">At risk</span>
-            </div>
-
-            <!-- SLA Row 3 — warning -->
-            <div class="sla-row">
-              <div class="sla-ring">
-                <svg width="36" height="36" viewBox="0 0 36 36">
-                  <circle cx="18" cy="18" r="15" fill="none" stroke="rgba(212,135,44,0.3)" stroke-width="3"/>
-                  <circle cx="18" cy="18" r="15" fill="none" stroke="#D4872C" stroke-width="3"
-                    stroke-dasharray="94.25" stroke-dashoffset="28" stroke-linecap="round"/>
-                </svg>
-                <div class="sla-ring-value" style="color:#D4872C;">18h</div>
-              </div>
-              <div class="sla-info">
-                <div class="sla-order">#VT-3847291</div>
-                <div class="sla-buyer">Emma Watson · Vinted</div>
-              </div>
-              <span class="sla-tag sla-warning">At risk</span>
-            </div>
+          <div class="donut-total">
+            <span class="lab">Avg time-to-ship</span>
+            <span class="num">4h 12m <span style="color:#059669;font-size:11px;font-weight:600;margin-left:4px">↓ 18m</span></span>
           </div>
-
         </div>
-      </div>
+      </section>
 
-    </div>
+      <!-- ROW: Recent Orders + Copilot -->
+      <section class="row">
+        <div class="card">
+          <div class="card-head">
+            <div><h3>Recent orders</h3><div class="sub">Updated continuously · last sync 14s</div></div>
+            <button class="btn btn-secondary" style="font-size:12px">View all <i class="fa-solid fa-arrow-right" style="font-size:10px"></i></button>
+          </div>
+          <table class="tbl">
+            <thead><tr><th>Order</th><th>Channel</th><th>Items</th><th>Value</th><th>Status</th><th>SLA</th></tr></thead>
+            <tbody>
+              <tr><td><span class="oid">#MER-21847</span></td><td><span class="ch-pill amazon"><i class="fa-brands fa-amazon"></i>Amazon UK</span></td><td>3</td><td><b>£284.50</b></td><td><span class="bdg success">Dispatched</span></td><td><span class="sla good">2h 14m</span></td></tr>
+              <tr><td><span class="oid">#MER-21846</span></td><td><span class="ch-pill shopify"><i class="fa-brands fa-shopify"></i>Shopify</span></td><td>1</td><td><b>£89.00</b></td><td><span class="bdg info">Picking</span></td><td><span class="sla good">5h 41m</span></td></tr>
+              <tr><td><span class="oid">#MER-21845</span></td><td><span class="ch-pill ebay">eBay</span></td><td>2</td><td><b>£156.20</b></td><td><span class="bdg warn">Awaiting stock</span></td><td><span class="sla warn">0h 47m</span></td></tr>
+              <tr><td><span class="oid">#MER-21844</span></td><td><span class="ch-pill tiktok"><i class="fa-brands fa-tiktok"></i>TikTok Shop</span></td><td>5</td><td><b>£412.99</b></td><td><span class="bdg info">Packed</span></td><td><span class="sla good">3h 22m</span></td></tr>
+              <tr><td><span class="oid">#MER-21843</span></td><td><span class="ch-pill amazon"><i class="fa-brands fa-amazon"></i>Amazon EU</span></td><td>1</td><td><b>£72.40</b></td><td><span class="bdg neutral">On hold</span></td><td><span class="sla bad">-12m</span></td></tr>
+            </tbody>
+          </table>
+        </div>
+
+        <div class="copilot">
+          <div class="cp-head">
+            <div class="cp-bot"><i class="fa-solid fa-wand-magic-sparkles"></i></div>
+            <div>
+              <div class="cp-title">AI Copilot</div>
+              <div class="cp-meta"><i class="fa-solid fa-circle"></i>Digest ready · 09:42</div>
+            </div>
+          </div>
+          <div class="cp-digest">Today's queue is healthy, but I spotted <b>3 things worth your attention</b>:</div>
+          <ul class="cp-list">
+            <li><i class="fa-solid fa-triangle-exclamation"></i><span><b>SKU-LED-9842</b> will stockout in <b>~38h</b> at current pace. Reorder 240 units to keep Prime velocity.</span></li>
+            <li><i class="fa-solid fa-arrow-trend-up"></i><span><b>TikTok Shop</b> orders up <b>+47%</b> WoW. Consider raising daily ad budget by £80.</span></li>
+            <li><i class="fa-solid fa-clock"></i><span>1 order on <b>Amazon EU</b> has breached SLA. Auto-escalation queued.</span></li>
+          </ul>
+          <div class="cp-actions">
+            <button class="btn-primary">Accept all<i class="fa-solid fa-check" style="margin-left:6px;font-size:11px"></i></button>
+            <button class="btn-ghost">Dismiss</button>
+          </div>
+        </div>
+      </section>
+
+      <!-- CHANNEL HEALTH -->
+      <section class="ch-row">
+        <div class="ch-card">
+          <div class="ch-logo amazon"></div>
+          <div class="ch-meta">
+            <div class="ch-name">Amazon <span class="ch-status green"></span></div>
+            <div class="ch-sub">Last sync 28s ago · 4 marketplaces</div>
+          </div>
+          <div class="ch-stats"><b>624</b>orders today</div>
+        </div>
+        <div class="ch-card">
+          <div class="ch-logo ebay"></div>
+          <div class="ch-meta">
+            <div class="ch-name">eBay <span class="ch-status amber"></span></div>
+            <div class="ch-sub">Sync delayed · last 4m 12s ago</div>
+          </div>
+          <div class="ch-stats"><b>198</b>orders today</div>
+        </div>
+        <div class="ch-card">
+          <div class="ch-logo shopify"></div>
+          <div class="ch-meta">
+            <div class="ch-name">Shopify <span class="ch-status green"></span></div>
+            <div class="ch-sub">Last sync 11s ago · webhook live</div>
+          </div>
+          <div class="ch-stats"><b>425</b>orders today</div>
+        </div>
+      </section>
+
+    </main>
   </div>
 </div>
-
-<!-- FAB Bar -->
-<div class="fab-bar">
-  <button class="fab-btn">
-    <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M12 5v14M5 12h14"/></svg>
-    + Order
-  </button>
-  <button class="fab-btn">
-    <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M12 5v14M5 12h14"/></svg>
-    + Listing
-  </button>
-  <button class="fab-btn secondary">
-    <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>
-    Print Labels
-  </button>
-  <button class="fab-btn secondary">
-    <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="3" width="7" height="7" rx="1"/><path d="M3 14h4M3 17h4M3 20h4M14 3h4M17 3v4M14 8h7"/></svg>
-    Scan Item
-  </button>
-</div>
-
 </body>
 </html>

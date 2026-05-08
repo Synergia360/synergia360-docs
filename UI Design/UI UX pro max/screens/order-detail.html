@@ -1,0 +1,270 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<title>Order #ORD-84291 — Synergia360</title>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=Geist+Mono:wght@400;600&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
+<style>
+:root{--bg:#F8F9FC;--surface:#FFFFFF;--surface-2:#F8FAFF;--border:#E2E8F0;--accent:#4F46E5;--accent-dim:rgba(79,70,229,.08);--accent-light:#EEF2FF;--text:#0F172A;--text-2:#475569;--text-3:#94A3B8;--green:#10B981;--green-dim:rgba(16,185,129,.08);--green-light:#ECFDF5;--red:#EF4444;--red-dim:rgba(239,68,68,.08);--red-light:#FEF2F2;--amber:#F59E0B;--amber-dim:rgba(245,158,11,.08);--amber-light:#FFFBEB;--blue:#3B82F6;--font:'Inter',sans-serif;--mono:'Geist Mono',monospace}
+*{box-sizing:border-box;margin:0;padding:0}
+body{font-family:var(--font);background:var(--bg);color:var(--text);font-size:14px;line-height:1.5;-webkit-font-smoothing:antialiased}
+.app{display:flex;min-height:100vh}
+/* sidebar */
+.sidebar{width:240px;background:#fff;border-right:1px solid var(--border);display:flex;flex-direction:column;flex-shrink:0;position:sticky;top:0;height:100vh;overflow:hidden}
+.sb-logo{padding:18px 20px;border-bottom:1px solid var(--border);display:flex;align-items:center;gap:12px;flex-shrink:0}
+.sb-mark{width:36px;height:36px;background:var(--accent);border-radius:9px;display:grid;place-items:center;color:#fff;font-weight:800;font-size:16px;flex-shrink:0}
+.sb-name{font-weight:700;font-size:15px;color:var(--text)}
+.sb-nav{flex:1;padding:10px;overflow-y:auto}
+.sb-section{font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:.07em;color:var(--text-3);padding:14px 8px 4px;display:block}
+.sb-link{display:flex;align-items:center;gap:10px;padding:8px 10px;border-radius:8px;color:var(--text-2);font-size:13px;font-weight:500;text-decoration:none;border-left:2px solid transparent;margin-bottom:1px;transition:background .15s,color .15s}
+.sb-link:hover{background:#F1F5F9;color:var(--text)}
+.sb-link.active{background:var(--accent-light);color:var(--accent);border-left-color:var(--accent);font-weight:600}
+.sb-link i{width:16px;text-align:center;font-size:13px;color:var(--text-3);flex-shrink:0}
+.sb-link.active i{color:var(--accent)}
+.sb-foot{padding:12px 16px;border-top:1px solid var(--border);display:flex;align-items:center;gap:10px;flex-shrink:0}
+.sb-av{width:34px;height:34px;background:var(--accent-light);border-radius:50%;display:grid;place-items:center;color:var(--accent);font-weight:700;font-size:13px;flex-shrink:0}
+.sb-uname{font-size:13px;font-weight:600;color:var(--text);line-height:1.2}
+.sb-urole{font-size:11px;color:var(--text-3)}
+.main{flex:1;display:flex;flex-direction:column;min-width:0}
+.topbar{min-height:60px;background:var(--surface);border-bottom:1px solid var(--border);display:flex;align-items:center;padding:12px 24px;gap:14px;position:sticky;top:0;z-index:10;flex-wrap:wrap}
+.crumb{color:var(--text-2);font-size:13px;display:flex;align-items:center;gap:6px;cursor:pointer}
+.crumb:hover{color:var(--accent)}
+.topbar h1{font-size:19px;font-weight:700;letter-spacing:-.3px;font-family:var(--mono)}
+.topbar .grow{flex:1}
+.btn{height:36px;padding:0 14px;border-radius:8px;font-size:13px;font-weight:600;border:1px solid var(--border);background:var(--surface);color:var(--text);display:inline-flex;align-items:center;gap:8px;cursor:pointer}
+.btn.primary{background:var(--accent);color:#fff;border-color:var(--accent)}
+.badge{display:inline-flex;align-items:center;gap:5px;padding:4px 10px;border-radius:6px;font-size:11.5px;font-weight:600;border:1px solid transparent}
+.s-info{background:var(--accent-light);color:var(--accent);border-color:rgba(79,70,229,.15)}
+.s-success{background:var(--green-light);color:#059669;border-color:rgba(5,150,105,.15)}
+.s-warn{background:var(--amber-light);color:#D97706;border-color:rgba(217,119,6,.15)}
+.s-neutral{background:#F1F5F9;color:var(--text-2);border-color:var(--border)}
+.b-amazon{background:#FFF7ED;color:#C2410C;border-color:rgba(194,65,12,.18)}
+.content{padding:24px;display:grid;grid-template-columns:2fr 1fr;gap:18px;align-items:flex-start}
+.card{background:var(--surface);border:1px solid var(--border);border-radius:12px;box-shadow:0 1px 3px rgba(0,0,0,.04);padding:20px;margin-bottom:16px}
+.card-h{display:flex;align-items:center;justify-content:space-between;margin-bottom:14px}
+.card-h h3{font-size:14px;font-weight:700;letter-spacing:-.2px;display:flex;align-items:center;gap:8px}
+.card-h h3 i{color:var(--text-3);font-size:13px}
+.lk{color:var(--accent);font-size:12.5px;font-weight:600;text-decoration:none;cursor:pointer}
+.items-tbl{width:100%;border-collapse:collapse}
+.items-tbl th{font-size:11px;text-transform:uppercase;letter-spacing:.06em;color:#64748B;text-align:left;padding:10px 0;border-bottom:1px solid var(--border);font-weight:700}
+.items-tbl td{padding:14px 0;border-bottom:1px solid #F1F5F9;font-size:13.5px;vertical-align:middle}
+.items-tbl tr:last-child td{border-bottom:none}
+.prod{display:flex;gap:12px;align-items:center}
+.prod-img{width:54px;height:54px;border-radius:8px;background:linear-gradient(135deg,#1F2937,#374151);display:flex;align-items:center;justify-content:center;color:#fff;font-size:20px;flex-shrink:0}
+.prod .pn{font-weight:600;font-size:13.5px}
+.prod .ps{font-family:var(--mono);font-size:11.5px;color:var(--text-3);margin-top:2px}
+.totals{margin-top:14px;padding-top:14px;border-top:1px dashed var(--border);display:flex;flex-direction:column;gap:6px;font-size:13px}
+.totals .row{display:flex;justify-content:space-between;color:var(--text-2)}
+.totals .row.grand{font-weight:700;color:var(--text);padding-top:8px;border-top:1px solid var(--border);margin-top:6px}
+.totals .row.grand .v{font-size:17px;font-family:var(--mono)}
+.field-grid{display:grid;grid-template-columns:1fr 1fr;gap:14px}
+.fld{display:flex;flex-direction:column;gap:6px}
+.fld label{font-size:11px;text-transform:uppercase;letter-spacing:.06em;color:#64748B;font-weight:700}
+.fld .input{height:38px;border:1px solid var(--border);border-radius:8px;padding:0 12px;display:flex;align-items:center;gap:8px;background:var(--surface);font-size:13.5px;color:var(--text)}
+.fld .input.sel{cursor:pointer}
+.fld .input i.chev{margin-left:auto;color:var(--text-3);font-size:11px}
+.fld .input .pin{width:18px;height:18px;border-radius:4px;background:var(--accent-light);color:var(--accent);display:flex;align-items:center;justify-content:center;font-size:10px;font-weight:700}
+.fld .hint{font-size:11.5px;color:var(--text-3)}
+.tl{position:relative;padding-left:24px}
+.tl::before{content:"";position:absolute;left:9px;top:6px;bottom:6px;width:2px;background:var(--border)}
+.tl-evt{position:relative;padding-bottom:18px}
+.tl-evt:last-child{padding-bottom:0}
+.tl-evt .dot{position:absolute;left:-19px;top:2px;width:20px;height:20px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:9px;color:#fff;background:var(--accent);box-shadow:0 0 0 3px var(--surface)}
+.tl-evt .dot.done{background:var(--green)}
+.tl-evt .meta{display:flex;justify-content:space-between;align-items:baseline;gap:10px}
+.tl-evt .ttl{font-weight:600;font-size:13.5px}
+.tl-evt .tm{font-size:11.5px;color:var(--text-3);font-family:var(--mono);white-space:nowrap}
+.tl-evt .desc{font-size:12.5px;color:var(--text-2);margin-top:3px}
+.rail .card{padding:16px}
+.rail .card-h h3{font-size:13px}
+.cust-row{display:flex;align-items:center;gap:12px}
+.cust-row .av{width:42px;height:42px;border-radius:50%;background:linear-gradient(135deg,#6366F1,#8B5CF6);color:#fff;display:flex;align-items:center;justify-content:center;font-weight:700}
+.cust-row .nm{font-weight:700;font-size:14px}
+.cust-row .nm small{display:block;font-weight:500;color:var(--text-3);font-size:12px;margin-top:1px}
+.kv{display:flex;flex-direction:column;gap:8px;margin-top:14px}
+.kv .row{display:flex;justify-content:space-between;font-size:12.5px;gap:10px}
+.kv .row .k{color:var(--text-3)}
+.kv .row .v{color:var(--text);font-weight:500;text-align:right}
+.fin .row{display:flex;justify-content:space-between;font-size:13px;padding:6px 0;color:var(--text-2)}
+.fin .row.net{border-top:1px solid var(--border);margin-top:6px;padding-top:10px;font-weight:700;color:var(--text)}
+.fin .row.net .v{font-family:var(--mono);font-size:16px;color:var(--green)}
+.tags{display:flex;flex-wrap:wrap;gap:6px}
+.tag{padding:4px 10px;border-radius:14px;background:var(--surface-2);border:1px solid var(--border);font-size:11.5px;color:var(--text-2);font-weight:500;display:inline-flex;align-items:center;gap:5px}
+.tag.add{border-style:dashed;color:var(--accent);cursor:pointer}
+.ai-card{background:linear-gradient(135deg,#FFFBEB,#FEF3C7);border-color:rgba(217,119,6,.2)}
+.ai-card .robot{width:36px;height:36px;border-radius:10px;background:linear-gradient(135deg,#F59E0B,#D97706);color:#fff;display:flex;align-items:center;justify-content:center;font-size:16px;box-shadow:0 4px 12px rgba(217,119,6,.3)}
+.ai-card .ttl{font-weight:700;font-size:14px}
+.ai-card .sub{font-size:12px;color:var(--text-2);margin-top:2px}
+.ai-actions{display:flex;gap:8px;margin-top:14px}
+.ai-actions .btn{flex:1;justify-content:center;height:34px;font-size:12.5px}
+@media (max-width:1100px){.content{grid-template-columns:1fr}}
+</style>
+</head>
+<body>
+<div class="app">
+  <aside class="sidebar">
+    <div class="sb-logo">
+      <div class="sb-mark">S</div>
+      <span class="sb-name">Synergia<span style="color:var(--accent)">360</span></span>
+    </div>
+    <nav class="sb-nav">
+      <a href="main-dashboard.html" class="sb-link"><i class="fa-solid fa-grid-2"></i> Dashboard</a>
+      <a href="command-palette.html" class="sb-link"><i class="fa-solid fa-bolt"></i> Command Center</a>
+      <a href="dashboard-builder.html" class="sb-link"><i class="fa-solid fa-sliders"></i> Dashboard Builder</a>
+      <span class="sb-section">Orders</span>
+      <a href="order-queue.html" class="sb-link active"><i class="fa-solid fa-receipt"></i> Order Queue</a>
+      <a href="returns-queue.html" class="sb-link"><i class="fa-solid fa-rotate-left"></i> Returns</a>
+      <a href="shipments-list.html" class="sb-link"><i class="fa-solid fa-truck-fast"></i> Shipments</a>
+      <a href="routing-rules.html" class="sb-link"><i class="fa-solid fa-code-branch"></i> Routing Rules</a>
+      <a href="order-automation.html" class="sb-link"><i class="fa-solid fa-robot"></i> Automation</a>
+      <span class="sb-section">Inventory</span>
+      <a href="inventory-stock-overview.html" class="sb-link"><i class="fa-solid fa-boxes-stacked"></i> Stock</a>
+      <a href="inventory-stock-take.html" class="sb-link"><i class="fa-solid fa-clipboard-check"></i> Stock Take</a>
+      <a href="purchase-orders.html" class="sb-link"><i class="fa-solid fa-cart-plus"></i> Purchase Orders</a>
+      <a href="suppliers-list.html" class="sb-link"><i class="fa-solid fa-industry"></i> Suppliers</a>
+      <span class="sb-section">Catalogue</span>
+      <a href="catalogue-product-list.html" class="sb-link"><i class="fa-solid fa-tag"></i> Products</a>
+      <a href="catalogue-bom-builder.html" class="sb-link"><i class="fa-solid fa-list-tree"></i> BOM Builder</a>
+      <span class="sb-section">Channels</span>
+      <a href="channels-overview.html" class="sb-link"><i class="fa-solid fa-plug"></i> Overview</a>
+      <a href="listing-manager.html" class="sb-link"><i class="fa-solid fa-store"></i> Listings</a>
+      <a href="pricing-rules.html" class="sb-link"><i class="fa-solid fa-pound-sign"></i> Pricing Rules</a>
+      <span class="sb-section">Customers</span>
+      <a href="customers-list.html" class="sb-link"><i class="fa-solid fa-users"></i> Customers</a>
+      <span class="sb-section">Finance</span>
+      <a href="finance-dashboard.html" class="sb-link"><i class="fa-solid fa-chart-pie"></i> Overview</a>
+      <a href="finance-expense-management.html" class="sb-link"><i class="fa-solid fa-file-invoice"></i> Expenses</a>
+      <a href="sku-profitability.html" class="sb-link"><i class="fa-solid fa-chart-bar"></i> SKU Profitability</a>
+      <a href="finance-monthly-close.html" class="sb-link"><i class="fa-solid fa-calendar-check"></i> Monthly Close</a>
+      <span class="sb-section">Reports</span>
+      <a href="reports-library.html" class="sb-link"><i class="fa-solid fa-book"></i> Library</a>
+      <a href="report-builder-ai.html" class="sb-link"><i class="fa-solid fa-wand-magic-sparkles"></i> AI Builder</a>
+      <a href="automation-rule-builder.html" class="sb-link"><i class="fa-solid fa-gears"></i> Automation Rules</a>
+      <span class="sb-section">Settings</span>
+      <a href="settings-team.html" class="sb-link"><i class="fa-solid fa-people-group"></i> Team</a>
+      <a href="settings-rbac.html" class="sb-link"><i class="fa-solid fa-shield-halved"></i> Roles &amp; Permissions</a>
+      <a href="settings-integrations.html" class="sb-link"><i class="fa-solid fa-puzzle-piece"></i> Integrations</a>
+      <a href="settings-billing.html" class="sb-link"><i class="fa-solid fa-credit-card"></i> Billing</a>
+      <a href="settings-notifications.html" class="sb-link"><i class="fa-solid fa-bell"></i> Notifications</a>
+      <a href="settings-locale.html" class="sb-link"><i class="fa-solid fa-earth-europe"></i> Locale &amp; Currency</a>
+      <a href="settings-warehouses.html" class="sb-link"><i class="fa-solid fa-warehouse"></i> Warehouses</a>
+      <a href="settings-api-webhooks.html" class="sb-link"><i class="fa-solid fa-code"></i> API &amp; Webhooks</a>
+    </nav>
+    <div class="sb-foot">
+      <div class="sb-av">JW</div>
+      <div>
+        <div class="sb-uname">James Whitcombe</div>
+        <div class="sb-urole">Owner &middot; Acme Co</div>
+      </div>
+    </div>
+  </aside>
+
+  <div class="main">
+    <header class="topbar">
+      <div class="crumb"><i class="fa-solid fa-arrow-left"></i>Back to Orders</div>
+      <div style="width:1px;height:20px;background:var(--border)"></div>
+      <h1>Order #ORD-84291</h1>
+      <span class="badge s-info">Processing</span>
+      <span class="badge s-neutral">Priority dispatch</span>
+      <div class="grow"></div>
+      <button class="btn"><i class="fa-regular fa-pen-to-square"></i>Edit</button>
+      <button class="btn"><i class="fa-solid fa-print"></i>Invoice</button>
+      <button class="btn primary"><i class="fa-solid fa-truck-fast"></i>Ship Order</button>
+      <button class="btn" style="width:36px;padding:0;justify-content:center"><i class="fa-solid fa-ellipsis"></i></button>
+    </header>
+
+    <div class="content">
+      <div>
+        <div class="card">
+          <div class="card-h"><h3><i class="fa-solid fa-box"></i>Order Items <span class="badge s-neutral" style="margin-left:6px">2 lines</span></h3><a class="lk">+ Add line item</a></div>
+          <table class="items-tbl">
+            <thead><tr><th>Product</th><th style="text-align:center">Qty</th><th style="text-align:right">Unit</th><th style="text-align:right">Total</th></tr></thead>
+            <tbody>
+              <tr><td><div class="prod"><div class="prod-img"><i class="fa-solid fa-headphones"></i></div><div><div class="pn">Sony WH-1000XM5 Wireless Headphones — Black</div><div class="ps">SKU SNY-WH1000XM5-BLK · ASIN B09XS7JWHH</div></div></div></td><td style="text-align:center">2</td><td style="text-align:right;font-family:var(--mono)">£249.99</td><td style="text-align:right;font-family:var(--mono);font-weight:600">£499.98</td></tr>
+              <tr><td><div class="prod"><div class="prod-img" style="background:linear-gradient(135deg,#7C2D12,#A16207)"><i class="fa-solid fa-truck-fast"></i></div><div><div class="pn">Royal Mail Tracked 24 — Express</div><div class="ps">SKU SHIP-RMT24 · 1kg parcel</div></div></div></td><td style="text-align:center">1</td><td style="text-align:right;font-family:var(--mono)">£6.99</td><td style="text-align:right;font-family:var(--mono);font-weight:600">£6.99</td></tr>
+            </tbody>
+          </table>
+          <div class="totals">
+            <div class="row"><span>Subtotal</span><span style="font-family:var(--mono)">£499.98</span></div>
+            <div class="row"><span>Shipping</span><span style="font-family:var(--mono)">£6.99</span></div>
+            <div class="row"><span>VAT (incl.)</span><span style="font-family:var(--mono)">£84.50</span></div>
+            <div class="row grand"><span>Order Total</span><span class="v">£506.97</span></div>
+          </div>
+        </div>
+
+        <div class="card">
+          <div class="card-h"><h3><i class="fa-solid fa-warehouse"></i>Fulfilment</h3><span class="badge s-success"><i class="fa-solid fa-check"></i>Stock confirmed</span></div>
+          <div class="field-grid">
+            <div class="fld"><label>Warehouse</label><div class="input sel"><span class="pin">PR</span>Premium WH — LDN-02<i class="fa-solid fa-chevron-down chev"></i></div><div class="hint">Auto-selected by routing rule "Express UK"</div></div>
+            <div class="fld"><label>Shipping method</label><div class="input sel"><i class="fa-solid fa-truck-fast" style="color:var(--accent)"></i>Royal Mail Tracked 24<i class="fa-solid fa-chevron-down chev"></i></div><div class="hint">Estimated delivery Thu, 9 May</div></div>
+            <div class="fld"><label>Tracking number</label><div class="input"><i class="fa-solid fa-barcode" style="color:var(--text-3)"></i><span style="color:var(--text-3)">Will be generated on dispatch</span></div></div>
+            <div class="fld"><label>Dispatch date</label><div class="input sel"><i class="fa-regular fa-calendar" style="color:var(--accent)"></i>Today, 7 May 2026<i class="fa-solid fa-chevron-down chev"></i></div></div>
+          </div>
+        </div>
+
+        <div class="card">
+          <div class="card-h"><h3><i class="fa-solid fa-timeline"></i>Activity Timeline</h3><a class="lk">View full log</a></div>
+          <div class="tl">
+            <div class="tl-evt"><div class="dot"><i class="fa-solid fa-clock"></i></div><div class="meta"><div class="ttl">Awaiting dispatch</div><div class="tm">Now</div></div><div class="desc">Picked & packed at LDN-02. Awaiting courier handover.</div></div>
+            <div class="tl-evt"><div class="dot done"><i class="fa-solid fa-box-open"></i></div><div class="meta"><div class="ttl">Picked & packed</div><div class="tm">12:34</div></div><div class="desc">Packed by Aisha D. at station PACK-04. Weight 1.04kg.</div></div>
+            <div class="tl-evt"><div class="dot done"><i class="fa-solid fa-route"></i></div><div class="meta"><div class="ttl">Routing rule applied</div><div class="tm">12:18</div></div><div class="desc">Rule "Express UK → LDN-02" matched. Tagged as priority dispatch.</div></div>
+            <div class="tl-evt"><div class="dot done"><i class="fa-solid fa-credit-card"></i></div><div class="meta"><div class="ttl">Payment captured</div><div class="tm">12:16</div></div><div class="desc">£506.97 captured via Amazon Pay. Settlement ETA 9 May.</div></div>
+            <div class="tl-evt"><div class="dot done"><i class="fa-solid fa-cart-shopping"></i></div><div class="meta"><div class="ttl">Order placed</div><div class="tm">12:14</div></div><div class="desc">Imported from Amazon UK marketplace via SP-API.</div></div>
+          </div>
+        </div>
+      </div>
+
+      <div class="rail">
+        <div class="card">
+          <div class="card-h"><h3><i class="fa-regular fa-user"></i>Customer</h3><a class="lk">View profile →</a></div>
+          <div class="cust-row"><div class="av">JW</div><div><div class="nm">James Whitmore<small>Returning · 12 orders · LTV £2,840</small></div></div></div>
+          <div class="kv">
+            <div class="row"><span class="k">Email</span><span class="v">james.w@me.co.uk</span></div>
+            <div class="row"><span class="k">Phone</span><span class="v" style="font-family:var(--mono)">+44 7700 900291</span></div>
+            <div class="row"><span class="k">Ship to</span><span class="v">14 Cromwell Mews,<br>London SW7 2JY</span></div>
+          </div>
+        </div>
+
+        <div class="card">
+          <div class="card-h"><h3><i class="fa-solid fa-store"></i>Channel</h3><span class="badge b-amazon"><i class="fa-brands fa-amazon"></i>Amazon UK</span></div>
+          <div class="kv">
+            <div class="row"><span class="k">Marketplace ref</span><span class="v" style="font-family:var(--mono);font-size:11.5px">202-7493012-8421643</span></div>
+            <div class="row"><span class="k">ASIN</span><span class="v" style="font-family:var(--mono)">B09XS7JWHH</span></div>
+            <div class="row"><span class="k">Marketplace fee</span><span class="v" style="font-family:var(--mono);color:var(--red)">−£24.30</span></div>
+            <div class="row"><span class="k">Settlement</span><span class="v">9 May 2026</span></div>
+          </div>
+        </div>
+
+        <div class="card fin">
+          <div class="card-h"><h3><i class="fa-solid fa-coins"></i>Financial Summary</h3></div>
+          <div class="row"><span>Subtotal</span><span style="font-family:var(--mono)">£499.98</span></div>
+          <div class="row"><span>Shipping</span><span style="font-family:var(--mono)">£6.99</span></div>
+          <div class="row"><span>Marketplace fee</span><span style="font-family:var(--mono);color:var(--red)">−£24.30</span></div>
+          <div class="row"><span>VAT remittance</span><span style="font-family:var(--mono);color:var(--red)">−£84.50</span></div>
+          <div class="row net"><span>Net Revenue</span><span class="v">£398.17</span></div>
+        </div>
+
+        <div class="card">
+          <div class="card-h"><h3><i class="fa-solid fa-tag"></i>Tags</h3></div>
+          <div class="tags">
+            <span class="tag"><i class="fa-solid fa-circle" style="color:#10B981;font-size:7px"></i>high-value</span>
+            <span class="tag"><i class="fa-brands fa-amazon" style="color:#C2410C;font-size:11px"></i>amazon</span>
+            <span class="tag"><i class="fa-solid fa-bolt" style="color:#F59E0B;font-size:10px"></i>express</span>
+            <span class="tag add"><i class="fa-solid fa-plus" style="font-size:9px"></i>Add tag</span>
+          </div>
+        </div>
+
+        <div class="card ai-card">
+          <div style="display:flex;gap:12px;align-items:center"><div class="robot"><i class="fa-solid fa-robot"></i></div><div style="flex:1"><div class="ttl">3 AI suggestions available</div><div class="sub">Upsell paired item · adjust dispatch · gift-note opportunity</div></div></div>
+          <div class="ai-actions">
+            <button class="btn"><i class="fa-regular fa-eye"></i>Review</button>
+            <button class="btn primary"><i class="fa-solid fa-check"></i>Accept all</button>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+</body>
+</html>

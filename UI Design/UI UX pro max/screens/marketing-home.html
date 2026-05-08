@@ -1,0 +1,365 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>Synergia360 — The Operating System for Multi-Channel Commerce</title>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&family=Geist+Mono:wght@400;600&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
+<style>
+  *,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+  :root{
+    --bg:#FFFFFF; --bg-alt:#F8F9FC; --ink:#0F172A; --ink-2:#475569; --ink-3:#94A3B8;
+    --line:#E2E8F0; --indigo:#4F46E5; --indigo-600:#4338CA; --indigo-50:#EEF2FF;
+    --green:#10B981; --amber:#F59E0B; --rose:#F43F5E;
+    --shadow-sm:0 1px 2px rgba(15,23,42,.04);
+    --shadow:0 10px 30px -12px rgba(15,23,42,.18),0 4px 10px -6px rgba(15,23,42,.06);
+    --shadow-lg:0 30px 80px -30px rgba(79,70,229,.35),0 12px 32px -16px rgba(15,23,42,.18);
+  }
+  html,body{background:var(--bg);color:var(--ink);font-family:'Inter',sans-serif;-webkit-font-smoothing:antialiased;line-height:1.5}
+  a{color:inherit;text-decoration:none}
+  .container{width:100%;max-width:1200px;margin:0 auto;padding:0 24px}
+
+  .nav{position:sticky;top:0;z-index:50;background:rgba(255,255,255,.85);backdrop-filter:blur(12px);border-bottom:1px solid rgba(226,232,240,.7)}
+  .nav-inner{height:68px;display:flex;align-items:center;justify-content:space-between;gap:32px}
+  .logo{display:flex;align-items:center;gap:10px;font-weight:800;font-size:17px;letter-spacing:-.02em}
+  .logo-mark{width:34px;height:34px;border-radius:9px;background:linear-gradient(135deg,#4F46E5,#7C3AED);display:grid;place-items:center;color:#fff;font-weight:900;box-shadow:0 6px 16px -6px rgba(79,70,229,.6)}
+  .nav-links{display:flex;gap:28px;font-size:14.5px;color:var(--ink-2);font-weight:500}
+  .nav-links a:hover{color:var(--ink)}
+  .nav-cta{display:flex;align-items:center;gap:10px}
+  .btn{display:inline-flex;align-items:center;gap:8px;height:40px;padding:0 18px;border-radius:10px;font-weight:600;font-size:14.5px;cursor:pointer;border:1px solid transparent;transition:all .2s ease;white-space:nowrap}
+  .btn-primary{background:var(--indigo);color:#fff;box-shadow:0 6px 16px -8px rgba(79,70,229,.7),inset 0 1px 0 rgba(255,255,255,.2)}
+  .btn-primary:hover{background:var(--indigo-600);transform:translateY(-1px)}
+  .btn-ghost{background:transparent;color:var(--ink)}
+  .btn-ghost:hover{background:#F1F5F9}
+  .btn-outline{background:#fff;color:var(--ink);border-color:var(--line)}
+  .btn-outline:hover{border-color:#CBD5E1;background:#F8FAFC}
+  .btn-lg{height:50px;padding:0 24px;font-size:15.5px;border-radius:12px}
+
+  .hero{position:relative;padding:88px 0 40px;text-align:center;overflow:hidden}
+  .hero::before{content:"";position:absolute;inset:-20% -10% 30% -10%;background:radial-gradient(60% 60% at 50% 30%,rgba(79,70,229,.10),transparent 70%);z-index:-1}
+  .hero::after{content:"";position:absolute;inset:0;background-image:linear-gradient(rgba(15,23,42,.04) 1px,transparent 1px),linear-gradient(90deg,rgba(15,23,42,.04) 1px,transparent 1px);background-size:48px 48px;mask-image:radial-gradient(50% 50% at 50% 30%,#000,transparent 75%);z-index:-1;pointer-events:none}
+  .eyebrow{display:inline-flex;align-items:center;gap:10px;padding:6px 14px;background:#fff;border:1px solid var(--line);border-radius:999px;font-size:13px;color:var(--ink-2);font-weight:500;box-shadow:var(--shadow-sm)}
+  .eyebrow .dot{width:6px;height:6px;border-radius:50%;background:var(--green);box-shadow:0 0 0 3px rgba(16,185,129,.18)}
+  .eyebrow strong{color:var(--ink);font-weight:600}
+  h1.headline{margin-top:24px;font-size:clamp(44px,7vw,80px);font-weight:900;line-height:.98;letter-spacing:-.035em;max-width:14ch;margin-left:auto;margin-right:auto}
+  h1.headline em{font-style:normal;background:linear-gradient(120deg,#4F46E5 0%,#8B5CF6 50%,#EC4899 100%);-webkit-background-clip:text;background-clip:text;color:transparent}
+  .lede{margin:24px auto 0;max-width:640px;font-size:20px;color:var(--ink-2);line-height:1.55}
+  .hero-cta{margin-top:36px;display:flex;gap:12px;justify-content:center;flex-wrap:wrap}
+  .channels{margin-top:64px}
+  .channels-label{font-size:12px;letter-spacing:.12em;text-transform:uppercase;color:var(--ink-3);font-weight:600;margin-bottom:20px}
+  .channels-row{display:flex;align-items:center;justify-content:center;gap:36px;flex-wrap:wrap;color:var(--ink-2)}
+  .channels-row .ch{display:flex;align-items:center;gap:8px;font-weight:600;font-size:15px;opacity:.7;transition:opacity .2s}
+  .channels-row .ch:hover{opacity:1}
+  .channels-row .ch i{font-size:18px}
+
+  .mock-wrap{padding:40px 0 100px}
+  .mock{max-width:1120px;margin:0 auto;background:#fff;border:1px solid var(--line);border-radius:18px;box-shadow:var(--shadow-lg);overflow:hidden}
+  .mock-chrome{display:flex;align-items:center;gap:8px;padding:12px 16px;border-bottom:1px solid var(--line);background:#FAFBFD}
+  .mock-chrome .dot{width:11px;height:11px;border-radius:50%}
+  .mc-d1{background:#FF5F57}.mc-d2{background:#FEBC2E}.mc-d3{background:#28C840}
+  .mock-url{margin-left:14px;flex:1;height:28px;background:#F1F5F9;border-radius:7px;display:flex;align-items:center;padding:0 12px;color:var(--ink-3);font-size:12.5px;gap:8px;max-width:420px}
+  .mock-body{padding:22px;display:grid;grid-template-columns:220px 1fr;gap:22px;background:#FAFBFD;min-height:480px}
+  .mock-side{background:#fff;border:1px solid var(--line);border-radius:12px;padding:16px}
+  .mock-side h5{font-size:11px;letter-spacing:.1em;text-transform:uppercase;color:var(--ink-3);margin-bottom:12px;font-weight:700}
+  .mock-side ul{list-style:none;display:flex;flex-direction:column;gap:4px}
+  .mock-side li{display:flex;align-items:center;gap:10px;font-size:13px;padding:7px 9px;border-radius:7px;color:var(--ink-2);font-weight:500}
+  .mock-side li.active{background:var(--indigo-50);color:var(--indigo);font-weight:600}
+  .mock-side li i{width:14px;font-size:12px}
+  .mock-main{display:flex;flex-direction:column;gap:18px}
+  .mock-h{display:flex;align-items:center;justify-content:space-between}
+  .mock-h h4{font-size:18px;font-weight:700;letter-spacing:-.01em}
+  .mock-h .pill{font-size:11px;font-weight:600;padding:4px 10px;border-radius:999px;background:#ECFDF5;color:#047857;border:1px solid #A7F3D0}
+  .kpis{display:grid;grid-template-columns:repeat(3,1fr);gap:14px}
+  .kpi{background:#fff;border:1px solid var(--line);border-radius:12px;padding:16px}
+  .kpi .lbl{font-size:11.5px;color:var(--ink-3);text-transform:uppercase;letter-spacing:.08em;font-weight:600}
+  .kpi .val{font-size:24px;font-weight:800;letter-spacing:-.02em;margin-top:6px}
+  .kpi .delta{font-size:12px;font-weight:600;margin-top:4px;display:inline-flex;align-items:center;gap:4px}
+  .kpi .delta.up{color:#047857}
+  .kpi .delta.down{color:#B91C1C}
+  .chart{background:#fff;border:1px solid var(--line);border-radius:12px;padding:18px}
+  .chart-h{display:flex;justify-content:space-between;align-items:baseline;margin-bottom:14px}
+  .chart-h strong{font-size:14px}
+  .chart-h span{font-size:11.5px;color:var(--ink-3)}
+  .bars{display:flex;align-items:flex-end;gap:10px;height:120px}
+  .bar{flex:1;background:linear-gradient(to top,#4F46E5,#8B5CF6);border-radius:5px 5px 0 0}
+  .bar.muted{background:linear-gradient(to top,#CBD5E1,#E2E8F0)}
+  .bar-labels{display:flex;gap:10px;margin-top:8px}
+  .bar-labels span{flex:1;text-align:center;font-size:10.5px;color:var(--ink-3);font-weight:500}
+  .table{background:#fff;border:1px solid var(--line);border-radius:12px;overflow:hidden}
+  .thead{display:grid;grid-template-columns:1.4fr .9fr 1fr .8fr;gap:14px;padding:11px 16px;background:#F8FAFC;border-bottom:1px solid var(--line);font-size:11px;text-transform:uppercase;letter-spacing:.08em;color:var(--ink-3);font-weight:700}
+  .trow{display:grid;grid-template-columns:1.4fr .9fr 1fr .8fr;gap:14px;padding:12px 16px;border-bottom:1px solid var(--line);font-size:13px;align-items:center}
+  .trow:last-child{border-bottom:0}
+  .channel-tag{font-size:11px;font-weight:700;padding:3px 8px;border-radius:6px;display:inline-block}
+  .ct-amazon{background:#FFF4E5;color:#B45309}
+  .ct-ebay{background:#EEF2FF;color:#4338CA}
+  .ct-shopify{background:#ECFDF5;color:#047857}
+  .badge{font-size:11px;font-weight:600;padding:3px 8px;border-radius:6px;background:#F1F5F9;color:var(--ink-2)}
+  .badge.warn{background:#FEF3C7;color:#92400E}
+  .badge.ok{background:#ECFDF5;color:#047857}
+
+  .stats{padding:64px 0;background:var(--bg-alt);border-top:1px solid var(--line);border-bottom:1px solid var(--line)}
+  .stats-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:32px}
+  .stat{text-align:center}
+  .stat-num{font-size:clamp(36px,4.5vw,52px);font-weight:900;letter-spacing:-.04em;background:linear-gradient(120deg,#0F172A,#4F46E5);-webkit-background-clip:text;background-clip:text;color:transparent}
+  .stat-lbl{margin-top:6px;font-size:14px;color:var(--ink-2);font-weight:500}
+
+  .section{padding:100px 0}
+  .section-head{text-align:center;max-width:680px;margin:0 auto 56px}
+  .section-eyebrow{font-size:12.5px;letter-spacing:.14em;text-transform:uppercase;font-weight:700;color:var(--indigo)}
+  .section-head h2{margin-top:14px;font-size:clamp(34px,4.5vw,52px);font-weight:800;letter-spacing:-.03em;line-height:1.05}
+  .section-head p{margin-top:18px;font-size:18px;color:var(--ink-2);line-height:1.6}
+
+  .features{display:grid;grid-template-columns:repeat(3,1fr);gap:24px}
+  .feature{padding:30px;background:#fff;border:1px solid var(--line);border-radius:16px;transition:all .2s}
+  .feature:hover{transform:translateY(-2px);border-color:#CBD5E1;box-shadow:var(--shadow)}
+  .feature-icon{width:46px;height:46px;border-radius:12px;background:var(--indigo-50);color:var(--indigo);display:grid;place-items:center;font-size:18px;margin-bottom:18px}
+  .feature h3{font-size:18px;font-weight:700;letter-spacing:-.01em}
+  .feature p{margin-top:10px;font-size:14.5px;color:var(--ink-2);line-height:1.6}
+
+  .testi-section{background:var(--bg-alt);border-top:1px solid var(--line);border-bottom:1px solid var(--line)}
+  .testi{display:grid;grid-template-columns:repeat(3,1fr);gap:22px}
+  .quote{background:#fff;border:1px solid var(--line);border-radius:16px;padding:30px;display:flex;flex-direction:column;gap:18px}
+  .quote .stars{color:#F59E0B;font-size:14px;letter-spacing:2px}
+  .quote blockquote{font-size:16px;line-height:1.6;color:var(--ink);font-weight:500}
+  .quote-by{display:flex;align-items:center;gap:12px;margin-top:auto;padding-top:18px;border-top:1px solid var(--line)}
+  .avatar{width:40px;height:40px;border-radius:50%;display:grid;place-items:center;font-weight:700;color:#fff;font-size:14px}
+  .av-1{background:linear-gradient(135deg,#F59E0B,#EF4444)}
+  .av-2{background:linear-gradient(135deg,#10B981,#0EA5E9)}
+  .av-3{background:linear-gradient(135deg,#8B5CF6,#EC4899)}
+  .quote-by strong{display:block;font-size:14px}
+  .quote-by span{font-size:12.5px;color:var(--ink-3)}
+
+  .cta-section{padding:100px 0}
+  .cta-card{position:relative;overflow:hidden;background:radial-gradient(120% 100% at 50% 0%,#6366F1 0%,#4F46E5 50%,#3730A3 100%);border-radius:24px;padding:80px 40px;text-align:center;color:#fff;box-shadow:0 30px 80px -30px rgba(79,70,229,.5)}
+  .cta-card::before{content:"";position:absolute;inset:0;background-image:linear-gradient(rgba(255,255,255,.06) 1px,transparent 1px),linear-gradient(90deg,rgba(255,255,255,.06) 1px,transparent 1px);background-size:42px 42px;mask-image:radial-gradient(50% 60% at 50% 50%,#000,transparent 75%);pointer-events:none}
+  .cta-card h2{font-size:clamp(34px,4.5vw,52px);font-weight:900;letter-spacing:-.03em;line-height:1.05;position:relative}
+  .cta-card p{margin-top:16px;font-size:18px;color:rgba(255,255,255,.85);max-width:520px;margin-left:auto;margin-right:auto;position:relative}
+  .cta-card .btn-row{margin-top:32px;display:flex;gap:12px;justify-content:center;flex-wrap:wrap;position:relative}
+  .cta-card .btn-primary{background:#fff;color:var(--indigo)}
+  .cta-card .btn-primary:hover{background:#F1F5F9}
+  .cta-card .btn-outline{background:transparent;color:#fff;border-color:rgba(255,255,255,.3)}
+  .cta-card .btn-outline:hover{background:rgba(255,255,255,.1);border-color:rgba(255,255,255,.5)}
+  .cta-meta{margin-top:18px;font-size:13.5px;color:rgba(255,255,255,.7);display:flex;gap:18px;justify-content:center;flex-wrap:wrap;position:relative}
+
+  footer{padding:80px 0 32px;border-top:1px solid var(--line);background:#fff}
+  .foot{display:grid;grid-template-columns:2fr 1fr 1fr 1fr 1fr;gap:48px}
+  .foot-brand p{margin-top:14px;color:var(--ink-2);font-size:14px;max-width:260px;line-height:1.6}
+  .foot-col h6{font-size:12.5px;text-transform:uppercase;letter-spacing:.1em;color:var(--ink-3);font-weight:700;margin-bottom:16px}
+  .foot-col a{display:block;font-size:14px;color:var(--ink-2);padding:5px 0}
+  .foot-col a:hover{color:var(--ink)}
+  .foot-bottom{margin-top:56px;padding-top:24px;border-top:1px solid var(--line);display:flex;justify-content:space-between;font-size:13px;color:var(--ink-3);flex-wrap:wrap;gap:14px}
+  .foot-social{display:flex;gap:14px}
+  .foot-social a{width:32px;height:32px;border-radius:8px;border:1px solid var(--line);display:grid;place-items:center;color:var(--ink-2)}
+  .foot-social a:hover{color:var(--indigo);border-color:var(--indigo)}
+
+  @media(max-width:960px){
+    .features,.testi{grid-template-columns:1fr 1fr}
+    .foot{grid-template-columns:1fr 1fr 1fr}
+    .stats-grid{grid-template-columns:1fr 1fr}
+    .nav-links{display:none}
+    .mock-body{grid-template-columns:1fr}
+    .mock-side{display:none}
+  }
+  @media(max-width:600px){
+    .features,.testi{grid-template-columns:1fr}
+    .foot{grid-template-columns:1fr 1fr}
+    .kpis{grid-template-columns:1fr}
+  }
+</style>
+</head>
+<body>
+
+<header class="nav">
+  <div class="container nav-inner">
+    <a class="logo" href="#"><span class="logo-mark">S</span> Synergia360</a>
+    <nav class="nav-links">
+      <a href="marketing-features.html">Features</a>
+      <a href="marketing-pricing.html">Pricing</a>
+      <a href="#">Integrations</a>
+      <a href="marketing-comparison.html">Compare</a>
+      <a href="#">Blog</a>
+    </nav>
+    <div class="nav-cta">
+      <a class="btn btn-ghost" href="auth-login.html">Sign in</a>
+      <a class="btn btn-primary" href="auth-signup.html">Start free trial</a>
+    </div>
+  </div>
+</header>
+
+<section class="hero">
+  <div class="container">
+    <span class="eyebrow"><span class="dot"></span> Trusted by <strong>2,400+ brands</strong> across 14 countries</span>
+    <h1 class="headline">The Operating System for <em>Multi-Channel Commerce</em></h1>
+    <p class="lede">Unify orders, inventory, fulfilment and finance across every marketplace and storefront. One platform, one source of truth — built for scaling commerce operations.</p>
+    <div class="hero-cta">
+      <a class="btn btn-primary btn-lg" href="auth-signup.html">Start 14-day free trial <i class="fa-solid fa-arrow-right"></i></a>
+      <a class="btn btn-outline btn-lg" href="#"><i class="fa-solid fa-circle-play"></i> Watch demo</a>
+    </div>
+    <div class="channels">
+      <div class="channels-label">Connects natively to</div>
+      <div class="channels-row">
+        <span class="ch"><i class="fa-brands fa-amazon"></i> Amazon</span>
+        <span class="ch"><i class="fa-brands fa-ebay"></i> eBay</span>
+        <span class="ch"><i class="fa-brands fa-shopify"></i> Shopify</span>
+        <span class="ch"><i class="fa-brands fa-etsy"></i> Etsy</span>
+        <span class="ch"><i class="fa-brands fa-tiktok"></i> TikTok Shop</span>
+        <span class="ch"><i class="fa-solid fa-cube"></i> Wayfair</span>
+        <span class="ch" style="color:var(--ink-3);font-size:13px">and 25+ more</span>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section class="mock-wrap">
+  <div class="container">
+    <div class="mock">
+      <div class="mock-chrome">
+        <span class="dot mc-d1"></span><span class="dot mc-d2"></span><span class="dot mc-d3"></span>
+        <div class="mock-url"><i class="fa-solid fa-lock" style="font-size:11px"></i> app.synergia360.co.uk/dashboard</div>
+      </div>
+      <div class="mock-body">
+        <aside class="mock-side">
+          <h5>Workspace</h5>
+          <ul>
+            <li class="active"><i class="fa-solid fa-grip"></i> Dashboard</li>
+            <li><i class="fa-solid fa-receipt"></i> Orders</li>
+            <li><i class="fa-solid fa-boxes-stacked"></i> Inventory</li>
+            <li><i class="fa-solid fa-warehouse"></i> Warehouse</li>
+            <li><i class="fa-solid fa-plug"></i> Channels</li>
+            <li><i class="fa-solid fa-sterling-sign"></i> Finance</li>
+            <li><i class="fa-solid fa-robot"></i> Copilot</li>
+          </ul>
+        </aside>
+        <div class="mock-main">
+          <div class="mock-h">
+            <h4>Operations Overview</h4>
+            <span class="pill">● Live · 12 channels syncing</span>
+          </div>
+          <div class="kpis">
+            <div class="kpi"><div class="lbl">Orders today</div><div class="val">1,248</div><div class="delta up"><i class="fa-solid fa-arrow-up"></i> 18.2% vs yest</div></div>
+            <div class="kpi"><div class="lbl">Revenue</div><div class="val">£84,210</div><div class="delta up"><i class="fa-solid fa-arrow-up"></i> 12.4%</div></div>
+            <div class="kpi"><div class="lbl">SLA at risk</div><div class="val">7</div><div class="delta down"><i class="fa-solid fa-triangle-exclamation"></i> Action required</div></div>
+          </div>
+          <div class="chart">
+            <div class="chart-h"><strong>Orders by channel · last 7 days</strong><span>Updated 2 min ago</span></div>
+            <div class="bars">
+              <div class="bar muted" style="height:42%"></div>
+              <div class="bar muted" style="height:55%"></div>
+              <div class="bar muted" style="height:48%"></div>
+              <div class="bar" style="height:72%"></div>
+              <div class="bar" style="height:88%"></div>
+              <div class="bar" style="height:64%"></div>
+              <div class="bar" style="height:96%"></div>
+            </div>
+            <div class="bar-labels"><span>Mon</span><span>Tue</span><span>Wed</span><span>Thu</span><span>Fri</span><span>Sat</span><span>Sun</span></div>
+          </div>
+          <div class="table">
+            <div class="thead"><div>Order</div><div>Channel</div><div>Customer</div><div>Status</div></div>
+            <div class="trow"><div><strong>#SYN-10489</strong></div><div><span class="channel-tag ct-amazon">Amazon UK</span></div><div>Hannah Webb</div><div><span class="badge ok">Picked</span></div></div>
+            <div class="trow"><div><strong>#SYN-10488</strong></div><div><span class="channel-tag ct-shopify">Shopify</span></div><div>Marcus Reid</div><div><span class="badge warn">SLA · 42m</span></div></div>
+            <div class="trow"><div><strong>#SYN-10487</strong></div><div><span class="channel-tag ct-ebay">eBay UK</span></div><div>Priya Shah</div><div><span class="badge">Awaiting stock</span></div></div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section class="stats">
+  <div class="container stats-grid">
+    <div class="stat"><div class="stat-num">2,400+</div><div class="stat-lbl">Brands powered</div></div>
+    <div class="stat"><div class="stat-num">£2.1B+</div><div class="stat-lbl">Orders processed annually</div></div>
+    <div class="stat"><div class="stat-num">30+</div><div class="stat-lbl">Channel integrations</div></div>
+    <div class="stat"><div class="stat-num">99.9%</div><div class="stat-lbl">Platform uptime</div></div>
+  </div>
+</section>
+
+<section class="section">
+  <div class="container">
+    <div class="section-head">
+      <div class="section-eyebrow">Platform</div>
+      <h2>Everything you need to run multi-channel commerce</h2>
+      <p>From the moment an order lands to the moment it ships and gets reconciled — Synergia360 connects every workflow your operations team needs.</p>
+    </div>
+    <div class="features">
+      <div class="feature"><div class="feature-icon"><i class="fa-solid fa-receipt"></i></div><h3>Unified Order Hub</h3><p>One queue across every channel. Auto-routing, SLA timers, split fulfilment, and bulk actions for high-velocity teams.</p></div>
+      <div class="feature"><div class="feature-icon"><i class="fa-solid fa-boxes-stacked"></i></div><h3>Real-Time Inventory</h3><p>Sync stock to every channel within seconds. Reservations, kits, bundles, and multi-warehouse rules built in.</p></div>
+      <div class="feature"><div class="feature-icon"><i class="fa-solid fa-warehouse"></i></div><h3>Mobile WMS</h3><p>Pick, pack and dispatch from a phone or scanner. Wave picking, smart batching and barcode-driven accuracy.</p></div>
+      <div class="feature"><div class="feature-icon"><i class="fa-solid fa-robot"></i></div><h3>AI Copilot</h3><p>Ask questions in plain English. Get demand forecasts, anomaly alerts and listing optimisations on tap.</p></div>
+      <div class="feature"><div class="feature-icon"><i class="fa-solid fa-sterling-sign"></i></div><h3>Finance & Reconciliation</h3><p>Channel fees, refunds and payouts reconciled automatically. Cleaner closes, fewer surprises.</p></div>
+      <div class="feature"><div class="feature-icon"><i class="fa-solid fa-bolt"></i></div><h3>Workflow Automation</h3><p>Visual rule builder for repricing, stock thresholds, fulfilment routing and customer comms — no code required.</p></div>
+    </div>
+  </div>
+</section>
+
+<section class="section testi-section">
+  <div class="container">
+    <div class="section-head">
+      <div class="section-eyebrow">Customers</div>
+      <h2>Operations leaders who switched and never looked back</h2>
+    </div>
+    <div class="testi">
+      <div class="quote">
+        <div class="stars">★★★★★</div>
+        <blockquote>"We replaced three separate tools with Synergia360 and cut our order-to-ship time by 38%. The Copilot pays for itself every week — it caught a £14k pricing error on its second day."</blockquote>
+        <div class="quote-by"><div class="avatar av-1">EH</div><div><strong>Emma Hartley</strong><span>Head of Ops · Northcote Living</span></div></div>
+      </div>
+      <div class="quote">
+        <div class="stars">★★★★★</div>
+        <blockquote>"Going live on Synergia360 took eleven days. Eleven. We were quoted six months elsewhere. Stock accuracy across our 4 warehouses is now 99.7%."</blockquote>
+        <div class="quote-by"><div class="avatar av-2">JO</div><div><strong>James Okonkwo</strong><span>COO · Forge & Foundry Co.</span></div></div>
+      </div>
+      <div class="quote">
+        <div class="stars">★★★★★</div>
+        <blockquote>"The reconciliation engine alone is worth the subscription. We spent two days a month on Amazon settlement — now it's automatic and our finance team trusts the numbers."</blockquote>
+        <div class="quote-by"><div class="avatar av-3">SR</div><div><strong>Sarah Rajan</strong><span>Finance Director · Beacon Home</span></div></div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section class="cta-section">
+  <div class="container">
+    <div class="cta-card">
+      <h2>Ready to unify your operation?</h2>
+      <p>Spin up a workspace in under five minutes. No credit card. No commitment. Real data on day one.</p>
+      <div class="btn-row">
+        <a class="btn btn-primary btn-lg" href="auth-signup.html">Start 14-day free trial <i class="fa-solid fa-arrow-right"></i></a>
+        <a class="btn btn-outline btn-lg" href="#"><i class="fa-solid fa-calendar"></i> Book a demo</a>
+      </div>
+      <div class="cta-meta">
+        <span><i class="fa-solid fa-check"></i> 14-day trial</span>
+        <span><i class="fa-solid fa-check"></i> No credit card required</span>
+        <span><i class="fa-solid fa-check"></i> Migration assistance included</span>
+      </div>
+    </div>
+  </div>
+</section>
+
+<footer>
+  <div class="container">
+    <div class="foot">
+      <div class="foot-brand">
+        <a class="logo" href="#"><span class="logo-mark">S</span> Synergia360</a>
+        <p>The operating system for multi-channel commerce. Made in London. Trusted globally.</p>
+      </div>
+      <div class="foot-col"><h6>Product</h6><a href="marketing-features.html">Features</a><a href="marketing-pricing.html">Pricing</a><a href="#">Integrations</a><a href="#">Changelog</a><a href="#">Roadmap</a></div>
+      <div class="foot-col"><h6>Company</h6><a href="#">About</a><a href="#">Customers</a><a href="#">Careers</a><a href="#">Press</a><a href="#">Contact</a></div>
+      <div class="foot-col"><h6>Resources</h6><a href="#">Blog</a><a href="#">Docs</a><a href="#">API reference</a><a href="#">Status</a><a href="#">Security</a></div>
+      <div class="foot-col"><h6>Legal</h6><a href="#">Privacy</a><a href="#">Terms</a><a href="#">DPA</a><a href="#">Cookies</a></div>
+    </div>
+    <div class="foot-bottom">
+      <span>© 2026 Synergia360 Ltd. Registered in England & Wales · No. 13495021</span>
+      <div class="foot-social">
+        <a href="#"><i class="fa-brands fa-x-twitter"></i></a>
+        <a href="#"><i class="fa-brands fa-linkedin-in"></i></a>
+        <a href="#"><i class="fa-brands fa-github"></i></a>
+        <a href="#"><i class="fa-brands fa-youtube"></i></a>
+      </div>
+    </div>
+  </div>
+</footer>
+
+</body>
+</html>

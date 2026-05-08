@@ -1,0 +1,454 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>API &amp; Webhooks — Synergia360</title>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
+<style>
+:root{--bg:#F8F9FC;--surface:#FFFFFF;--surface-2:#F8FAFF;--border:#E2E8F0;--accent:#4F46E5;--accent-light:#EEF2FF;--text:#0F172A;--text-2:#475569;--text-3:#94A3B8;--green:#10B981;--red:#EF4444;--amber:#F59E0B;--blue:#3B82F6}
+*{box-sizing:border-box;margin:0;padding:0}
+body{background:var(--bg);color:var(--text);font-family:'Inter',sans-serif;font-size:14px;display:flex;height:100vh;overflow:hidden}
+
+/* ── CANONICAL SIDEBAR ── */
+.sidebar{width:240px;background:#fff;border-right:1px solid var(--border);display:flex;flex-direction:column;flex-shrink:0;position:sticky;top:0;height:100vh;overflow:hidden}
+.sb-logo{padding:18px 20px;border-bottom:1px solid var(--border);display:flex;align-items:center;gap:12px;flex-shrink:0}
+.sb-mark{width:36px;height:36px;background:var(--accent);border-radius:9px;display:grid;place-items:center;color:#fff;font-weight:800;font-size:16px;flex-shrink:0}
+.sb-name{font-weight:700;font-size:15px;color:var(--text)}
+.sb-nav{flex:1;padding:10px;overflow-y:auto}
+.sb-section{font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:.07em;color:var(--text-3);padding:14px 8px 4px;display:block}
+.sb-link{display:flex;align-items:center;gap:10px;padding:8px 10px;border-radius:8px;color:var(--text-2);font-size:13px;font-weight:500;text-decoration:none;border-left:2px solid transparent;margin-bottom:1px;transition:background .15s,color .15s}
+.sb-link:hover{background:#F1F5F9;color:var(--text)}
+.sb-link.active{background:var(--accent-light);color:var(--accent);border-left-color:var(--accent);font-weight:600}
+.sb-link i{width:16px;text-align:center;font-size:13px;color:var(--text-3);flex-shrink:0}
+.sb-link.active i{color:var(--accent)}
+.sb-foot{padding:12px 16px;border-top:1px solid var(--border);display:flex;align-items:center;gap:10px;flex-shrink:0}
+.sb-av{width:34px;height:34px;background:var(--accent-light);border-radius:50%;display:grid;place-items:center;color:var(--accent);font-weight:700;font-size:13px;flex-shrink:0}
+.sb-uname{font-size:13px;font-weight:600;color:var(--text);line-height:1.2}
+.sb-urole{font-size:11px;color:var(--text-3)}
+
+/* ── MAIN LAYOUT ── */
+.main{flex:1;display:flex;flex-direction:column;overflow:hidden;min-width:0}
+.topbar{height:60px;background:var(--surface);border-bottom:1px solid var(--border);display:flex;align-items:center;padding:0 28px;gap:16px;flex-shrink:0}
+.topbar-title{font-size:20px;font-weight:700;letter-spacing:-.02em}
+.topbar-right{margin-left:auto;display:flex;align-items:center;gap:10px}
+.btn{display:inline-flex;align-items:center;gap:7px;padding:8px 16px;border-radius:8px;font-size:13px;font-weight:600;cursor:pointer;border:1px solid transparent;font-family:'Inter',sans-serif;text-decoration:none;transition:background .15s,box-shadow .15s}
+.btn-primary{background:var(--accent);color:#fff;box-shadow:0 1px 3px rgba(79,70,229,.3)}
+.btn-primary:hover{background:#4338CA}
+.btn-ghost{background:var(--surface);color:var(--text-2);border-color:var(--border)}
+.btn-ghost:hover{color:var(--text);border-color:var(--text-3)}
+.btn-sm{padding:6px 12px;font-size:12px}
+.btn-danger{background:#FEF2F2;color:var(--red);border-color:#FECACA}
+.btn-danger:hover{background:#FEE2E2}
+.content{flex:1;overflow-y:auto;padding:28px 32px}
+
+/* ── TAB BAR ── */
+.tab-bar{display:flex;gap:2px;padding:0;border-bottom:1px solid var(--border);margin-bottom:28px}
+.tab{padding:10px 20px;font-size:13px;font-weight:600;color:var(--text-3);cursor:pointer;border-bottom:2px solid transparent;margin-bottom:-1px;transition:color .15s,border-color .15s}
+.tab:hover{color:var(--text-2)}
+.tab.active{color:var(--accent);border-bottom-color:var(--accent)}
+
+/* ── PAGE HEADER ── */
+.page-head{display:flex;align-items:flex-start;justify-content:space-between;margin-bottom:24px}
+.page-head-left h1{font-size:18px;font-weight:700;letter-spacing:-.02em}
+.page-head-left p{font-size:13px;color:var(--text-2);margin-top:3px}
+
+/* ── ALERT BOX ── */
+.alert{display:flex;align-items:flex-start;gap:12px;padding:14px 16px;border-radius:10px;margin-bottom:24px;font-size:13px;line-height:1.55}
+.alert-amber{background:#FFFBEB;border:1px solid #FDE68A;color:#92400E}
+.alert-amber i{color:var(--amber);flex-shrink:0;margin-top:1px;font-size:15px}
+.alert-blue{background:#EFF6FF;border:1px solid #BFDBFE;color:#1D4ED8}
+.alert-blue i{color:var(--blue);flex-shrink:0;margin-top:1px;font-size:15px}
+.alert strong{font-weight:700}
+.alert a{color:inherit;text-decoration:underline;cursor:pointer}
+
+/* ── TABLE ── */
+.card{background:var(--surface);border:1px solid var(--border);border-radius:12px;box-shadow:0 1px 3px rgba(0,0,0,.04);overflow:hidden;margin-bottom:24px}
+.card-head{padding:16px 20px;border-bottom:1px solid var(--border);display:flex;align-items:center;gap:10px}
+.card-head h3{font-size:14px;font-weight:700;letter-spacing:-.01em}
+.card-head .right{margin-left:auto;display:flex;gap:8px;align-items:center}
+.card-head .count-chip{font-size:11px;font-weight:700;background:var(--surface-2);border:1px solid var(--border);color:var(--text-2);padding:2px 8px;border-radius:99px}
+table{width:100%;border-collapse:collapse}
+thead tr{background:var(--surface-2)}
+thead th{padding:10px 16px;font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:.07em;color:var(--text-3);text-align:left;border-bottom:1px solid var(--border)}
+tbody tr{border-bottom:1px solid var(--border);transition:background .12s}
+tbody tr:last-child{border-bottom:none}
+tbody tr:hover{background:#FAFBFF}
+td{padding:13px 16px;font-size:13px;color:var(--text-2);vertical-align:middle}
+td .primary{font-weight:600;color:var(--text);margin-bottom:2px}
+td .mono{font-family:'Courier New',monospace;font-size:12px;color:var(--text-3);background:var(--surface-2);border:1px solid var(--border);padding:2px 8px;border-radius:5px;display:inline-block;letter-spacing:.03em}
+.td-actions{display:flex;gap:6px;align-items:center}
+
+/* ── ADD ROW (dashed) ── */
+.add-row{padding:14px 16px;border:1.5px dashed var(--border);border-radius:10px;margin:16px;display:flex;align-items:center;gap:10px;cursor:pointer;transition:border-color .15s,background .15s}
+.add-row:hover{border-color:var(--accent);background:var(--accent-light)}
+.add-row i{color:var(--text-3);font-size:13px}
+.add-row span{font-size:13px;font-weight:500;color:var(--text-3)}
+.add-row:hover i,.add-row:hover span{color:var(--accent)}
+
+/* ── CHIPS / BADGES ── */
+.chip{display:inline-flex;align-items:center;gap:5px;padding:3px 9px;border-radius:99px;font-size:11px;font-weight:700}
+.chip-green{background:#ECFDF5;color:#065F46}
+.chip-red{background:#FEF2F2;color:#991B1B}
+.chip-amber{background:#FFFBEB;color:#92400E}
+.chip-blue{background:#EFF6FF;color:#1D4ED8}
+.chip-gray{background:#F1F5F9;color:var(--text-3)}
+.chip::before{content:'';width:6px;height:6px;border-radius:50%;flex-shrink:0}
+.chip-green::before{background:var(--green)}
+.chip-red::before{background:var(--red)}
+.chip-amber::before{background:var(--amber)}
+.chip-gray::before{background:var(--text-3)}
+
+/* ── SCOPE TAGS ── */
+.scope-wrap{display:flex;gap:4px;flex-wrap:wrap}
+.scope-tag{font-size:10px;font-weight:600;background:var(--accent-light);color:var(--accent);padding:2px 7px;border-radius:4px}
+.scope-tag.write{background:#ECFDF5;color:#065F46}
+.scope-tag.inv{background:#FFF7ED;color:#C2410C}
+
+/* ── WEBHOOK TABLE SPECIFICS ── */
+.url-cell{display:flex;align-items:center;gap:8px}
+.url-cell .url-text{font-family:'Courier New',monospace;font-size:12px;color:var(--text);background:var(--surface-2);border:1px solid var(--border);padding:4px 10px;border-radius:6px;max-width:260px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.inactive td{opacity:.6}
+
+/* ── SECTION DIVIDER ── */
+.section-label{font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:.1em;color:var(--text-3);margin-bottom:14px}
+
+/* ── DOCS LINK ROW ── */
+.docs-row{display:flex;align-items:center;gap:12px;padding:16px 20px;background:var(--surface-2);border-top:1px solid var(--border)}
+.docs-row p{font-size:13px;color:var(--text-2);flex:1}
+.docs-row strong{color:var(--text);font-weight:600}
+</style>
+</head>
+<body>
+
+<!-- ══ SIDEBAR ══ -->
+<aside class="sidebar">
+  <div class="sb-logo">
+    <div class="sb-mark">S</div>
+    <span class="sb-name">Synergia<span style="color:var(--accent)">360</span></span>
+  </div>
+  <nav class="sb-nav">
+    <a href="main-dashboard.html" class="sb-link"><i class="fa-solid fa-grid-2"></i> Dashboard</a>
+    <a href="command-palette.html" class="sb-link"><i class="fa-solid fa-bolt"></i> Command Center</a>
+    <a href="dashboard-builder.html" class="sb-link"><i class="fa-solid fa-sliders"></i> Dashboard Builder</a>
+    <span class="sb-section">Orders</span>
+    <a href="order-queue.html" class="sb-link"><i class="fa-solid fa-receipt"></i> Order Queue</a>
+    <a href="returns-queue.html" class="sb-link"><i class="fa-solid fa-rotate-left"></i> Returns</a>
+    <a href="shipments-list.html" class="sb-link"><i class="fa-solid fa-truck-fast"></i> Shipments</a>
+    <a href="routing-rules.html" class="sb-link"><i class="fa-solid fa-code-branch"></i> Routing Rules</a>
+    <a href="order-automation.html" class="sb-link"><i class="fa-solid fa-robot"></i> Automation</a>
+    <span class="sb-section">Inventory</span>
+    <a href="inventory-stock-overview.html" class="sb-link"><i class="fa-solid fa-boxes-stacked"></i> Stock</a>
+    <a href="inventory-stock-take.html" class="sb-link"><i class="fa-solid fa-clipboard-check"></i> Stock Take</a>
+    <a href="purchase-orders.html" class="sb-link"><i class="fa-solid fa-cart-plus"></i> Purchase Orders</a>
+    <a href="suppliers-list.html" class="sb-link"><i class="fa-solid fa-industry"></i> Suppliers</a>
+    <span class="sb-section">Catalogue</span>
+    <a href="catalogue-product-list.html" class="sb-link"><i class="fa-solid fa-tag"></i> Products</a>
+    <a href="catalogue-bom-builder.html" class="sb-link"><i class="fa-solid fa-list-tree"></i> BOM Builder</a>
+    <span class="sb-section">Channels</span>
+    <a href="channels-overview.html" class="sb-link"><i class="fa-solid fa-plug"></i> Overview</a>
+    <a href="listing-manager.html" class="sb-link"><i class="fa-solid fa-store"></i> Listings</a>
+    <a href="pricing-rules.html" class="sb-link"><i class="fa-solid fa-pound-sign"></i> Pricing Rules</a>
+    <span class="sb-section">Customers</span>
+    <a href="customers-list.html" class="sb-link"><i class="fa-solid fa-users"></i> Customers</a>
+    <span class="sb-section">Finance</span>
+    <a href="finance-dashboard.html" class="sb-link"><i class="fa-solid fa-chart-pie"></i> Overview</a>
+    <a href="finance-expense-management.html" class="sb-link"><i class="fa-solid fa-file-invoice"></i> Expenses</a>
+    <a href="sku-profitability.html" class="sb-link"><i class="fa-solid fa-chart-bar"></i> SKU Profitability</a>
+    <a href="finance-monthly-close.html" class="sb-link"><i class="fa-solid fa-calendar-check"></i> Monthly Close</a>
+    <span class="sb-section">Reports</span>
+    <a href="reports-library.html" class="sb-link"><i class="fa-solid fa-book"></i> Library</a>
+    <a href="report-builder-ai.html" class="sb-link"><i class="fa-solid fa-wand-magic-sparkles"></i> AI Builder</a>
+    <a href="automation-rule-builder.html" class="sb-link"><i class="fa-solid fa-gears"></i> Automation Rules</a>
+    <span class="sb-section">Settings</span>
+    <a href="settings-team.html" class="sb-link"><i class="fa-solid fa-people-group"></i> Team</a>
+    <a href="settings-rbac.html" class="sb-link"><i class="fa-solid fa-shield-halved"></i> Roles &amp; Permissions</a>
+    <a href="settings-integrations.html" class="sb-link"><i class="fa-solid fa-puzzle-piece"></i> Integrations</a>
+    <a href="settings-billing.html" class="sb-link"><i class="fa-solid fa-credit-card"></i> Billing</a>
+    <a href="settings-notifications.html" class="sb-link"><i class="fa-solid fa-bell"></i> Notifications</a>
+    <a href="settings-locale.html" class="sb-link"><i class="fa-solid fa-earth-europe"></i> Locale &amp; Currency</a>
+    <a href="settings-warehouses.html" class="sb-link"><i class="fa-solid fa-warehouse"></i> Warehouses</a>
+    <a href="settings-api-webhooks.html" class="sb-link active"><i class="fa-solid fa-code"></i> API &amp; Webhooks</a>
+  </nav>
+  <div class="sb-foot">
+    <div class="sb-av">JW</div>
+    <div>
+      <div class="sb-uname">James Whitcombe</div>
+      <div class="sb-urole">Owner &middot; Acme Co</div>
+    </div>
+  </div>
+</aside>
+
+<!-- ══ MAIN ══ -->
+<div class="main">
+
+  <!-- Topbar -->
+  <div class="topbar">
+    <span class="topbar-title">API &amp; Webhooks</span>
+    <div class="topbar-right">
+      <button class="btn btn-ghost btn-sm"><i class="fa-solid fa-book"></i> API Docs</button>
+      <button class="btn btn-primary btn-sm"><i class="fa-solid fa-plus"></i> Create API Key</button>
+    </div>
+  </div>
+
+  <!-- Scrollable content -->
+  <div class="content">
+
+    <!-- Tab bar -->
+    <div class="tab-bar">
+      <div class="tab active">API Keys</div>
+      <div class="tab">Webhooks</div>
+      <div class="tab">Logs</div>
+    </div>
+
+    <!-- Rate limit alert -->
+    <div class="alert alert-amber">
+      <i class="fa-solid fa-triangle-exclamation"></i>
+      <div>
+        <strong>Rate limits:</strong> Your account is permitted <strong>100 requests/sec</strong> and <strong>10,000 requests/hour</strong> per API key. If you need higher throughput for production integrations, <a>contact our support team</a> to request a limit increase.
+      </div>
+    </div>
+
+    <!-- API docs info -->
+    <div class="alert alert-blue">
+      <i class="fa-solid fa-circle-info"></i>
+      <div>
+        Explore our <a>interactive API reference</a> to test endpoints directly, view request/response schemas, and download OpenAPI 3.1 specs. SDKs available for Node.js, Python, and PHP.
+      </div>
+    </div>
+
+    <!-- API Keys table -->
+    <div class="page-head">
+      <div class="page-head-left">
+        <h1>API Keys</h1>
+        <p>Keys authenticate requests to the Synergia360 REST API. Store them securely — they are shown in full only once.</p>
+      </div>
+    </div>
+
+    <div class="card">
+      <div class="card-head">
+        <i class="fa-solid fa-key" style="color:var(--accent);font-size:14px"></i>
+        <h3>Active Keys</h3>
+        <span class="count-chip right">3 keys</span>
+      </div>
+      <table>
+        <thead>
+          <tr>
+            <th>Name</th>
+            <th>Key</th>
+            <th>Scopes</th>
+            <th>Last Used</th>
+            <th>Created</th>
+            <th style="width:120px">Actions</th>
+          </tr>
+        </thead>
+        <tbody>
+          <!-- Row 1 -->
+          <tr>
+            <td>
+              <div class="primary">Production Key</div>
+              <div style="font-size:11px;color:var(--text-3)">Full read/write access</div>
+            </td>
+            <td><span class="mono">sk_live_8f3a...9d2c</span></td>
+            <td>
+              <div class="scope-wrap">
+                <span class="scope-tag">Read</span>
+                <span class="scope-tag write">Write</span>
+              </div>
+            </td>
+            <td style="color:var(--green);font-weight:600">2 mins ago</td>
+            <td style="color:var(--text-3)">Jan 2024</td>
+            <td>
+              <div class="td-actions">
+                <button class="btn btn-ghost btn-sm"><i class="fa-regular fa-copy"></i> Copy</button>
+                <button class="btn btn-danger btn-sm">Revoke</button>
+              </div>
+            </td>
+          </tr>
+          <!-- Row 2 -->
+          <tr>
+            <td>
+              <div class="primary">Analytics Read-Only</div>
+              <div style="font-size:11px;color:var(--text-3)">Reporting &amp; metrics only</div>
+            </td>
+            <td><span class="mono">sk_live_c4b1...7e8f</span></td>
+            <td>
+              <div class="scope-wrap">
+                <span class="scope-tag">Read</span>
+              </div>
+            </td>
+            <td>3 hours ago</td>
+            <td style="color:var(--text-3)">Mar 2024</td>
+            <td>
+              <div class="td-actions">
+                <button class="btn btn-ghost btn-sm"><i class="fa-regular fa-copy"></i> Copy</button>
+                <button class="btn btn-danger btn-sm">Revoke</button>
+              </div>
+            </td>
+          </tr>
+          <!-- Row 3 -->
+          <tr>
+            <td>
+              <div class="primary">Warehouse API</div>
+              <div style="font-size:11px;color:var(--text-3)">WMS integration — stock &amp; movements</div>
+            </td>
+            <td><span class="mono">sk_live_a2d9...1b4e</span></td>
+            <td>
+              <div class="scope-wrap">
+                <span class="scope-tag">Read</span>
+                <span class="scope-tag write">Write</span>
+                <span class="scope-tag inv">Inventory</span>
+              </div>
+            </td>
+            <td>Yesterday</td>
+            <td style="color:var(--text-3)">Feb 2024</td>
+            <td>
+              <div class="td-actions">
+                <button class="btn btn-ghost btn-sm"><i class="fa-regular fa-copy"></i> Copy</button>
+                <button class="btn btn-danger btn-sm">Revoke</button>
+              </div>
+            </td>
+          </tr>
+        </tbody>
+      </table>
+      <!-- Add new key row -->
+      <div class="add-row">
+        <i class="fa-solid fa-plus"></i>
+        <span>Generate a new API key…</span>
+      </div>
+    </div>
+
+    <!-- ── WEBHOOKS SECTION ── -->
+    <div class="page-head" style="margin-top:12px">
+      <div class="page-head-left">
+        <h1>Webhook Endpoints</h1>
+        <p>Synergia360 sends signed POST requests to these URLs when events occur. Verify the <code style="font-size:11px;background:var(--surface-2);border:1px solid var(--border);padding:1px 6px;border-radius:4px">X-Synergia-Signature</code> header on every request.</p>
+      </div>
+      <button class="btn btn-ghost btn-sm" style="margin-top:4px"><i class="fa-solid fa-plus"></i> Add Endpoint</button>
+    </div>
+
+    <div class="card">
+      <div class="card-head">
+        <i class="fa-solid fa-webhook" style="color:var(--accent);font-size:14px"></i>
+        <h3>Endpoints</h3>
+        <span class="count-chip right">4 endpoints</span>
+      </div>
+      <table>
+        <thead>
+          <tr>
+            <th>URL</th>
+            <th>Events</th>
+            <th>Status</th>
+            <th>Last Triggered</th>
+            <th style="width:130px">Actions</th>
+          </tr>
+        </thead>
+        <tbody>
+          <!-- Row 1 -->
+          <tr>
+            <td>
+              <div class="url-cell">
+                <i class="fa-solid fa-globe" style="color:var(--text-3);font-size:12px;flex-shrink:0"></i>
+                <span class="url-text">webhook.acme.co/orders</span>
+              </div>
+            </td>
+            <td>
+              <div class="scope-wrap">
+                <span class="scope-tag">order.created</span>
+                <span class="scope-tag">order.updated</span>
+                <span class="scope-tag write">order.shipped</span>
+              </div>
+            </td>
+            <td><span class="chip chip-green">Active</span></td>
+            <td style="color:var(--text-2)">4 mins ago</td>
+            <td>
+              <div class="td-actions">
+                <button class="btn btn-ghost btn-sm"><i class="fa-solid fa-rotate-right"></i> Retry</button>
+                <button class="btn btn-ghost btn-sm"><i class="fa-solid fa-pen"></i></button>
+              </div>
+            </td>
+          </tr>
+          <!-- Row 2 -->
+          <tr>
+            <td>
+              <div class="url-cell">
+                <i class="fa-solid fa-globe" style="color:var(--text-3);font-size:12px;flex-shrink:0"></i>
+                <span class="url-text">webhook.acme.co/inventory</span>
+              </div>
+            </td>
+            <td>
+              <div class="scope-wrap">
+                <span class="scope-tag">stock.low</span>
+                <span class="scope-tag inv">stock.adjusted</span>
+              </div>
+            </td>
+            <td><span class="chip chip-green">Active</span></td>
+            <td style="color:var(--text-2)">18 mins ago</td>
+            <td>
+              <div class="td-actions">
+                <button class="btn btn-ghost btn-sm"><i class="fa-solid fa-rotate-right"></i> Retry</button>
+                <button class="btn btn-ghost btn-sm"><i class="fa-solid fa-pen"></i></button>
+              </div>
+            </td>
+          </tr>
+          <!-- Row 3 -->
+          <tr>
+            <td>
+              <div class="url-cell">
+                <i class="fa-solid fa-globe" style="color:var(--text-3);font-size:12px;flex-shrink:0"></i>
+                <span class="url-text">webhook.acme.co/returns</span>
+              </div>
+            </td>
+            <td>
+              <div class="scope-wrap">
+                <span class="scope-tag">return.opened</span>
+                <span class="scope-tag">return.processed</span>
+              </div>
+            </td>
+            <td><span class="chip chip-green">Active</span></td>
+            <td style="color:var(--text-2)">2 hours ago</td>
+            <td>
+              <div class="td-actions">
+                <button class="btn btn-ghost btn-sm"><i class="fa-solid fa-rotate-right"></i> Retry</button>
+                <button class="btn btn-ghost btn-sm"><i class="fa-solid fa-pen"></i></button>
+              </div>
+            </td>
+          </tr>
+          <!-- Row 4 — Inactive -->
+          <tr class="inactive">
+            <td>
+              <div class="url-cell">
+                <i class="fa-solid fa-globe" style="color:var(--text-3);font-size:12px;flex-shrink:0"></i>
+                <span class="url-text" style="color:var(--text-3)">test.requestbin.com/r/x7k2p9</span>
+              </div>
+            </td>
+            <td>
+              <div class="scope-wrap">
+                <span class="scope-tag" style="background:#F1F5F9;color:var(--text-3)">All events</span>
+              </div>
+            </td>
+            <td><span class="chip chip-gray">Inactive</span></td>
+            <td style="color:var(--text-3)">7 days ago</td>
+            <td>
+              <div class="td-actions">
+                <button class="btn btn-ghost btn-sm" style="opacity:.6">Enable</button>
+                <button class="btn btn-danger btn-sm">Delete</button>
+              </div>
+            </td>
+          </tr>
+        </tbody>
+      </table>
+      <!-- Docs footer -->
+      <div class="docs-row">
+        <i class="fa-solid fa-book-open-reader" style="color:var(--accent);font-size:15px"></i>
+        <p><strong>Need help setting up webhooks?</strong> Read our <a href="#" style="color:var(--accent);font-weight:600;text-decoration:none">Webhook Integration Guide</a> — covers signing secrets, retry logic, and event payload schemas.</p>
+        <button class="btn btn-ghost btn-sm"><i class="fa-solid fa-arrow-up-right-from-square"></i> View Docs</button>
+      </div>
+    </div>
+
+  </div><!-- /content -->
+</div><!-- /main -->
+
+</body>
+</html>

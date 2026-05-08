@@ -1,0 +1,403 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Jane Smith — Synergia360</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+<style>
+:root{
+  --bg:#F8F9FC;--surface:#FFFFFF;--surface-2:#F8FAFF;--border:#E2E8F0;
+  --accent:#4F46E5;--accent-dim:rgba(79,70,229,.08);--accent-light:#EEF2FF;
+  --text:#0F172A;--text-2:#475569;--text-3:#94A3B8;
+  --green:#10B981;--green-dim:rgba(16,185,129,.08);--green-light:#ECFDF5;
+  --red:#EF4444;--red-dim:rgba(239,68,68,.08);--red-light:#FEF2F2;
+  --amber:#F59E0B;--amber-dim:rgba(245,158,11,.08);--amber-light:#FFFBEB;
+  --blue:#3B82F6;--font:'Inter',sans-serif;--mono:'Geist Mono',monospace;
+  --shadow-sm:0 1px 2px rgba(0,0,0,.05);--shadow:0 1px 3px rgba(0,0,0,.08),0 1px 2px rgba(0,0,0,.04);
+  --purple:#8B5CF6;--purple-light:#F5F3FF
+}
+*{box-sizing:border-box;margin:0;padding:0}
+body{font-family:var(--font);background:var(--bg);color:var(--text);font-size:14px;line-height:1.5;display:flex}
+
+/* Sidebar */
+.sidebar{width:240px;background:var(--surface);border-right:1px solid var(--border);height:100vh;position:fixed;top:0;left:0;display:flex;flex-direction:column;z-index:50;overflow-y:auto}
+.sb-logo{padding:16px;border-bottom:1px solid var(--border);display:flex;align-items:center;gap:10px;flex-shrink:0}
+.sb-mark{width:32px;height:32px;background:var(--accent);border-radius:8px;display:grid;place-items:center;color:#fff;font-weight:800;font-size:14px;flex-shrink:0}
+.sb-name{font-weight:700;font-size:15px;color:var(--text)}
+.sb-nav{flex:1;padding:10px 8px;overflow-y:auto;display:flex;flex-direction:column}
+.sb-section{font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:.06em;color:var(--text-3);padding:12px 10px 4px;display:block}
+.sb-link{display:flex;align-items:center;gap:8px;padding:8px 10px;border-radius:8px;color:var(--text-2);font-size:13px;font-weight:500;text-decoration:none;border-left:2px solid transparent;margin-bottom:1px;transition:background .15s,color .15s}
+.sb-link:hover{background:var(--surface-2);color:var(--text)}
+.sb-link.active{background:var(--accent-light);color:var(--accent);border-left-color:var(--accent);font-weight:600}
+.sb-foot{padding:12px 16px;border-top:1px solid var(--border);display:flex;align-items:center;gap:10px;flex-shrink:0}
+.sb-av{width:32px;height:32px;background:var(--accent-light);border-radius:50%;display:grid;place-items:center;color:var(--accent);font-weight:700;font-size:12px;flex-shrink:0}
+.sb-uname{font-size:13px;font-weight:600;color:var(--text);line-height:1.2}
+.sb-urole{font-size:11px;color:var(--text-3)}
+.main{margin-left:240px;min-height:100vh;flex:1}
+
+/* Top bar */
+.topbar{position:sticky;top:0;z-index:40;background:var(--surface);border-bottom:1px solid var(--border);padding:0 28px;height:60px;display:flex;align-items:center;gap:12px}
+.breadcrumb{flex:1;font-size:14px;color:var(--text-2);display:flex;align-items:center;gap:6px}
+.breadcrumb a{color:var(--text-3);text-decoration:none;font-weight:500}
+.breadcrumb a:hover{color:var(--text-2)}
+.breadcrumb span{color:var(--text-3)}
+.breadcrumb strong{color:var(--text);font-weight:600}
+.btn{display:inline-flex;align-items:center;gap:6px;padding:7px 14px;border-radius:8px;font-size:13px;font-weight:600;cursor:pointer;border:none;line-height:1.4;text-decoration:none;transition:background .15s}
+.btn-ghost{background:transparent;border:1px solid var(--border);color:var(--text-2)}
+.btn-ghost:hover{background:var(--surface-2)}
+.btn-accent{background:var(--accent);color:#fff}
+.btn-accent:hover{background:#4338CA}
+.btn-sm{padding:6px 12px;font-size:12px}
+
+/* Content */
+.content{padding:24px 28px}
+.two-col{display:flex;gap:20px;align-items:flex-start}
+.col-main{flex:1;min-width:0}
+.col-side{width:300px;flex-shrink:0}
+
+/* Cards */
+.card{background:var(--surface);border:1px solid var(--border);border-radius:12px;box-shadow:var(--shadow);margin-bottom:16px;overflow:hidden}
+.card-body{padding:18px 20px}
+.card-title{font-size:13px;font-weight:700;color:var(--text);margin-bottom:14px}
+
+/* Customer info */
+.cust-header{display:flex;align-items:center;gap:14px;margin-bottom:16px}
+.cust-avatar{width:48px;height:48px;border-radius:50%;background:var(--accent-light);display:grid;place-items:center;color:var(--accent);font-size:16px;font-weight:800;flex-shrink:0}
+.cust-name{font-size:18px;font-weight:700;color:var(--text);margin-bottom:4px;display:flex;align-items:center;gap:8px}
+.cust-meta{font-size:13px;color:var(--text-3)}
+.info-grid{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+.info-item .info-label{font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:.05em;color:var(--text-3);margin-bottom:2px}
+.info-item .info-val{font-size:13px;color:var(--text);font-weight:500}
+
+/* Badges */
+.badge{display:inline-flex;align-items:center;padding:3px 8px;border-radius:20px;font-size:11px;font-weight:600;white-space:nowrap}
+.badge-purple{background:var(--purple-light);color:var(--purple)}
+.badge-blue{background:#EFF6FF;color:var(--blue)}
+.badge-green{background:var(--green-light);color:var(--green)}
+
+/* Tabs */
+.tab-bar{display:flex;gap:2px;border-bottom:1px solid var(--border);margin-bottom:0}
+.tab{padding:10px 16px;font-size:13px;font-weight:500;color:var(--text-3);cursor:pointer;border:none;background:none;border-bottom:2px solid transparent;margin-bottom:-1px;transition:color .15s}
+.tab.active{color:var(--accent);border-bottom-color:var(--accent);font-weight:600}
+.tab:hover:not(.active){color:var(--text-2)}
+
+/* Orders table */
+table{width:100%;border-collapse:collapse}
+thead th{background:var(--surface-2);padding:9px 14px;text-align:left;font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:.05em;color:var(--text-3);border-bottom:1px solid var(--border)}
+tbody tr{border-bottom:1px solid var(--border);transition:background .12s}
+tbody tr:last-child{border-bottom:none}
+tbody tr:hover{background:var(--surface-2)}
+tbody td{padding:10px 14px;font-size:13px;color:var(--text-2);vertical-align:middle}
+td.cell-id{color:var(--accent);font-weight:600;cursor:pointer}
+td.cell-id:hover{text-decoration:underline}
+td.cell-amount{color:var(--text);font-weight:600}
+
+/* Action links */
+.action-link{color:var(--accent);font-size:12px;font-weight:600;text-decoration:none;cursor:pointer}
+.action-link:hover{text-decoration:underline}
+
+/* View all link */
+.view-all-row{padding:12px 20px;border-top:1px solid var(--border);text-align:center}
+
+/* Stats card */
+.stats-grid{display:grid;grid-template-columns:1fr 1fr;gap:12px}
+.stat-item{padding:10px 12px;background:var(--surface-2);border-radius:8px;border:1px solid var(--border)}
+.stat-item .stat-label{font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:.05em;color:var(--text-3);margin-bottom:3px}
+.stat-item .stat-val{font-size:18px;font-weight:700;color:var(--text)}
+
+/* Segment card */
+.seg-card-inner{display:flex;flex-direction:column;gap:6px}
+.seg-sub{font-size:12px;color:var(--text-3);margin-top:2px}
+
+/* Top products */
+.product-row{display:flex;align-items:center;gap:10px;padding:8px 0;border-bottom:1px solid var(--border)}
+.product-row:last-child{border-bottom:none}
+.product-icon{width:32px;height:32px;border-radius:6px;background:var(--surface-2);border:1px solid var(--border);display:grid;place-items:center;font-size:14px;flex-shrink:0}
+.product-info{flex:1;min-width:0}
+.product-name{font-size:12px;font-weight:600;color:var(--text);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.product-sub{font-size:11px;color:var(--text-3);margin-top:1px}
+.product-total{font-size:12px;font-weight:700;color:var(--text);white-space:nowrap}
+
+/* Notes */
+.note-entry{background:var(--amber-light);border:1px solid var(--amber-dim);border-radius:8px;padding:10px 12px;margin-bottom:10px}
+.note-date{font-size:10px;font-weight:600;color:var(--amber);margin-bottom:3px}
+.note-text{font-size:12px;color:var(--text-2);line-height:1.5}
+.note-textarea{width:100%;border:1px solid var(--border);border-radius:8px;padding:10px 12px;font-size:13px;font-family:var(--font);color:var(--text);resize:vertical;min-height:72px;outline:none;background:var(--surface)}
+.note-textarea:focus{border-color:var(--accent);box-shadow:0 0 0 3px var(--accent-dim)}
+.note-actions{display:flex;justify-content:flex-end;margin-top:8px}
+</style>
+</head>
+<body>
+
+<aside class="sidebar">
+  <div class="sb-logo">
+    <div class="sb-mark">S</div>
+    <span class="sb-name">Synergia<span style="color:var(--accent)">360</span></span>
+  </div>
+  <nav class="sb-nav">
+    <a href="main-dashboard.html" class="sb-link">Dashboard</a>
+    <span class="sb-section">Orders</span>
+    <a href="order-queue.html" class="sb-link">Order Queue</a>
+    <a href="returns-queue.html" class="sb-link">Returns</a>
+    <a href="shipments-list.html" class="sb-link">Shipments</a>
+    <a href="routing-rules.html" class="sb-link">Routing Rules</a>
+    <a href="order-automation.html" class="sb-link">Automation</a>
+    <span class="sb-section">Inventory</span>
+    <a href="inventory-stock-overview.html" class="sb-link">Stock</a>
+    <a href="inventory-stock-take.html" class="sb-link">Stock Take</a>
+    <a href="purchase-orders.html" class="sb-link">Purchase Orders</a>
+    <a href="suppliers-list.html" class="sb-link">Suppliers</a>
+    <span class="sb-section">Catalogue</span>
+    <a href="catalogue-product-list.html" class="sb-link">Products</a>
+    <a href="catalogue-bom-builder.html" class="sb-link">BOM Builder</a>
+    <span class="sb-section">Channels</span>
+    <a href="channels-overview.html" class="sb-link">Overview</a>
+    <a href="listing-manager.html" class="sb-link">Listings</a>
+    <a href="pricing-rules.html" class="sb-link">Pricing Rules</a>
+    <span class="sb-section">Customers</span>
+    <a href="customers-list.html" class="sb-link active">Customers</a>
+    <span class="sb-section">Finance</span>
+    <a href="finance-dashboard.html" class="sb-link">Overview</a>
+    <a href="finance-expense-management.html" class="sb-link">Expenses</a>
+    <a href="sku-profitability.html" class="sb-link">SKU Profitability</a>
+    <a href="finance-monthly-close.html" class="sb-link">Monthly Close</a>
+    <span class="sb-section">Reports</span>
+    <a href="reports-library.html" class="sb-link">Library</a>
+    <a href="report-builder-ai.html" class="sb-link">AI Builder</a>
+    <a href="automation-rule-builder.html" class="sb-link">Automation</a>
+    <span class="sb-section">Settings</span>
+    <a href="settings-team.html" class="sb-link">Team</a>
+    <a href="settings-rbac.html" class="sb-link">Roles &amp; Permissions</a>
+    <a href="settings-billing.html" class="sb-link">Billing</a>
+    <a href="settings-notifications.html" class="sb-link">Notifications</a>
+    <a href="settings-locale.html" class="sb-link">Locale &amp; Currency</a>
+    <a href="settings-integrations.html" class="sb-link">Integrations</a>
+    <a href="settings-warehouses.html" class="sb-link">Warehouses</a>
+    <a href="settings-api-webhooks.html" class="sb-link">API &amp; Webhooks</a>
+  </nav>
+  <div class="sb-foot">
+    <div class="sb-av">JW</div>
+    <div>
+      <div class="sb-uname">James Whitcombe</div>
+      <div class="sb-urole">Owner &middot; Acme Co</div>
+    </div>
+  </div>
+</aside>
+
+<div class="main">
+  <div class="topbar">
+    <div class="breadcrumb">
+      <a href="customers-list.html">Customers</a>
+      <span>/</span>
+      <strong>Jane Smith</strong>
+    </div>
+    <button class="btn btn-ghost">&#9993; Send Email</button>
+    <button class="btn btn-accent">+ Create Order</button>
+  </div>
+
+  <div class="content">
+    <div class="two-col">
+      <!-- Left column -->
+      <div class="col-main">
+        <!-- Customer info card -->
+        <div class="card">
+          <div class="card-body">
+            <div class="cust-header">
+              <div class="cust-avatar">JS</div>
+              <div>
+                <div class="cust-name">
+                  Jane Smith
+                  <span class="badge badge-purple">VIP</span>
+                </div>
+                <div class="cust-meta">Customer since 12 Jan 2023 &middot; Source: Amazon</div>
+              </div>
+            </div>
+            <div class="info-grid">
+              <div class="info-item">
+                <div class="info-label">Email</div>
+                <div class="info-val">jane.smith@email.com</div>
+              </div>
+              <div class="info-item">
+                <div class="info-label">Phone</div>
+                <div class="info-val">+44 7700 900123</div>
+              </div>
+              <div class="info-item" style="grid-column:1/-1">
+                <div class="info-label">Shipping Address</div>
+                <div class="info-val">14 Baker Street, London, W1U 6JS</div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Order history -->
+        <div class="card">
+          <div class="tab-bar" style="padding:0 20px;margin-bottom:0">
+            <button class="tab active">Order History</button>
+            <button class="tab">Returns</button>
+            <button class="tab">Notes</button>
+          </div>
+          <table>
+            <thead>
+              <tr>
+                <th>Order ID</th>
+                <th>Date</th>
+                <th>Items</th>
+                <th>Total</th>
+                <th>Channel</th>
+                <th>Status</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr>
+                <td class="cell-id">ORD-14450</td>
+                <td>07 May 2026</td>
+                <td>3 items</td>
+                <td class="cell-amount">£142.50</td>
+                <td>Amazon</td>
+                <td><span class="badge badge-blue">Dispatched</span></td>
+              </tr>
+              <tr>
+                <td class="cell-id">ORD-12341</td>
+                <td>15 Apr 2026</td>
+                <td>1 item</td>
+                <td class="cell-amount">£49.99</td>
+                <td>Amazon</td>
+                <td><span class="badge badge-green">Delivered</span></td>
+              </tr>
+              <tr>
+                <td class="cell-id">ORD-10982</td>
+                <td>02 Mar 2026</td>
+                <td>5 items</td>
+                <td class="cell-amount">£287.40</td>
+                <td>Amazon</td>
+                <td><span class="badge badge-green">Delivered</span></td>
+              </tr>
+              <tr>
+                <td class="cell-id">ORD-09123</td>
+                <td>14 Feb 2026</td>
+                <td>2 items</td>
+                <td class="cell-amount">£98.00</td>
+                <td>Shopify</td>
+                <td><span class="badge badge-green">Delivered</span></td>
+              </tr>
+              <tr>
+                <td class="cell-id">ORD-07891</td>
+                <td>28 Jan 2026</td>
+                <td>4 items</td>
+                <td class="cell-amount">£204.80</td>
+                <td>Amazon</td>
+                <td><span class="badge badge-green">Delivered</span></td>
+              </tr>
+            </tbody>
+          </table>
+          <div class="view-all-row">
+            <a class="action-link" href="#">View All 12 Orders &#8594;</a>
+          </div>
+        </div>
+
+        <!-- Notes card -->
+        <div class="card">
+          <div class="card-body">
+            <div class="card-title">Internal Notes</div>
+            <div class="note-entry">
+              <div class="note-date">2024-03-15</div>
+              <div class="note-text">Customer called about delayed delivery, resolved. Happy customer.</div>
+            </div>
+            <textarea class="note-textarea" placeholder="Add a note…"></textarea>
+            <div class="note-actions">
+              <button class="btn btn-accent btn-sm">Save Note</button>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Right column -->
+      <div class="col-side">
+        <!-- Stats card -->
+        <div class="card">
+          <div class="card-body">
+            <div class="card-title">Customer Stats</div>
+            <div class="stats-grid">
+              <div class="stat-item">
+                <div class="stat-label">Total Spent</div>
+                <div class="stat-val">£1,847</div>
+              </div>
+              <div class="stat-item">
+                <div class="stat-label">Orders</div>
+                <div class="stat-val">12</div>
+              </div>
+              <div class="stat-item">
+                <div class="stat-label">Avg Order</div>
+                <div class="stat-val">£153</div>
+              </div>
+              <div class="stat-item">
+                <div class="stat-label">Last Order</div>
+                <div class="stat-val" style="font-size:13px;padding-top:4px">2 days ago</div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Segment card -->
+        <div class="card">
+          <div class="card-body">
+            <div class="card-title">Segment</div>
+            <div class="seg-card-inner">
+              <div><span class="badge badge-purple" style="font-size:12px;padding:4px 10px">VIP Customer</span></div>
+              <div class="seg-sub">Top 5% by spend &middot; Member 3 years 4 months</div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Top Products -->
+        <div class="card">
+          <div class="card-body">
+            <div class="card-title">Top Products</div>
+            <div class="product-row">
+              <div class="product-icon">&#128199;</div>
+              <div class="product-info">
+                <div class="product-name">Blue Widget Pro 500ml</div>
+                <div class="product-sub">Bought 6&times;</div>
+              </div>
+              <div class="product-total">£179.94</div>
+            </div>
+            <div class="product-row">
+              <div class="product-icon">&#128272;</div>
+              <div class="product-info">
+                <div class="product-name">Premium Cable Set</div>
+                <div class="product-sub">Bought 3&times;</div>
+              </div>
+              <div class="product-total">£37.47</div>
+            </div>
+            <div class="product-row">
+              <div class="product-icon">&#128736;</div>
+              <div class="product-info">
+                <div class="product-name">Red Gadget Kit</div>
+                <div class="product-sub">Bought 2&times;</div>
+              </div>
+              <div class="product-total">£49.98</div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Quick actions -->
+        <div class="card">
+          <div class="card-body">
+            <div class="card-title">Quick Actions</div>
+            <div style="display:flex;flex-direction:column;gap:8px">
+              <button class="btn btn-ghost" style="width:100%;justify-content:flex-start;gap:8px">&#9993; Send Email</button>
+              <button class="btn btn-ghost" style="width:100%;justify-content:flex-start;gap:8px">&#128203; Create Order</button>
+              <button class="btn btn-ghost" style="width:100%;justify-content:flex-start;gap:8px">&#128200; View Reports</button>
+              <button class="btn btn-ghost" style="width:100%;justify-content:flex-start;gap:8px;color:var(--red);border-color:var(--red-light)">&#128683; Flag Account</button>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+</body>
+</html>

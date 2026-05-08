@@ -1,0 +1,359 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>SKU Profitability — Synergia360</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+<style>
+:root{
+  --bg:#F8F9FC;--surface:#FFFFFF;--surface-2:#F8FAFF;--border:#E2E8F0;
+  --accent:#4F46E5;--accent-dim:rgba(79,70,229,.08);--accent-light:#EEF2FF;
+  --text:#0F172A;--text-2:#475569;--text-3:#94A3B8;
+  --green:#10B981;--green-dim:rgba(16,185,129,.08);--green-light:#ECFDF5;
+  --red:#EF4444;--red-dim:rgba(239,68,68,.08);--red-light:#FEF2F2;
+  --amber:#F59E0B;--amber-dim:rgba(245,158,11,.08);--amber-light:#FFFBEB;
+  --blue:#3B82F6;--font:'Inter',sans-serif;--mono:'Geist Mono',monospace;
+  --shadow-sm:0 1px 2px rgba(0,0,0,.05);--shadow:0 1px 3px rgba(0,0,0,.08),0 1px 2px rgba(0,0,0,.04)
+}
+*{box-sizing:border-box;margin:0;padding:0}
+body{font-family:var(--font);background:var(--bg);color:var(--text);font-size:14px;line-height:1.5}
+/* sidebar */
+.sidebar{width:240px;background:#fff;border-right:1px solid var(--border);display:flex;flex-direction:column;flex-shrink:0;position:sticky;top:0;height:100vh;overflow:hidden}
+.sb-logo{padding:18px 20px;border-bottom:1px solid var(--border);display:flex;align-items:center;gap:12px;flex-shrink:0}
+.sb-mark{width:36px;height:36px;background:var(--accent);border-radius:9px;display:grid;place-items:center;color:#fff;font-weight:800;font-size:16px;flex-shrink:0}
+.sb-name{font-weight:700;font-size:15px;color:var(--text)}
+.sb-nav{flex:1;padding:10px;overflow-y:auto}
+.sb-section{font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:.07em;color:var(--text-3);padding:14px 8px 4px;display:block}
+.sb-link{display:flex;align-items:center;gap:10px;padding:8px 10px;border-radius:8px;color:var(--text-2);font-size:13px;font-weight:500;text-decoration:none;border-left:2px solid transparent;margin-bottom:1px;transition:background .15s,color .15s}
+.sb-link:hover{background:#F1F5F9;color:var(--text)}
+.sb-link.active{background:var(--accent-light);color:var(--accent);border-left-color:var(--accent);font-weight:600}
+.sb-link i{width:16px;text-align:center;font-size:13px;color:var(--text-3);flex-shrink:0}
+.sb-link.active i{color:var(--accent)}
+.sb-foot{padding:12px 16px;border-top:1px solid var(--border);display:flex;align-items:center;gap:10px;flex-shrink:0}
+.sb-av{width:34px;height:34px;background:var(--accent-light);border-radius:50%;display:grid;place-items:center;color:var(--accent);font-weight:700;font-size:13px;flex-shrink:0}
+.sb-uname{font-size:13px;font-weight:600;color:var(--text);line-height:1.2}
+.sb-urole{font-size:11px;color:var(--text-3)}
+.app{display:flex;min-height:100vh}
+.main{flex:1;min-height:100vh}
+.topbar{position:sticky;top:0;background:var(--surface);border-bottom:1px solid var(--border);height:58px;display:flex;align-items:center;justify-content:space-between;padding:0 24px;z-index:50;gap:12px}
+.topbar-left{display:flex;flex-direction:column}
+.topbar-title{font-size:15px;font-weight:600}
+.topbar-breadcrumb{font-size:12px;color:var(--text-3);margin-top:1px}
+.topbar-actions{display:flex;align-items:center;gap:8px;flex-shrink:0}
+.btn{display:inline-flex;align-items:center;gap:6px;padding:7px 14px;border-radius:8px;font-size:13px;font-weight:500;cursor:pointer;border:1px solid var(--border);background:var(--surface);color:var(--text-2);font-family:var(--font);transition:all .13s}
+.btn:hover{background:var(--surface-2)}
+.btn-accent{background:var(--accent);color:#fff;border-color:var(--accent)}
+.btn-accent:hover{background:#4338CA}
+.content{padding:24px}
+.card{background:var(--surface);border:1px solid var(--border);border-radius:12px;padding:20px;box-shadow:var(--shadow)}
+
+/* Filter row */
+.filter-row{display:flex;align-items:center;gap:10px;margin-bottom:20px;flex-wrap:wrap}
+.search-inp{display:flex;align-items:center;gap:8px;background:var(--surface);border:1px solid var(--border);border-radius:8px;padding:7px 12px;min-width:200px}
+.search-inp input{background:none;border:none;outline:none;font-family:var(--font);font-size:13px;color:var(--text);width:100%}
+select{background:var(--surface);border:1px solid var(--border);border-radius:8px;padding:7px 12px;font-family:var(--font);font-size:13px;color:var(--text-2);outline:none;cursor:pointer}
+
+/* Stat chips */
+.stat-chips{display:flex;gap:12px;margin-bottom:20px;flex-wrap:wrap}
+.stat-chip{background:var(--surface);border:1px solid var(--border);border-radius:10px;padding:14px 18px;box-shadow:var(--shadow-sm)}
+.sc-label{font-size:11px;font-weight:600;color:var(--text-3);text-transform:uppercase;letter-spacing:.05em;margin-bottom:4px}
+.sc-value{font-size:22px;font-weight:700;color:var(--text)}
+.sc-value.green{color:var(--green)}
+.sc-value.red{color:var(--red)}
+
+/* Table */
+.table-wrap{background:var(--surface);border:1px solid var(--border);border-radius:12px;overflow:hidden;box-shadow:var(--shadow);margin-bottom:20px}
+.table-header{display:flex;align-items:center;justify-content:space-between;padding:16px 18px;border-bottom:1px solid var(--border)}
+.table-title{font-size:14px;font-weight:600}
+table{width:100%;border-collapse:collapse}
+thead th{text-align:left;padding:9px 14px;font-size:11px;font-weight:600;color:var(--text-3);text-transform:uppercase;letter-spacing:.05em;border-bottom:1px solid var(--border);background:var(--surface-2)}
+tbody td{padding:11px 14px;border-bottom:1px solid var(--border);font-size:13px;color:var(--text-2);vertical-align:middle}
+tbody tr:last-child td{border-bottom:none}
+tbody tr:hover td{background:var(--surface-2)}
+tbody tr.loss-row{border-left:3px solid var(--red)}
+.sku-code{font-size:11px;color:var(--text-3);font-family:var(--mono);margin-top:2px}
+.margin-green{color:var(--green);font-weight:700}
+.margin-amber{color:var(--amber);font-weight:700}
+.margin-red{color:var(--red);font-weight:700;background:var(--red-light);padding:2px 6px;border-radius:5px}
+.trend-up{color:var(--green);font-size:12px;font-weight:500}
+.trend-down{color:var(--red);font-size:12px;font-weight:500}
+.trend-flat{color:var(--text-3);font-size:12px}
+.action-link{color:var(--accent);font-size:12px;font-weight:500;cursor:pointer;text-decoration:none}
+.action-link:hover{text-decoration:underline}
+.action-btn-red{background:var(--red-light);color:var(--red);border:1px solid rgba(239,68,68,.2);border-radius:6px;padding:3px 8px;font-size:11px;font-weight:600;cursor:pointer;margin-left:4px}
+
+/* Distribution chart */
+.dist-grid{display:grid;grid-template-columns:minmax(0,1fr) 320px;gap:20px;align-items:start}
+.dist-rows{display:flex;flex-direction:column;gap:10px}
+.dist-row{display:flex;align-items:center;gap:12px}
+.dist-label{width:60px;font-size:12px;color:var(--text-2);text-align:right;flex-shrink:0}
+.dist-track{flex:1;height:10px;background:var(--border);border-radius:99px;overflow:hidden}
+.dist-fill{height:100%;border-radius:99px}
+.dist-count{font-size:12px;color:var(--text-3);width:70px;flex-shrink:0}
+
+/* AI Insight */
+.ai-card{background:linear-gradient(135deg,#4F46E5 0%,#7C3AED 100%);color:#fff;border-radius:12px;padding:20px;margin-top:20px}
+.ai-header{font-size:13px;font-weight:700;margin-bottom:8px;opacity:.85}
+.ai-body{font-size:14px;line-height:1.6}
+</style>
+</head>
+<body>
+
+<div class="app">
+<aside class="sidebar">
+  <div class="sb-logo">
+    <div class="sb-mark">S</div>
+    <span class="sb-name">Synergia<span style="color:var(--accent)">360</span></span>
+  </div>
+  <nav class="sb-nav">
+    <a href="main-dashboard.html" class="sb-link"><i class="fa-solid fa-grid-2"></i> Dashboard</a>
+    <a href="command-palette.html" class="sb-link"><i class="fa-solid fa-bolt"></i> Command Center</a>
+    <a href="dashboard-builder.html" class="sb-link"><i class="fa-solid fa-sliders"></i> Dashboard Builder</a>
+    <span class="sb-section">Orders</span>
+    <a href="order-queue.html" class="sb-link"><i class="fa-solid fa-receipt"></i> Order Queue</a>
+    <a href="returns-queue.html" class="sb-link"><i class="fa-solid fa-rotate-left"></i> Returns</a>
+    <a href="shipments-list.html" class="sb-link"><i class="fa-solid fa-truck-fast"></i> Shipments</a>
+    <a href="routing-rules.html" class="sb-link"><i class="fa-solid fa-code-branch"></i> Routing Rules</a>
+    <a href="order-automation.html" class="sb-link"><i class="fa-solid fa-robot"></i> Automation</a>
+    <span class="sb-section">Inventory</span>
+    <a href="inventory-stock-overview.html" class="sb-link"><i class="fa-solid fa-boxes-stacked"></i> Stock</a>
+    <a href="inventory-stock-take.html" class="sb-link"><i class="fa-solid fa-clipboard-check"></i> Stock Take</a>
+    <a href="purchase-orders.html" class="sb-link"><i class="fa-solid fa-cart-plus"></i> Purchase Orders</a>
+    <a href="suppliers-list.html" class="sb-link"><i class="fa-solid fa-industry"></i> Suppliers</a>
+    <span class="sb-section">Catalogue</span>
+    <a href="catalogue-product-list.html" class="sb-link"><i class="fa-solid fa-tag"></i> Products</a>
+    <a href="catalogue-bom-builder.html" class="sb-link"><i class="fa-solid fa-list-tree"></i> BOM Builder</a>
+    <span class="sb-section">Channels</span>
+    <a href="channels-overview.html" class="sb-link"><i class="fa-solid fa-plug"></i> Overview</a>
+    <a href="listing-manager.html" class="sb-link"><i class="fa-solid fa-store"></i> Listings</a>
+    <a href="pricing-rules.html" class="sb-link"><i class="fa-solid fa-pound-sign"></i> Pricing Rules</a>
+    <span class="sb-section">Customers</span>
+    <a href="customers-list.html" class="sb-link"><i class="fa-solid fa-users"></i> Customers</a>
+    <span class="sb-section">Finance</span>
+    <a href="finance-dashboard.html" class="sb-link"><i class="fa-solid fa-chart-pie"></i> Overview</a>
+    <a href="finance-expense-management.html" class="sb-link"><i class="fa-solid fa-file-invoice"></i> Expenses</a>
+    <a href="sku-profitability.html" class="sb-link active"><i class="fa-solid fa-chart-bar"></i> SKU Profitability</a>
+    <a href="finance-monthly-close.html" class="sb-link"><i class="fa-solid fa-calendar-check"></i> Monthly Close</a>
+    <span class="sb-section">Reports</span>
+    <a href="reports-library.html" class="sb-link"><i class="fa-solid fa-book"></i> Library</a>
+    <a href="report-builder-ai.html" class="sb-link"><i class="fa-solid fa-wand-magic-sparkles"></i> AI Builder</a>
+    <a href="automation-rule-builder.html" class="sb-link"><i class="fa-solid fa-gears"></i> Automation Rules</a>
+    <span class="sb-section">Settings</span>
+    <a href="settings-team.html" class="sb-link"><i class="fa-solid fa-people-group"></i> Team</a>
+    <a href="settings-rbac.html" class="sb-link"><i class="fa-solid fa-shield-halved"></i> Roles &amp; Permissions</a>
+    <a href="settings-integrations.html" class="sb-link"><i class="fa-solid fa-puzzle-piece"></i> Integrations</a>
+    <a href="settings-billing.html" class="sb-link"><i class="fa-solid fa-credit-card"></i> Billing</a>
+    <a href="settings-notifications.html" class="sb-link"><i class="fa-solid fa-bell"></i> Notifications</a>
+    <a href="settings-locale.html" class="sb-link"><i class="fa-solid fa-earth-europe"></i> Locale &amp; Currency</a>
+    <a href="settings-warehouses.html" class="sb-link"><i class="fa-solid fa-warehouse"></i> Warehouses</a>
+    <a href="settings-api-webhooks.html" class="sb-link"><i class="fa-solid fa-code"></i> API &amp; Webhooks</a>
+  </nav>
+  <div class="sb-foot">
+    <div class="sb-av">JW</div>
+    <div>
+      <div class="sb-uname">James Whitcombe</div>
+      <div class="sb-urole">Owner &middot; Acme Co</div>
+    </div>
+  </div>
+</aside>
+
+<div class="main">
+  <div class="topbar">
+    <div class="topbar-left">
+      <div class="topbar-title">SKU Profitability</div>
+      <div class="topbar-breadcrumb">Finance › SKU Profitability</div>
+    </div>
+    <div class="topbar-actions">
+      <button class="btn">📅 Apr 1–30, 2026</button>
+      <button class="btn btn-accent">↓ Export</button>
+    </div>
+  </div>
+
+  <div class="content">
+
+    <!-- Filter row -->
+    <div class="filter-row">
+      <div class="search-inp">
+        <span style="color:var(--text-3);font-size:13px">🔍</span>
+        <input type="text" placeholder="Search SKUs or product names...">
+      </div>
+      <select><option>Channel: All</option><option>Amazon UK</option><option>eBay</option><option>Shopify</option></select>
+      <select><option>Category: All</option><option>Hardware</option><option>Electronics</option><option>Accessories</option><option>Stationery</option></select>
+      <select><option>Show: All</option><option>Margin &gt; 0%</option><option>Margin &lt; 10%</option><option>Loss-Making &lt; 0%</option></select>
+    </div>
+
+    <!-- Stat chips -->
+    <div class="stat-chips">
+      <div class="stat-chip">
+        <div class="sc-label">Avg Margin</div>
+        <div class="sc-value">34.2%</div>
+      </div>
+      <div class="stat-chip">
+        <div class="sc-label">Total SKUs Analysed</div>
+        <div class="sc-value">4,821</div>
+      </div>
+      <div class="stat-chip">
+        <div class="sc-label">Profitable SKUs</div>
+        <div class="sc-value green">4,209</div>
+      </div>
+      <div class="stat-chip">
+        <div class="sc-label">Loss-Making SKUs</div>
+        <div class="sc-value red">87</div>
+      </div>
+    </div>
+
+    <!-- Profitability Table -->
+    <div class="table-wrap">
+      <div class="table-header">
+        <span class="table-title">SKU Profitability — Apr 2026</span>
+        <button class="btn" style="font-size:12px;padding:5px 10px">⚙ Columns</button>
+      </div>
+      <table>
+        <thead>
+          <tr>
+            <th>SKU</th>
+            <th>Product Name</th>
+            <th>Category</th>
+            <th>Revenue</th>
+            <th>COGS</th>
+            <th>Gross Profit</th>
+            <th>Margin</th>
+            <th>Trend</th>
+            <th>Actions</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td><div style="font-family:var(--mono);font-size:11px;color:var(--text-3)">SKU-11234</div></td>
+            <td><div style="font-weight:500;color:var(--text)">Blue Widget Pro 500ml</div></td>
+            <td>Hardware</td>
+            <td style="font-weight:600;color:var(--text)">£12,420</td>
+            <td>£6,820</td>
+            <td style="color:var(--green);font-weight:600">£5,600</td>
+            <td><span class="margin-green">45.1%</span></td>
+            <td class="trend-up">↑ +2.1%</td>
+            <td><a class="action-link">Details</a></td>
+          </tr>
+          <tr>
+            <td><div style="font-family:var(--mono);font-size:11px;color:var(--text-3)">SKU-22341</div></td>
+            <td><div style="font-weight:500;color:var(--text)">Red Gadget Kit</div></td>
+            <td>Electronics</td>
+            <td style="font-weight:600;color:var(--text)">£8,901</td>
+            <td>£5,200</td>
+            <td style="color:var(--green);font-weight:600">£3,701</td>
+            <td><span class="margin-green">41.6%</span></td>
+            <td class="trend-flat">→ 0.0%</td>
+            <td><a class="action-link">Details</a></td>
+          </tr>
+          <tr>
+            <td><div style="font-family:var(--mono);font-size:11px;color:var(--text-3)">SKU-33892</div></td>
+            <td><div style="font-weight:500;color:var(--text)">Premium Cable Set</div></td>
+            <td>Accessories</td>
+            <td style="font-weight:600;color:var(--text)">£6,234</td>
+            <td>£3,870</td>
+            <td style="color:var(--green);font-weight:600">£2,364</td>
+            <td><span class="margin-green">37.9%</span></td>
+            <td class="trend-up">↑ +0.8%</td>
+            <td><a class="action-link">Details</a></td>
+          </tr>
+          <tr>
+            <td><div style="font-family:var(--mono);font-size:11px;color:var(--text-3)">SKU-44521</div></td>
+            <td><div style="font-weight:500;color:var(--text)">Basic Stand Adapter</div></td>
+            <td>Accessories</td>
+            <td style="font-weight:600;color:var(--text)">£3,120</td>
+            <td>£2,340</td>
+            <td style="color:var(--amber);font-weight:600">£780</td>
+            <td><span class="margin-amber">25.0%</span></td>
+            <td class="trend-down">↓ −3.2%</td>
+            <td><a class="action-link">Details</a></td>
+          </tr>
+          <tr>
+            <td><div style="font-family:var(--mono);font-size:11px;color:var(--text-3)">SKU-55671</div></td>
+            <td><div style="font-weight:500;color:var(--text)">Economy Connector</div></td>
+            <td>Accessories</td>
+            <td style="font-weight:600;color:var(--text)">£1,240</td>
+            <td>£980</td>
+            <td style="color:var(--amber);font-weight:600">£260</td>
+            <td><span class="margin-amber">21.0%</span></td>
+            <td class="trend-down">↓ −5.1%</td>
+            <td><a class="action-link">Details</a></td>
+          </tr>
+          <tr>
+            <td><div style="font-family:var(--mono);font-size:11px;color:var(--text-3)">SKU-66230</div></td>
+            <td><div style="font-weight:500;color:var(--text)">Value Pen Pack 10×</div></td>
+            <td>Stationery</td>
+            <td style="font-weight:600;color:var(--text)">£890</td>
+            <td>£740</td>
+            <td style="color:var(--amber);font-weight:600">£150</td>
+            <td><span class="margin-amber">16.9%</span></td>
+            <td class="trend-down">↓ −8.3%</td>
+            <td><a class="action-link">Details</a></td>
+          </tr>
+          <tr class="loss-row">
+            <td><div style="font-family:var(--mono);font-size:11px;color:var(--text-3)">SKU-77412</div></td>
+            <td><div style="font-weight:500;color:var(--text)">Clearance Widget</div></td>
+            <td>Hardware</td>
+            <td style="font-weight:600;color:var(--text)">£320</td>
+            <td>£410</td>
+            <td style="color:var(--red);font-weight:700">−£90</td>
+            <td><span class="margin-red">−28.1%</span></td>
+            <td class="trend-down">↓ −12%</td>
+            <td><a class="action-link">Details</a><button class="action-btn-red">Review</button></td>
+          </tr>
+          <tr class="loss-row">
+            <td><div style="font-family:var(--mono);font-size:11px;color:var(--text-3)">SKU-88901</div></td>
+            <td><div style="font-weight:500;color:var(--text)">Legacy Adapter</div></td>
+            <td>Electronics</td>
+            <td style="font-weight:600;color:var(--text)">£180</td>
+            <td>£240</td>
+            <td style="color:var(--red);font-weight:700">−£60</td>
+            <td><span class="margin-red">−33.3%</span></td>
+            <td class="trend-down">↓ −21%</td>
+            <td><a class="action-link">Details</a><a class="action-link" style="color:var(--red);margin-left:8px">Discontinue</a></td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+
+    <!-- Distribution + AI -->
+    <div class="dist-grid">
+      <div class="card">
+        <div style="font-size:14px;font-weight:600;margin-bottom:16px">Margin Distribution</div>
+        <div class="dist-rows">
+          <div class="dist-row">
+            <div class="dist-label" style="color:var(--accent);font-weight:600">&gt;40%</div>
+            <div class="dist-track"><div class="dist-fill" style="width:75%;background:var(--accent)"></div></div>
+            <div class="dist-count">1,247 SKUs</div>
+          </div>
+          <div class="dist-row">
+            <div class="dist-label" style="color:var(--green);font-weight:600">20–40%</div>
+            <div class="dist-track"><div class="dist-fill" style="width:100%;background:var(--green)"></div></div>
+            <div class="dist-count">2,962 SKUs</div>
+          </div>
+          <div class="dist-row">
+            <div class="dist-label" style="color:var(--amber);font-weight:600">0–20%</div>
+            <div class="dist-track"><div class="dist-fill" style="width:32%;background:var(--amber)"></div></div>
+            <div class="dist-count">525 SKUs</div>
+          </div>
+          <div class="dist-row">
+            <div class="dist-label" style="color:var(--red);font-weight:600">&lt;0%</div>
+            <div class="dist-track"><div class="dist-fill" style="width:5%;background:var(--red)"></div></div>
+            <div class="dist-count">87 SKUs</div>
+          </div>
+        </div>
+      </div>
+
+      <div class="ai-card">
+        <div class="ai-header">🤖 AI Insights</div>
+        <div class="ai-body">SKU-77412 and SKU-88901 are loss-making after shipping and fees. Consider running a clearance promotion or discontinuing. Increasing the SKU-11234 bundle size by 3× could improve margin to 52%.</div>
+      </div>
+    </div>
+
+  </div>
+</div>
+</div>
+
+</body>
+</html>

@@ -1,0 +1,353 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>Pricing — Synergia360</title>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&family=Geist+Mono:wght@400;600&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
+<style>
+  *,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+  :root{
+    --bg:#FFFFFF;--bg-alt:#F8F9FC;--ink:#0F172A;--ink-2:#475569;--ink-3:#94A3B8;
+    --line:#E2E8F0;--indigo:#4F46E5;--indigo-600:#4338CA;--indigo-50:#EEF2FF;
+    --green:#10B981;--shadow-sm:0 1px 2px rgba(15,23,42,.04);
+    --shadow:0 10px 30px -12px rgba(15,23,42,.18),0 4px 10px -6px rgba(15,23,42,.06)
+  }
+  html,body{background:var(--bg);color:var(--ink);font-family:'Inter',sans-serif;-webkit-font-smoothing:antialiased;line-height:1.5}
+  a{color:inherit;text-decoration:none}
+  .container{width:100%;max-width:1200px;margin:0 auto;padding:0 24px}
+
+  .nav{position:sticky;top:0;z-index:50;background:rgba(255,255,255,.85);backdrop-filter:blur(12px);border-bottom:1px solid rgba(226,232,240,.7)}
+  .nav-inner{height:68px;display:flex;align-items:center;justify-content:space-between;gap:32px}
+  .logo{display:flex;align-items:center;gap:10px;font-weight:800;font-size:17px;letter-spacing:-.02em}
+  .logo-mark{width:34px;height:34px;border-radius:9px;background:linear-gradient(135deg,#4F46E5,#7C3AED);display:grid;place-items:center;color:#fff;font-weight:900;box-shadow:0 6px 16px -6px rgba(79,70,229,.6)}
+  .nav-links{display:flex;gap:28px;font-size:14.5px;color:var(--ink-2);font-weight:500}
+  .nav-links a:hover{color:var(--ink)}
+  .nav-links a.active{color:var(--ink)}
+  .nav-cta{display:flex;align-items:center;gap:10px}
+  .btn{display:inline-flex;align-items:center;gap:8px;height:40px;padding:0 18px;border-radius:10px;font-weight:600;font-size:14.5px;cursor:pointer;border:1px solid transparent;transition:all .2s;white-space:nowrap}
+  .btn-primary{background:var(--indigo);color:#fff;box-shadow:0 6px 16px -8px rgba(79,70,229,.7),inset 0 1px 0 rgba(255,255,255,.2)}
+  .btn-primary:hover{background:var(--indigo-600);transform:translateY(-1px)}
+  .btn-ghost{background:transparent}
+  .btn-ghost:hover{background:#F1F5F9}
+  .btn-outline{background:#fff;color:var(--ink);border-color:var(--line)}
+  .btn-outline:hover{border-color:#CBD5E1;background:#F8FAFC}
+  .btn-lg{height:48px;padding:0 22px;font-size:15px;border-radius:11px}
+  .btn-block{width:100%;justify-content:center}
+
+  .hero{position:relative;padding:88px 0 40px;text-align:center}
+  .hero::before{content:"";position:absolute;inset:-20% -10% 30% -10%;background:radial-gradient(60% 60% at 50% 30%,rgba(79,70,229,.08),transparent 70%);z-index:-1}
+  .hero h1{font-size:clamp(40px,6vw,68px);font-weight:900;line-height:1;letter-spacing:-.035em;max-width:14ch;margin:18px auto 0}
+  .hero p{margin:22px auto 0;max-width:580px;font-size:19px;color:var(--ink-2);line-height:1.55}
+  .eyebrow{display:inline-flex;align-items:center;gap:8px;padding:6px 14px;background:#fff;border:1px solid var(--line);border-radius:999px;font-size:13px;color:var(--ink-2);font-weight:500;box-shadow:var(--shadow-sm)}
+
+  .toggle-wrap{margin-top:36px;display:flex;justify-content:center}
+  .toggle{display:inline-flex;background:#F1F5F9;padding:5px;border-radius:12px;position:relative;border:1px solid var(--line)}
+  .toggle button{border:0;background:transparent;padding:8px 18px;font:inherit;font-weight:600;font-size:13.5px;color:var(--ink-2);cursor:pointer;border-radius:8px;display:flex;align-items:center;gap:8px}
+  .toggle button.on{background:#fff;color:var(--ink);box-shadow:0 1px 3px rgba(15,23,42,.08)}
+  .save-badge{font-size:10.5px;font-weight:700;padding:2px 7px;border-radius:5px;background:#ECFDF5;color:#047857;border:1px solid #A7F3D0}
+
+  .plans{padding:50px 0 100px}
+  .plans-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:18px}
+  .plan{background:#fff;border:1px solid var(--line);border-radius:18px;padding:30px 26px;display:flex;flex-direction:column;gap:18px;position:relative}
+  .plan h3{font-size:15px;font-weight:700;letter-spacing:-.01em;color:var(--ink-2);text-transform:uppercase;letter-spacing:.08em}
+  .plan .price{display:flex;align-items:baseline;gap:6px;margin-top:2px}
+  .plan .price .num{font-size:48px;font-weight:900;letter-spacing:-.04em;line-height:1}
+  .plan .price .per{font-size:14px;color:var(--ink-3);font-weight:500}
+  .plan .desc{font-size:14px;color:var(--ink-2);line-height:1.55;min-height:42px}
+  .plan ul{list-style:none;display:flex;flex-direction:column;gap:11px;border-top:1px solid var(--line);padding-top:20px}
+  .plan li{display:flex;gap:10px;align-items:flex-start;font-size:13.5px;color:var(--ink-2)}
+  .plan li i{color:#10B981;font-size:11px;margin-top:6px;flex-shrink:0}
+  .plan li strong{color:var(--ink);font-weight:600}
+  .plan.popular{background:linear-gradient(180deg,#4F46E5 0%,#3730A3 100%);color:#fff;border:0;box-shadow:0 30px 60px -25px rgba(79,70,229,.55);transform:scale(1.02)}
+  .plan.popular h3{color:rgba(255,255,255,.7)}
+  .plan.popular .price .per{color:rgba(255,255,255,.7)}
+  .plan.popular .desc{color:rgba(255,255,255,.85)}
+  .plan.popular ul{border-top-color:rgba(255,255,255,.18)}
+  .plan.popular li{color:rgba(255,255,255,.92)}
+  .plan.popular li strong{color:#fff}
+  .plan.popular li i{color:#A7F3D0}
+  .plan.popular .btn-primary{background:#fff;color:var(--indigo)}
+  .plan.popular .btn-primary:hover{background:#F1F5F9}
+  .pop-badge{position:absolute;top:-12px;left:50%;transform:translateX(-50%);background:#0F172A;color:#fff;font-size:11px;font-weight:700;padding:5px 12px;border-radius:999px;letter-spacing:.04em;text-transform:uppercase}
+
+  /* TABLE */
+  .compare{padding:100px 0;background:var(--bg-alt);border-top:1px solid var(--line);border-bottom:1px solid var(--line)}
+  .section-head{text-align:center;max-width:680px;margin:0 auto 48px}
+  .section-eyebrow{font-size:12.5px;letter-spacing:.14em;text-transform:uppercase;font-weight:700;color:var(--indigo)}
+  .section-head h2{margin-top:14px;font-size:clamp(32px,4vw,46px);font-weight:800;letter-spacing:-.03em}
+  .section-head p{margin-top:14px;font-size:17px;color:var(--ink-2)}
+  .ctable{background:#fff;border:1px solid var(--line);border-radius:16px;overflow:hidden}
+  .ctable .row{display:grid;grid-template-columns:2fr 1fr 1fr 1fr 1fr;align-items:center}
+  .ctable .row > div{padding:14px 18px;font-size:14px;border-bottom:1px solid var(--line)}
+  .ctable .row > div + div{border-left:1px solid var(--line);text-align:center}
+  .ctable .row.head > div{background:#FAFBFD;font-weight:700;font-size:13.5px}
+  .ctable .row.head .pop-col{background:#EEF2FF;color:var(--indigo)}
+  .ctable .row.group > div{background:#F8FAFC;font-weight:700;font-size:11.5px;text-transform:uppercase;letter-spacing:.1em;color:var(--ink-3);padding:10px 18px}
+  .ctable .row > div:first-child{text-align:left;font-weight:500;color:var(--ink-2)}
+  .ctable .check{color:#10B981}
+  .ctable .dash{color:var(--ink-3)}
+  .ctable .row .pop-col{background:rgba(238,242,255,.4)}
+
+  /* FAQ */
+  .faq{padding:100px 0}
+  .faq-list{max-width:760px;margin:0 auto;display:flex;flex-direction:column;gap:12px}
+  .faq-item{background:#fff;border:1px solid var(--line);border-radius:14px;overflow:hidden}
+  .faq-item summary{list-style:none;padding:22px 26px;cursor:pointer;display:flex;justify-content:space-between;align-items:center;gap:16px;font-weight:600;font-size:16px}
+  .faq-item summary::-webkit-details-marker{display:none}
+  .faq-item summary i{color:var(--ink-3);transition:transform .2s}
+  .faq-item[open] summary i{transform:rotate(180deg);color:var(--indigo)}
+  .faq-item .a{padding:0 26px 22px;color:var(--ink-2);font-size:15px;line-height:1.65}
+
+  .cta-section{padding:60px 0 100px}
+  .cta-card{position:relative;overflow:hidden;background:radial-gradient(120% 100% at 50% 0%,#6366F1 0%,#4F46E5 50%,#3730A3 100%);border-radius:24px;padding:70px 40px;text-align:center;color:#fff}
+  .cta-card h2{font-size:clamp(30px,4vw,44px);font-weight:900;letter-spacing:-.03em;line-height:1.05}
+  .cta-card p{margin-top:14px;font-size:17px;color:rgba(255,255,255,.85);max-width:520px;margin-left:auto;margin-right:auto}
+  .cta-card .btn-row{margin-top:28px;display:flex;gap:12px;justify-content:center;flex-wrap:wrap}
+  .cta-card .btn-primary{background:#fff;color:var(--indigo)}
+  .cta-card .btn-outline{background:transparent;color:#fff;border-color:rgba(255,255,255,.3)}
+
+  footer{padding:80px 0 32px;border-top:1px solid var(--line);background:#fff}
+  .foot{display:grid;grid-template-columns:2fr 1fr 1fr 1fr 1fr;gap:48px}
+  .foot-brand p{margin-top:14px;color:var(--ink-2);font-size:14px;max-width:260px;line-height:1.6}
+  .foot-col h6{font-size:12.5px;text-transform:uppercase;letter-spacing:.1em;color:var(--ink-3);font-weight:700;margin-bottom:16px}
+  .foot-col a{display:block;font-size:14px;color:var(--ink-2);padding:5px 0}
+  .foot-col a:hover{color:var(--ink)}
+  .foot-bottom{margin-top:56px;padding-top:24px;border-top:1px solid var(--line);display:flex;justify-content:space-between;font-size:13px;color:var(--ink-3);flex-wrap:wrap;gap:14px}
+  .foot-social{display:flex;gap:14px}
+  .foot-social a{width:32px;height:32px;border-radius:8px;border:1px solid var(--line);display:grid;place-items:center;color:var(--ink-2)}
+
+  @media(max-width:1100px){.plans-grid{grid-template-columns:1fr 1fr}.plan.popular{transform:none}}
+  @media(max-width:900px){.ctable .row{grid-template-columns:1.6fr 1fr 1fr 1fr 1fr;font-size:12px}.nav-links{display:none}.foot{grid-template-columns:1fr 1fr 1fr}}
+  @media(max-width:600px){.plans-grid{grid-template-columns:1fr}.foot{grid-template-columns:1fr 1fr}}
+</style>
+</head>
+<body>
+
+<header class="nav">
+  <div class="container nav-inner">
+    <a class="logo" href="marketing-home.html"><span class="logo-mark">S</span> Synergia360</a>
+    <nav class="nav-links">
+      <a href="marketing-features.html">Features</a>
+      <a href="marketing-pricing.html" class="active">Pricing</a>
+      <a href="#">Integrations</a>
+      <a href="marketing-comparison.html">Compare</a>
+      <a href="#">Blog</a>
+    </nav>
+    <div class="nav-cta">
+      <a class="btn btn-ghost" href="auth-login.html">Sign in</a>
+      <a class="btn btn-primary" href="auth-signup.html">Start free trial</a>
+    </div>
+  </div>
+</header>
+
+<section class="hero">
+  <div class="container">
+    <span class="eyebrow"><i class="fa-solid fa-tag" style="color:var(--indigo)"></i> Pricing in GBP · VAT excluded</span>
+    <h1>Simple, Predictable Pricing</h1>
+    <p>Pick a plan that fits your scale today. Move up or down at any time. No setup fees, no per-order surcharges.</p>
+    <div class="toggle-wrap">
+      <div class="toggle">
+        <button>Monthly</button>
+        <button class="on">Annual <span class="save-badge">Save 20%</span></button>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section class="plans">
+  <div class="container">
+    <div class="plans-grid">
+      <div class="plan">
+        <h3>Starter</h3>
+        <div class="price"><span class="num">£89</span><span class="per">/ month</span></div>
+        <p class="desc">For new sellers connecting their first 2–3 channels.</p>
+        <a class="btn btn-outline btn-block btn-lg" href="auth-signup.html">Start free trial</a>
+        <ul>
+          <li><i class="fa-solid fa-check"></i> Up to <strong>1,500 orders</strong> / month</li>
+          <li><i class="fa-solid fa-check"></i> <strong>3 sales channels</strong> connected</li>
+          <li><i class="fa-solid fa-check"></i> 1 warehouse · 2 team seats</li>
+          <li><i class="fa-solid fa-check"></i> Unified order queue & basic SLA</li>
+          <li><i class="fa-solid fa-check"></i> Real-time inventory sync</li>
+          <li><i class="fa-solid fa-check"></i> Mobile pick & pack app</li>
+          <li><i class="fa-solid fa-check"></i> Standard reporting</li>
+          <li><i class="fa-solid fa-check"></i> Email support</li>
+        </ul>
+      </div>
+      <div class="plan">
+        <h3>Growth</h3>
+        <div class="price"><span class="num">£189</span><span class="per">/ month</span></div>
+        <p class="desc">For brands hitting their stride across multiple marketplaces.</p>
+        <a class="btn btn-outline btn-block btn-lg" href="auth-signup.html">Start free trial</a>
+        <ul>
+          <li><i class="fa-solid fa-check"></i> Up to <strong>8,000 orders</strong> / month</li>
+          <li><i class="fa-solid fa-check"></i> <strong>10 sales channels</strong> connected</li>
+          <li><i class="fa-solid fa-check"></i> 3 warehouses · 6 team seats</li>
+          <li><i class="fa-solid fa-check"></i> Workflow automation builder</li>
+          <li><i class="fa-solid fa-check"></i> Bundles, kits & multi-warehouse</li>
+          <li><i class="fa-solid fa-check"></i> Channel fee reconciliation</li>
+          <li><i class="fa-solid fa-check"></i> Advanced reporting & exports</li>
+          <li><i class="fa-solid fa-check"></i> Chat support · 4h SLA</li>
+        </ul>
+      </div>
+      <div class="plan popular">
+        <span class="pop-badge">Most popular</span>
+        <h3>Pro</h3>
+        <div class="price"><span class="num">£349</span><span class="per">/ month</span></div>
+        <p class="desc">For high-volume operators with complex fulfilment networks.</p>
+        <a class="btn btn-primary btn-block btn-lg" href="auth-signup.html">Start free trial <i class="fa-solid fa-arrow-right"></i></a>
+        <ul>
+          <li><i class="fa-solid fa-check"></i> Up to <strong>30,000 orders</strong> / month</li>
+          <li><i class="fa-solid fa-check"></i> <strong>Unlimited channels</strong></li>
+          <li><i class="fa-solid fa-check"></i> Unlimited warehouses · 20 seats</li>
+          <li><i class="fa-solid fa-check"></i> <strong>AI Copilot</strong> with anomaly alerts</li>
+          <li><i class="fa-solid fa-check"></i> Demand forecasting & repricing</li>
+          <li><i class="fa-solid fa-check"></i> 3PL & EDI integrations</li>
+          <li><i class="fa-solid fa-check"></i> Custom dashboards & API</li>
+          <li><i class="fa-solid fa-check"></i> Priority support · 1h SLA</li>
+        </ul>
+      </div>
+      <div class="plan">
+        <h3>Enterprise</h3>
+        <div class="price"><span class="num">Custom</span></div>
+        <p class="desc">For groups, multi-entity operators and bespoke deployments.</p>
+        <a class="btn btn-outline btn-block btn-lg" href="#">Talk to sales</a>
+        <ul>
+          <li><i class="fa-solid fa-check"></i> <strong>Unlimited</strong> orders & seats</li>
+          <li><i class="fa-solid fa-check"></i> Multi-entity & multi-currency</li>
+          <li><i class="fa-solid fa-check"></i> Dedicated infrastructure & SSO</li>
+          <li><i class="fa-solid fa-check"></i> Custom integrations & SLAs</li>
+          <li><i class="fa-solid fa-check"></i> Sandbox environments</li>
+          <li><i class="fa-solid fa-check"></i> Onboarding manager included</li>
+          <li><i class="fa-solid fa-check"></i> Quarterly business reviews</li>
+          <li><i class="fa-solid fa-check"></i> 24/7 phone support · 15m SLA</li>
+        </ul>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section class="compare">
+  <div class="container">
+    <div class="section-head">
+      <div class="section-eyebrow">Plan comparison</div>
+      <h2>The full feature breakdown</h2>
+      <p>Every plan includes our core platform. Here's what's specific to each tier.</p>
+    </div>
+    <div class="ctable">
+      <div class="row head">
+        <div>Feature</div><div>Starter</div><div>Growth</div><div class="pop-col">Pro</div><div>Enterprise</div>
+      </div>
+      <div class="row group"><div>Order Management</div><div></div><div></div><div class="pop-col"></div><div></div></div>
+      <div class="row"><div>Monthly orders</div><div>1,500</div><div>8,000</div><div class="pop-col"><strong>30,000</strong></div><div>Unlimited</div></div>
+      <div class="row"><div>Unified queue & SLA timers</div><div><i class="fa-solid fa-check check"></i></div><div><i class="fa-solid fa-check check"></i></div><div class="pop-col"><i class="fa-solid fa-check check"></i></div><div><i class="fa-solid fa-check check"></i></div></div>
+      <div class="row"><div>Auto-routing & split fulfilment</div><div><span class="dash">—</span></div><div><i class="fa-solid fa-check check"></i></div><div class="pop-col"><i class="fa-solid fa-check check"></i></div><div><i class="fa-solid fa-check check"></i></div></div>
+      <div class="row"><div>Returns & RMA workflows</div><div>Basic</div><div>Standard</div><div class="pop-col">Advanced</div><div>Custom</div></div>
+      <div class="row"><div>Bulk actions & saved views</div><div><i class="fa-solid fa-check check"></i></div><div><i class="fa-solid fa-check check"></i></div><div class="pop-col"><i class="fa-solid fa-check check"></i></div><div><i class="fa-solid fa-check check"></i></div></div>
+
+      <div class="row group"><div>Inventory</div><div></div><div></div><div class="pop-col"></div><div></div></div>
+      <div class="row"><div>Real-time channel sync</div><div><i class="fa-solid fa-check check"></i></div><div><i class="fa-solid fa-check check"></i></div><div class="pop-col"><i class="fa-solid fa-check check"></i></div><div><i class="fa-solid fa-check check"></i></div></div>
+      <div class="row"><div>Bundles & kits</div><div><span class="dash">—</span></div><div><i class="fa-solid fa-check check"></i></div><div class="pop-col"><i class="fa-solid fa-check check"></i></div><div><i class="fa-solid fa-check check"></i></div></div>
+      <div class="row"><div>Multi-warehouse routing</div><div>1 warehouse</div><div>3 warehouses</div><div class="pop-col">Unlimited</div><div>Unlimited</div></div>
+      <div class="row"><div>Demand forecasting</div><div><span class="dash">—</span></div><div><span class="dash">—</span></div><div class="pop-col"><i class="fa-solid fa-check check"></i></div><div><i class="fa-solid fa-check check"></i></div></div>
+      <div class="row"><div>Lot, batch & expiry tracking</div><div><span class="dash">—</span></div><div><i class="fa-solid fa-check check"></i></div><div class="pop-col"><i class="fa-solid fa-check check"></i></div><div><i class="fa-solid fa-check check"></i></div></div>
+
+      <div class="row group"><div>Channels</div><div></div><div></div><div class="pop-col"></div><div></div></div>
+      <div class="row"><div>Connected channels</div><div>3</div><div>10</div><div class="pop-col"><strong>Unlimited</strong></div><div>Unlimited</div></div>
+      <div class="row"><div>Listing templates & A+ content</div><div><span class="dash">—</span></div><div><i class="fa-solid fa-check check"></i></div><div class="pop-col"><i class="fa-solid fa-check check"></i></div><div><i class="fa-solid fa-check check"></i></div></div>
+      <div class="row"><div>Repricing engine</div><div><span class="dash">—</span></div><div>Rule-based</div><div class="pop-col">AI-driven</div><div>AI-driven</div></div>
+      <div class="row"><div>FBA & FBM management</div><div><span class="dash">—</span></div><div><i class="fa-solid fa-check check"></i></div><div class="pop-col"><i class="fa-solid fa-check check"></i></div><div><i class="fa-solid fa-check check"></i></div></div>
+
+      <div class="row group"><div>Warehouse Management</div><div></div><div></div><div class="pop-col"></div><div></div></div>
+      <div class="row"><div>Mobile pick & pack app</div><div><i class="fa-solid fa-check check"></i></div><div><i class="fa-solid fa-check check"></i></div><div class="pop-col"><i class="fa-solid fa-check check"></i></div><div><i class="fa-solid fa-check check"></i></div></div>
+      <div class="row"><div>Wave & batch picking</div><div><span class="dash">—</span></div><div><i class="fa-solid fa-check check"></i></div><div class="pop-col"><i class="fa-solid fa-check check"></i></div><div><i class="fa-solid fa-check check"></i></div></div>
+      <div class="row"><div>Barcode & ZPL label support</div><div><i class="fa-solid fa-check check"></i></div><div><i class="fa-solid fa-check check"></i></div><div class="pop-col"><i class="fa-solid fa-check check"></i></div><div><i class="fa-solid fa-check check"></i></div></div>
+      <div class="row"><div>3PL & EDI connectors</div><div><span class="dash">—</span></div><div><span class="dash">—</span></div><div class="pop-col"><i class="fa-solid fa-check check"></i></div><div><i class="fa-solid fa-check check"></i></div></div>
+
+      <div class="row group"><div>AI & Automation</div><div></div><div></div><div class="pop-col"></div><div></div></div>
+      <div class="row"><div>Workflow automation builder</div><div><span class="dash">—</span></div><div><i class="fa-solid fa-check check"></i></div><div class="pop-col"><i class="fa-solid fa-check check"></i></div><div><i class="fa-solid fa-check check"></i></div></div>
+      <div class="row"><div>AI Copilot (chat & queries)</div><div><span class="dash">—</span></div><div><span class="dash">—</span></div><div class="pop-col"><i class="fa-solid fa-check check"></i></div><div><i class="fa-solid fa-check check"></i></div></div>
+      <div class="row"><div>Anomaly detection alerts</div><div><span class="dash">—</span></div><div><span class="dash">—</span></div><div class="pop-col"><i class="fa-solid fa-check check"></i></div><div><i class="fa-solid fa-check check"></i></div></div>
+      <div class="row"><div>Listing optimisation suggestions</div><div><span class="dash">—</span></div><div><span class="dash">—</span></div><div class="pop-col"><i class="fa-solid fa-check check"></i></div><div><i class="fa-solid fa-check check"></i></div></div>
+      <div class="row"><div>Custom AI agents</div><div><span class="dash">—</span></div><div><span class="dash">—</span></div><div class="pop-col"><span class="dash">—</span></div><div><i class="fa-solid fa-check check"></i></div></div>
+      <div class="row"><div>Single sign-on (SSO/SAML)</div><div><span class="dash">—</span></div><div><span class="dash">—</span></div><div class="pop-col">Add-on</div><div><i class="fa-solid fa-check check"></i></div></div>
+      <div class="row"><div>Audit logs & compliance pack</div><div><span class="dash">—</span></div><div>Standard</div><div class="pop-col">Advanced</div><div>SOC 2 + ISO</div></div>
+    </div>
+  </div>
+</section>
+
+<section class="faq">
+  <div class="container">
+    <div class="section-head">
+      <div class="section-eyebrow">FAQ</div>
+      <h2>Pricing questions, answered</h2>
+    </div>
+    <div class="faq-list">
+      <details class="faq-item" open>
+        <summary>Is there a long-term contract or commitment? <i class="fa-solid fa-chevron-down"></i></summary>
+        <div class="a">No long-term commitment. All plans are month-to-month with the option to switch to annual billing for a 20% discount. You can cancel, upgrade or downgrade at any time from your billing dashboard. Annual customers can convert to monthly at renewal.</div>
+      </details>
+      <details class="faq-item" open>
+        <summary>What happens during the 14-day trial? <i class="fa-solid fa-chevron-down"></i></summary>
+        <div class="a">Full access to the Pro tier — no credit card required. Connect your channels, import historical orders, and run your operation as if you'd already onboarded. At the end of the trial, pick a plan or extend with our team if you need more time. Data you create during trial migrates straight into your paid workspace.</div>
+      </details>
+      <details class="faq-item">
+        <summary>How does data migration work? <i class="fa-solid fa-chevron-down"></i></summary>
+        <div class="a">We provide guided importers for the most common platforms (Linnworks, Brightpearl, Veeqo, Cin7, NetSuite, Khaos, Volo). On Growth and above we include up to two onboarding sessions with a specialist. Pro and Enterprise customers get a dedicated migration manager.</div>
+      </details>
+      <details class="faq-item">
+        <summary>Can I add more team seats? <i class="fa-solid fa-chevron-down"></i></summary>
+        <div class="a">Yes. Additional seats are £18 per user per month on Starter and Growth, included up to the plan cap on Pro, and unlimited on Enterprise. Seats can be added or removed mid-cycle and are pro-rated automatically.</div>
+      </details>
+      <details class="faq-item">
+        <summary>What if I exceed my monthly order volume? <i class="fa-solid fa-chevron-down"></i></summary>
+        <div class="a">No surprise overage fees. We'll notify you at 80%, 95%, and 100% of plan capacity and recommend an upgrade. Orders continue to flow without interruption — we don't throttle live operations. You can upgrade, top-up, or stay on plan and absorb a soft cap.</div>
+      </details>
+      <details class="faq-item">
+        <summary>Do you offer discounts for non-profits or startups? <i class="fa-solid fa-chevron-down"></i></summary>
+        <div class="a">Yes — we offer 50% off for registered charities and a Founders programme for early-stage brands trading under £400k/year ARR. Apply through our sales team and we'll confirm within 48 hours.</div>
+      </details>
+    </div>
+  </div>
+</section>
+
+<section class="cta-section">
+  <div class="container">
+    <div class="cta-card">
+      <h2>Try it before you buy it</h2>
+      <p>14 days. Full Pro access. No credit card. Get a feel for how Synergia360 fits your operation.</p>
+      <div class="btn-row">
+        <a class="btn btn-primary btn-lg" href="auth-signup.html">Start free trial <i class="fa-solid fa-arrow-right"></i></a>
+        <a class="btn btn-outline btn-lg" href="#"><i class="fa-solid fa-calendar"></i> Book a demo</a>
+      </div>
+    </div>
+  </div>
+</section>
+
+<footer>
+  <div class="container">
+    <div class="foot">
+      <div class="foot-brand">
+        <a class="logo" href="marketing-home.html"><span class="logo-mark">S</span> Synergia360</a>
+        <p>The operating system for multi-channel commerce. Made in London. Trusted globally.</p>
+      </div>
+      <div class="foot-col"><h6>Product</h6><a href="marketing-features.html">Features</a><a href="marketing-pricing.html">Pricing</a><a href="#">Integrations</a><a href="#">Changelog</a></div>
+      <div class="foot-col"><h6>Company</h6><a href="#">About</a><a href="#">Customers</a><a href="#">Careers</a><a href="#">Contact</a></div>
+      <div class="foot-col"><h6>Resources</h6><a href="#">Blog</a><a href="#">Docs</a><a href="#">API reference</a><a href="#">Status</a></div>
+      <div class="foot-col"><h6>Legal</h6><a href="#">Privacy</a><a href="#">Terms</a><a href="#">DPA</a><a href="#">Cookies</a></div>
+    </div>
+    <div class="foot-bottom">
+      <span>© 2026 Synergia360 Ltd. Registered in England & Wales · No. 13495021</span>
+      <div class="foot-social">
+        <a href="#"><i class="fa-brands fa-x-twitter"></i></a>
+        <a href="#"><i class="fa-brands fa-linkedin-in"></i></a>
+        <a href="#"><i class="fa-brands fa-github"></i></a>
+        <a href="#"><i class="fa-brands fa-youtube"></i></a>
+      </div>
+    </div>
+  </div>
+</footer>
+
+</body>
+</html>

@@ -1,0 +1,338 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<title>Order Routing Rules — Synergia360</title>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=Geist+Mono:wght@400;600&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
+<style>
+:root{--bg:#F8F9FC;--surface:#FFFFFF;--surface-2:#F8FAFF;--border:#E2E8F0;--accent:#4F46E5;--accent-dim:rgba(79,70,229,.08);--accent-light:#EEF2FF;--text:#0F172A;--text-2:#475569;--text-3:#94A3B8;--green:#10B981;--green-dim:rgba(16,185,129,.08);--green-light:#ECFDF5;--red:#EF4444;--red-dim:rgba(239,68,68,.08);--red-light:#FEF2F2;--amber:#F59E0B;--amber-dim:rgba(245,158,11,.08);--amber-light:#FFFBEB;--blue:#3B82F6;--font:'Inter',sans-serif;--mono:'Geist Mono',monospace}
+*{box-sizing:border-box;margin:0;padding:0}
+body{font-family:var(--font);background:var(--bg);color:var(--text);font-size:14px;line-height:1.5;-webkit-font-smoothing:antialiased}
+.app{display:flex;min-height:100vh}
+/* sidebar */
+.sidebar{width:240px;background:#fff;border-right:1px solid var(--border);display:flex;flex-direction:column;flex-shrink:0;position:sticky;top:0;height:100vh;overflow:hidden}
+.sb-logo{padding:18px 20px;border-bottom:1px solid var(--border);display:flex;align-items:center;gap:12px;flex-shrink:0}
+.sb-mark{width:36px;height:36px;background:var(--accent);border-radius:9px;display:grid;place-items:center;color:#fff;font-weight:800;font-size:16px;flex-shrink:0}
+.sb-name{font-weight:700;font-size:15px;color:var(--text)}
+.sb-nav{flex:1;padding:10px;overflow-y:auto}
+.sb-section{font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:.07em;color:var(--text-3);padding:14px 8px 4px;display:block}
+.sb-link{display:flex;align-items:center;gap:10px;padding:8px 10px;border-radius:8px;color:var(--text-2);font-size:13px;font-weight:500;text-decoration:none;border-left:2px solid transparent;margin-bottom:1px;transition:background .15s,color .15s}
+.sb-link:hover{background:#F1F5F9;color:var(--text)}
+.sb-link.active{background:var(--accent-light);color:var(--accent);border-left-color:var(--accent);font-weight:600}
+.sb-link i{width:16px;text-align:center;font-size:13px;color:var(--text-3);flex-shrink:0}
+.sb-link.active i{color:var(--accent)}
+.sb-foot{padding:12px 16px;border-top:1px solid var(--border);display:flex;align-items:center;gap:10px;flex-shrink:0}
+.sb-av{width:34px;height:34px;background:var(--accent-light);border-radius:50%;display:grid;place-items:center;color:var(--accent);font-weight:700;font-size:13px;flex-shrink:0}
+.sb-uname{font-size:13px;font-weight:600;color:var(--text);line-height:1.2}
+.sb-urole{font-size:11px;color:var(--text-3)}
+.avatar{width:32px;height:32px;border-radius:50%;background:linear-gradient(135deg,#4F46E5,#7C3AED);color:#fff;display:flex;align-items:center;justify-content:center;font-weight:700;font-size:12px}
+.main{flex:1;display:flex;flex-direction:column;min-width:0}
+.topbar{height:60px;background:var(--surface);border-bottom:1px solid var(--border);display:flex;align-items:center;padding:0 24px;gap:16px;position:sticky;top:0;z-index:10}
+.page-title{font-size:20px;font-weight:700}
+.topbar-right{margin-left:auto;display:flex;align-items:center;gap:14px}
+.search{display:flex;align-items:center;gap:8px;background:var(--surface-2);border:1px solid var(--border);border-radius:8px;padding:7px 12px;width:300px;color:var(--text-3);font-size:13px}
+.icon-btn{width:36px;height:36px;border-radius:8px;background:var(--surface-2);border:1px solid var(--border);display:flex;align-items:center;justify-content:center;color:var(--text-2);cursor:pointer}
+.content{padding:24px;flex:1;max-width:1240px;width:100%}
+.page-head{display:flex;align-items:flex-end;justify-content:space-between;margin-bottom:18px}
+.page-head h1{font-size:26px;font-weight:800;letter-spacing:-.6px}
+.page-head .sub{color:var(--text-2);margin-top:2px;font-size:13px}
+.btn{height:38px;padding:0 14px;border-radius:8px;font-size:13px;font-weight:600;border:1px solid var(--border);background:var(--surface);color:var(--text);display:inline-flex;align-items:center;gap:8px;cursor:pointer}
+.btn.primary{background:var(--accent);color:#fff;border-color:var(--accent)}
+.btn.ghost{background:transparent}
+.banner{display:flex;align-items:flex-start;gap:12px;padding:12px 16px;background:linear-gradient(90deg,#EEF2FF,#FAFAFE);border:1px solid rgba(79,70,229,.18);border-radius:10px;margin-bottom:18px;position:relative}
+.banner .ico{width:34px;height:34px;border-radius:9px;background:var(--accent);color:#fff;display:flex;align-items:center;justify-content:center;flex-shrink:0;box-shadow:0 4px 10px rgba(79,70,229,.25)}
+.banner .ttl{font-weight:700;font-size:13.5px;color:#3730A3}
+.banner .msg{font-size:12.5px;color:var(--text-2);margin-top:2px}
+.banner .x{position:absolute;top:12px;right:12px;color:var(--text-3);cursor:pointer;width:24px;height:24px;display:flex;align-items:center;justify-content:center;border-radius:6px}
+.banner .x:hover{background:rgba(0,0,0,.04)}
+.rules{display:flex;flex-direction:column;gap:12px}
+.rule{background:var(--surface);border:1px solid var(--border);border-radius:12px;box-shadow:0 1px 3px rgba(0,0,0,.04);overflow:hidden;transition:border-color .15s}
+.rule:hover{border-color:#CBD5E1}
+.rule-head{display:flex;align-items:center;gap:14px;padding:14px 16px}
+.drag{width:18px;color:var(--text-3);cursor:grab;font-size:14px}
+.prio{width:30px;height:30px;border-radius:8px;background:var(--accent-light);color:var(--accent);display:flex;align-items:center;justify-content:center;font-weight:800;font-family:var(--mono);font-size:13px;flex-shrink:0}
+.toggle{width:38px;height:22px;border-radius:11px;background:var(--green);position:relative;cursor:pointer;flex-shrink:0;transition:background .15s}
+.toggle::after{content:"";position:absolute;top:2px;left:18px;width:18px;height:18px;border-radius:50%;background:#fff;box-shadow:0 1px 2px rgba(0,0,0,.3);transition:left .15s}
+.toggle.off{background:#CBD5E1}
+.toggle.off::after{left:2px}
+.r-info{flex:1;min-width:0}
+.r-name{font-weight:700;font-size:14.5px;display:flex;align-items:center;gap:8px}
+.r-meta{display:flex;align-items:center;gap:8px;margin-top:6px;flex-wrap:wrap}
+.chip{display:inline-flex;align-items:center;gap:5px;padding:3px 8px;border-radius:6px;font-size:11.5px;font-weight:600;background:#F1F5F9;color:var(--text-2);border:1px solid var(--border);font-family:var(--mono)}
+.chip.if{background:var(--accent-dim);color:var(--accent);border-color:rgba(79,70,229,.18)}
+.chip.then{background:var(--green-dim);color:#047857;border-color:rgba(4,120,87,.18)}
+.chip i{font-size:10px}
+.r-stats{display:flex;align-items:center;gap:18px;font-size:12px;color:var(--text-3);white-space:nowrap}
+.r-stats .v{color:var(--text);font-weight:600;font-family:var(--mono);font-size:13px}
+.r-actions{display:flex;gap:6px}
+.ic-btn{width:32px;height:32px;border-radius:7px;border:1px solid var(--border);background:var(--surface);color:var(--text-2);cursor:pointer;display:flex;align-items:center;justify-content:center;font-size:12px}
+.ic-btn:hover{background:var(--surface-2);color:var(--accent)}
+.r-body{border-top:1px solid var(--border);background:var(--surface-2);padding:18px 18px 18px 60px}
+.section-lbl{font-size:10.5px;text-transform:uppercase;letter-spacing:.08em;color:#64748B;font-weight:800;margin-bottom:10px;display:flex;align-items:center;gap:8px}
+.section-lbl .pill{padding:1px 8px;border-radius:5px;font-size:10px;font-family:var(--mono);font-weight:700}
+.pill.if{background:var(--accent);color:#fff}
+.pill.then{background:var(--green);color:#fff}
+.cond-row{display:flex;gap:8px;align-items:center;margin-bottom:8px;flex-wrap:wrap}
+.fld{height:36px;border:1px solid var(--border);border-radius:8px;padding:0 12px;background:var(--surface);font-size:13px;display:inline-flex;align-items:center;gap:8px;color:var(--text);min-width:0}
+.fld i.chev{margin-left:4px;color:var(--text-3);font-size:10px}
+.fld.op{font-family:var(--mono);font-weight:600;background:#F1F5F9;color:var(--text-2);min-width:90px;justify-content:center}
+.fld.val{flex:1;min-width:140px}
+.add-cond{font-size:12.5px;color:var(--accent);font-weight:600;cursor:pointer;display:inline-flex;align-items:center;gap:5px;margin-top:4px}
+.divider-and{display:flex;align-items:center;gap:10px;margin:8px 0;font-family:var(--mono);font-size:11px;font-weight:700;color:var(--text-3)}
+.divider-and::before,.divider-and::after{content:"";flex:1;height:1px;background:var(--border)}
+.action-block{margin-top:14px}
+.settings-row{display:flex;gap:14px;margin-top:14px;padding-top:14px;border-top:1px dashed var(--border);font-size:13px;flex-wrap:wrap;align-items:center}
+.settings-row .item{display:flex;align-items:center;gap:8px;color:var(--text-2)}
+.settings-row .item strong{color:var(--text);font-weight:600}
+.r-body-actions{display:flex;gap:8px;margin-top:16px;padding-top:14px;border-top:1px solid var(--border)}
+.add-card{border:1.5px dashed #CBD5E1;border-radius:12px;padding:24px;text-align:center;color:var(--accent);font-weight:600;cursor:pointer;background:transparent;display:flex;align-items:center;justify-content:center;gap:8px;font-size:14px}
+.add-card:hover{background:var(--accent-dim);border-color:var(--accent)}
+.dot-pulse{width:8px;height:8px;border-radius:50%;background:var(--green);box-shadow:0 0 0 3px rgba(16,185,129,.18)}
+.disabled-pill{margin-left:8px;font-size:11px;font-weight:600;color:var(--text-3);background:#F1F5F9;padding:2px 7px;border-radius:5px;border:1px solid var(--border)}
+</style>
+</head>
+<body>
+<div class="app">
+  <aside class="sidebar">
+    <div class="sb-logo">
+      <div class="sb-mark">S</div>
+      <span class="sb-name">Synergia<span style="color:var(--accent)">360</span></span>
+    </div>
+    <nav class="sb-nav">
+      <a href="main-dashboard.html" class="sb-link"><i class="fa-solid fa-grid-2"></i> Dashboard</a>
+      <a href="command-palette.html" class="sb-link"><i class="fa-solid fa-bolt"></i> Command Center</a>
+      <a href="dashboard-builder.html" class="sb-link"><i class="fa-solid fa-sliders"></i> Dashboard Builder</a>
+      <span class="sb-section">Orders</span>
+      <a href="order-queue.html" class="sb-link"><i class="fa-solid fa-receipt"></i> Order Queue</a>
+      <a href="returns-queue.html" class="sb-link"><i class="fa-solid fa-rotate-left"></i> Returns</a>
+      <a href="shipments-list.html" class="sb-link"><i class="fa-solid fa-truck-fast"></i> Shipments</a>
+      <a href="routing-rules.html" class="sb-link active"><i class="fa-solid fa-code-branch"></i> Routing Rules</a>
+      <a href="order-automation.html" class="sb-link"><i class="fa-solid fa-robot"></i> Automation</a>
+      <span class="sb-section">Inventory</span>
+      <a href="inventory-stock-overview.html" class="sb-link"><i class="fa-solid fa-boxes-stacked"></i> Stock</a>
+      <a href="inventory-stock-take.html" class="sb-link"><i class="fa-solid fa-clipboard-check"></i> Stock Take</a>
+      <a href="purchase-orders.html" class="sb-link"><i class="fa-solid fa-cart-plus"></i> Purchase Orders</a>
+      <a href="suppliers-list.html" class="sb-link"><i class="fa-solid fa-industry"></i> Suppliers</a>
+      <span class="sb-section">Catalogue</span>
+      <a href="catalogue-product-list.html" class="sb-link"><i class="fa-solid fa-tag"></i> Products</a>
+      <a href="catalogue-bom-builder.html" class="sb-link"><i class="fa-solid fa-list-tree"></i> BOM Builder</a>
+      <span class="sb-section">Channels</span>
+      <a href="channels-overview.html" class="sb-link"><i class="fa-solid fa-plug"></i> Overview</a>
+      <a href="listing-manager.html" class="sb-link"><i class="fa-solid fa-store"></i> Listings</a>
+      <a href="pricing-rules.html" class="sb-link"><i class="fa-solid fa-pound-sign"></i> Pricing Rules</a>
+      <span class="sb-section">Customers</span>
+      <a href="customers-list.html" class="sb-link"><i class="fa-solid fa-users"></i> Customers</a>
+      <span class="sb-section">Finance</span>
+      <a href="finance-dashboard.html" class="sb-link"><i class="fa-solid fa-chart-pie"></i> Overview</a>
+      <a href="finance-expense-management.html" class="sb-link"><i class="fa-solid fa-file-invoice"></i> Expenses</a>
+      <a href="sku-profitability.html" class="sb-link"><i class="fa-solid fa-chart-bar"></i> SKU Profitability</a>
+      <a href="finance-monthly-close.html" class="sb-link"><i class="fa-solid fa-calendar-check"></i> Monthly Close</a>
+      <span class="sb-section">Reports</span>
+      <a href="reports-library.html" class="sb-link"><i class="fa-solid fa-book"></i> Library</a>
+      <a href="report-builder-ai.html" class="sb-link"><i class="fa-solid fa-wand-magic-sparkles"></i> AI Builder</a>
+      <a href="automation-rule-builder.html" class="sb-link"><i class="fa-solid fa-gears"></i> Automation Rules</a>
+      <span class="sb-section">Settings</span>
+      <a href="settings-team.html" class="sb-link"><i class="fa-solid fa-people-group"></i> Team</a>
+      <a href="settings-rbac.html" class="sb-link"><i class="fa-solid fa-shield-halved"></i> Roles &amp; Permissions</a>
+      <a href="settings-integrations.html" class="sb-link"><i class="fa-solid fa-puzzle-piece"></i> Integrations</a>
+      <a href="settings-billing.html" class="sb-link"><i class="fa-solid fa-credit-card"></i> Billing</a>
+      <a href="settings-notifications.html" class="sb-link"><i class="fa-solid fa-bell"></i> Notifications</a>
+      <a href="settings-locale.html" class="sb-link"><i class="fa-solid fa-earth-europe"></i> Locale &amp; Currency</a>
+      <a href="settings-warehouses.html" class="sb-link"><i class="fa-solid fa-warehouse"></i> Warehouses</a>
+      <a href="settings-api-webhooks.html" class="sb-link"><i class="fa-solid fa-code"></i> API &amp; Webhooks</a>
+    </nav>
+    <div class="sb-foot">
+      <div class="sb-av">JW</div>
+      <div>
+        <div class="sb-uname">James Whitcombe</div>
+        <div class="sb-urole">Owner &middot; Acme Co</div>
+      </div>
+    </div>
+  </aside>
+
+  <div class="main">
+    <header class="topbar">
+      <div class="page-title">Routing Rules</div>
+      <div class="topbar-right">
+        <div class="search"><i class="fa-solid fa-magnifying-glass"></i> Search anywhere</div>
+        <div class="icon-btn"><i class="fa-regular fa-bell"></i></div>
+        <div class="avatar">JW</div>
+      </div>
+    </header>
+
+    <div class="content">
+      <div class="page-head">
+        <div>
+          <h1>Order Routing Rules</h1>
+          <div class="sub">5 active rules · last evaluated 14s ago · 1,247 orders routed today</div>
+        </div>
+        <div style="display:flex;gap:10px">
+          <button class="btn"><i class="fa-solid fa-flask"></i>Test Simulator</button>
+          <button class="btn primary"><i class="fa-solid fa-plus"></i>New Rule</button>
+        </div>
+      </div>
+
+      <div class="banner">
+        <div class="ico"><i class="fa-solid fa-circle-info"></i></div>
+        <div>
+          <div class="ttl">Rules execute top-down in priority order</div>
+          <div class="msg">The first matching rule wins unless "Continue evaluating" is enabled. Drag rows to reorder. Disabled rules are skipped.</div>
+        </div>
+        <div class="x"><i class="fa-solid fa-xmark"></i></div>
+      </div>
+
+      <div class="rules">
+        <div class="rule">
+          <div class="rule-head">
+            <div class="drag"><i class="fa-solid fa-grip-vertical"></i></div>
+            <div class="prio">01</div>
+            <div class="toggle"></div>
+            <div class="r-info">
+              <div class="r-name">Express UK → London Premium WH <span class="dot-pulse" title="Currently matching"></span></div>
+              <div class="r-meta">
+                <span class="chip if"><i class="fa-solid fa-filter"></i>IF tag = express AND country = GB</span>
+                <span class="chip then"><i class="fa-solid fa-arrow-right"></i>THEN route to LDN-02 + tag priority</span>
+              </div>
+            </div>
+            <div class="r-stats">
+              <div><span class="v">1,243</span> matches today</div>
+              <div>Last run <span class="v">14s ago</span></div>
+            </div>
+            <div class="r-actions">
+              <button class="ic-btn"><i class="fa-regular fa-pen-to-square"></i></button>
+              <button class="ic-btn"><i class="fa-solid fa-chevron-up"></i></button>
+              <button class="ic-btn"><i class="fa-solid fa-ellipsis"></i></button>
+            </div>
+          </div>
+          <div class="r-body">
+            <div class="section-lbl"><span class="pill if">IF</span>All of the following conditions match</div>
+            <div class="cond-row">
+              <div class="fld" style="min-width:160px">Order tag<i class="fa-solid fa-chevron-down chev"></i></div>
+              <div class="fld op">equals</div>
+              <div class="fld val"><i class="fa-solid fa-bolt" style="color:var(--amber)"></i>express<i class="fa-solid fa-chevron-down chev"></i></div>
+              <button class="ic-btn"><i class="fa-solid fa-xmark"></i></button>
+            </div>
+            <div class="divider-and">AND</div>
+            <div class="cond-row">
+              <div class="fld" style="min-width:160px">Shipping country<i class="fa-solid fa-chevron-down chev"></i></div>
+              <div class="fld op">is in</div>
+              <div class="fld val">GB, JE, GG, IM<i class="fa-solid fa-chevron-down chev"></i></div>
+              <button class="ic-btn"><i class="fa-solid fa-xmark"></i></button>
+            </div>
+            <div class="divider-and">AND</div>
+            <div class="cond-row">
+              <div class="fld" style="min-width:160px">Order value<i class="fa-solid fa-chevron-down chev"></i></div>
+              <div class="fld op">≥</div>
+              <div class="fld val" style="font-family:var(--mono)">£50.00</div>
+              <button class="ic-btn"><i class="fa-solid fa-xmark"></i></button>
+            </div>
+            <a class="add-cond"><i class="fa-solid fa-plus"></i>Add condition</a>
+
+            <div class="action-block">
+              <div class="section-lbl"><span class="pill then">THEN</span>Perform these actions</div>
+              <div class="cond-row">
+                <div class="fld" style="min-width:160px"><i class="fa-solid fa-warehouse" style="color:var(--accent)"></i>Route to warehouse<i class="fa-solid fa-chevron-down chev"></i></div>
+                <div class="fld val"><span style="width:20px;height:20px;font-size:10px;background:var(--accent-light);color:var(--accent);border-radius:4px;display:inline-flex;align-items:center;justify-content:center;font-weight:700;font-family:var(--mono)">PR</span>Premium WH — LDN-02<i class="fa-solid fa-chevron-down chev"></i></div>
+              </div>
+              <div class="cond-row" style="margin-top:8px">
+                <div class="fld" style="min-width:160px"><i class="fa-solid fa-tag" style="color:var(--green)"></i>Add tag<i class="fa-solid fa-chevron-down chev"></i></div>
+                <div class="fld val">priority-dispatch, express-uk</div>
+              </div>
+              <div class="cond-row" style="margin-top:8px">
+                <div class="fld" style="min-width:160px"><i class="fa-solid fa-truck-fast" style="color:var(--blue)"></i>Set carrier<i class="fa-solid fa-chevron-down chev"></i></div>
+                <div class="fld val">Royal Mail Tracked 24<i class="fa-solid fa-chevron-down chev"></i></div>
+              </div>
+            </div>
+
+            <div class="settings-row">
+              <div class="item"><i class="fa-solid fa-arrow-up-1-9" style="color:var(--text-3)"></i>Priority <strong>01</strong></div>
+              <div class="item"><i class="fa-solid fa-stop" style="color:var(--text-3)"></i>Stop after match <strong>Yes</strong></div>
+              <div class="item"><i class="fa-regular fa-clock" style="color:var(--text-3)"></i>Schedule <strong>Always active</strong></div>
+              <div class="item"><i class="fa-solid fa-bell" style="color:var(--text-3)"></i>Notify on match <strong>No</strong></div>
+            </div>
+
+            <div class="r-body-actions">
+              <button class="btn ghost" style="color:var(--red);border-color:rgba(239,68,68,.3)"><i class="fa-regular fa-trash-can"></i>Delete rule</button>
+              <div style="flex:1"></div>
+              <button class="btn"><i class="fa-solid fa-flask"></i>Test against last 100 orders</button>
+              <button class="btn primary"><i class="fa-solid fa-check"></i>Save changes</button>
+            </div>
+          </div>
+        </div>
+
+        <div class="rule">
+          <div class="rule-head">
+            <div class="drag"><i class="fa-solid fa-grip-vertical"></i></div>
+            <div class="prio">02</div>
+            <div class="toggle"></div>
+            <div class="r-info">
+              <div class="r-name">Heavy items → Manchester DC</div>
+              <div class="r-meta">
+                <span class="chip if"><i class="fa-solid fa-filter"></i>IF weight &gt; 5kg</span>
+                <span class="chip then"><i class="fa-solid fa-arrow-right"></i>THEN route to MAN-01 + carrier DPD</span>
+              </div>
+            </div>
+            <div class="r-stats"><div><span class="v">218</span> matches today</div><div>Last run <span class="v">2m ago</span></div></div>
+            <div class="r-actions"><button class="ic-btn"><i class="fa-regular fa-pen-to-square"></i></button><button class="ic-btn"><i class="fa-solid fa-chevron-down"></i></button><button class="ic-btn"><i class="fa-solid fa-ellipsis"></i></button></div>
+          </div>
+        </div>
+
+        <div class="rule">
+          <div class="rule-head">
+            <div class="drag"><i class="fa-solid fa-grip-vertical"></i></div>
+            <div class="prio">03</div>
+            <div class="toggle"></div>
+            <div class="r-info">
+              <div class="r-name">Amazon FBA bypass</div>
+              <div class="r-meta">
+                <span class="chip if"><i class="fa-solid fa-filter"></i>IF channel = Amazon AND fulfilled_by = FBA</span>
+                <span class="chip then"><i class="fa-solid fa-arrow-right"></i>THEN skip routing + mark synced</span>
+              </div>
+            </div>
+            <div class="r-stats"><div><span class="v">412</span> matches today</div><div>Last run <span class="v">38s ago</span></div></div>
+            <div class="r-actions"><button class="ic-btn"><i class="fa-regular fa-pen-to-square"></i></button><button class="ic-btn"><i class="fa-solid fa-chevron-down"></i></button><button class="ic-btn"><i class="fa-solid fa-ellipsis"></i></button></div>
+          </div>
+        </div>
+
+        <div class="rule">
+          <div class="rule-head">
+            <div class="drag"><i class="fa-solid fa-grip-vertical"></i></div>
+            <div class="prio">04</div>
+            <div class="toggle"></div>
+            <div class="r-info">
+              <div class="r-name">EU orders → Rotterdam fulfilment partner</div>
+              <div class="r-meta">
+                <span class="chip if"><i class="fa-solid fa-filter"></i>IF country in EU-27 AND channel ≠ Amazon</span>
+                <span class="chip then"><i class="fa-solid fa-arrow-right"></i>THEN route to RTM-3PL + carrier DHL</span>
+              </div>
+            </div>
+            <div class="r-stats"><div><span class="v">94</span> matches today</div><div>Last run <span class="v">11m ago</span></div></div>
+            <div class="r-actions"><button class="ic-btn"><i class="fa-regular fa-pen-to-square"></i></button><button class="ic-btn"><i class="fa-solid fa-chevron-down"></i></button><button class="ic-btn"><i class="fa-solid fa-ellipsis"></i></button></div>
+          </div>
+        </div>
+
+        <div class="rule" style="opacity:.78">
+          <div class="rule-head">
+            <div class="drag"><i class="fa-solid fa-grip-vertical"></i></div>
+            <div class="prio" style="background:#F1F5F9;color:var(--text-3)">05</div>
+            <div class="toggle off"></div>
+            <div class="r-info">
+              <div class="r-name">Holiday peak overflow → Birmingham<span class="disabled-pill">DISABLED</span></div>
+              <div class="r-meta">
+                <span class="chip if"><i class="fa-solid fa-filter"></i>IF date 20 Nov – 31 Dec AND LDN load &gt; 80%</span>
+                <span class="chip then"><i class="fa-solid fa-arrow-right"></i>THEN route to BHX-01</span>
+              </div>
+            </div>
+            <div class="r-stats"><div><span class="v">0</span> matches today</div><div>Disabled <span class="v">14d ago</span></div></div>
+            <div class="r-actions"><button class="ic-btn"><i class="fa-regular fa-pen-to-square"></i></button><button class="ic-btn"><i class="fa-solid fa-chevron-down"></i></button><button class="ic-btn"><i class="fa-solid fa-ellipsis"></i></button></div>
+          </div>
+        </div>
+
+        <button class="add-card"><i class="fa-solid fa-plus"></i>Add Rule</button>
+      </div>
+    </div>
+  </div>
+</div>
+</body>
+</html>

@@ -1,0 +1,412 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Integrations — Synergia360</title>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
+<style>
+:root{--bg:#F8F9FC;--surface:#FFFFFF;--surface-2:#F8FAFF;--border:#E2E8F0;--accent:#4F46E5;--accent-light:#EEF2FF;--text:#0F172A;--text-2:#475569;--text-3:#94A3B8;--green:#10B981;--red:#EF4444;--amber:#F59E0B;--blue:#3B82F6}
+*{box-sizing:border-box;margin:0;padding:0}
+body{background:var(--bg);color:var(--text);font-family:'Inter',sans-serif;font-size:14px;display:flex;min-height:100vh}
+
+/* CANONICAL SIDEBAR */
+.sidebar{width:240px;background:#fff;border-right:1px solid var(--border);display:flex;flex-direction:column;flex-shrink:0;position:sticky;top:0;height:100vh;overflow:hidden}
+.sb-logo{padding:18px 20px;border-bottom:1px solid var(--border);display:flex;align-items:center;gap:12px;flex-shrink:0}
+.sb-mark{width:36px;height:36px;background:var(--accent);border-radius:9px;display:grid;place-items:center;color:#fff;font-weight:800;font-size:16px;flex-shrink:0}
+.sb-name{font-weight:700;font-size:15px;color:var(--text)}
+.sb-nav{flex:1;padding:10px;overflow-y:auto}
+.sb-section{font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:.07em;color:var(--text-3);padding:14px 8px 4px;display:block}
+.sb-link{display:flex;align-items:center;gap:10px;padding:8px 10px;border-radius:8px;color:var(--text-2);font-size:13px;font-weight:500;text-decoration:none;border-left:2px solid transparent;margin-bottom:1px;transition:background .15s,color .15s}
+.sb-link:hover{background:#F1F5F9;color:var(--text)}
+.sb-link.active{background:var(--accent-light);color:var(--accent);border-left-color:var(--accent);font-weight:600}
+.sb-link i{width:16px;text-align:center;font-size:13px;color:var(--text-3);flex-shrink:0}
+.sb-link.active i{color:var(--accent)}
+.sb-foot{padding:12px 16px;border-top:1px solid var(--border);display:flex;align-items:center;gap:10px;flex-shrink:0}
+.sb-av{width:34px;height:34px;background:var(--accent-light);border-radius:50%;display:grid;place-items:center;color:var(--accent);font-weight:700;font-size:13px;flex-shrink:0}
+.sb-uname{font-size:13px;font-weight:600;color:var(--text);line-height:1.2}
+.sb-urole{font-size:11px;color:var(--text-3)}
+
+/* MAIN LAYOUT */
+.main{flex:1;display:flex;flex-direction:column;min-height:100vh;overflow-x:hidden}
+
+/* TOPBAR */
+.topbar{height:60px;background:var(--surface);border-bottom:1px solid var(--border);display:flex;align-items:center;padding:0 28px;gap:14px;flex-shrink:0}
+.topbar-title{font-size:19px;font-weight:700;letter-spacing:-.01em;color:var(--text)}
+.topbar-right{margin-left:auto;display:flex;align-items:center;gap:10px}
+.btn{display:inline-flex;align-items:center;gap:7px;padding:8px 15px;border-radius:8px;font-size:13px;font-weight:500;cursor:pointer;border:1px solid transparent;font-family:'Inter',sans-serif;transition:all .15s;text-decoration:none}
+.btn-primary{background:var(--accent);color:#fff;border-color:var(--accent)}
+.btn-primary:hover{background:#4338CA}
+.btn-ghost{background:var(--surface);color:var(--text-2);border-color:var(--border)}
+.btn-ghost:hover{color:var(--text);border-color:#94A3B8}
+.icon-btn{width:36px;height:36px;border-radius:8px;border:1px solid var(--border);background:var(--surface);display:grid;place-items:center;cursor:pointer;color:var(--text-2)}
+.icon-btn:hover{background:var(--surface-2);color:var(--text)}
+
+/* PAGE BODY */
+.page-body{flex:1;padding:28px;display:flex;flex-direction:column;gap:24px;overflow-y:auto}
+
+/* STAT CARDS */
+.stat-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:16px}
+.stat-card{background:var(--surface);border:1px solid var(--border);border-radius:12px;padding:20px 22px;display:flex;flex-direction:column;gap:4px}
+.stat-card .label{font-size:12px;font-weight:500;color:var(--text-3);text-transform:uppercase;letter-spacing:.05em}
+.stat-card .value{font-size:28px;font-weight:700;color:var(--text);line-height:1.1;letter-spacing:-.02em}
+.stat-card .sub{font-size:12px;color:var(--text-3);margin-top:2px;display:flex;align-items:center;gap:5px}
+.stat-card .sub .dot{width:7px;height:7px;border-radius:50%;flex-shrink:0}
+.dot-green{background:var(--green)}
+.dot-amber{background:var(--amber)}
+.dot-red{background:var(--red)}
+.dot-blue{background:var(--blue)}
+
+/* TAB BAR */
+.tab-bar{display:flex;gap:2px;background:var(--surface);border:1px solid var(--border);border-radius:10px;padding:4px;align-self:flex-start}
+.tab{padding:7px 16px;border-radius:7px;font-size:13px;font-weight:500;color:var(--text-2);cursor:pointer;transition:all .15s;border:none;background:transparent;font-family:'Inter',sans-serif}
+.tab:hover{color:var(--text);background:var(--surface-2)}
+.tab.active{background:var(--accent);color:#fff;font-weight:600}
+
+/* INTEGRATION GRID */
+.section-header{display:flex;align-items:center;justify-content:space-between}
+.section-title{font-size:15px;font-weight:600;color:var(--text)}
+.section-sub{font-size:12px;color:var(--text-3)}
+.int-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:16px}
+.int-card{background:var(--surface);border:1px solid var(--border);border-radius:12px;padding:20px;display:flex;flex-direction:column;gap:14px;transition:box-shadow .15s,border-color .15s}
+.int-card:hover{border-color:#C7D2FE;box-shadow:0 4px 16px rgba(79,70,229,.07)}
+.int-card-header{display:flex;align-items:flex-start;gap:14px}
+.int-logo{width:48px;height:48px;border-radius:10px;display:grid;place-items:center;font-weight:800;font-size:14px;color:#fff;flex-shrink:0;letter-spacing:-.01em}
+.logo-az{background:linear-gradient(135deg,#FF9900,#FFB733)}
+.logo-sh{background:linear-gradient(135deg,#96BF48,#6FA13A)}
+.logo-eb{background:linear-gradient(135deg,#E53238,#F5AF02)}
+.logo-tt{background:linear-gradient(135deg,#010101,#69C9D0)}
+.logo-rm{background:linear-gradient(135deg,#E30613,#C0000F)}
+.logo-dh{background:linear-gradient(135deg,#FFCC00,#F5A800)}
+.logo-qb{background:linear-gradient(135deg,#2CA01C,#1A7912)}
+.logo-kl{background:linear-gradient(135deg,#000000,#333333)}
+.logo-ga{background:linear-gradient(135deg,#E37400,#F9AB00)}
+.int-meta{flex:1;min-width:0}
+.int-name{font-size:14px;font-weight:600;color:var(--text);margin-bottom:2px}
+.int-desc{font-size:12px;color:var(--text-3);line-height:1.45}
+.badge{display:inline-flex;align-items:center;gap:5px;padding:3px 9px;border-radius:6px;font-size:11px;font-weight:600;flex-shrink:0}
+.badge-green{background:#ECFDF5;color:#065F46}
+.badge-blue{background:#EFF6FF;color:#1D4ED8}
+.badge-amber{background:#FFFBEB;color:#92400E}
+.badge i{font-size:9px}
+.int-stat{font-size:11px;color:var(--text-3);display:flex;align-items:center;gap:5px}
+.int-stat i{font-size:10px;color:var(--green)}
+.int-stat.amber i{color:var(--amber)}
+.int-footer{display:flex;align-items:center;justify-content:space-between;padding-top:10px;border-top:1px solid var(--border)}
+.btn-sm{padding:6px 12px;font-size:12px;border-radius:7px}
+.last-sync{font-size:11px;color:var(--text-3)}
+
+/* MARKETPLACE BANNER */
+.mkt-banner{background:linear-gradient(135deg,#4F46E5 0%,#7C3AED 100%);border-radius:14px;padding:28px 32px;display:flex;align-items:center;gap:24px;margin-top:4px}
+.mkt-text{flex:1}
+.mkt-title{font-size:17px;font-weight:700;color:#fff;margin-bottom:6px}
+.mkt-sub{font-size:13px;color:rgba(255,255,255,.75);line-height:1.5}
+.mkt-count{font-size:36px;font-weight:800;color:#fff;letter-spacing:-.02em;opacity:.15;flex-shrink:0}
+.btn-white{background:#fff;color:var(--accent);border-color:#fff;font-weight:600}
+.btn-white:hover{background:#EEF2FF}
+
+/* SEARCH BAR */
+.search-row{display:flex;align-items:center;gap:12px}
+.search-box{display:flex;align-items:center;gap:8px;background:var(--surface);border:1px solid var(--border);border-radius:8px;padding:8px 14px;min-width:260px}
+.search-box input{border:none;background:transparent;outline:none;font-family:'Inter',sans-serif;font-size:13px;color:var(--text);flex:1;width:200px}
+.search-box i{color:var(--text-3);font-size:13px}
+</style>
+</head>
+<body>
+
+<!-- SIDEBAR -->
+<aside class="sidebar">
+  <div class="sb-logo">
+    <div class="sb-mark">S</div>
+    <span class="sb-name">Synergia<span style="color:var(--accent)">360</span></span>
+  </div>
+  <nav class="sb-nav">
+    <a href="main-dashboard.html" class="sb-link"><i class="fa-solid fa-grid-2"></i> Dashboard</a>
+    <a href="command-palette.html" class="sb-link"><i class="fa-solid fa-bolt"></i> Command Center</a>
+    <a href="dashboard-builder.html" class="sb-link"><i class="fa-solid fa-sliders"></i> Dashboard Builder</a>
+    <span class="sb-section">Orders</span>
+    <a href="order-queue.html" class="sb-link"><i class="fa-solid fa-receipt"></i> Order Queue</a>
+    <a href="returns-queue.html" class="sb-link"><i class="fa-solid fa-rotate-left"></i> Returns</a>
+    <a href="shipments-list.html" class="sb-link"><i class="fa-solid fa-truck-fast"></i> Shipments</a>
+    <a href="routing-rules.html" class="sb-link"><i class="fa-solid fa-code-branch"></i> Routing Rules</a>
+    <a href="order-automation.html" class="sb-link"><i class="fa-solid fa-robot"></i> Automation</a>
+    <span class="sb-section">Inventory</span>
+    <a href="inventory-stock-overview.html" class="sb-link"><i class="fa-solid fa-boxes-stacked"></i> Stock</a>
+    <a href="inventory-stock-take.html" class="sb-link"><i class="fa-solid fa-clipboard-check"></i> Stock Take</a>
+    <a href="purchase-orders.html" class="sb-link"><i class="fa-solid fa-cart-plus"></i> Purchase Orders</a>
+    <a href="suppliers-list.html" class="sb-link"><i class="fa-solid fa-industry"></i> Suppliers</a>
+    <span class="sb-section">Catalogue</span>
+    <a href="catalogue-product-list.html" class="sb-link"><i class="fa-solid fa-tag"></i> Products</a>
+    <a href="catalogue-bom-builder.html" class="sb-link"><i class="fa-solid fa-list-tree"></i> BOM Builder</a>
+    <span class="sb-section">Channels</span>
+    <a href="channels-overview.html" class="sb-link"><i class="fa-solid fa-plug"></i> Overview</a>
+    <a href="listing-manager.html" class="sb-link"><i class="fa-solid fa-store"></i> Listings</a>
+    <a href="pricing-rules.html" class="sb-link"><i class="fa-solid fa-pound-sign"></i> Pricing Rules</a>
+    <span class="sb-section">Customers</span>
+    <a href="customers-list.html" class="sb-link"><i class="fa-solid fa-users"></i> Customers</a>
+    <span class="sb-section">Finance</span>
+    <a href="finance-dashboard.html" class="sb-link"><i class="fa-solid fa-chart-pie"></i> Overview</a>
+    <a href="finance-expense-management.html" class="sb-link"><i class="fa-solid fa-file-invoice"></i> Expenses</a>
+    <a href="sku-profitability.html" class="sb-link"><i class="fa-solid fa-chart-bar"></i> SKU Profitability</a>
+    <a href="finance-monthly-close.html" class="sb-link"><i class="fa-solid fa-calendar-check"></i> Monthly Close</a>
+    <span class="sb-section">Reports</span>
+    <a href="reports-library.html" class="sb-link"><i class="fa-solid fa-book"></i> Library</a>
+    <a href="report-builder-ai.html" class="sb-link"><i class="fa-solid fa-wand-magic-sparkles"></i> AI Builder</a>
+    <a href="automation-rule-builder.html" class="sb-link"><i class="fa-solid fa-gears"></i> Automation Rules</a>
+    <span class="sb-section">Settings</span>
+    <a href="settings-team.html" class="sb-link"><i class="fa-solid fa-people-group"></i> Team</a>
+    <a href="settings-rbac.html" class="sb-link"><i class="fa-solid fa-shield-halved"></i> Roles &amp; Permissions</a>
+    <a href="settings-integrations.html" class="sb-link active"><i class="fa-solid fa-puzzle-piece"></i> Integrations</a>
+    <a href="settings-billing.html" class="sb-link"><i class="fa-solid fa-credit-card"></i> Billing</a>
+    <a href="settings-notifications.html" class="sb-link"><i class="fa-solid fa-bell"></i> Notifications</a>
+    <a href="settings-locale.html" class="sb-link"><i class="fa-solid fa-earth-europe"></i> Locale &amp; Currency</a>
+    <a href="settings-warehouses.html" class="sb-link"><i class="fa-solid fa-warehouse"></i> Warehouses</a>
+    <a href="settings-api-webhooks.html" class="sb-link"><i class="fa-solid fa-code"></i> API &amp; Webhooks</a>
+  </nav>
+  <div class="sb-foot">
+    <div class="sb-av">JW</div>
+    <div>
+      <div class="sb-uname">James Whitcombe</div>
+      <div class="sb-urole">Owner &middot; Acme Co</div>
+    </div>
+  </div>
+</aside>
+
+<!-- MAIN -->
+<div class="main">
+
+  <!-- TOPBAR -->
+  <div class="topbar">
+    <span class="topbar-title">Integrations</span>
+    <div class="topbar-right">
+      <div class="search-box">
+        <i class="fa-solid fa-magnifying-glass"></i>
+        <input type="text" placeholder="Search integrations…">
+      </div>
+      <button class="btn btn-primary"><i class="fa-solid fa-store"></i> Browse Marketplace</button>
+      <button class="icon-btn"><i class="fa-solid fa-gear"></i></button>
+    </div>
+  </div>
+
+  <!-- PAGE BODY -->
+  <div class="page-body">
+
+    <!-- STAT CARDS -->
+    <div class="stat-grid">
+      <div class="stat-card">
+        <span class="label">Connected</span>
+        <span class="value">12</span>
+        <span class="sub"><span class="dot dot-green"></span> All healthy</span>
+      </div>
+      <div class="stat-card">
+        <span class="label">Pending Setup</span>
+        <span class="value">3</span>
+        <span class="sub"><span class="dot dot-amber"></span> Action required</span>
+      </div>
+      <div class="stat-card">
+        <span class="label">Errors</span>
+        <span class="value" style="color:var(--text-3)">0</span>
+        <span class="sub"><span class="dot dot-green"></span> No issues detected</span>
+      </div>
+      <div class="stat-card">
+        <span class="label">API Calls Today</span>
+        <span class="value">847</span>
+        <span class="sub"><span class="dot dot-blue"></span> Across all integrations</span>
+      </div>
+    </div>
+
+    <!-- TAB BAR -->
+    <div>
+      <div class="tab-bar">
+        <button class="tab active">All</button>
+        <button class="tab">E-commerce</button>
+        <button class="tab">Marketplaces</button>
+        <button class="tab">Shipping</button>
+        <button class="tab">Accounting</button>
+        <button class="tab">Marketing</button>
+      </div>
+    </div>
+
+    <!-- SECTION HEADER -->
+    <div class="section-header">
+      <div>
+        <div class="section-title">Your Integrations</div>
+        <div class="section-sub">12 connected &middot; last synced 2 minutes ago</div>
+      </div>
+      <button class="btn btn-ghost btn-sm"><i class="fa-solid fa-arrow-rotate-right"></i> Sync All</button>
+    </div>
+
+    <!-- INTEGRATION GRID -->
+    <div class="int-grid">
+
+      <!-- Amazon -->
+      <div class="int-card">
+        <div class="int-card-header">
+          <div class="int-logo logo-az">AZ</div>
+          <div class="int-meta">
+            <div class="int-name">Amazon</div>
+            <div class="int-desc">Multi-marketplace selling: UK, DE, FR, IT, ES. FBA &amp; FBM.</div>
+          </div>
+          <span class="badge badge-green"><i class="fa-solid fa-circle-check"></i> Connected</span>
+        </div>
+        <div class="int-stat"><i class="fa-solid fa-arrow-down-to-line"></i> 4,821 orders synced today</div>
+        <div class="int-footer">
+          <span class="last-sync">Last sync: 2 min ago</span>
+          <button class="btn btn-ghost btn-sm"><i class="fa-solid fa-gear"></i> Configure</button>
+        </div>
+      </div>
+
+      <!-- Shopify -->
+      <div class="int-card">
+        <div class="int-card-header">
+          <div class="int-logo logo-sh">SH</div>
+          <div class="int-meta">
+            <div class="int-name">Shopify</div>
+            <div class="int-desc">Direct-to-consumer store, inventory sync &amp; fulfilment.</div>
+          </div>
+          <span class="badge badge-green"><i class="fa-solid fa-circle-check"></i> Connected</span>
+        </div>
+        <div class="int-stat"><i class="fa-solid fa-arrow-down-to-line"></i> 1,247 orders synced today</div>
+        <div class="int-footer">
+          <span class="last-sync">Last sync: 2 min ago</span>
+          <button class="btn btn-ghost btn-sm"><i class="fa-solid fa-gear"></i> Configure</button>
+        </div>
+      </div>
+
+      <!-- eBay -->
+      <div class="int-card">
+        <div class="int-card-header">
+          <div class="int-logo logo-eb">EB</div>
+          <div class="int-meta">
+            <div class="int-name">eBay</div>
+            <div class="int-desc">UK &amp; international marketplace listings and order imports.</div>
+          </div>
+          <span class="badge badge-green"><i class="fa-solid fa-circle-check"></i> Connected</span>
+        </div>
+        <div class="int-stat"><i class="fa-solid fa-arrow-down-to-line"></i> 892 orders synced today</div>
+        <div class="int-footer">
+          <span class="last-sync">Last sync: 3 min ago</span>
+          <button class="btn btn-ghost btn-sm"><i class="fa-solid fa-gear"></i> Configure</button>
+        </div>
+      </div>
+
+      <!-- TikTok Shop -->
+      <div class="int-card">
+        <div class="int-card-header">
+          <div class="int-logo logo-tt">TT</div>
+          <div class="int-meta">
+            <div class="int-name">TikTok Shop</div>
+            <div class="int-desc">Social commerce orders, live shopping fulfilment sync.</div>
+          </div>
+          <span class="badge badge-green"><i class="fa-solid fa-circle-check"></i> Connected</span>
+        </div>
+        <div class="int-stat"><i class="fa-solid fa-arrow-down-to-line"></i> 312 orders synced today</div>
+        <div class="int-footer">
+          <span class="last-sync">Last sync: 5 min ago</span>
+          <button class="btn btn-ghost btn-sm"><i class="fa-solid fa-gear"></i> Configure</button>
+        </div>
+      </div>
+
+      <!-- Royal Mail -->
+      <div class="int-card">
+        <div class="int-card-header">
+          <div class="int-logo logo-rm">RM</div>
+          <div class="int-meta">
+            <div class="int-name">Royal Mail</div>
+            <div class="int-desc">Label generation, Click &amp; Drop, tracked &amp; untracked services.</div>
+          </div>
+          <span class="badge badge-green"><i class="fa-solid fa-circle-check"></i> Connected</span>
+        </div>
+        <div class="int-stat"><i class="fa-solid fa-truck-fast"></i> 2,841 shipments manifested</div>
+        <div class="int-footer">
+          <span class="last-sync">Last sync: 1 min ago</span>
+          <button class="btn btn-ghost btn-sm"><i class="fa-solid fa-gear"></i> Configure</button>
+        </div>
+      </div>
+
+      <!-- DHL Express -->
+      <div class="int-card">
+        <div class="int-card-header">
+          <div class="int-logo logo-dh">DH</div>
+          <div class="int-meta">
+            <div class="int-name">DHL Express</div>
+            <div class="int-desc">International express shipping, customs docs &amp; tracking.</div>
+          </div>
+          <span class="badge badge-blue"><i class="fa-solid fa-circle-plus"></i> Available</span>
+        </div>
+        <div class="int-stat" style="color:var(--text-3)"><i class="fa-solid fa-circle-info" style="color:var(--blue)"></i> Connect to enable international shipping</div>
+        <div class="int-footer">
+          <span class="last-sync">Not connected</span>
+          <button class="btn btn-primary btn-sm"><i class="fa-solid fa-plug"></i> Connect</button>
+        </div>
+      </div>
+
+      <!-- QuickBooks -->
+      <div class="int-card" style="border-color:#FDE68A">
+        <div class="int-card-header">
+          <div class="int-logo logo-qb">QB</div>
+          <div class="int-meta">
+            <div class="int-name">QuickBooks</div>
+            <div class="int-desc">Accounting sync: invoices, expenses, VAT returns &amp; P&amp;L.</div>
+          </div>
+          <span class="badge badge-amber"><i class="fa-solid fa-clock"></i> Pending</span>
+        </div>
+        <div class="int-stat amber" style="color:#92400E"><i class="fa-solid fa-triangle-exclamation"></i> Setup in progress — OAuth required</div>
+        <div class="int-footer">
+          <span class="last-sync">Started 1 hour ago</span>
+          <button class="btn btn-ghost btn-sm" style="color:var(--amber);border-color:#FDE68A"><i class="fa-solid fa-arrow-right"></i> Resume Setup</button>
+        </div>
+      </div>
+
+      <!-- Klaviyo -->
+      <div class="int-card">
+        <div class="int-card-header">
+          <div class="int-logo logo-kl">KL</div>
+          <div class="int-meta">
+            <div class="int-name">Klaviyo</div>
+            <div class="int-desc">Email &amp; SMS marketing automation, customer segments.</div>
+          </div>
+          <span class="badge badge-blue"><i class="fa-solid fa-circle-plus"></i> Available</span>
+        </div>
+        <div class="int-stat" style="color:var(--text-3)"><i class="fa-solid fa-circle-info" style="color:var(--blue)"></i> Sync customers &amp; purchase events</div>
+        <div class="int-footer">
+          <span class="last-sync">Not connected</span>
+          <button class="btn btn-primary btn-sm"><i class="fa-solid fa-plug"></i> Connect</button>
+        </div>
+      </div>
+
+      <!-- Google Analytics -->
+      <div class="int-card">
+        <div class="int-card-header">
+          <div class="int-logo logo-ga">GA</div>
+          <div class="int-meta">
+            <div class="int-name">Google Analytics</div>
+            <div class="int-desc">GA4 revenue events, conversion tracking &amp; audience data.</div>
+          </div>
+          <span class="badge badge-blue"><i class="fa-solid fa-circle-plus"></i> Available</span>
+        </div>
+        <div class="int-stat" style="color:var(--text-3)"><i class="fa-solid fa-circle-info" style="color:var(--blue)"></i> Push ecommerce events to GA4</div>
+        <div class="int-footer">
+          <span class="last-sync">Not connected</span>
+          <button class="btn btn-primary btn-sm"><i class="fa-solid fa-plug"></i> Connect</button>
+        </div>
+      </div>
+
+    </div>
+
+    <!-- MARKETPLACE BANNER -->
+    <div class="mkt-banner">
+      <div class="mkt-text">
+        <div class="mkt-title">Explore the Synergia360 Marketplace</div>
+        <div class="mkt-sub">Connect 200+ platforms — couriers, sales channels, ERPs, accountancy tools, and marketing apps — in minutes, no code required.</div>
+        <button class="btn btn-white" style="margin-top:16px"><i class="fa-solid fa-store"></i> Open Marketplace</button>
+      </div>
+      <div class="mkt-count">200+</div>
+    </div>
+
+  </div><!-- /page-body -->
+</div><!-- /main -->
+
+</body>
+</html>

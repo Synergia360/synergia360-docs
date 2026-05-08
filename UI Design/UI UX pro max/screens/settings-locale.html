@@ -1,0 +1,508 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Synergia360 — Locale &amp; Currency</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
+<style>
+:root{
+  --bg:#F8F9FC;--surface:#FFFFFF;--surface-2:#F8FAFF;--border:#E2E8F0;
+  --accent:#4F46E5;--accent-dim:rgba(79,70,229,.08);--accent-light:#EEF2FF;
+  --text:#0F172A;--text-2:#475569;--text-3:#94A3B8;
+  --green:#10B981;--green-dim:rgba(16,185,129,.08);--green-light:#ECFDF5;
+  --red:#EF4444;--red-dim:rgba(239,68,68,.08);--red-light:#FEF2F2;
+  --amber:#F59E0B;--amber-dim:rgba(245,158,11,.08);--amber-light:#FFFBEB;
+  --blue:#3B82F6;--font:'Inter',sans-serif;--mono:'Geist Mono',monospace;
+  --shadow-sm:0 1px 2px rgba(0,0,0,.05);--shadow:0 1px 3px rgba(0,0,0,.08),0 1px 2px rgba(0,0,0,.04)
+}
+*{box-sizing:border-box;margin:0;padding:0}
+body{font-family:var(--font);background:var(--bg);color:var(--text);font-size:14px;line-height:1.5;display:flex;min-height:100vh}
+
+/* sidebar */
+.sidebar{width:240px;background:#fff;border-right:1px solid var(--border);display:flex;flex-direction:column;flex-shrink:0;position:sticky;top:0;height:100vh;overflow:hidden}
+.sb-logo{padding:18px 20px;border-bottom:1px solid var(--border);display:flex;align-items:center;gap:12px;flex-shrink:0}
+.sb-mark{width:36px;height:36px;background:var(--accent);border-radius:9px;display:grid;place-items:center;color:#fff;font-weight:800;font-size:16px;flex-shrink:0}
+.sb-name{font-weight:700;font-size:15px;color:var(--text)}
+.sb-nav{flex:1;padding:10px;overflow-y:auto}
+.sb-section{font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:.07em;color:var(--text-3);padding:14px 8px 4px;display:block}
+.sb-link{display:flex;align-items:center;gap:10px;padding:8px 10px;border-radius:8px;color:var(--text-2);font-size:13px;font-weight:500;text-decoration:none;border-left:2px solid transparent;margin-bottom:1px;transition:background .15s,color .15s}
+.sb-link:hover{background:#F1F5F9;color:var(--text)}
+.sb-link.active{background:var(--accent-light);color:var(--accent);border-left-color:var(--accent);font-weight:600}
+.sb-link i{width:16px;text-align:center;font-size:13px;color:var(--text-3);flex-shrink:0}
+.sb-link.active i{color:var(--accent)}
+.sb-foot{padding:12px 16px;border-top:1px solid var(--border);display:flex;align-items:center;gap:10px;flex-shrink:0}
+.sb-av{width:34px;height:34px;background:var(--accent-light);border-radius:50%;display:grid;place-items:center;color:var(--accent);font-weight:700;font-size:13px;flex-shrink:0}
+.sb-uname{font-size:13px;font-weight:600;color:var(--text);line-height:1.2}
+.sb-urole{font-size:11px;color:var(--text-3)}
+
+/* Main */
+.main{flex:1;min-height:100vh;display:flex;flex-direction:column}
+
+.topbar{
+  display:flex;align-items:center;justify-content:space-between;
+  padding:16px 32px;background:var(--surface);border-bottom:1px solid var(--border);
+  position:sticky;top:0;z-index:10
+}
+.topbar-title{font-size:18px;font-weight:700;color:var(--text);letter-spacing:-0.3px}
+.btn-save{
+  padding:9px 20px;background:var(--accent);color:white;border:none;border-radius:8px;
+  font-family:var(--font);font-size:13px;font-weight:600;cursor:pointer;transition:background .15s
+}
+.btn-save:hover{background:#4338CA}
+
+.settings-nav{
+  display:flex;align-items:center;padding:0 32px;
+  background:var(--surface);border-bottom:1px solid var(--border);overflow-x:auto
+}
+.settings-nav-item{
+  padding:14px 16px;font-size:13px;color:var(--text-2);cursor:pointer;
+  border-bottom:2px solid transparent;white-space:nowrap;transition:all .15s;font-weight:500
+}
+.settings-nav-item:hover{color:var(--text)}
+.settings-nav-item.active{color:var(--accent);border-bottom:2px solid var(--accent);font-weight:600}
+
+/* Content */
+.content{padding:28px 32px;max-width:800px}
+.section{margin-bottom:24px}
+.section-title{font-size:15px;font-weight:700;color:var(--text);margin-bottom:4px}
+.section-desc{font-size:13px;color:var(--text-3);margin-bottom:16px}
+
+/* Card */
+.card{background:var(--surface);border:1px solid var(--border);border-radius:12px;overflow:hidden}
+.card-preview{background:var(--surface-2);border:1px solid var(--border);border-radius:12px;overflow:hidden}
+
+/* Form rows */
+.field-row{
+  display:flex;align-items:center;justify-content:space-between;
+  padding:16px 20px;border-bottom:1px solid var(--border);gap:16px
+}
+.field-row:last-child{border-bottom:none}
+.field-label{font-size:14px;font-weight:500;color:var(--text);min-width:180px}
+.field-desc{font-size:12px;color:var(--text-3);margin-top:2px}
+.field-right{display:flex;align-items:center;gap:8px;flex-shrink:0}
+
+.form-select{
+  padding:8px 36px 8px 12px;border:1px solid var(--border);border-radius:8px;
+  font-family:var(--font);font-size:13px;color:var(--text);background:var(--surface);
+  outline:none;-webkit-appearance:none;cursor:pointer;transition:border-color .15s,box-shadow .15s;
+  min-width:200px
+}
+.select-wrap{position:relative;display:inline-block}
+.select-wrap::after{
+  content:'';position:absolute;right:12px;top:50%;transform:translateY(-50%);
+  border-left:4px solid transparent;border-right:4px solid transparent;
+  border-top:5px solid var(--text-3);pointer-events:none
+}
+.form-select:focus{border-color:var(--accent);box-shadow:0 0 0 3px var(--accent-dim)}
+
+/* Radio group */
+.radio-group{display:flex;gap:8px}
+.radio-opt{
+  display:flex;align-items:center;gap:7px;padding:8px 14px;
+  border:1px solid var(--border);border-radius:8px;cursor:pointer;transition:all .15s;font-size:13px
+}
+.radio-opt:hover{border-color:#C7D2FE}
+.radio-opt.selected{border-color:var(--accent);background:var(--accent-light);color:var(--accent);font-weight:500}
+.radio-dot{width:16px;height:16px;border-radius:50%;border:2px solid var(--border);display:flex;align-items:center;justify-content:center;flex-shrink:0;transition:all .15s}
+.radio-opt.selected .radio-dot{border-color:var(--accent);background:var(--accent)}
+.radio-dot-inner{width:5px;height:5px;border-radius:50%;background:white}
+
+/* Preview date note */
+.preview-note{font-size:12px;color:var(--text-3);margin-left:8px}
+
+/* Toggle switch */
+.switch{
+  width:44px;height:24px;border-radius:12px;background:#CBD5E1;
+  position:relative;transition:background .2s;cursor:pointer;border:none;padding:0;
+  display:inline-flex;align-items:center;flex-shrink:0
+}
+.switch.on{background:var(--accent)}
+.switch::after{
+  content:'';position:absolute;left:3px;width:18px;height:18px;
+  border-radius:50%;background:white;transition:transform .2s;
+  box-shadow:0 1px 3px rgba(0,0,0,.15)
+}
+.switch.on::after{transform:translateX(20px)}
+
+/* VAT number input */
+.input-suffix{display:flex;align-items:stretch;border:1px solid var(--border);border-radius:8px;overflow:hidden;transition:box-shadow .15s,border-color .15s}
+.input-suffix:focus-within{border-color:var(--accent);box-shadow:0 0 0 3px var(--accent-dim)}
+.vat-input{border:none;padding:8px 12px;font-family:var(--font);font-size:13px;color:var(--text);outline:none;width:80px;background:var(--surface)}
+.input-suffix-label{padding:8px 12px;background:var(--surface-2);font-size:13px;color:var(--text-3);border-left:1px solid var(--border);display:flex;align-items:center}
+
+/* Currency chips */
+.chip-row{display:flex;flex-wrap:wrap;gap:8px;align-items:center;padding:16px 20px;border-bottom:1px solid var(--border)}
+.currency-chip{
+  display:flex;align-items:center;gap:6px;
+  background:var(--accent-light);color:var(--accent);border-radius:6px;
+  padding:5px 10px;font-size:13px;font-weight:500
+}
+.chip-remove{
+  background:none;border:none;color:var(--accent);cursor:pointer;
+  font-size:14px;line-height:1;padding:0 0 0 2px;opacity:.7;transition:opacity .1s
+}
+.chip-remove:hover{opacity:1}
+.btn-add{
+  padding:5px 12px;border:1px dashed var(--accent);border-radius:6px;
+  background:transparent;font-family:var(--font);font-size:13px;
+  color:var(--accent);cursor:pointer;transition:all .15s
+}
+.btn-add:hover{background:var(--accent-light)}
+
+/* Exchange rate row */
+.meta-row{padding:14px 20px;display:flex;align-items:center;justify-content:space-between;border-bottom:1px solid var(--border)}
+.meta-row:last-child{border-bottom:none}
+
+/* Preview table */
+.preview-table{width:100%;border-collapse:collapse}
+.preview-table th{
+  text-align:left;padding:10px 20px;font-size:11px;font-weight:600;
+  color:var(--text-3);text-transform:uppercase;letter-spacing:.5px;
+  border-bottom:1px solid var(--border);background:var(--surface-2)
+}
+.preview-table td{padding:12px 20px;border-bottom:1px solid var(--border);font-size:14px}
+.preview-table tr:last-child td{border-bottom:none}
+.preview-table td:last-child{font-family:var(--mono);font-size:13px;color:var(--accent);font-weight:600}
+.preview-table td:first-child{color:var(--text-2)}
+
+/* Save footer */
+.save-footer{
+  display:flex;align-items:center;justify-content:space-between;
+  padding:20px 32px;border-top:1px solid var(--border);
+  background:var(--surface);position:sticky;bottom:0;max-width:calc(800px + 64px)
+}
+.save-time{font-size:13px;color:var(--text-3)}
+</style>
+</head>
+<body>
+
+<!-- Sidebar -->
+<aside class="sidebar">
+  <div class="sb-logo">
+    <div class="sb-mark">S</div>
+    <span class="sb-name">Synergia<span style="color:var(--accent)">360</span></span>
+  </div>
+  <nav class="sb-nav">
+    <a href="main-dashboard.html" class="sb-link"><i class="fa-solid fa-grid-2"></i> Dashboard</a>
+    <a href="command-palette.html" class="sb-link"><i class="fa-solid fa-bolt"></i> Command Center</a>
+    <a href="dashboard-builder.html" class="sb-link"><i class="fa-solid fa-sliders"></i> Dashboard Builder</a>
+    <span class="sb-section">Orders</span>
+    <a href="order-queue.html" class="sb-link"><i class="fa-solid fa-receipt"></i> Order Queue</a>
+    <a href="returns-queue.html" class="sb-link"><i class="fa-solid fa-rotate-left"></i> Returns</a>
+    <a href="shipments-list.html" class="sb-link"><i class="fa-solid fa-truck-fast"></i> Shipments</a>
+    <a href="routing-rules.html" class="sb-link"><i class="fa-solid fa-code-branch"></i> Routing Rules</a>
+    <a href="order-automation.html" class="sb-link"><i class="fa-solid fa-robot"></i> Automation</a>
+    <span class="sb-section">Inventory</span>
+    <a href="inventory-stock-overview.html" class="sb-link"><i class="fa-solid fa-boxes-stacked"></i> Stock</a>
+    <a href="inventory-stock-take.html" class="sb-link"><i class="fa-solid fa-clipboard-check"></i> Stock Take</a>
+    <a href="purchase-orders.html" class="sb-link"><i class="fa-solid fa-cart-plus"></i> Purchase Orders</a>
+    <a href="suppliers-list.html" class="sb-link"><i class="fa-solid fa-industry"></i> Suppliers</a>
+    <span class="sb-section">Catalogue</span>
+    <a href="catalogue-product-list.html" class="sb-link"><i class="fa-solid fa-tag"></i> Products</a>
+    <a href="catalogue-bom-builder.html" class="sb-link"><i class="fa-solid fa-list-tree"></i> BOM Builder</a>
+    <span class="sb-section">Channels</span>
+    <a href="channels-overview.html" class="sb-link"><i class="fa-solid fa-plug"></i> Overview</a>
+    <a href="listing-manager.html" class="sb-link"><i class="fa-solid fa-store"></i> Listings</a>
+    <a href="pricing-rules.html" class="sb-link"><i class="fa-solid fa-pound-sign"></i> Pricing Rules</a>
+    <span class="sb-section">Customers</span>
+    <a href="customers-list.html" class="sb-link"><i class="fa-solid fa-users"></i> Customers</a>
+    <span class="sb-section">Finance</span>
+    <a href="finance-dashboard.html" class="sb-link"><i class="fa-solid fa-chart-pie"></i> Overview</a>
+    <a href="finance-expense-management.html" class="sb-link"><i class="fa-solid fa-file-invoice"></i> Expenses</a>
+    <a href="sku-profitability.html" class="sb-link"><i class="fa-solid fa-chart-bar"></i> SKU Profitability</a>
+    <a href="finance-monthly-close.html" class="sb-link"><i class="fa-solid fa-calendar-check"></i> Monthly Close</a>
+    <span class="sb-section">Reports</span>
+    <a href="reports-library.html" class="sb-link"><i class="fa-solid fa-book"></i> Library</a>
+    <a href="report-builder-ai.html" class="sb-link"><i class="fa-solid fa-wand-magic-sparkles"></i> AI Builder</a>
+    <a href="automation-rule-builder.html" class="sb-link"><i class="fa-solid fa-gears"></i> Automation Rules</a>
+    <span class="sb-section">Settings</span>
+    <a href="settings-team.html" class="sb-link"><i class="fa-solid fa-people-group"></i> Team</a>
+    <a href="settings-rbac.html" class="sb-link"><i class="fa-solid fa-shield-halved"></i> Roles &amp; Permissions</a>
+    <a href="settings-integrations.html" class="sb-link"><i class="fa-solid fa-puzzle-piece"></i> Integrations</a>
+    <a href="settings-billing.html" class="sb-link"><i class="fa-solid fa-credit-card"></i> Billing</a>
+    <a href="settings-notifications.html" class="sb-link"><i class="fa-solid fa-bell"></i> Notifications</a>
+    <a href="settings-locale.html" class="sb-link active"><i class="fa-solid fa-earth-europe"></i> Locale &amp; Currency</a>
+    <a href="settings-warehouses.html" class="sb-link"><i class="fa-solid fa-warehouse"></i> Warehouses</a>
+    <a href="settings-api-webhooks.html" class="sb-link"><i class="fa-solid fa-code"></i> API &amp; Webhooks</a>
+  </nav>
+  <div class="sb-foot">
+    <div class="sb-av">JW</div>
+    <div>
+      <div class="sb-uname">James Whitcombe</div>
+      <div class="sb-urole">Owner &middot; Acme Co</div>
+    </div>
+  </div>
+</aside>
+
+<!-- Main -->
+<div class="main">
+  <div class="topbar">
+    <div class="topbar-title">Locale &amp; Currency</div>
+    <button class="btn-save">Save Changes</button>
+  </div>
+
+  <div class="settings-nav">
+    <div class="settings-nav-item">Team</div>
+    <div class="settings-nav-item">Roles &amp; Permissions</div>
+    <div class="settings-nav-item">Billing</div>
+    <div class="settings-nav-item">Notifications</div>
+    <div class="settings-nav-item active">Locale &amp; Currency</div>
+    <div class="settings-nav-item">Integrations</div>
+  </div>
+
+  <div class="content">
+
+    <!-- Regional Settings -->
+    <div class="section">
+      <div class="section-title">Regional Settings</div>
+      <div class="section-desc">Configure date, time, and language preferences for your workspace</div>
+      <div class="card">
+        <div class="field-row">
+          <div>
+            <div class="field-label">Primary Language</div>
+          </div>
+          <div class="field-right">
+            <div class="select-wrap">
+              <select class="form-select">
+                <option selected>English (UK)</option>
+                <option>English (US)</option>
+                <option>German</option>
+                <option>French</option>
+                <option>Spanish</option>
+              </select>
+            </div>
+          </div>
+        </div>
+        <div class="field-row">
+          <div>
+            <div class="field-label">Date Format</div>
+            <div class="field-desc">Preview: 08/05/2026</div>
+          </div>
+          <div class="field-right">
+            <div class="select-wrap">
+              <select class="form-select">
+                <option selected>DD/MM/YYYY</option>
+                <option>MM/DD/YYYY</option>
+                <option>YYYY-MM-DD</option>
+                <option>D MMM YYYY</option>
+              </select>
+            </div>
+          </div>
+        </div>
+        <div class="field-row">
+          <div>
+            <div class="field-label">Time Format</div>
+          </div>
+          <div class="field-right">
+            <div class="radio-group">
+              <div class="radio-opt">
+                <div class="radio-dot"></div>
+                12-hour (AM/PM)
+              </div>
+              <div class="radio-opt selected">
+                <div class="radio-dot"><div class="radio-dot-inner"></div></div>
+                24-hour
+              </div>
+            </div>
+          </div>
+        </div>
+        <div class="field-row">
+          <div>
+            <div class="field-label">Timezone</div>
+          </div>
+          <div class="field-right">
+            <div class="select-wrap">
+              <select class="form-select">
+                <option selected>Europe/London (UTC+1)</option>
+                <option>America/New_York (UTC-4)</option>
+                <option>America/Los_Angeles (UTC-7)</option>
+                <option>Asia/Singapore (UTC+8)</option>
+                <option>Australia/Sydney (UTC+10)</option>
+              </select>
+            </div>
+          </div>
+        </div>
+        <div class="field-row">
+          <div>
+            <div class="field-label">First day of week</div>
+          </div>
+          <div class="field-right">
+            <div class="radio-group">
+              <div class="radio-opt selected">
+                <div class="radio-dot"><div class="radio-dot-inner"></div></div>
+                Monday
+              </div>
+              <div class="radio-opt">
+                <div class="radio-dot"></div>
+                Sunday
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Currency & Pricing -->
+    <div class="section">
+      <div class="section-title">Currency &amp; Pricing</div>
+      <div class="section-desc">Set your base currency and how prices are displayed across the platform</div>
+      <div class="card">
+        <div class="field-row">
+          <div>
+            <div class="field-label">Base Currency</div>
+          </div>
+          <div class="field-right">
+            <div class="select-wrap">
+              <select class="form-select">
+                <option selected>British Pound £ — GBP</option>
+                <option>US Dollar $ — USD</option>
+                <option>Euro € — EUR</option>
+                <option>Australian Dollar — AUD</option>
+              </select>
+            </div>
+          </div>
+        </div>
+        <div class="field-row">
+          <div>
+            <div class="field-label">Currency display</div>
+          </div>
+          <div class="field-right">
+            <div class="radio-group">
+              <div class="radio-opt selected">
+                <div class="radio-dot"><div class="radio-dot-inner"></div></div>
+                Symbol (£)
+              </div>
+              <div class="radio-opt">
+                <div class="radio-dot"></div>
+                Code (GBP)
+              </div>
+            </div>
+          </div>
+        </div>
+        <div class="field-row">
+          <div>
+            <div class="field-label">Decimal separator</div>
+          </div>
+          <div class="field-right">
+            <div class="radio-group">
+              <div class="radio-opt selected">
+                <div class="radio-dot"><div class="radio-dot-inner"></div></div>
+                Period (1,234.56)
+              </div>
+              <div class="radio-opt">
+                <div class="radio-dot"></div>
+                Comma (1.234,56)
+              </div>
+            </div>
+          </div>
+        </div>
+        <div class="field-row">
+          <div>
+            <div class="field-label">Show prices</div>
+            <div class="field-desc">Toggle inclusive/exclusive VAT display</div>
+          </div>
+          <div class="field-right" style="gap:12px">
+            <span style="font-size:13px;color:var(--text-3)">Excl. VAT</span>
+            <button class="switch on" aria-label="Toggle VAT inclusive"></button>
+            <span style="font-size:13px;color:var(--accent);font-weight:500">Incl. VAT</span>
+          </div>
+        </div>
+        <div class="field-row">
+          <div>
+            <div class="field-label">VAT rate</div>
+          </div>
+          <div class="field-right">
+            <div class="input-suffix">
+              <input class="vat-input" type="number" value="20" min="0" max="100">
+              <div class="input-suffix-label">%</div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Multi-Currency -->
+    <div class="section">
+      <div class="section-title">Multi-Currency Support</div>
+      <div class="section-desc">Accept and display prices in additional currencies</div>
+      <div class="card">
+        <div class="field-row">
+          <div>
+            <div class="field-label">Enable multi-currency</div>
+            <div class="field-desc">Show localised prices to international customers</div>
+          </div>
+          <button class="switch on" aria-label="Toggle multi-currency"></button>
+        </div>
+        <div class="chip-row">
+          <div class="currency-chip">USD <button class="chip-remove">×</button></div>
+          <div class="currency-chip">EUR <button class="chip-remove">×</button></div>
+          <div class="currency-chip">AUD <button class="chip-remove">×</button></div>
+          <div class="currency-chip">CAD <button class="chip-remove">×</button></div>
+          <button class="btn-add">+ Add Currency</button>
+        </div>
+        <div class="meta-row">
+          <div>
+            <div style="font-size:13px;font-weight:500;color:var(--text)">Exchange rate source</div>
+            <div style="font-size:12px;color:var(--text-3);margin-top:2px">Last updated: Today 4:00pm</div>
+          </div>
+          <div class="select-wrap">
+            <select class="form-select" style="min-width:220px">
+              <option selected>European Central Bank</option>
+              <option>Open Exchange Rates</option>
+              <option>Wise / TransferWise</option>
+              <option>Manual entry</option>
+            </select>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Number Formatting Preview -->
+    <div class="section">
+      <div class="section-title">Number Formatting Preview</div>
+      <div class="section-desc">Live examples using your current locale and currency settings</div>
+      <div class="card-preview">
+        <table class="preview-table">
+          <thead>
+            <tr>
+              <th>Type</th>
+              <th>Formatted value</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td>Price</td>
+              <td>£1,234.56</td>
+            </tr>
+            <tr>
+              <td>Large number</td>
+              <td>£1,234,567.89</td>
+            </tr>
+            <tr>
+              <td>Percentage</td>
+              <td>20.00%</td>
+            </tr>
+            <tr>
+              <td>Date · Time</td>
+              <td>08/05/2026 · 14:30</td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+
+  </div>
+
+  <!-- Save footer -->
+  <div class="save-footer">
+    <span class="save-time">Last saved: 5 minutes ago</span>
+    <button class="btn-save">Save Changes</button>
+  </div>
+
+</div>
+
+</body>
+</html>

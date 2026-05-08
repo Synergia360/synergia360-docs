@@ -1,0 +1,385 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Admin – System Health</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+<style>
+:root{
+  --bg:#F8F9FC;--surface:#FFFFFF;--surface-2:#F8FAFF;--border:#E2E8F0;
+  --accent:#4F46E5;--accent-dim:rgba(79,70,229,.08);--accent-light:#EEF2FF;
+  --text:#0F172A;--text-2:#475569;--text-3:#94A3B8;
+  --green:#10B981;--green-dim:rgba(16,185,129,.08);--green-light:#ECFDF5;
+  --red:#EF4444;--red-dim:rgba(239,68,68,.08);--red-light:#FEF2F2;
+  --amber:#F59E0B;--amber-dim:rgba(245,158,11,.08);--amber-light:#FFFBEB;
+  --blue:#3B82F6;--font:'Inter',sans-serif;--mono:'Courier New',monospace;
+  --shadow-sm:0 1px 2px rgba(0,0,0,.05);--shadow:0 1px 3px rgba(0,0,0,.08),0 1px 2px rgba(0,0,0,.04);
+  --violet:#7C3AED;--violet-dim:rgba(124,58,237,.08);--violet-light:#F5F3FF
+}
+*{box-sizing:border-box;margin:0;padding:0}
+body{font-family:var(--font);background:var(--bg);color:var(--text);font-size:14px;line-height:1.5;display:flex;min-height:100vh}
+
+/* Sidebar */
+.sidebar{width:256px;background:var(--surface);border-right:1px solid var(--border);display:flex;flex-direction:column;flex-shrink:0;min-height:100vh}
+.sidebar-logo{padding:20px 20px 16px;border-bottom:1px solid var(--border);display:flex;align-items:center;gap:10px}
+.logo-text{font-size:18px;font-weight:700;color:var(--violet)}
+.admin-badge{background:var(--violet);color:white;font-size:10px;font-weight:700;padding:2px 7px;border-radius:4px;letter-spacing:.4px}
+.sidebar-nav{padding:12px;flex:1;display:flex;flex-direction:column;gap:2px}
+.nav-item{display:flex;align-items:center;gap:10px;padding:9px 10px;border-radius:8px;font-size:13px;font-weight:500;color:var(--text-2);cursor:pointer}
+.nav-item:hover{background:var(--bg);color:var(--text)}
+.nav-item.active{background:#F5F3FF;color:var(--violet);border-left:3px solid var(--violet);padding-left:7px;font-weight:600}
+.nav-item svg{flex-shrink:0;opacity:.7}
+.nav-item.active svg{opacity:1}
+.sidebar-footer{padding:16px 12px;border-top:1px solid var(--border);display:flex;align-items:center;gap:10px}
+.avatar-sm{width:32px;height:32px;border-radius:50%;background:var(--violet);color:white;font-size:12px;font-weight:700;display:flex;align-items:center;justify-content:center;flex-shrink:0}
+.footer-name{font-size:13px;font-weight:600;color:var(--text)}
+.footer-role{font-size:11px;color:var(--text-3)}
+.signout-link{font-size:12px;color:var(--text-3);cursor:pointer;margin-left:auto}
+
+/* Main */
+.main{flex:1;display:flex;flex-direction:column;min-height:100vh;overflow:hidden}
+.topbar{padding:20px 28px;border-bottom:1px solid var(--border);background:var(--surface);display:flex;align-items:center;justify-content:space-between}
+.topbar-h1{font-size:22px;font-weight:700;color:var(--text)}
+.topbar-meta{font-size:13px;color:var(--text-3);margin-top:2px}
+.badge-green{background:var(--green-light);color:var(--green);padding:5px 14px;border-radius:99px;font-size:13px;font-weight:600;display:flex;align-items:center;gap:6px}
+
+.content{padding:24px 28px;display:flex;flex-direction:column;gap:24px;flex:1}
+
+/* Status banner */
+.status-banner{background:var(--green-light);border:1px solid var(--green);border-radius:12px;padding:20px 24px;display:flex;align-items:center;gap:16px}
+.banner-icon{width:44px;height:44px;border-radius:50%;background:var(--green);display:flex;align-items:center;justify-content:center;flex-shrink:0}
+.banner-title{font-size:16px;font-weight:700;color:var(--text)}
+.banner-sub{font-size:13px;color:var(--text-2);margin-top:2px}
+
+/* Services grid */
+.services-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:14px}
+.service-card{border:1px solid var(--border);border-radius:12px;padding:20px;background:var(--surface);display:flex;flex-direction:column;gap:10px;box-shadow:var(--shadow-sm)}
+.svc-top{display:flex;align-items:center;justify-content:space-between}
+.svc-name-row{display:flex;align-items:center;gap:8px}
+.svc-dot{width:9px;height:9px;border-radius:50%;background:var(--green);flex-shrink:0}
+.svc-name{font-size:13px;font-weight:600;color:var(--text)}
+.svc-badge{background:var(--green-light);color:var(--green);padding:2px 8px;border-radius:99px;font-size:11px;font-weight:600}
+.svc-metric{font-size:22px;font-weight:700;color:var(--text)}
+.svc-metric-label{font-size:12px;color:var(--text-3)}
+
+/* Incidents */
+.section-title-row{display:flex;align-items:center;gap:12px}
+.section-title{font-size:16px;font-weight:600;color:var(--text)}
+.incidents-list{display:flex;flex-direction:column;gap:0;background:var(--surface);border:1px solid var(--border);border-radius:12px;overflow:hidden;box-shadow:var(--shadow-sm)}
+.incident-row{display:flex;align-items:flex-start;gap:14px;padding:16px 20px;border-bottom:1px solid var(--border)}
+.incident-row:last-child{border-bottom:none}
+.inc-badge{padding:3px 9px;border-radius:4px;font-size:11px;font-weight:700;flex-shrink:0;margin-top:1px}
+.inc-resolved{background:var(--green-light);color:var(--green)}
+.inc-body{flex:1}
+.inc-title{font-size:13px;font-weight:600;color:var(--text)}
+.inc-meta{font-size:12px;color:var(--text-2);margin-top:3px}
+.inc-date{font-size:12px;color:var(--text-3);flex-shrink:0;white-space:nowrap}
+
+/* Metrics row */
+.metrics-row{display:grid;grid-template-columns:repeat(3,1fr);gap:14px}
+.metric-card{background:var(--surface);border:1px solid var(--border);border-radius:12px;padding:20px;box-shadow:var(--shadow-sm)}
+.mc-label{font-size:12px;color:var(--text-2);margin-bottom:6px}
+.mc-val{font-size:26px;font-weight:700;color:var(--text)}
+.mc-sub{font-size:12px;color:var(--green);margin-top:4px;font-weight:500}
+.sparkline{margin-top:12px;height:36px;display:flex;align-items:flex-end;gap:3px}
+.spark-bar{flex:1;border-radius:2px 2px 0 0;min-height:4px}
+
+/* Infra section */
+.infra-grid{display:grid;grid-template-columns:1fr 1fr;gap:16px}
+.infra-card{background:var(--surface);border:1px solid var(--border);border-radius:12px;padding:20px;box-shadow:var(--shadow-sm);display:flex;flex-direction:column;gap:14px}
+.infra-title{font-size:14px;font-weight:600;color:var(--text)}
+.infra-row{display:flex;justify-content:space-between;align-items:center;font-size:13px}
+.infra-key{color:var(--text-2)}
+.infra-val{font-weight:500;color:var(--text)}
+.infra-val.mono{font-family:var(--mono);font-size:12px}
+.db-progress{display:flex;flex-direction:column;gap:4px}
+.db-prog-label{display:flex;justify-content:space-between;font-size:12px;color:var(--text-2)}
+.db-prog-track{height:6px;background:var(--border);border-radius:99px;overflow:hidden}
+.db-prog-fill{height:100%;border-radius:99px;background:var(--violet)}
+.queue-row{display:flex;justify-content:space-between;align-items:center;padding:9px 0;border-bottom:1px solid var(--border);font-size:13px}
+.queue-row:last-child{border-bottom:none}
+.queue-name{color:var(--text);font-weight:500}
+.queue-meta{color:var(--text-2);font-size:12px}
+.chip-green{background:var(--green-light);color:var(--green);padding:2px 8px;border-radius:99px;font-size:11px;font-weight:600}
+</style>
+</head>
+<body>
+
+<aside class="sidebar">
+  <div class="sidebar-logo">
+    <svg width="28" height="28" viewBox="0 0 28 28" fill="none"><rect width="28" height="28" rx="8" fill="#7C3AED"/><path d="M7 14l5 5 9-9" stroke="white" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"/></svg>
+    <span class="logo-text">Synergia</span>
+    <span class="admin-badge">Admin</span>
+  </div>
+
+  <nav class="sidebar-nav">
+    <a class="nav-item">
+      <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M3 9l9-7 9 7v11a2 2 0 01-2 2H5a2 2 0 01-2-2z"/></svg>
+      Companies
+    </a>
+    <a class="nav-item active">
+      <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M22 12h-4l-3 9L9 3l-3 9H2"/></svg>
+      System Health
+    </a>
+    <a class="nav-item">
+      <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M9 11l3 3L22 4"/><path d="M21 12v7a2 2 0 01-2 2H5a2 2 0 01-2-2V5a2 2 0 012-2h11"/></svg>
+      Audit Logs
+    </a>
+    <a class="nav-item">
+      <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><rect x="1" y="4" width="22" height="16" rx="2"/><path d="M1 10h22"/></svg>
+      Feature Flags
+    </a>
+    <a class="nav-item">
+      <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><path d="M12 8v4l3 3"/></svg>
+      Support Tickets
+    </a>
+    <a class="nav-item">
+      <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><rect x="2" y="5" width="20" height="14" rx="2"/><path d="M2 10h20"/></svg>
+      Billing
+    </a>
+    <a class="nav-item">
+      <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><circle cx="12" cy="12" r="3"/><path d="M12 1v4M12 19v4M4.22 4.22l2.83 2.83M16.95 16.95l2.83 2.83M1 12h4M19 12h4M4.22 19.78l2.83-2.83M16.95 7.05l2.83-2.83"/></svg>
+      Settings
+    </a>
+  </nav>
+
+  <div class="sidebar-footer">
+    <div class="avatar-sm">SA</div>
+    <div>
+      <div class="footer-name">Super Admin</div>
+      <div class="footer-role">Platform Administrator</div>
+    </div>
+    <span class="signout-link">Sign Out</span>
+  </div>
+</aside>
+
+<div class="main">
+  <div class="topbar">
+    <div>
+      <div class="topbar-h1">System Health</div>
+      <div class="topbar-meta">Last updated: 2 seconds ago</div>
+    </div>
+    <div class="badge-green">
+      <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg>
+      All Systems Operational
+    </div>
+  </div>
+
+  <div class="content">
+
+    <div class="status-banner">
+      <div class="banner-icon">
+        <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg>
+      </div>
+      <div>
+        <div class="banner-title">All Systems Operational</div>
+        <div class="banner-sub">Uptime 99.97% over the last 30 days · No active incidents</div>
+      </div>
+    </div>
+
+    <div>
+      <div class="section-title-row" style="margin-bottom:14px">
+        <span class="section-title">Services</span>
+      </div>
+      <div class="services-grid">
+        <div class="service-card">
+          <div class="svc-top">
+            <div class="svc-name-row"><div class="svc-dot"></div><span class="svc-name">API Gateway</span></div>
+            <span class="svc-badge">Operational</span>
+          </div>
+          <div><div class="svc-metric">12ms</div><div class="svc-metric-label">Avg response time</div></div>
+        </div>
+        <div class="service-card">
+          <div class="svc-top">
+            <div class="svc-name-row"><div class="svc-dot"></div><span class="svc-name">Database (Postgres)</span></div>
+            <span class="svc-badge">Operational</span>
+          </div>
+          <div><div class="svc-metric">4ms</div><div class="svc-metric-label">Query latency</div></div>
+        </div>
+        <div class="service-card">
+          <div class="svc-top">
+            <div class="svc-name-row"><div class="svc-dot"></div><span class="svc-name">Redis Cache</span></div>
+            <span class="svc-badge">Operational</span>
+          </div>
+          <div><div class="svc-metric">1ms</div><div class="svc-metric-label">Hit latency</div></div>
+        </div>
+        <div class="service-card">
+          <div class="svc-top">
+            <div class="svc-name-row"><div class="svc-dot"></div><span class="svc-name">Background Jobs</span></div>
+            <span class="svc-badge">Operational</span>
+          </div>
+          <div><div class="svc-metric">14</div><div class="svc-metric-label">Active workers</div></div>
+        </div>
+        <div class="service-card">
+          <div class="svc-top">
+            <div class="svc-name-row"><div class="svc-dot"></div><span class="svc-name">File Storage (S3)</span></div>
+            <span class="svc-badge">Operational</span>
+          </div>
+          <div><div class="svc-metric">38ms</div><div class="svc-metric-label">Upload latency</div></div>
+        </div>
+        <div class="service-card">
+          <div class="svc-top">
+            <div class="svc-name-row"><div class="svc-dot"></div><span class="svc-name">Email (Sendgrid)</span></div>
+            <span class="svc-badge">Operational</span>
+          </div>
+          <div><div class="svc-metric">99.8%</div><div class="svc-metric-label">Delivery rate</div></div>
+        </div>
+        <div class="service-card">
+          <div class="svc-top">
+            <div class="svc-name-row"><div class="svc-dot"></div><span class="svc-name">Webhook Delivery</span></div>
+            <span class="svc-badge">Operational</span>
+          </div>
+          <div><div class="svc-metric">99.6%</div><div class="svc-metric-label">Success rate</div></div>
+        </div>
+        <div class="service-card">
+          <div class="svc-top">
+            <div class="svc-name-row"><div class="svc-dot"></div><span class="svc-name">Search (Elasticsearch)</span></div>
+            <span class="svc-badge">Operational</span>
+          </div>
+          <div><div class="svc-metric">8ms</div><div class="svc-metric-label">Avg query time</div></div>
+        </div>
+        <div class="service-card">
+          <div class="svc-top">
+            <div class="svc-name-row"><div class="svc-dot"></div><span class="svc-name">CDN (Cloudflare)</span></div>
+            <span class="svc-badge">Operational</span>
+          </div>
+          <div><div class="svc-metric">98.1%</div><div class="svc-metric-label">Cache hit rate</div></div>
+        </div>
+      </div>
+    </div>
+
+    <div>
+      <div class="section-title-row" style="margin-bottom:14px">
+        <span class="section-title">Recent Incidents</span>
+        <span class="badge-green" style="font-size:12px;padding:3px 10px">0 Active</span>
+      </div>
+      <div class="incidents-list">
+        <div class="incident-row">
+          <span class="inc-badge inc-resolved">Resolved</span>
+          <div class="inc-body">
+            <div class="inc-title">Elevated API latency</div>
+            <div class="inc-meta">Lasted 23 min · Affected &lt;1% of requests · Root cause: upstream timeout spike</div>
+          </div>
+          <div class="inc-date">May 5, 2026</div>
+        </div>
+        <div class="incident-row">
+          <span class="inc-badge inc-resolved">Resolved</span>
+          <div class="inc-body">
+            <div class="inc-title">Database failover</div>
+            <div class="inc-meta">Lasted 4 min · Automated recovery · Replica promoted successfully</div>
+          </div>
+          <div class="inc-date">Apr 28, 2026</div>
+        </div>
+        <div class="incident-row">
+          <span class="inc-badge inc-resolved">Resolved</span>
+          <div class="inc-body">
+            <div class="inc-title">Webhook delivery delays</div>
+            <div class="inc-meta">Lasted 1h 12m · Manual fix · Queue backlog cleared</div>
+          </div>
+          <div class="inc-date">Apr 15, 2026</div>
+        </div>
+      </div>
+    </div>
+
+    <div class="metrics-row">
+      <div class="metric-card">
+        <div class="mc-label">Requests / min</div>
+        <div class="mc-val">4,821</div>
+        <div class="mc-sub">↑ 3.2% vs last hour</div>
+        <div class="sparkline">
+          <div class="spark-bar" style="height:55%;background:var(--violet-dim);border:1px solid var(--violet);opacity:.5"></div>
+          <div class="spark-bar" style="height:65%;background:var(--violet-dim);border:1px solid var(--violet);opacity:.6"></div>
+          <div class="spark-bar" style="height:70%;background:var(--violet-dim);border:1px solid var(--violet);opacity:.6"></div>
+          <div class="spark-bar" style="height:60%;background:var(--violet-dim);border:1px solid var(--violet);opacity:.5"></div>
+          <div class="spark-bar" style="height:80%;background:var(--violet-dim);border:1px solid var(--violet);opacity:.7"></div>
+          <div class="spark-bar" style="height:75%;background:var(--violet-dim);border:1px solid var(--violet);opacity:.6"></div>
+          <div class="spark-bar" style="height:90%;background:var(--violet);opacity:.8"></div>
+          <div class="spark-bar" style="height:100%;background:var(--violet)"></div>
+        </div>
+      </div>
+      <div class="metric-card">
+        <div class="mc-label">Error rate</div>
+        <div class="mc-val" style="color:var(--green)">0.03%</div>
+        <div class="mc-sub">Well within threshold (&lt;0.5%)</div>
+        <div class="sparkline">
+          <div class="spark-bar" style="height:8%;background:var(--green);opacity:.4"></div>
+          <div class="spark-bar" style="height:6%;background:var(--green);opacity:.4"></div>
+          <div class="spark-bar" style="height:10%;background:var(--green);opacity:.4"></div>
+          <div class="spark-bar" style="height:5%;background:var(--green);opacity:.4"></div>
+          <div class="spark-bar" style="height:7%;background:var(--green);opacity:.4"></div>
+          <div class="spark-bar" style="height:9%;background:var(--green);opacity:.5"></div>
+          <div class="spark-bar" style="height:4%;background:var(--green);opacity:.5"></div>
+          <div class="spark-bar" style="height:3%;background:var(--green)"></div>
+        </div>
+      </div>
+      <div class="metric-card">
+        <div class="mc-label">P95 Latency</div>
+        <div class="mc-val">87ms</div>
+        <div class="mc-sub">Stable · Target &lt;200ms</div>
+        <div class="sparkline">
+          <div class="spark-bar" style="height:50%;background:var(--blue);opacity:.4"></div>
+          <div class="spark-bar" style="height:55%;background:var(--blue);opacity:.4"></div>
+          <div class="spark-bar" style="height:48%;background:var(--blue);opacity:.4"></div>
+          <div class="spark-bar" style="height:52%;background:var(--blue);opacity:.5"></div>
+          <div class="spark-bar" style="height:45%;background:var(--blue);opacity:.5"></div>
+          <div class="spark-bar" style="height:47%;background:var(--blue);opacity:.5"></div>
+          <div class="spark-bar" style="height:44%;background:var(--blue);opacity:.6"></div>
+          <div class="spark-bar" style="height:43%;background:var(--blue)"></div>
+        </div>
+      </div>
+    </div>
+
+    <div>
+      <div class="section-title-row" style="margin-bottom:14px">
+        <span class="section-title">Infrastructure</span>
+      </div>
+      <div class="infra-grid">
+        <div class="infra-card">
+          <div class="infra-title">Database</div>
+          <div class="infra-row"><span class="infra-key">Engine</span><span class="infra-val mono">PostgreSQL 16.2</span></div>
+          <div class="db-progress">
+            <div class="db-prog-label"><span>Storage used</span><span>284 GB / 500 GB</span></div>
+            <div class="db-prog-track"><div class="db-prog-fill" style="width:57%"></div></div>
+          </div>
+          <div class="infra-row"><span class="infra-key">Active connections</span><span class="infra-val">42 / 200</span></div>
+          <div class="infra-row"><span class="infra-key">Replica lag</span><span class="infra-val">12ms</span></div>
+          <div class="infra-row"><span class="infra-key">Slow queries (1h)</span><span class="infra-val">0</span></div>
+        </div>
+        <div class="infra-card">
+          <div style="display:flex;align-items:center;justify-content:space-between">
+            <div class="infra-title">Background Jobs</div>
+            <span class="chip-green">0 Failed</span>
+          </div>
+          <div style="font-size:12px;color:var(--text-3);margin-bottom:2px">Sidekiq · 14 workers</div>
+          <div class="queue-row">
+            <div>
+              <div class="queue-name">default</div>
+              <div class="queue-meta">3 queued · 8 workers</div>
+            </div>
+            <span class="chip-green">Healthy</span>
+          </div>
+          <div class="queue-row">
+            <div>
+              <div class="queue-name">mailer</div>
+              <div class="queue-meta">0 queued · 3 workers</div>
+            </div>
+            <span class="chip-green">Healthy</span>
+          </div>
+          <div class="queue-row">
+            <div>
+              <div class="queue-name">webhooks</div>
+              <div class="queue-meta">11 queued · 3 workers</div>
+            </div>
+            <span class="chip-green">Healthy</span>
+          </div>
+        </div>
+      </div>
+    </div>
+
+  </div>
+</div>
+
+</body>
+</html>

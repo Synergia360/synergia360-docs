@@ -1,0 +1,400 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Synergia360 — Notifications</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
+<style>
+:root{
+  --bg:#F8F9FC;--surface:#FFFFFF;--surface-2:#F8FAFF;--border:#E2E8F0;
+  --accent:#4F46E5;--accent-dim:rgba(79,70,229,.08);--accent-light:#EEF2FF;
+  --text:#0F172A;--text-2:#475569;--text-3:#94A3B8;
+  --green:#10B981;--green-dim:rgba(16,185,129,.08);--green-light:#ECFDF5;
+  --red:#EF4444;--red-dim:rgba(239,68,68,.08);--red-light:#FEF2F2;
+  --amber:#F59E0B;--amber-dim:rgba(245,158,11,.08);--amber-light:#FFFBEB;
+  --blue:#3B82F6;--font:'Inter',sans-serif;--mono:'Geist Mono',monospace;
+  --shadow-sm:0 1px 2px rgba(0,0,0,.05);--shadow:0 1px 3px rgba(0,0,0,.08),0 1px 2px rgba(0,0,0,.04)
+}
+*{box-sizing:border-box;margin:0;padding:0}
+body{font-family:var(--font);background:var(--bg);color:var(--text);font-size:14px;line-height:1.5;display:flex;min-height:100vh}
+
+/* sidebar */
+.sidebar{width:240px;background:#fff;border-right:1px solid var(--border);display:flex;flex-direction:column;flex-shrink:0;position:sticky;top:0;height:100vh;overflow:hidden}
+.sb-logo{padding:18px 20px;border-bottom:1px solid var(--border);display:flex;align-items:center;gap:12px;flex-shrink:0}
+.sb-mark{width:36px;height:36px;background:var(--accent);border-radius:9px;display:grid;place-items:center;color:#fff;font-weight:800;font-size:16px;flex-shrink:0}
+.sb-name{font-weight:700;font-size:15px;color:var(--text)}
+.sb-nav{flex:1;padding:10px;overflow-y:auto}
+.sb-section{font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:.07em;color:var(--text-3);padding:14px 8px 4px;display:block}
+.sb-link{display:flex;align-items:center;gap:10px;padding:8px 10px;border-radius:8px;color:var(--text-2);font-size:13px;font-weight:500;text-decoration:none;border-left:2px solid transparent;margin-bottom:1px;transition:background .15s,color .15s}
+.sb-link:hover{background:#F1F5F9;color:var(--text)}
+.sb-link.active{background:var(--accent-light);color:var(--accent);border-left-color:var(--accent);font-weight:600}
+.sb-link i{width:16px;text-align:center;font-size:13px;color:var(--text-3);flex-shrink:0}
+.sb-link.active i{color:var(--accent)}
+.sb-foot{padding:12px 16px;border-top:1px solid var(--border);display:flex;align-items:center;gap:10px;flex-shrink:0}
+.sb-av{width:34px;height:34px;background:var(--accent-light);border-radius:50%;display:grid;place-items:center;color:var(--accent);font-weight:700;font-size:13px;flex-shrink:0}
+.sb-uname{font-size:13px;font-weight:600;color:var(--text);line-height:1.2}
+.sb-urole{font-size:11px;color:var(--text-3)}
+
+/* Main */
+.main{flex:1;min-height:100vh;display:flex;flex-direction:column}
+
+/* Top bar */
+.topbar{
+  display:flex;align-items:center;justify-content:space-between;
+  padding:16px 32px;background:var(--surface);border-bottom:1px solid var(--border);
+  position:sticky;top:0;z-index:10
+}
+.topbar-title{font-size:18px;font-weight:700;color:var(--text);letter-spacing:-0.3px}
+.btn-save{
+  padding:9px 20px;background:var(--accent);color:white;border:none;border-radius:8px;
+  font-family:var(--font);font-size:13px;font-weight:600;cursor:pointer;transition:background .15s
+}
+.btn-save:hover{background:#4338CA}
+
+/* Settings secondary nav */
+.settings-nav{
+  display:flex;align-items:center;gap:0;padding:0 32px;
+  background:var(--surface);border-bottom:1px solid var(--border);overflow-x:auto
+}
+.settings-nav-item{
+  padding:14px 16px;font-size:13px;color:var(--text-2);cursor:pointer;
+  border-bottom:2px solid transparent;white-space:nowrap;transition:all .15s;font-weight:500
+}
+.settings-nav-item:hover{color:var(--text)}
+.settings-nav-item.active{color:var(--accent);border-bottom:2px solid var(--accent);font-weight:600}
+
+/* Content */
+.content{padding:28px 32px;max-width:800px}
+.section{margin-bottom:24px}
+.section-title{font-size:15px;font-weight:700;color:var(--text);margin-bottom:4px}
+.section-desc{font-size:13px;color:var(--text-3);margin-bottom:16px}
+
+/* Card */
+.card{background:var(--surface);border:1px solid var(--border);border-radius:12px;overflow:hidden}
+.toggle-row{
+  display:flex;align-items:center;gap:12px;padding:16px 20px;
+  border-bottom:1px solid var(--border);transition:background .1s
+}
+.toggle-row:last-child{border-bottom:none}
+.toggle-row:hover{background:var(--surface-2)}
+.toggle-icon{
+  width:34px;height:34px;border-radius:8px;background:var(--accent-light);
+  display:flex;align-items:center;justify-content:center;font-size:16px;flex-shrink:0
+}
+.toggle-info{flex:1;min-width:0}
+.toggle-label{font-size:14px;font-weight:600;color:var(--text);margin-bottom:2px}
+.toggle-desc{font-size:12px;color:var(--text-3);line-height:1.4}
+.toggle-switch{flex-shrink:0;cursor:pointer}
+.switch{
+  width:44px;height:24px;border-radius:12px;background:#CBD5E1;
+  position:relative;transition:background .2s;cursor:pointer;border:none;padding:0;
+  display:inline-flex;align-items:center
+}
+.switch.on{background:var(--accent)}
+.switch::after{
+  content:'';position:absolute;left:3px;width:18px;height:18px;
+  border-radius:50%;background:white;transition:transform .2s;
+  box-shadow:0 1px 3px rgba(0,0,0,.15)
+}
+.switch.on::after{transform:translateX(20px)}
+
+/* Phone input */
+.phone-row{display:flex;gap:10px;align-items:center;padding:16px 20px;border-bottom:1px solid var(--border)}
+.form-input{
+  padding:9px 14px;border:1px solid var(--border);border-radius:8px;
+  font-family:var(--font);font-size:14px;color:var(--text);background:var(--surface);
+  outline:none;transition:border-color .15s,box-shadow .15s;width:200px
+}
+.form-input:focus{border-color:var(--accent);box-shadow:0 0 0 3px var(--accent-dim)}
+.btn-verify{
+  padding:9px 16px;border:1px solid var(--border);border-radius:8px;
+  background:transparent;font-family:var(--font);font-size:13px;font-weight:500;
+  color:var(--text-2);cursor:pointer;white-space:nowrap;transition:all .15s
+}
+.btn-verify:hover{border-color:var(--accent);color:var(--accent)}
+.sms-note{padding:10px 20px;font-size:12px;color:var(--text-3);border-bottom:1px solid var(--border)}
+
+/* Quiet hours */
+.quiet-row{padding:16px 20px;border-bottom:1px solid var(--border);display:flex;align-items:center;justify-content:space-between}
+.time-pickers{display:flex;align-items:center;gap:10px;padding:12px 20px;border-bottom:1px solid var(--border)}
+.time-pickers.disabled{opacity:.4;pointer-events:none}
+.time-picker-group{display:flex;flex-direction:column;gap:4px}
+.time-picker-label{font-size:11px;font-weight:600;color:var(--text-3);text-transform:uppercase;letter-spacing:.4px}
+.time-select{
+  padding:8px 12px;border:1px solid var(--border);border-radius:8px;
+  font-family:var(--font);font-size:13px;color:var(--text);background:var(--surface);
+  outline:none;-webkit-appearance:none
+}
+.days-row{padding:16px 20px;display:flex;align-items:center;gap:8px}
+.day-chip{
+  width:34px;height:34px;border-radius:8px;border:1px solid var(--border);
+  display:flex;align-items:center;justify-content:center;font-size:12px;
+  font-weight:600;color:var(--text-2);cursor:pointer;transition:all .15s
+}
+.day-chip.checked{background:var(--accent-light);border-color:var(--accent);color:var(--accent)}
+</style>
+</head>
+<body>
+
+<!-- Sidebar -->
+<aside class="sidebar">
+  <div class="sb-logo">
+    <div class="sb-mark">S</div>
+    <span class="sb-name">Synergia<span style="color:var(--accent)">360</span></span>
+  </div>
+  <nav class="sb-nav">
+    <a href="main-dashboard.html" class="sb-link"><i class="fa-solid fa-grid-2"></i> Dashboard</a>
+    <a href="command-palette.html" class="sb-link"><i class="fa-solid fa-bolt"></i> Command Center</a>
+    <a href="dashboard-builder.html" class="sb-link"><i class="fa-solid fa-sliders"></i> Dashboard Builder</a>
+    <span class="sb-section">Orders</span>
+    <a href="order-queue.html" class="sb-link"><i class="fa-solid fa-receipt"></i> Order Queue</a>
+    <a href="returns-queue.html" class="sb-link"><i class="fa-solid fa-rotate-left"></i> Returns</a>
+    <a href="shipments-list.html" class="sb-link"><i class="fa-solid fa-truck-fast"></i> Shipments</a>
+    <a href="routing-rules.html" class="sb-link"><i class="fa-solid fa-code-branch"></i> Routing Rules</a>
+    <a href="order-automation.html" class="sb-link"><i class="fa-solid fa-robot"></i> Automation</a>
+    <span class="sb-section">Inventory</span>
+    <a href="inventory-stock-overview.html" class="sb-link"><i class="fa-solid fa-boxes-stacked"></i> Stock</a>
+    <a href="inventory-stock-take.html" class="sb-link"><i class="fa-solid fa-clipboard-check"></i> Stock Take</a>
+    <a href="purchase-orders.html" class="sb-link"><i class="fa-solid fa-cart-plus"></i> Purchase Orders</a>
+    <a href="suppliers-list.html" class="sb-link"><i class="fa-solid fa-industry"></i> Suppliers</a>
+    <span class="sb-section">Catalogue</span>
+    <a href="catalogue-product-list.html" class="sb-link"><i class="fa-solid fa-tag"></i> Products</a>
+    <a href="catalogue-bom-builder.html" class="sb-link"><i class="fa-solid fa-list-tree"></i> BOM Builder</a>
+    <span class="sb-section">Channels</span>
+    <a href="channels-overview.html" class="sb-link"><i class="fa-solid fa-plug"></i> Overview</a>
+    <a href="listing-manager.html" class="sb-link"><i class="fa-solid fa-store"></i> Listings</a>
+    <a href="pricing-rules.html" class="sb-link"><i class="fa-solid fa-pound-sign"></i> Pricing Rules</a>
+    <span class="sb-section">Customers</span>
+    <a href="customers-list.html" class="sb-link"><i class="fa-solid fa-users"></i> Customers</a>
+    <span class="sb-section">Finance</span>
+    <a href="finance-dashboard.html" class="sb-link"><i class="fa-solid fa-chart-pie"></i> Overview</a>
+    <a href="finance-expense-management.html" class="sb-link"><i class="fa-solid fa-file-invoice"></i> Expenses</a>
+    <a href="sku-profitability.html" class="sb-link"><i class="fa-solid fa-chart-bar"></i> SKU Profitability</a>
+    <a href="finance-monthly-close.html" class="sb-link"><i class="fa-solid fa-calendar-check"></i> Monthly Close</a>
+    <span class="sb-section">Reports</span>
+    <a href="reports-library.html" class="sb-link"><i class="fa-solid fa-book"></i> Library</a>
+    <a href="report-builder-ai.html" class="sb-link"><i class="fa-solid fa-wand-magic-sparkles"></i> AI Builder</a>
+    <a href="automation-rule-builder.html" class="sb-link"><i class="fa-solid fa-gears"></i> Automation Rules</a>
+    <span class="sb-section">Settings</span>
+    <a href="settings-team.html" class="sb-link"><i class="fa-solid fa-people-group"></i> Team</a>
+    <a href="settings-rbac.html" class="sb-link"><i class="fa-solid fa-shield-halved"></i> Roles &amp; Permissions</a>
+    <a href="settings-integrations.html" class="sb-link"><i class="fa-solid fa-puzzle-piece"></i> Integrations</a>
+    <a href="settings-billing.html" class="sb-link"><i class="fa-solid fa-credit-card"></i> Billing</a>
+    <a href="settings-notifications.html" class="sb-link active"><i class="fa-solid fa-bell"></i> Notifications</a>
+    <a href="settings-locale.html" class="sb-link"><i class="fa-solid fa-earth-europe"></i> Locale &amp; Currency</a>
+    <a href="settings-warehouses.html" class="sb-link"><i class="fa-solid fa-warehouse"></i> Warehouses</a>
+    <a href="settings-api-webhooks.html" class="sb-link"><i class="fa-solid fa-code"></i> API &amp; Webhooks</a>
+  </nav>
+  <div class="sb-foot">
+    <div class="sb-av">JW</div>
+    <div>
+      <div class="sb-uname">James Whitcombe</div>
+      <div class="sb-urole">Owner &middot; Acme Co</div>
+    </div>
+  </div>
+</aside>
+
+<!-- Main -->
+<div class="main">
+  <div class="topbar">
+    <div class="topbar-title">Notifications</div>
+    <button class="btn-save">Save Changes</button>
+  </div>
+
+  <!-- Settings secondary nav -->
+  <div class="settings-nav">
+    <div class="settings-nav-item">Team</div>
+    <div class="settings-nav-item">Roles &amp; Permissions</div>
+    <div class="settings-nav-item">Billing</div>
+    <div class="settings-nav-item active">Notifications</div>
+    <div class="settings-nav-item">Locale &amp; Currency</div>
+    <div class="settings-nav-item">Integrations</div>
+  </div>
+
+  <div class="content">
+
+    <!-- Email Notifications -->
+    <div class="section">
+      <div class="section-title">Email Notifications</div>
+      <div class="section-desc">Choose which events trigger email alerts to your inbox</div>
+      <div class="card">
+        <div class="toggle-row">
+          <div class="toggle-icon">🔔</div>
+          <div class="toggle-info">
+            <div class="toggle-label">New Order Received</div>
+            <div class="toggle-desc">Get notified immediately when a new order arrives</div>
+          </div>
+          <button class="switch on" aria-label="Toggle"></button>
+        </div>
+        <div class="toggle-row">
+          <div class="toggle-icon">⚠️</div>
+          <div class="toggle-info">
+            <div class="toggle-label">Low Stock Alert</div>
+            <div class="toggle-desc">When inventory falls below reorder threshold</div>
+          </div>
+          <button class="switch on" aria-label="Toggle"></button>
+        </div>
+        <div class="toggle-row">
+          <div class="toggle-icon">🚫</div>
+          <div class="toggle-info">
+            <div class="toggle-label">Order Cancelled</div>
+            <div class="toggle-desc">When a customer cancels an order</div>
+          </div>
+          <button class="switch on" aria-label="Toggle"></button>
+        </div>
+        <div class="toggle-row">
+          <div class="toggle-icon">🚚</div>
+          <div class="toggle-info">
+            <div class="toggle-label">Dispatch Reminder</div>
+            <div class="toggle-desc">Daily digest of orders due to dispatch today</div>
+          </div>
+          <button class="switch" aria-label="Toggle"></button>
+        </div>
+        <div class="toggle-row">
+          <div class="toggle-icon">📊</div>
+          <div class="toggle-info">
+            <div class="toggle-label">Weekly Report</div>
+            <div class="toggle-desc">Summary email every Monday 8am</div>
+          </div>
+          <button class="switch on" aria-label="Toggle"></button>
+        </div>
+        <div class="toggle-row">
+          <div class="toggle-icon">💳</div>
+          <div class="toggle-info">
+            <div class="toggle-label">Invoice Generated</div>
+            <div class="toggle-desc">When a new invoice is available</div>
+          </div>
+          <button class="switch" aria-label="Toggle"></button>
+        </div>
+      </div>
+    </div>
+
+    <!-- In-App Notifications -->
+    <div class="section">
+      <div class="section-title">In-App Notifications</div>
+      <div class="section-desc">Alerts shown within the Synergia360 dashboard</div>
+      <div class="card">
+        <div class="toggle-row">
+          <div class="toggle-icon">🛒</div>
+          <div class="toggle-info">
+            <div class="toggle-label">Order status changes</div>
+            <div class="toggle-desc">Real-time updates as orders move through fulfilment</div>
+          </div>
+          <button class="switch on" aria-label="Toggle"></button>
+        </div>
+        <div class="toggle-row">
+          <div class="toggle-icon">💬</div>
+          <div class="toggle-info">
+            <div class="toggle-label">Team mentions</div>
+            <div class="toggle-desc">When a colleague mentions you in a note or comment</div>
+          </div>
+          <button class="switch on" aria-label="Toggle"></button>
+        </div>
+        <div class="toggle-row">
+          <div class="toggle-icon">🤖</div>
+          <div class="toggle-info">
+            <div class="toggle-label">AI Insights ready</div>
+            <div class="toggle-desc">When new automated insights are available</div>
+          </div>
+          <button class="switch on" aria-label="Toggle"></button>
+        </div>
+        <div class="toggle-row">
+          <div class="toggle-icon">🔄</div>
+          <div class="toggle-info">
+            <div class="toggle-label">Channel sync errors</div>
+            <div class="toggle-desc">When a marketplace sync fails or encounters issues</div>
+          </div>
+          <button class="switch on" aria-label="Toggle"></button>
+        </div>
+        <div class="toggle-row">
+          <div class="toggle-icon">📦</div>
+          <div class="toggle-info">
+            <div class="toggle-label">Restock suggestions</div>
+            <div class="toggle-desc">AI-powered purchase order recommendations</div>
+          </div>
+          <button class="switch" aria-label="Toggle"></button>
+        </div>
+      </div>
+    </div>
+
+    <!-- SMS/WhatsApp -->
+    <div class="section">
+      <div class="section-title">SMS / WhatsApp Alerts</div>
+      <div class="section-desc">Critical alerts sent directly to your mobile number</div>
+      <div class="card">
+        <div class="phone-row">
+          <input class="form-input" type="text" value="+44 7700 900123">
+          <button class="btn-verify">Verify number</button>
+        </div>
+        <div class="sms-note">SMS alerts: 2p per message (included in Pro plan)</div>
+        <div class="toggle-row">
+          <div class="toggle-icon">⚡</div>
+          <div class="toggle-info">
+            <div class="toggle-label">Urgent stock-out alerts</div>
+            <div class="toggle-desc">When any SKU hits zero available stock</div>
+          </div>
+          <button class="switch on" aria-label="Toggle"></button>
+        </div>
+        <div class="toggle-row">
+          <div class="toggle-icon">💳</div>
+          <div class="toggle-info">
+            <div class="toggle-label">Payment failures</div>
+            <div class="toggle-desc">When a payment is declined or disputed</div>
+          </div>
+          <button class="switch on" aria-label="Toggle"></button>
+        </div>
+        <div class="toggle-row">
+          <div class="toggle-icon">🛑</div>
+          <div class="toggle-info">
+            <div class="toggle-label">System outages</div>
+            <div class="toggle-desc">Platform downtime or service interruptions</div>
+          </div>
+          <button class="switch" aria-label="Toggle"></button>
+        </div>
+      </div>
+    </div>
+
+    <!-- Schedule -->
+    <div class="section">
+      <div class="section-title">Notification Schedule</div>
+      <div class="section-desc">Restrict when non-urgent notifications are delivered</div>
+      <div class="card">
+        <div class="quiet-row">
+          <div>
+            <div style="font-size:14px;font-weight:600;color:var(--text);margin-bottom:2px">Quiet hours</div>
+            <div style="font-size:12px;color:var(--text-3)">Suppress non-critical alerts during these hours</div>
+          </div>
+          <button class="switch" aria-label="Toggle quiet hours"></button>
+        </div>
+        <div class="time-pickers disabled">
+          <div class="time-picker-group">
+            <div class="time-picker-label">From</div>
+            <select class="time-select"><option>22:00</option><option>21:00</option><option>23:00</option></select>
+          </div>
+          <div style="color:var(--text-3);font-size:13px;margin-top:16px">→</div>
+          <div class="time-picker-group">
+            <div class="time-picker-label">Until</div>
+            <select class="time-select"><option>08:00</option><option>07:00</option><option>09:00</option></select>
+          </div>
+        </div>
+        <div class="days-row">
+          <span style="font-size:12px;font-weight:600;color:var(--text-3);margin-right:4px">Active:</span>
+          <div class="day-chip checked">M</div>
+          <div class="day-chip checked">T</div>
+          <div class="day-chip checked">W</div>
+          <div class="day-chip checked">T</div>
+          <div class="day-chip checked">F</div>
+          <div class="day-chip checked">S</div>
+          <div class="day-chip checked">S</div>
+        </div>
+      </div>
+    </div>
+
+  </div>
+</div>
+
+</body>
+</html>

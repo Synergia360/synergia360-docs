@@ -1,0 +1,288 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Roles &amp; Permissions — Synergia360</title>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=Geist+Mono:wght@400;600&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
+<style>
+:root{--bg:#F8F9FC;--surface:#FFFFFF;--surface-2:#F8FAFF;--border:#E2E8F0;--accent:#4F46E5;--accent-dim:rgba(79,70,229,.08);--accent-light:#EEF2FF;--text:#0F172A;--text-2:#475569;--text-3:#94A3B8;--green:#10B981;--green-light:#ECFDF5;--red:#EF4444;--amber:#F59E0B;--amber-light:#FFFBEB;--blue:#3B82F6;--font:'Inter',sans-serif;--mono:'Geist Mono',monospace}
+*{box-sizing:border-box;margin:0;padding:0}
+body{background:var(--bg);color:var(--text);font-family:var(--font);font-size:14px;display:flex;height:100vh;overflow:hidden}
+/* sidebar */
+.sidebar{width:240px;background:#fff;border-right:1px solid var(--border);display:flex;flex-direction:column;flex-shrink:0;position:sticky;top:0;height:100vh;overflow:hidden}
+.sb-logo{padding:18px 20px;border-bottom:1px solid var(--border);display:flex;align-items:center;gap:12px;flex-shrink:0}
+.sb-mark{width:36px;height:36px;background:var(--accent);border-radius:9px;display:grid;place-items:center;color:#fff;font-weight:800;font-size:16px;flex-shrink:0}
+.sb-name{font-weight:700;font-size:15px;color:var(--text)}
+.sb-nav{flex:1;padding:10px;overflow-y:auto}
+.sb-section{font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:.07em;color:var(--text-3);padding:14px 8px 4px;display:block}
+.sb-link{display:flex;align-items:center;gap:10px;padding:8px 10px;border-radius:8px;color:var(--text-2);font-size:13px;font-weight:500;text-decoration:none;border-left:2px solid transparent;margin-bottom:1px;transition:background .15s,color .15s}
+.sb-link:hover{background:#F1F5F9;color:var(--text)}
+.sb-link.active{background:var(--accent-light);color:var(--accent);border-left-color:var(--accent);font-weight:600}
+.sb-link i{width:16px;text-align:center;font-size:13px;color:var(--text-3);flex-shrink:0}
+.sb-link.active i{color:var(--accent)}
+.sb-foot{padding:12px 16px;border-top:1px solid var(--border);display:flex;align-items:center;gap:10px;flex-shrink:0}
+.sb-av{width:34px;height:34px;background:var(--accent-light);border-radius:50%;display:grid;place-items:center;color:var(--accent);font-weight:700;font-size:13px;flex-shrink:0}
+.sb-uname{font-size:13px;font-weight:600;color:var(--text);line-height:1.2}
+.sb-urole{font-size:11px;color:var(--text-3)}
+.main{flex:1;display:flex;flex-direction:column;overflow:hidden}
+.topbar{height:60px;background:var(--surface);border-bottom:1px solid var(--border);display:flex;align-items:center;padding:0 28px;gap:16px}
+.topbar-title{font-size:20px;font-weight:700;letter-spacing:-.01em}
+.topbar-right{margin-left:auto;display:flex;align-items:center;gap:14px}
+.search{display:flex;align-items:center;gap:8px;background:var(--surface-2);border:1px solid var(--border);border-radius:8px;padding:7px 12px;width:280px}
+.search input{border:none;background:transparent;outline:none;font-family:var(--font);font-size:13px;color:var(--text);flex:1}
+.search i{color:var(--text-3);font-size:13px}
+.icon-btn{width:36px;height:36px;border-radius:8px;border:1px solid var(--border);background:var(--surface);display:grid;place-items:center;cursor:pointer;color:var(--text-2);position:relative}
+.icon-btn .dot{position:absolute;top:8px;right:9px;width:7px;height:7px;background:var(--red);border-radius:50%;border:2px solid #fff}
+.tb-avatar{width:36px;height:36px;border-radius:50%;background:linear-gradient(135deg,#6366F1,#8B5CF6);display:grid;place-items:center;color:#fff;font-weight:600;font-size:13px;cursor:pointer}
+.content-wrap{flex:1;overflow:hidden;display:flex}
+.sec-nav{width:180px;border-right:1px solid var(--border);background:var(--surface);padding:24px 12px;flex-shrink:0}
+.sec-nav-label{font-size:10px;font-weight:600;color:var(--text-3);text-transform:uppercase;letter-spacing:.1em;padding:0 12px 10px}
+.sec-item{padding:8px 12px;font-size:13px;font-weight:500;color:var(--text-2);border-radius:8px;cursor:pointer;margin-bottom:2px}
+.sec-item:hover{background:#F1F5F9;color:var(--text)}
+.sec-item.active{background:var(--accent-light);color:var(--accent);font-weight:600}
+.content{flex:1;overflow-y:auto;padding:28px 32px}
+.btn{display:inline-flex;align-items:center;gap:7px;padding:8px 14px;border-radius:8px;font-size:13px;font-weight:500;cursor:pointer;border:1px solid transparent;font-family:var(--font);transition:all .15s}
+.btn-primary{background:var(--accent);color:#fff}
+.btn-primary:hover{background:#4338CA}
+.btn-ghost{background:var(--surface);color:var(--text-2);border-color:var(--border)}
+.btn-ghost:hover{color:var(--text);border-color:var(--text-3)}
+.page-head{display:flex;align-items:center;margin-bottom:22px}
+.page-head h1{font-size:22px;font-weight:700;letter-spacing:-.01em}
+.page-head .sub{font-size:13px;color:var(--text-2);margin-top:2px}
+.page-head .actions{margin-left:auto;display:flex;gap:8px}
+/* Role cards */
+.role-grid{display:grid;grid-template-columns:repeat(5,1fr) auto;gap:14px;margin-bottom:24px}
+.role-card{background:var(--surface);border:1px solid var(--border);border-radius:12px;padding:16px;cursor:pointer;transition:all .15s;box-shadow:0 1px 3px rgba(0,0,0,.04);position:relative}
+.role-card:hover{border-color:var(--accent);transform:translateY(-1px)}
+.role-card.selected{border-color:var(--accent);background:linear-gradient(135deg,#FFFFFF,var(--accent-light));box-shadow:0 4px 12px rgba(79,70,229,.12)}
+.role-card.selected::after{content:'\f00c';font-family:'Font Awesome 6 Free';font-weight:900;position:absolute;top:12px;right:12px;width:18px;height:18px;background:var(--accent);color:#fff;border-radius:50%;display:grid;place-items:center;font-size:9px}
+.role-icon{width:36px;height:36px;border-radius:9px;display:grid;place-items:center;font-size:14px;margin-bottom:10px}
+.ri-admin{background:#EEF2FF;color:#4F46E5}
+.ri-manager{background:#ECFDF5;color:#059669}
+.ri-warehouse{background:#FFFBEB;color:#D97706}
+.ri-cs{background:#EFF6FF;color:#2563EB}
+.ri-finance{background:#FDF2F8;color:#BE185D}
+.role-name{font-size:14px;font-weight:600;margin-bottom:2px}
+.role-count{font-size:11px;color:var(--text-3)}
+.role-card.create-role{border:2px dashed var(--border);background:transparent;display:flex;flex-direction:column;align-items:center;justify-content:center;text-align:center;color:var(--text-3);min-width:140px}
+.role-card.create-role:hover{border-color:var(--accent);color:var(--accent);background:var(--accent-light)}
+.role-card.create-role i{font-size:18px;margin-bottom:6px}
+.role-card.create-role span{font-size:12px;font-weight:600}
+/* Matrix */
+.matrix-card{background:var(--surface);border:1px solid var(--border);border-radius:12px;box-shadow:0 1px 3px rgba(0,0,0,.04);overflow:hidden}
+.matrix-head{padding:18px 22px;border-bottom:1px solid var(--border);display:flex;align-items:center;gap:14px}
+.matrix-head .role-icon{margin-bottom:0}
+.matrix-head h3{font-size:15px;font-weight:700;letter-spacing:-.01em}
+.matrix-head p{font-size:12px;color:var(--text-2);margin-top:2px}
+.matrix-head .right{margin-left:auto;display:flex;gap:8px}
+table.perm{width:100%;border-collapse:collapse}
+table.perm th{text-align:center;font-size:11px;font-weight:600;color:var(--text-3);text-transform:uppercase;letter-spacing:.06em;padding:14px;background:var(--surface-2);border-bottom:1px solid var(--border)}
+table.perm th:first-child{text-align:left;padding-left:22px;width:30%}
+table.perm td{padding:14px;border-bottom:1px solid var(--border);font-size:13px;text-align:center}
+table.perm td:first-child{text-align:left;padding-left:22px;font-weight:600}
+table.perm tr:last-child td{border-bottom:none}
+table.perm tr:hover td{background:#FAFBFF}
+.mod{display:flex;align-items:center;gap:10px}
+.mod-ic{width:30px;height:30px;border-radius:7px;background:#F1F5F9;display:grid;place-items:center;color:var(--text-2);font-size:13px}
+.cb{width:20px;height:20px;border-radius:5px;border:1.5px solid var(--border);background:#fff;display:inline-grid;place-items:center;cursor:pointer;transition:all .15s}
+.cb.on{background:var(--accent);border-color:var(--accent)}
+.cb.on::after{content:'\f00c';font-family:'Font Awesome 6 Free';font-weight:900;font-size:10px;color:#fff}
+.cb.partial{background:var(--accent-light);border-color:var(--accent)}
+.cb.partial::after{content:'';width:8px;height:2px;background:var(--accent);border-radius:1px}
+.legend{display:flex;align-items:center;gap:16px;padding:14px 22px;background:var(--surface-2);border-top:1px solid var(--border);font-size:12px;color:var(--text-2)}
+.legend-item{display:flex;align-items:center;gap:6px}
+</style>
+</head>
+<body>
+
+<aside class="sidebar">
+  <div class="sb-logo">
+    <div class="sb-mark">S</div>
+    <span class="sb-name">Synergia<span style="color:var(--accent)">360</span></span>
+  </div>
+  <nav class="sb-nav">
+    <a href="main-dashboard.html" class="sb-link"><i class="fa-solid fa-grid-2"></i> Dashboard</a>
+    <a href="command-palette.html" class="sb-link"><i class="fa-solid fa-bolt"></i> Command Center</a>
+    <a href="dashboard-builder.html" class="sb-link"><i class="fa-solid fa-sliders"></i> Dashboard Builder</a>
+    <span class="sb-section">Orders</span>
+    <a href="order-queue.html" class="sb-link"><i class="fa-solid fa-receipt"></i> Order Queue</a>
+    <a href="returns-queue.html" class="sb-link"><i class="fa-solid fa-rotate-left"></i> Returns</a>
+    <a href="shipments-list.html" class="sb-link"><i class="fa-solid fa-truck-fast"></i> Shipments</a>
+    <a href="routing-rules.html" class="sb-link"><i class="fa-solid fa-code-branch"></i> Routing Rules</a>
+    <a href="order-automation.html" class="sb-link"><i class="fa-solid fa-robot"></i> Automation</a>
+    <span class="sb-section">Inventory</span>
+    <a href="inventory-stock-overview.html" class="sb-link"><i class="fa-solid fa-boxes-stacked"></i> Stock</a>
+    <a href="inventory-stock-take.html" class="sb-link"><i class="fa-solid fa-clipboard-check"></i> Stock Take</a>
+    <a href="purchase-orders.html" class="sb-link"><i class="fa-solid fa-cart-plus"></i> Purchase Orders</a>
+    <a href="suppliers-list.html" class="sb-link"><i class="fa-solid fa-industry"></i> Suppliers</a>
+    <span class="sb-section">Catalogue</span>
+    <a href="catalogue-product-list.html" class="sb-link"><i class="fa-solid fa-tag"></i> Products</a>
+    <a href="catalogue-bom-builder.html" class="sb-link"><i class="fa-solid fa-list-tree"></i> BOM Builder</a>
+    <span class="sb-section">Channels</span>
+    <a href="channels-overview.html" class="sb-link"><i class="fa-solid fa-plug"></i> Overview</a>
+    <a href="listing-manager.html" class="sb-link"><i class="fa-solid fa-store"></i> Listings</a>
+    <a href="pricing-rules.html" class="sb-link"><i class="fa-solid fa-pound-sign"></i> Pricing Rules</a>
+    <span class="sb-section">Customers</span>
+    <a href="customers-list.html" class="sb-link"><i class="fa-solid fa-users"></i> Customers</a>
+    <span class="sb-section">Finance</span>
+    <a href="finance-dashboard.html" class="sb-link"><i class="fa-solid fa-chart-pie"></i> Overview</a>
+    <a href="finance-expense-management.html" class="sb-link"><i class="fa-solid fa-file-invoice"></i> Expenses</a>
+    <a href="sku-profitability.html" class="sb-link"><i class="fa-solid fa-chart-bar"></i> SKU Profitability</a>
+    <a href="finance-monthly-close.html" class="sb-link"><i class="fa-solid fa-calendar-check"></i> Monthly Close</a>
+    <span class="sb-section">Reports</span>
+    <a href="reports-library.html" class="sb-link"><i class="fa-solid fa-book"></i> Library</a>
+    <a href="report-builder-ai.html" class="sb-link"><i class="fa-solid fa-wand-magic-sparkles"></i> AI Builder</a>
+    <a href="automation-rule-builder.html" class="sb-link"><i class="fa-solid fa-gears"></i> Automation Rules</a>
+    <span class="sb-section">Settings</span>
+    <a href="settings-team.html" class="sb-link"><i class="fa-solid fa-people-group"></i> Team</a>
+    <a href="settings-rbac.html" class="sb-link active"><i class="fa-solid fa-shield-halved"></i> Roles &amp; Permissions</a>
+    <a href="settings-integrations.html" class="sb-link"><i class="fa-solid fa-puzzle-piece"></i> Integrations</a>
+    <a href="settings-billing.html" class="sb-link"><i class="fa-solid fa-credit-card"></i> Billing</a>
+    <a href="settings-notifications.html" class="sb-link"><i class="fa-solid fa-bell"></i> Notifications</a>
+    <a href="settings-locale.html" class="sb-link"><i class="fa-solid fa-earth-europe"></i> Locale &amp; Currency</a>
+    <a href="settings-warehouses.html" class="sb-link"><i class="fa-solid fa-warehouse"></i> Warehouses</a>
+    <a href="settings-api-webhooks.html" class="sb-link"><i class="fa-solid fa-code"></i> API &amp; Webhooks</a>
+  </nav>
+  <div class="sb-foot">
+    <div class="sb-av">JW</div>
+    <div>
+      <div class="sb-uname">James Whitcombe</div>
+      <div class="sb-urole">Owner &middot; Acme Co</div>
+    </div>
+  </div>
+</aside>
+
+<div class="main">
+  <div class="topbar">
+    <div class="topbar-title">Settings</div>
+    <div class="topbar-right">
+      <div class="search"><i class="fa fa-magnifying-glass"></i><input placeholder="Search permissions…"></div>
+      <div class="icon-btn"><i class="fa fa-bell"></i><span class="dot"></span></div>
+      <div class="tb-avatar">JS</div>
+    </div>
+  </div>
+
+  <div class="content-wrap">
+    <aside class="sec-nav">
+      <div class="sec-nav-label">Settings</div>
+      <div class="sec-item">General</div>
+      <div class="sec-item">Team</div>
+      <div class="sec-item active">Roles &amp; Permissions</div>
+      <div class="sec-item">Notifications</div>
+      <div class="sec-item">Locale</div>
+      <div class="sec-item">Billing</div>
+    </aside>
+
+    <main class="content">
+      <div class="page-head">
+        <div>
+          <h1>Roles &amp; Permissions</h1>
+          <div class="sub">Define what each role can see and do across the platform</div>
+        </div>
+        <div class="actions">
+          <button class="btn btn-ghost"><i class="fa fa-clock-rotate-left"></i> Change History</button>
+          <button class="btn btn-primary"><i class="fa fa-plus"></i> Create Custom Role</button>
+        </div>
+      </div>
+
+      <div class="role-grid">
+        <div class="role-card selected">
+          <div class="role-icon ri-admin"><i class="fa fa-crown"></i></div>
+          <div class="role-name">Admin</div>
+          <div class="role-count">1 member · Full access</div>
+        </div>
+        <div class="role-card">
+          <div class="role-icon ri-manager"><i class="fa fa-user-tie"></i></div>
+          <div class="role-name">Manager</div>
+          <div class="role-count">2 members · Operations</div>
+        </div>
+        <div class="role-card">
+          <div class="role-icon ri-warehouse"><i class="fa fa-warehouse"></i></div>
+          <div class="role-name">Warehouse</div>
+          <div class="role-count">2 members · WMS only</div>
+        </div>
+        <div class="role-card">
+          <div class="role-icon ri-cs"><i class="fa fa-headset"></i></div>
+          <div class="role-name">Customer Service</div>
+          <div class="role-count">1 member · Orders &amp; returns</div>
+        </div>
+        <div class="role-card">
+          <div class="role-icon ri-finance"><i class="fa fa-sterling-sign"></i></div>
+          <div class="role-name">Finance</div>
+          <div class="role-count">1 member · Reports &amp; billing</div>
+        </div>
+        <div class="role-card create-role">
+          <i class="fa fa-plus"></i>
+          <span>Custom Role</span>
+        </div>
+      </div>
+
+      <div class="matrix-card">
+        <div class="matrix-head">
+          <div class="role-icon ri-admin"><i class="fa fa-crown"></i></div>
+          <div>
+            <h3>Admin Permissions</h3>
+            <p>Full access to all modules and system administration</p>
+          </div>
+          <div class="right">
+            <button class="btn btn-ghost"><i class="fa fa-copy"></i> Duplicate</button>
+            <button class="btn btn-primary"><i class="fa fa-pen"></i> Edit Role</button>
+          </div>
+        </div>
+        <table class="perm">
+          <thead>
+            <tr>
+              <th>Module</th>
+              <th>View</th>
+              <th>Create</th>
+              <th>Edit</th>
+              <th>Delete</th>
+              <th>Export</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td><div class="mod"><div class="mod-ic"><i class="fa fa-cart-shopping"></i></div>Orders</div></td>
+              <td><span class="cb on"></span></td><td><span class="cb on"></span></td><td><span class="cb on"></span></td><td><span class="cb on"></span></td><td><span class="cb on"></span></td>
+            </tr>
+            <tr>
+              <td><div class="mod"><div class="mod-ic"><i class="fa fa-boxes-stacked"></i></div>Inventory</div></td>
+              <td><span class="cb on"></span></td><td><span class="cb on"></span></td><td><span class="cb on"></span></td><td><span class="cb on"></span></td><td><span class="cb on"></span></td>
+            </tr>
+            <tr>
+              <td><div class="mod"><div class="mod-ic"><i class="fa fa-store"></i></div>Channels</div></td>
+              <td><span class="cb on"></span></td><td><span class="cb on"></span></td><td><span class="cb on"></span></td><td><span class="cb on"></span></td><td><span class="cb on"></span></td>
+            </tr>
+            <tr>
+              <td><div class="mod"><div class="mod-ic"><i class="fa fa-sterling-sign"></i></div>Finance</div></td>
+              <td><span class="cb on"></span></td><td><span class="cb on"></span></td><td><span class="cb on"></span></td><td><span class="cb partial"></span></td><td><span class="cb on"></span></td>
+            </tr>
+            <tr>
+              <td><div class="mod"><div class="mod-ic"><i class="fa fa-chart-line"></i></div>Reports</div></td>
+              <td><span class="cb on"></span></td><td><span class="cb on"></span></td><td><span class="cb on"></span></td><td><span class="cb on"></span></td><td><span class="cb on"></span></td>
+            </tr>
+            <tr>
+              <td><div class="mod"><div class="mod-ic"><i class="fa fa-gear"></i></div>Settings</div></td>
+              <td><span class="cb on"></span></td><td><span class="cb on"></span></td><td><span class="cb on"></span></td><td><span class="cb on"></span></td><td><span class="cb"></span></td>
+            </tr>
+            <tr>
+              <td><div class="mod"><div class="mod-ic"><i class="fa fa-warehouse"></i></div>WMS</div></td>
+              <td><span class="cb on"></span></td><td><span class="cb on"></span></td><td><span class="cb on"></span></td><td><span class="cb on"></span></td><td><span class="cb on"></span></td>
+            </tr>
+          </tbody>
+        </table>
+        <div class="legend">
+          <div class="legend-item"><span class="cb on"></span> Granted</div>
+          <div class="legend-item"><span class="cb partial"></span> Conditional</div>
+          <div class="legend-item"><span class="cb"></span> Denied</div>
+          <div style="margin-left:auto;color:var(--text-3)"><i class="fa fa-circle-info"></i> 32 of 35 permissions enabled for this role</div>
+        </div>
+      </div>
+    </main>
+  </div>
+</div>
+
+</body>
+</html>

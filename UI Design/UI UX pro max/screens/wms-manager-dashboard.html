@@ -1,0 +1,312 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>WMS – Manager Dashboard</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+<style>
+:root{
+  --bg:#F8F9FC;--surface:#FFFFFF;--surface-2:#F8FAFF;--border:#E2E8F0;
+  --accent:#4F46E5;--accent-dim:rgba(79,70,229,.08);--accent-light:#EEF2FF;
+  --text:#0F172A;--text-2:#475569;--text-3:#94A3B8;
+  --green:#10B981;--green-dim:rgba(16,185,129,.08);--green-light:#ECFDF5;
+  --red:#EF4444;--red-dim:rgba(239,68,68,.08);--red-light:#FEF2F2;
+  --amber:#F59E0B;--amber-dim:rgba(245,158,11,.08);--amber-light:#FFFBEB;
+  --blue:#3B82F6;--font:'Inter',sans-serif;
+  --shadow-sm:0 1px 2px rgba(0,0,0,.05);--shadow:0 1px 3px rgba(0,0,0,.08),0 1px 2px rgba(0,0,0,.04)
+}
+*{box-sizing:border-box;margin:0;padding:0}
+body{font-family:var(--font);background:#F0F4F8;color:var(--text);font-size:14px;line-height:1.5;min-height:100vh;display:flex;align-items:flex-start;justify-content:center;gap:40px;padding:40px}
+
+.phone-wrap{width:390px;background:#1A1A2E;border-radius:48px;padding:10px;box-shadow:0 30px 80px rgba(0,0,0,.3);flex-shrink:0}
+.phone-screen{background:#FFFFFF;border-radius:40px;overflow:hidden;min-height:700px;display:flex;flex-direction:column}
+
+.status-bar{background:#FFFFFF;padding:14px 24px 8px;display:flex;justify-content:space-between;align-items:center;font-size:12px;font-weight:600;color:#0F172A}
+.status-icons{display:flex;align-items:center;gap:5px}
+
+.top-bar{padding:10px 20px 12px;display:flex;align-items:center;justify-content:space-between;border-bottom:1px solid var(--border)}
+.top-bar-title{font-size:16px;font-weight:600;color:var(--text)}
+.icon-btn{width:36px;height:36px;display:flex;align-items:center;justify-content:center;border-radius:8px;border:none;background:transparent;cursor:pointer;color:var(--text);flex-shrink:0;position:relative}
+.notif-dot{position:absolute;top:6px;right:6px;width:8px;height:8px;border-radius:50%;background:var(--red);border:1.5px solid white}
+
+.screen-body{padding:18px 20px;display:flex;flex-direction:column;gap:16px;flex:1;overflow:hidden}
+
+.greeting{display:flex;flex-direction:column;gap:2px}
+.greeting-name{font-size:18px;font-weight:700;color:var(--text)}
+.greeting-sub{font-size:13px;color:var(--red);font-weight:500}
+
+.metrics-strip{display:flex;gap:8px}
+.metric-chip{flex:1;background:var(--surface-2);border:1px solid var(--border);border-radius:8px;padding:8px 10px;text-align:center}
+.metric-chip-val{font-size:15px;font-weight:700;color:var(--text);display:flex;align-items:center;justify-content:center;gap:5px}
+.metric-chip-label{font-size:10px;color:var(--text-3);margin-top:1px;white-space:nowrap}
+.status-dot{width:7px;height:7px;border-radius:50%;flex-shrink:0}
+.dot-green{background:var(--green)}
+
+.alert-card{border:1px solid var(--border);border-radius:12px;padding:12px 14px;display:flex;align-items:flex-start;justify-content:space-between;gap:8px}
+.alert-card.amber{border-left:3px solid var(--amber);background:var(--amber-light)}
+.alert-info{flex:1}
+.alert-title{font-size:13px;font-weight:600;color:var(--text);line-height:1.4}
+.alert-meta{font-size:12px;color:var(--text-2);margin-top:2px}
+.alert-action{font-size:12px;color:var(--accent);font-weight:600;cursor:pointer;white-space:nowrap;padding-top:2px}
+.btn-small{background:var(--accent);color:white;border:none;border-radius:6px;padding:4px 10px;font-size:12px;font-weight:600;cursor:pointer;font-family:var(--font);white-space:nowrap}
+
+.section-label{font-size:12px;font-weight:600;color:var(--text-3);text-transform:uppercase;letter-spacing:.5px}
+
+.picker-row{display:flex;align-items:center;gap:10px;padding:8px 0;border-bottom:1px solid var(--border)}
+.picker-row:last-child{border-bottom:none}
+.avatar{width:32px;height:32px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:13px;font-weight:700;color:white;flex-shrink:0}
+.picker-info{flex:1}
+.picker-name{font-size:13px;font-weight:600;color:var(--text)}
+.picker-task{font-size:12px;color:var(--text-2)}
+.picker-status{display:flex;align-items:center;gap:5px;font-size:12px;font-weight:500}
+
+.bottom-nav{display:flex;border-top:1px solid var(--border);padding:10px 0 6px}
+.nav-item{flex:1;display:flex;flex-direction:column;align-items:center;gap:4px;cursor:pointer;font-size:10px;color:var(--text-3);font-weight:500;position:relative}
+.nav-item.active{color:var(--accent)}
+.nav-active-dot{width:4px;height:4px;border-radius:50%;background:var(--accent);position:absolute;bottom:-2px}
+
+/* Context panel */
+.context-panel{width:360px;background:var(--surface);border:1px solid var(--border);border-radius:16px;padding:24px;box-shadow:var(--shadow);align-self:flex-start;display:flex;flex-direction:column;gap:20px}
+.panel-title{font-size:15px;font-weight:600;color:var(--text)}
+.prog-label{display:flex;justify-content:space-between;font-size:13px;margin-bottom:6px}
+.prog-label span:first-child{color:var(--text-2)}
+.prog-label span:last-child{font-weight:600;color:var(--text)}
+.prog-track{height:8px;background:var(--border);border-radius:99px;overflow:hidden}
+.prog-fill{height:100%;background:var(--accent);border-radius:99px}
+
+.metrics-grid{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+.metric-card{background:var(--surface-2);border:1px solid var(--border);border-radius:10px;padding:12px}
+.mc-val{font-size:22px;font-weight:700;color:var(--text)}
+.mc-label{font-size:12px;color:var(--text-2);margin-top:2px}
+.mc-val.green{color:var(--green)}
+.mc-val.red{color:var(--red)}
+
+.zone-section{display:flex;flex-direction:column;gap:2px}
+.zone-label-row{font-size:12px;font-weight:600;color:var(--text-3);text-transform:uppercase;letter-spacing:.5px;margin-bottom:8px}
+.zone-row{display:flex;align-items:center;gap:10px;margin-bottom:8px}
+.zone-name{font-size:13px;font-weight:500;color:var(--text);width:50px}
+.zone-track{flex:1;height:6px;background:var(--border);border-radius:99px;overflow:hidden}
+.zone-bar{height:100%;border-radius:99px}
+.zone-pct{font-size:12px;color:var(--text-2);width:34px;text-align:right}
+
+.alerts-mini{display:flex;flex-direction:column;gap:2px}
+.alert-mini-row{display:flex;justify-content:space-between;align-items:flex-start;padding:8px 0;border-bottom:1px solid var(--border);font-size:13px}
+.alert-mini-row:last-child{border-bottom:none}
+.ami-text{color:var(--text);flex:1}
+.ami-time{font-size:11px;color:var(--text-3);margin-top:2px}
+.ami-ts{font-size:12px;color:var(--text-3);flex-shrink:0;padding-top:1px}
+</style>
+</head>
+<body>
+
+<div class="phone-wrap">
+  <div class="phone-screen">
+
+    <div class="status-bar">
+      <span>9:41</span>
+      <div class="status-icons">
+        <svg width="16" height="12" viewBox="0 0 16 12" fill="currentColor"><rect x="0" y="7" width="2.5" height="5" rx=".5"/><rect x="3.5" y="5" width="2.5" height="7" rx=".5"/><rect x="7" y="3" width="2.5" height="9" rx=".5"/><rect x="10.5" y="1" width="2.5" height="11" rx=".5" opacity=".35"/></svg>
+        <svg width="16" height="12" viewBox="0 0 20 14" fill="currentColor"><path d="M10 2.5C13.5 2.5 16.6 4 18.7 6.4L20 5c-2.5-2.9-6.1-4.7-10-4.7S2.5 2.1 0 5l1.3 1.4C3.4 4 6.5 2.5 10 2.5zm0 4.2c2.1 0 4 .9 5.4 2.3L16.8 7.6C15 5.9 12.6 4.8 10 4.8S5 5.9 3.2 7.6l1.4 1.4C6 7.6 7.9 6.7 10 6.7zm0 4.2c1 0 1.9.4 2.6 1.1L14 10.6C12.9 9.4 11.5 8.7 10 8.7s-2.9.7-4 1.9l1.4 1.4c.7-.7 1.6-1.1 2.6-1.1zm0 3.1a1.5 1.5 0 100-3 1.5 1.5 0 000 3z"/></svg>
+        <svg width="25" height="12" viewBox="0 0 25 12" fill="none"><rect x=".5" y=".5" width="21" height="11" rx="2.5" stroke="currentColor" stroke-opacity=".35"/><rect x="1.5" y="1.5" width="17" height="9" rx="1.5" fill="currentColor"/><path d="M23 4v4a2 2 0 000-4z" fill="currentColor" opacity=".4"/></svg>
+      </div>
+    </div>
+
+    <div class="top-bar">
+      <button class="icon-btn">
+        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M3 6h18M3 12h18M3 18h18"/></svg>
+      </button>
+      <span class="top-bar-title">Manager View</span>
+      <button class="icon-btn">
+        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M18 8A6 6 0 006 8c0 7-3 9-3 9h18s-3-2-3-9M13.73 21a2 2 0 01-3.46 0"/></svg>
+        <div class="notif-dot"></div>
+      </button>
+    </div>
+
+    <div class="screen-body">
+      <div class="greeting">
+        <div class="greeting-name">Good morning, Alex</div>
+        <div class="greeting-sub">3 alerts need attention</div>
+      </div>
+
+      <div class="metrics-strip">
+        <div class="metric-chip">
+          <div class="metric-chip-val"><span class="status-dot dot-green"></span>8</div>
+          <div class="metric-chip-label">Active Pickers</div>
+        </div>
+        <div class="metric-chip">
+          <div class="metric-chip-val">247</div>
+          <div class="metric-chip-label">Orders Today</div>
+        </div>
+        <div class="metric-chip">
+          <div class="metric-chip-val" style="color:var(--green)">98.4%</div>
+          <div class="metric-chip-label">Accuracy</div>
+        </div>
+      </div>
+
+      <div style="display:flex;flex-direction:column;gap:8px">
+        <div class="alert-card amber">
+          <div class="alert-info">
+            <div class="alert-title">Low Stock Alert — SKU-44521</div>
+            <div class="alert-meta">Qty: 3 remaining · Zone B</div>
+          </div>
+          <span class="alert-action">View</span>
+        </div>
+        <div class="alert-card">
+          <div class="alert-info">
+            <div class="alert-title">New Pick List — 24 orders queued</div>
+            <div class="alert-meta">Zone C · Ready to assign</div>
+          </div>
+          <button class="btn-small">Assign</button>
+        </div>
+        <div class="alert-card">
+          <div class="alert-info">
+            <div class="alert-title">Picker Idle — Tom B. · 8 min</div>
+            <div class="alert-meta">Last seen · Aisle A</div>
+          </div>
+          <span class="alert-action">Message</span>
+        </div>
+      </div>
+
+      <div class="section-label">Team Status</div>
+
+      <div style="display:flex;flex-direction:column">
+        <div class="picker-row">
+          <div class="avatar" style="background:#4F46E5">SK</div>
+          <div class="picker-info">
+            <div class="picker-name">Sarah K.</div>
+            <div class="picker-task">Zone A · Picking</div>
+          </div>
+          <div class="picker-status" style="color:var(--green)">
+            <span class="status-dot" style="background:var(--green)"></span>Active
+          </div>
+        </div>
+        <div class="picker-row">
+          <div class="avatar" style="background:#7C3AED">MR</div>
+          <div class="picker-info">
+            <div class="picker-name">Mike R.</div>
+            <div class="picker-task">Zone C · Break</div>
+          </div>
+          <div class="picker-status" style="color:var(--amber)">
+            <span class="status-dot" style="background:var(--amber)"></span>Break
+          </div>
+        </div>
+        <div class="picker-row">
+          <div class="avatar" style="background:#94A3B8">TB</div>
+          <div class="picker-info">
+            <div class="picker-name">Tom B.</div>
+            <div class="picker-task">Zone A · Idle 8 min</div>
+          </div>
+          <div class="picker-status" style="color:var(--red)">
+            <span class="status-dot" style="background:var(--red)"></span>Idle
+          </div>
+        </div>
+        <div class="picker-row">
+          <div class="avatar" style="background:#10B981">EL</div>
+          <div class="picker-info">
+            <div class="picker-name">Emma L.</div>
+            <div class="picker-task">Zone B · Picking</div>
+          </div>
+          <div class="picker-status" style="color:var(--green)">
+            <span class="status-dot" style="background:var(--green)"></span>Active
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="bottom-nav">
+      <div class="nav-item active">
+        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="7" height="7"/><rect x="14" y="3" width="7" height="7"/><rect x="3" y="14" width="7" height="7"/><rect x="14" y="14" width="7" height="7"/></svg>
+        Dashboard
+        <div class="nav-active-dot"></div>
+      </div>
+      <div class="nav-item">
+        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M17 21v-2a4 4 0 00-4-4H5a4 4 0 00-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 00-3-3.87M16 3.13a4 4 0 010 7.75"/></svg>
+        Team
+      </div>
+      <div class="nav-item">
+        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M18 8A6 6 0 006 8c0 7-3 9-3 9h18s-3-2-3-9M13.73 21a2 2 0 01-3.46 0"/></svg>
+        Alerts
+      </div>
+      <div class="nav-item">
+        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="3"/><path d="M19.07 4.93l-1.41 1.41M21 12h-2M19.07 19.07l-1.41-1.41M12 21v-2M4.93 19.07l1.41-1.41M3 12h2M4.93 4.93l1.41 1.41"/></svg>
+        Settings
+      </div>
+    </div>
+  </div>
+</div>
+
+<div class="context-panel">
+  <div class="panel-title">Shift Summary</div>
+
+  <div>
+    <div class="prog-label">
+      <span>Shift progress</span>
+      <span>6h 20m of 8h</span>
+    </div>
+    <div class="prog-track"><div class="prog-fill" style="width:79%"></div></div>
+    <div style="font-size:12px;color:var(--text-3);margin-top:4px">1h 40m remaining</div>
+  </div>
+
+  <div class="metrics-grid">
+    <div class="metric-card">
+      <div class="mc-val">189</div>
+      <div class="mc-label">Orders Completed</div>
+    </div>
+    <div class="metric-card">
+      <div class="mc-val red">3</div>
+      <div class="mc-label">Errors Today</div>
+    </div>
+    <div class="metric-card" style="grid-column:1/-1">
+      <div class="mc-val green">4.2m</div>
+      <div class="mc-label">Avg Pick Time</div>
+    </div>
+  </div>
+
+  <div class="zone-section">
+    <div class="zone-label-row">Zone Performance</div>
+    <div class="zone-row">
+      <div class="zone-name">Zone A</div>
+      <div class="zone-track"><div class="zone-bar" style="width:88%;background:#4F46E5"></div></div>
+      <div class="zone-pct">88%</div>
+    </div>
+    <div class="zone-row">
+      <div class="zone-name">Zone B</div>
+      <div class="zone-track"><div class="zone-bar" style="width:74%;background:#10B981"></div></div>
+      <div class="zone-pct">74%</div>
+    </div>
+    <div class="zone-row">
+      <div class="zone-name">Zone C</div>
+      <div class="zone-track"><div class="zone-bar" style="width:61%;background:#F59E0B"></div></div>
+      <div class="zone-pct">61%</div>
+    </div>
+  </div>
+
+  <div>
+    <div style="font-size:13px;font-weight:600;color:var(--text);margin-bottom:10px">Recent Alerts</div>
+    <div class="alerts-mini">
+      <div class="alert-mini-row">
+        <div>
+          <div class="ami-text">Low stock: SKU-44521 Zone B</div>
+          <div class="ami-time">9:38 AM</div>
+        </div>
+      </div>
+      <div class="alert-mini-row">
+        <div>
+          <div class="ami-text">Pick list queued — Zone C (24)</div>
+          <div class="ami-time">9:15 AM</div>
+        </div>
+      </div>
+      <div class="alert-mini-row">
+        <div>
+          <div class="ami-text">Picker Tom B. idle — Aisle A</div>
+          <div class="ami-time">9:33 AM</div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+</body>
+</html>

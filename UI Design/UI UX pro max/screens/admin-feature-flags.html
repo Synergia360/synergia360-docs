@@ -1,0 +1,466 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Admin – Feature Flags</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
+<style>
+:root{
+  --bg:#F5F3FF;--surface:#FFFFFF;--surface-2:#F8F5FF;--border:#E9D5FF;
+  --accent:#7C3AED;--accent-light:#F5F3FF;
+  --text:#1E1B4B;--text-2:#5B5891;--text-3:#9CA3AF;
+  --green:#10B981;--red:#EF4444;--amber:#F59E0B;
+  --blue:#3B82F6;
+  --shadow-sm:0 1px 2px rgba(124,58,237,.06);
+  --shadow:0 1px 3px rgba(124,58,237,.1),0 1px 2px rgba(124,58,237,.06)
+}
+*{box-sizing:border-box;margin:0;padding:0}
+body{font-family:'Inter',sans-serif;background:var(--bg);color:var(--text);font-size:14px;line-height:1.5;display:flex;min-height:100vh}
+
+/* ── Sidebar ── */
+.sidebar{width:240px;background:#fff;border-right:1px solid var(--border);display:flex;flex-direction:column;flex-shrink:0;position:sticky;top:0;height:100vh;overflow:hidden}
+.sb-logo{padding:18px 20px;border-bottom:1px solid var(--border);display:flex;align-items:center;gap:12px;flex-shrink:0}
+.sb-mark{width:36px;height:36px;background:var(--accent);border-radius:9px;display:grid;place-items:center;color:#fff;font-weight:800;font-size:14px;flex-shrink:0}
+.sb-nav{flex:1;padding:10px;overflow-y:auto}
+.sb-section{font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:.07em;color:var(--text-3);padding:14px 8px 4px;display:block}
+.sb-link{display:flex;align-items:center;gap:10px;padding:8px 10px;border-radius:8px;color:var(--text-2);font-size:13px;font-weight:500;text-decoration:none;border-left:2px solid transparent;margin-bottom:1px;transition:background .15s,color .15s}
+.sb-link:hover{background:var(--surface-2);color:var(--text)}
+.sb-link.active{background:var(--accent-light);color:var(--accent);border-left-color:var(--accent);font-weight:600}
+.sb-link i{width:16px;text-align:center;font-size:13px;color:var(--text-3);flex-shrink:0}
+.sb-link.active i{color:var(--accent)}
+.sb-foot{padding:12px 16px;border-top:1px solid var(--border);display:flex;align-items:center;gap:10px;flex-shrink:0}
+.sb-av{width:34px;height:34px;background:var(--accent-light);border-radius:50%;display:grid;place-items:center;color:var(--accent);font-weight:700;font-size:13px;flex-shrink:0}
+.sb-uname{font-size:13px;font-weight:600;color:var(--text)}
+.sb-urole{font-size:11px;color:var(--text-3)}
+
+/* ── Main ── */
+.main{flex:1;display:flex;flex-direction:column;min-height:100vh;overflow:hidden}
+
+/* Topbar */
+.topbar{padding:16px 28px;border-bottom:1px solid var(--border);background:var(--surface);display:flex;align-items:center;justify-content:space-between;gap:16px}
+.topbar-left{}
+.breadcrumb{font-size:11px;color:var(--text-3);margin-bottom:3px;display:flex;align-items:center;gap:5px}
+.breadcrumb a{color:var(--text-3);text-decoration:none}
+.breadcrumb a:hover{color:var(--accent)}
+.breadcrumb .sep{opacity:.5}
+.topbar-h1{font-size:20px;font-weight:700;color:var(--text)}
+.topbar-right{display:flex;align-items:center;gap:10px}
+.env-select{padding:8px 12px;border:1px solid var(--border);border-radius:8px;background:var(--surface);font-size:13px;font-weight:500;color:var(--text-2);cursor:pointer;font-family:'Inter',sans-serif;appearance:none;padding-right:28px;background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' viewBox='0 0 24 24' fill='none' stroke='%235B5891' stroke-width='2'%3E%3Cpath d='M6 9l6 6 6-6'/%3E%3C/svg%3E");background-repeat:no-repeat;background-position:right 10px center}
+.btn-accent{padding:8px 16px;border:none;border-radius:8px;background:var(--accent);color:#fff;font-size:13px;font-weight:600;cursor:pointer;font-family:'Inter',sans-serif;display:inline-flex;align-items:center;gap:6px;transition:background .15s}
+.btn-accent:hover{background:#6D28D9}
+
+/* Content */
+.content{padding:24px 28px;display:flex;flex-direction:column;gap:20px;flex:1;overflow-y:auto}
+
+/* Stats */
+.stats-row{display:grid;grid-template-columns:repeat(4,1fr);gap:14px}
+.stat-card{background:var(--surface);border:1px solid var(--border);border-radius:12px;padding:16px 18px;box-shadow:var(--shadow-sm);display:flex;flex-direction:column;gap:4px}
+.stat-label{font-size:11px;font-weight:600;text-transform:uppercase;letter-spacing:.06em;color:var(--text-3)}
+.stat-val{font-size:26px;font-weight:800;color:var(--text)}
+.stat-sub{font-size:12px;color:var(--text-3)}
+.stat-card.green .stat-val{color:var(--green)}
+.stat-card.red .stat-val{color:var(--red)}
+.stat-card.amber .stat-val{color:var(--amber)}
+
+/* Toolbar */
+.toolbar{display:flex;align-items:center;gap:10px;background:var(--surface);border:1px solid var(--border);border-radius:12px;padding:14px 16px;box-shadow:var(--shadow-sm)}
+.search-wrap{position:relative;flex:1;max-width:320px}
+.search-wrap i{position:absolute;left:10px;top:50%;transform:translateY(-50%);color:var(--text-3);font-size:13px}
+.search-inp{width:100%;padding:8px 10px 8px 32px;border:1px solid var(--border);border-radius:8px;font-size:13px;font-family:'Inter',sans-serif;color:var(--text);background:var(--surface-2);outline:none}
+.search-inp:focus{border-color:var(--accent);background:#fff}
+.filter-label{font-size:12px;font-weight:500;color:var(--text-2);white-space:nowrap}
+.filter-btns{display:flex;gap:6px}
+.filter-btn{padding:6px 12px;border:1px solid var(--border);border-radius:20px;font-size:12px;font-weight:500;color:var(--text-2);background:var(--surface);cursor:pointer;transition:all .15s}
+.filter-btn:hover{border-color:var(--accent);color:var(--accent)}
+.filter-btn.active{background:var(--accent);color:#fff;border-color:var(--accent)}
+.toolbar-spacer{flex:1}
+.count-label{font-size:12px;color:var(--text-3);white-space:nowrap}
+
+/* Table */
+.table-card{background:var(--surface);border:1px solid var(--border);border-radius:12px;overflow:hidden;box-shadow:var(--shadow-sm)}
+.table-wrap{overflow-x:auto}
+table{width:100%;border-collapse:collapse}
+thead th{background:var(--surface-2);padding:11px 14px;text-align:left;font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:.05em;color:var(--text-3);border-bottom:1px solid var(--border);white-space:nowrap}
+thead th:first-child{border-radius:0}
+tbody tr{border-bottom:1px solid var(--border);transition:background .12s}
+tbody tr:last-child{border-bottom:none}
+tbody tr:hover{background:var(--surface-2)}
+tbody td{padding:13px 14px;font-size:13px;color:var(--text-2);vertical-align:middle}
+tbody td.key-col{font-family:'SF Mono','Fira Code',monospace;font-size:12px;color:var(--accent);font-weight:600;white-space:nowrap}
+tbody td.desc-col{color:var(--text);max-width:220px}
+
+/* Status pills */
+.pill{display:inline-flex;align-items:center;gap:5px;padding:3px 10px;border-radius:20px;font-size:11px;font-weight:600;white-space:nowrap}
+.pill-green{background:#ECFDF5;color:var(--green)}
+.pill-red{background:#FEF2F2;color:var(--red);border:1px solid #FECACA}
+.pill-grey{background:#F3F4F6;color:#6B7280}
+.pill-amber{background:linear-gradient(90deg,#FFFBEB,#FEF3C7);color:#B45309;border:1px solid #FDE68A}
+.pill-blue{background:#EFF6FF;color:var(--blue)}
+.pill-deprecated{background:#fff;color:var(--red);border:1px solid #FECACA}
+.pill-dot{width:6px;height:6px;border-radius:50%;background:currentColor;flex-shrink:0}
+
+/* Toggle */
+.toggle-wrap{display:flex;align-items:center;gap:8px}
+.toggle{position:relative;width:36px;height:20px;cursor:pointer}
+.toggle input{opacity:0;width:0;height:0;position:absolute}
+.toggle-track{position:absolute;inset:0;border-radius:10px;background:#D1D5DB;transition:background .2s}
+.toggle input:checked ~ .toggle-track{background:var(--green)}
+.toggle-thumb{position:absolute;top:3px;left:3px;width:14px;height:14px;border-radius:50%;background:#fff;box-shadow:0 1px 3px rgba(0,0,0,.2);transition:left .2s}
+.toggle input:checked ~ .toggle-track ~ .toggle-thumb,
+.toggle input:checked + .toggle-track + .toggle-thumb{left:19px}
+/* Simpler approach for thumb */
+.toggle-inner{position:relative;width:36px;height:20px}
+.toggle-inner input{display:none}
+.t-track{display:block;width:36px;height:20px;border-radius:10px;background:#D1D5DB;position:relative;cursor:pointer;transition:background .2s}
+.t-track::after{content:'';position:absolute;top:3px;left:3px;width:14px;height:14px;border-radius:50%;background:#fff;box-shadow:0 1px 2px rgba(0,0,0,.25);transition:left .2s}
+.t-on .t-track{background:var(--green)}
+.t-on .t-track::after{left:19px}
+
+/* Progress bar */
+.pbar-wrap{display:flex;align-items:center;gap:8px;min-width:100px}
+.pbar-bg{flex:1;height:5px;background:#E9D5FF;border-radius:3px;overflow:hidden}
+.pbar-fill{height:100%;border-radius:3px;background:var(--accent);transition:width .3s}
+.pbar-fill.green{background:var(--green)}
+.pbar-fill.amber{background:var(--amber)}
+.pbar-fill.blue{background:var(--blue)}
+.pbar-pct{font-size:11px;font-weight:600;color:var(--text-2);min-width:28px;text-align:right}
+
+/* Env tag */
+.env-tag{display:inline-flex;align-items:center;gap:4px;padding:2px 8px;border-radius:5px;font-size:11px;font-weight:500;background:var(--surface-2);color:var(--text-2);border:1px solid var(--border)}
+.env-tag.staging{background:#FEF3C7;color:#92400E;border-color:#FDE68A}
+.env-tag.dev{background:#EFF6FF;color:#1D4ED8;border-color:#BFDBFE}
+
+/* Actions */
+.actions{display:flex;align-items:center;gap:6px}
+.icon-btn{width:28px;height:28px;border-radius:7px;border:1px solid var(--border);background:var(--surface);display:inline-flex;align-items:center;justify-content:center;cursor:pointer;color:var(--text-3);font-size:12px;transition:all .15s}
+.icon-btn:hover{border-color:var(--accent);color:var(--accent);background:var(--accent-light)}
+</style>
+</head>
+<body>
+
+<!-- Sidebar -->
+<aside class="sidebar">
+  <div class="sb-logo">
+    <div class="sb-mark">SA</div>
+    <div>
+      <div style="font-weight:700;font-size:14px;color:var(--text)">Synergia<span style="color:var(--accent)">Admin</span></div>
+      <div style="font-size:10px;color:var(--text-3);font-weight:500">Platform Operations</div>
+    </div>
+  </div>
+  <nav class="sb-nav">
+    <span class="sb-section">Companies</span>
+    <a href="admin-company-list.html" class="sb-link"><i class="fa-solid fa-building"></i> All Companies</a>
+    <span class="sb-section">Platform</span>
+    <a href="admin-system-health.html" class="sb-link"><i class="fa-solid fa-heart-pulse"></i> System Health</a>
+    <a href="admin-feature-flags.html" class="sb-link active"><i class="fa-solid fa-flag"></i> Feature Flags</a>
+    <a href="admin-audit-logs.html" class="sb-link"><i class="fa-solid fa-scroll"></i> Audit Logs</a>
+    <span class="sb-section">Support</span>
+    <a href="admin-company-list.html" class="sb-link"><i class="fa-solid fa-headset"></i> Support Queue</a>
+    <a href="admin-company-list.html" class="sb-link"><i class="fa-solid fa-bell"></i> Alerts</a>
+  </nav>
+  <div class="sb-foot">
+    <div class="sb-av">AD</div>
+    <div>
+      <div class="sb-uname">Admin User</div>
+      <div class="sb-urole">Platform Admin</div>
+    </div>
+  </div>
+</aside>
+
+<!-- Main -->
+<div class="main">
+  <!-- Topbar -->
+  <div class="topbar">
+    <div class="topbar-left">
+      <div class="breadcrumb">
+        <a href="admin-company-list.html">Admin</a>
+        <span class="sep"><i class="fa-solid fa-chevron-right" style="font-size:9px"></i></span>
+        <span style="color:var(--accent);font-weight:600">Feature Flags</span>
+      </div>
+      <div class="topbar-h1">Feature Flags</div>
+    </div>
+    <div class="topbar-right">
+      <select class="env-select">
+        <option value="production">Production</option>
+        <option value="staging">Staging</option>
+        <option value="development">Development</option>
+      </select>
+      <button class="btn-accent"><i class="fa-solid fa-plus"></i> Create Flag</button>
+    </div>
+  </div>
+
+  <!-- Content -->
+  <div class="content">
+
+    <!-- Stats -->
+    <div class="stats-row">
+      <div class="stat-card">
+        <div class="stat-label">Total Flags</div>
+        <div class="stat-val">24</div>
+        <div class="stat-sub">Across all categories</div>
+      </div>
+      <div class="stat-card green">
+        <div class="stat-label">Enabled</div>
+        <div class="stat-val">18</div>
+        <div class="stat-sub">Live in production</div>
+      </div>
+      <div class="stat-card red">
+        <div class="stat-label">Disabled</div>
+        <div class="stat-val">6</div>
+        <div class="stat-sub">Inactive / deprecated</div>
+      </div>
+      <div class="stat-card amber">
+        <div class="stat-label">Beta / Rollout</div>
+        <div class="stat-val">3</div>
+        <div class="stat-sub">Partial deployment</div>
+      </div>
+    </div>
+
+    <!-- Toolbar -->
+    <div class="toolbar">
+      <div class="search-wrap">
+        <i class="fa-solid fa-magnifying-glass"></i>
+        <input class="search-inp" type="text" placeholder="Search flag key or description…">
+      </div>
+      <span class="filter-label">Category:</span>
+      <div class="filter-btns">
+        <button class="filter-btn active">All</button>
+        <button class="filter-btn">Core</button>
+        <button class="filter-btn">Beta</button>
+        <button class="filter-btn">Experiment</button>
+        <button class="filter-btn">Deprecated</button>
+      </div>
+      <div class="toolbar-spacer"></div>
+      <span class="count-label">8 of 24 flags</span>
+    </div>
+
+    <!-- Table -->
+    <div class="table-card">
+      <div class="table-wrap">
+        <table>
+          <thead>
+            <tr>
+              <th>Flag Key</th>
+              <th>Description</th>
+              <th style="min-width:130px">Rollout</th>
+              <th>Status</th>
+              <th>Environment</th>
+              <th>Toggle</th>
+              <th>Actions</th>
+            </tr>
+          </thead>
+          <tbody>
+
+            <!-- Row 1: ai_report_builder -->
+            <tr>
+              <td class="key-col">ai_report_builder</td>
+              <td class="desc-col">AI-powered report generation</td>
+              <td>
+                <div class="pbar-wrap">
+                  <div class="pbar-bg"><div class="pbar-fill green" style="width:100%"></div></div>
+                  <span class="pbar-pct">100%</span>
+                </div>
+              </td>
+              <td><span class="pill pill-green"><span class="pill-dot"></span>Enabled</span></td>
+              <td><span class="env-tag">All</span></td>
+              <td>
+                <div class="toggle-inner t-on">
+                  <label class="t-track" title="Toggle flag"></label>
+                </div>
+              </td>
+              <td>
+                <div class="actions">
+                  <button class="icon-btn" title="Edit"><i class="fa-solid fa-pen"></i></button>
+                  <button class="icon-btn" title="History"><i class="fa-solid fa-clock-rotate-left"></i></button>
+                </div>
+              </td>
+            </tr>
+
+            <!-- Row 2: bulk_listing_editor -->
+            <tr>
+              <td class="key-col">bulk_listing_editor</td>
+              <td class="desc-col">Multi-channel bulk edit UI</td>
+              <td>
+                <div class="pbar-wrap">
+                  <div class="pbar-bg"><div class="pbar-fill green" style="width:100%"></div></div>
+                  <span class="pbar-pct">100%</span>
+                </div>
+              </td>
+              <td><span class="pill pill-green"><span class="pill-dot"></span>Enabled</span></td>
+              <td><span class="env-tag">All</span></td>
+              <td>
+                <div class="toggle-inner t-on">
+                  <label class="t-track" title="Toggle flag"></label>
+                </div>
+              </td>
+              <td>
+                <div class="actions">
+                  <button class="icon-btn" title="Edit"><i class="fa-solid fa-pen"></i></button>
+                  <button class="icon-btn" title="History"><i class="fa-solid fa-clock-rotate-left"></i></button>
+                </div>
+              </td>
+            </tr>
+
+            <!-- Row 3: smart_pricing_v2 -->
+            <tr>
+              <td class="key-col">smart_pricing_v2</td>
+              <td class="desc-col">ML-based pricing suggestions</td>
+              <td>
+                <div class="pbar-wrap">
+                  <div class="pbar-bg"><div class="pbar-fill amber" style="width:25%"></div></div>
+                  <span class="pbar-pct">25%</span>
+                </div>
+              </td>
+              <td><span class="pill pill-amber"><span class="pill-dot"></span>Beta</span></td>
+              <td><span class="env-tag">All</span></td>
+              <td>
+                <div class="toggle-inner t-on">
+                  <label class="t-track" title="Toggle flag"></label>
+                </div>
+              </td>
+              <td>
+                <div class="actions">
+                  <button class="icon-btn" title="Edit"><i class="fa-solid fa-pen"></i></button>
+                  <button class="icon-btn" title="History"><i class="fa-solid fa-clock-rotate-left"></i></button>
+                </div>
+              </td>
+            </tr>
+
+            <!-- Row 4: wms_goods_in_v2 -->
+            <tr>
+              <td class="key-col">wms_goods_in_v2</td>
+              <td class="desc-col">New goods-in mobile flow</td>
+              <td>
+                <div class="pbar-wrap">
+                  <div class="pbar-bg"><div class="pbar-fill amber" style="width:50%"></div></div>
+                  <span class="pbar-pct">50%</span>
+                </div>
+              </td>
+              <td><span class="pill pill-amber"><span class="pill-dot"></span>Beta</span></td>
+              <td><span class="env-tag">All</span></td>
+              <td>
+                <div class="toggle-inner t-on">
+                  <label class="t-track" title="Toggle flag"></label>
+                </div>
+              </td>
+              <td>
+                <div class="actions">
+                  <button class="icon-btn" title="Edit"><i class="fa-solid fa-pen"></i></button>
+                  <button class="icon-btn" title="History"><i class="fa-solid fa-clock-rotate-left"></i></button>
+                </div>
+              </td>
+            </tr>
+
+            <!-- Row 5: customer_ai_insights -->
+            <tr>
+              <td class="key-col">customer_ai_insights</td>
+              <td class="desc-col">Customer churn prediction</td>
+              <td>
+                <div class="pbar-wrap">
+                  <div class="pbar-bg"><div class="pbar-fill blue" style="width:10%"></div></div>
+                  <span class="pbar-pct">10%</span>
+                </div>
+              </td>
+              <td><span class="pill pill-blue"><span class="pill-dot"></span>Experiment</span></td>
+              <td><span class="env-tag staging">Staging only</span></td>
+              <td>
+                <div class="toggle-inner t-on">
+                  <label class="t-track" title="Toggle flag"></label>
+                </div>
+              </td>
+              <td>
+                <div class="actions">
+                  <button class="icon-btn" title="Edit"><i class="fa-solid fa-pen"></i></button>
+                  <button class="icon-btn" title="History"><i class="fa-solid fa-clock-rotate-left"></i></button>
+                </div>
+              </td>
+            </tr>
+
+            <!-- Row 6: dashboard_builder_v3 -->
+            <tr>
+              <td class="key-col">dashboard_builder_v3</td>
+              <td class="desc-col">Drag-drop dashboard v3</td>
+              <td>
+                <div class="pbar-wrap">
+                  <div class="pbar-bg"><div class="pbar-fill" style="width:0%"></div></div>
+                  <span class="pbar-pct" style="color:var(--text-3)">0%</span>
+                </div>
+              </td>
+              <td><span class="pill pill-grey"><span class="pill-dot"></span>Disabled</span></td>
+              <td><span class="env-tag dev">Dev only</span></td>
+              <td>
+                <div class="toggle-inner">
+                  <label class="t-track" title="Toggle flag"></label>
+                </div>
+              </td>
+              <td>
+                <div class="actions">
+                  <button class="icon-btn" title="Edit"><i class="fa-solid fa-pen"></i></button>
+                  <button class="icon-btn" title="History"><i class="fa-solid fa-clock-rotate-left"></i></button>
+                </div>
+              </td>
+            </tr>
+
+            <!-- Row 7: legacy_csv_export -->
+            <tr>
+              <td class="key-col">legacy_csv_export</td>
+              <td class="desc-col">Old CSV export format</td>
+              <td>
+                <div class="pbar-wrap">
+                  <div class="pbar-bg"><div class="pbar-fill green" style="width:100%"></div></div>
+                  <span class="pbar-pct">100%</span>
+                </div>
+              </td>
+              <td><span class="pill pill-deprecated"><span class="pill-dot"></span>Deprecated</span></td>
+              <td><span class="env-tag">All</span></td>
+              <td>
+                <div class="toggle-inner t-on">
+                  <label class="t-track" style="background:#EF4444" title="Toggle flag"></label>
+                </div>
+              </td>
+              <td>
+                <div class="actions">
+                  <button class="icon-btn" title="Edit"><i class="fa-solid fa-pen"></i></button>
+                  <button class="icon-btn" title="History"><i class="fa-solid fa-clock-rotate-left"></i></button>
+                </div>
+              </td>
+            </tr>
+
+            <!-- Row 8: multi_currency_v2 -->
+            <tr>
+              <td class="key-col">multi_currency_v2</td>
+              <td class="desc-col">Currency conversion v2</td>
+              <td>
+                <div class="pbar-wrap">
+                  <div class="pbar-bg"><div class="pbar-fill" style="width:0%"></div></div>
+                  <span class="pbar-pct" style="color:var(--text-3)">0%</span>
+                </div>
+              </td>
+              <td><span class="pill pill-grey"><span class="pill-dot"></span>Disabled</span></td>
+              <td><span class="env-tag">All</span></td>
+              <td>
+                <div class="toggle-inner">
+                  <label class="t-track" title="Toggle flag"></label>
+                </div>
+              </td>
+              <td>
+                <div class="actions">
+                  <button class="icon-btn" title="Edit"><i class="fa-solid fa-pen"></i></button>
+                  <button class="icon-btn" title="History"><i class="fa-solid fa-clock-rotate-left"></i></button>
+                </div>
+              </td>
+            </tr>
+
+          </tbody>
+        </table>
+      </div>
+    </div>
+
+  </div><!-- /content -->
+</div><!-- /main -->
+
+</body>
+</html>

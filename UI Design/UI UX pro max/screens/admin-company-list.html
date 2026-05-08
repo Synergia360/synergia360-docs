@@ -1,0 +1,307 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Admin – Company List</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+<style>
+:root{
+  --bg:#F8F9FC;--surface:#FFFFFF;--surface-2:#F8FAFF;--border:#E2E8F0;
+  --accent:#4F46E5;--accent-dim:rgba(79,70,229,.08);--accent-light:#EEF2FF;
+  --text:#0F172A;--text-2:#475569;--text-3:#94A3B8;
+  --green:#10B981;--green-dim:rgba(16,185,129,.08);--green-light:#ECFDF5;
+  --red:#EF4444;--red-dim:rgba(239,68,68,.08);--red-light:#FEF2F2;
+  --amber:#F59E0B;--amber-dim:rgba(245,158,11,.08);--amber-light:#FFFBEB;
+  --blue:#3B82F6;--font:'Inter',sans-serif;
+  --shadow-sm:0 1px 2px rgba(0,0,0,.05);--shadow:0 1px 3px rgba(0,0,0,.08),0 1px 2px rgba(0,0,0,.04);
+  --violet:#7C3AED;--violet-dim:rgba(124,58,237,.08);--violet-light:#F5F3FF
+}
+*{box-sizing:border-box;margin:0;padding:0}
+body{font-family:var(--font);background:var(--bg);color:var(--text);font-size:14px;line-height:1.5;display:flex;min-height:100vh}
+
+/* Sidebar */
+.sidebar{width:256px;background:var(--surface);border-right:1px solid var(--border);display:flex;flex-direction:column;flex-shrink:0;min-height:100vh}
+.sidebar-logo{padding:20px 20px 16px;border-bottom:1px solid var(--border);display:flex;align-items:center;gap:10px}
+.logo-text{font-size:18px;font-weight:700;color:var(--violet)}
+.admin-badge{background:var(--violet);color:white;font-size:10px;font-weight:700;padding:2px 7px;border-radius:4px;letter-spacing:.4px}
+.sidebar-nav{padding:12px 12px;flex:1;display:flex;flex-direction:column;gap:2px}
+.nav-item{display:flex;align-items:center;gap:10px;padding:9px 10px;border-radius:8px;font-size:13px;font-weight:500;color:var(--text-2);cursor:pointer;text-decoration:none}
+.nav-item:hover{background:var(--bg);color:var(--text)}
+.nav-item.active{background:#F5F3FF;color:var(--violet);border-left:3px solid var(--violet);padding-left:7px;font-weight:600}
+.nav-item svg{flex-shrink:0;opacity:.7}
+.nav-item.active svg{opacity:1}
+.sidebar-footer{padding:16px 12px;border-top:1px solid var(--border);display:flex;align-items:center;gap:10px}
+.avatar-sm{width:32px;height:32px;border-radius:50%;background:var(--violet);color:white;font-size:12px;font-weight:700;display:flex;align-items:center;justify-content:center;flex-shrink:0}
+.footer-info{flex:1}
+.footer-name{font-size:13px;font-weight:600;color:var(--text)}
+.footer-role{font-size:11px;color:var(--text-3)}
+.signout-link{font-size:12px;color:var(--text-3);cursor:pointer}
+.signout-link:hover{color:var(--red)}
+
+/* Main */
+.main{flex:1;display:flex;flex-direction:column;min-height:100vh;overflow:hidden}
+.topbar{padding:20px 28px;border-bottom:1px solid var(--border);background:var(--surface);display:flex;align-items:center;justify-content:space-between}
+.topbar-left{}
+.topbar-breadcrumb{font-size:12px;color:var(--text-3);margin-bottom:2px}
+.topbar-breadcrumb span{color:var(--violet);font-weight:500}
+.topbar-h1{font-size:22px;font-weight:700;color:var(--text)}
+.topbar-right{display:flex;align-items:center;gap:10px}
+.btn-outline{padding:8px 16px;border:1px solid var(--border);border-radius:8px;background:var(--surface);font-size:13px;font-weight:500;color:var(--text-2);cursor:pointer;font-family:var(--font)}
+.btn-violet{padding:8px 16px;border:none;border-radius:8px;background:var(--violet);color:white;font-size:13px;font-weight:600;cursor:pointer;font-family:var(--font);display:flex;align-items:center;gap:6px}
+
+.content{padding:24px 28px;display:flex;flex-direction:column;gap:20px;flex:1}
+
+/* Stats row */
+.stats-row{display:flex;gap:14px}
+.stat-chip{flex:1;background:var(--surface);border:1px solid var(--border);border-radius:10px;padding:14px 16px;box-shadow:var(--shadow-sm)}
+.stat-val{font-size:22px;font-weight:700;color:var(--text);margin-bottom:2px}
+.stat-val.red{color:var(--red)}
+.stat-label{font-size:12px;color:var(--text-2)}
+
+/* Filter row */
+.filter-row{display:flex;align-items:center;gap:10px}
+.search-wrap{position:relative;flex:1;max-width:280px}
+.search-wrap svg{position:absolute;left:10px;top:50%;transform:translateY(-50%);color:var(--text-3);pointer-events:none}
+.search-input{width:100%;height:36px;padding:0 12px 0 34px;border:1px solid var(--border);border-radius:8px;font-size:13px;font-family:var(--font);color:var(--text);background:var(--surface);outline:none}
+.search-input:focus{border-color:var(--violet);box-shadow:0 0 0 3px var(--violet-dim)}
+.filter-select{height:36px;padding:0 10px;border:1px solid var(--border);border-radius:8px;font-size:13px;font-family:var(--font);color:var(--text-2);background:var(--surface);outline:none;cursor:pointer}
+
+/* Table */
+.table-wrap{background:var(--surface);border:1px solid var(--border);border-radius:12px;overflow:hidden;box-shadow:var(--shadow-sm)}
+table{width:100%;border-collapse:collapse}
+thead{background:var(--surface-2);border-bottom:1px solid var(--border)}
+th{padding:10px 16px;text-align:left;font-size:11px;font-weight:600;color:var(--text-3);text-transform:uppercase;letter-spacing:.5px;white-space:nowrap}
+td{padding:13px 16px;font-size:13px;color:var(--text);border-bottom:1px solid var(--border);vertical-align:middle}
+tr:last-child td{border-bottom:none}
+tr:hover td{background:#FAFBFF}
+
+.company-name{font-weight:600;color:var(--text)}
+.company-domain{font-size:12px;color:var(--text-3)}
+.plan-badge{display:inline-block;padding:2px 8px;border-radius:4px;font-size:11px;font-weight:600}
+.plan-enterprise{background:var(--violet-light);color:var(--violet)}
+.plan-pro{background:var(--accent-light);color:var(--accent)}
+.plan-starter{background:var(--surface-2);color:var(--text-2);border:1px solid var(--border)}
+
+.status-pill{display:inline-flex;align-items:center;gap:5px;padding:3px 9px;border-radius:99px;font-size:12px;font-weight:600}
+.pill-green{background:var(--green-light);color:var(--green)}
+.pill-amber{background:var(--amber-light);color:var(--amber)}
+.pill-red{background:var(--red-light);color:var(--red)}
+.pill-gray{background:#F1F5F9;color:var(--text-3)}
+.pill-dot{width:6px;height:6px;border-radius:50%}
+.dot-g{background:var(--green)}
+.dot-a{background:var(--amber)}
+.dot-r{background:var(--red)}
+.dot-grey{background:var(--text-3)}
+
+.action-link{color:var(--violet);font-size:12px;font-weight:500;cursor:pointer;white-space:nowrap}
+.action-link+.action-link{margin-left:10px;color:var(--text-2)}
+
+/* Pagination */
+.pagination{display:flex;align-items:center;justify-content:space-between;padding:14px 16px;background:var(--surface);border:1px solid var(--border);border-radius:0 0 12px 12px;border-top:none}
+.page-info{font-size:13px;color:var(--text-2)}
+.page-btns{display:flex;gap:6px}
+.page-btn{padding:6px 14px;border:1px solid var(--border);border-radius:7px;background:var(--surface);font-size:13px;font-weight:500;color:var(--text-2);cursor:pointer;font-family:var(--font)}
+.page-btn:hover{background:var(--surface-2)}
+</style>
+</head>
+<body>
+
+<aside class="sidebar">
+  <div class="sidebar-logo">
+    <svg width="28" height="28" viewBox="0 0 28 28" fill="none"><rect width="28" height="28" rx="8" fill="#7C3AED"/><path d="M7 14l5 5 9-9" stroke="white" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"/></svg>
+    <span class="logo-text">Synergia</span>
+    <span class="admin-badge">Admin</span>
+  </div>
+
+  <nav class="sidebar-nav">
+    <a class="nav-item active">
+      <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M3 9l9-7 9 7v11a2 2 0 01-2 2H5a2 2 0 01-2-2z"/></svg>
+      Companies
+    </a>
+    <a class="nav-item">
+      <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M22 12h-4l-3 9L9 3l-3 9H2"/></svg>
+      System Health
+    </a>
+    <a class="nav-item">
+      <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M9 11l3 3L22 4"/><path d="M21 12v7a2 2 0 01-2 2H5a2 2 0 01-2-2V5a2 2 0 012-2h11"/></svg>
+      Audit Logs
+    </a>
+    <a class="nav-item">
+      <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><rect x="1" y="4" width="22" height="16" rx="2"/><path d="M1 10h22"/></svg>
+      Feature Flags
+    </a>
+    <a class="nav-item">
+      <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><path d="M12 8v4l3 3"/></svg>
+      Support Tickets
+    </a>
+    <a class="nav-item">
+      <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><rect x="2" y="5" width="20" height="14" rx="2"/><path d="M2 10h20"/></svg>
+      Billing
+    </a>
+    <a class="nav-item">
+      <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><circle cx="12" cy="12" r="3"/><path d="M12 1v4M12 19v4M4.22 4.22l2.83 2.83M16.95 16.95l2.83 2.83M1 12h4M19 12h4M4.22 19.78l2.83-2.83M16.95 7.05l2.83-2.83"/></svg>
+      Settings
+    </a>
+  </nav>
+
+  <div class="sidebar-footer">
+    <div class="avatar-sm">SA</div>
+    <div class="footer-info">
+      <div class="footer-name">Super Admin</div>
+      <div class="footer-role">Platform Administrator</div>
+    </div>
+    <span class="signout-link">Sign Out</span>
+  </div>
+</aside>
+
+<div class="main">
+  <div class="topbar">
+    <div class="topbar-left">
+      <div class="topbar-breadcrumb">Platform Administration › <span>Companies</span></div>
+      <div class="topbar-h1">Companies</div>
+    </div>
+    <div class="topbar-right">
+      <button class="btn-outline">
+        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" style="display:inline;margin-right:5px;vertical-align:middle"><path d="M21 15v4a2 2 0 01-2 2H5a2 2 0 01-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>
+        Export CSV
+      </button>
+      <button class="btn-violet">
+        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
+        Add Company
+      </button>
+    </div>
+  </div>
+
+  <div class="content">
+    <div class="stats-row">
+      <div class="stat-chip">
+        <div class="stat-val">1,247</div>
+        <div class="stat-label">Total Companies</div>
+      </div>
+      <div class="stat-chip">
+        <div class="stat-val">1,189</div>
+        <div class="stat-label">Active Tenants</div>
+      </div>
+      <div class="stat-chip">
+        <div class="stat-val">43</div>
+        <div class="stat-label">Trial (14d)</div>
+      </div>
+      <div class="stat-chip">
+        <div class="stat-val red">15</div>
+        <div class="stat-label">Churned MTD</div>
+      </div>
+    </div>
+
+    <div class="filter-row">
+      <div class="search-wrap">
+        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><circle cx="11" cy="11" r="8"/><path d="M21 21l-4.35-4.35"/></svg>
+        <input class="search-input" type="text" placeholder="Search companies…">
+      </div>
+      <select class="filter-select"><option>All Statuses</option><option>Active</option><option>Trial</option><option>Expired</option><option>Suspended</option><option>Churned</option></select>
+      <select class="filter-select"><option>All Plans</option><option>Enterprise</option><option>Pro</option><option>Starter</option></select>
+      <select class="filter-select"><option>Sort: Newest</option><option>Sort: Oldest</option><option>Sort: MRR ↑</option><option>Sort: MRR ↓</option></select>
+    </div>
+
+    <div class="table-wrap">
+      <table>
+        <thead>
+          <tr>
+            <th>Company</th>
+            <th>Plan</th>
+            <th>Users</th>
+            <th>MRR</th>
+            <th>Status</th>
+            <th>Created</th>
+            <th>Actions</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td><div class="company-name">Acme Corp</div><div class="company-domain">acme.com</div></td>
+            <td><span class="plan-badge plan-pro">Pro</span></td>
+            <td>24</td>
+            <td>£2,400</td>
+            <td><span class="status-pill pill-green"><span class="pill-dot dot-g"></span>Active</span></td>
+            <td>Jan 2024</td>
+            <td><span class="action-link">View</span><span class="action-link">Impersonate</span></td>
+          </tr>
+          <tr>
+            <td><div class="company-name">TechStart Ltd</div><div class="company-domain">techstart.io</div></td>
+            <td><span class="plan-badge plan-starter">Starter</span></td>
+            <td>3</td>
+            <td>£299</td>
+            <td><span class="status-pill pill-amber"><span class="pill-dot dot-a"></span>Trial 8d</span></td>
+            <td>Apr 2024</td>
+            <td><span class="action-link">View</span><span class="action-link">Extend Trial</span></td>
+          </tr>
+          <tr>
+            <td><div class="company-name">Global Widgets</div><div class="company-domain">globalwidgets.com</div></td>
+            <td><span class="plan-badge plan-enterprise">Enterprise</span></td>
+            <td>87</td>
+            <td>£12,000</td>
+            <td><span class="status-pill pill-green"><span class="pill-dot dot-g"></span>Active</span></td>
+            <td>Nov 2023</td>
+            <td><span class="action-link">View</span><span class="action-link">Impersonate</span></td>
+          </tr>
+          <tr>
+            <td><div class="company-name">QuickShop</div><div class="company-domain">quickshop.co.uk</div></td>
+            <td><span class="plan-badge plan-pro">Pro</span></td>
+            <td>11</td>
+            <td>£1,200</td>
+            <td><span class="status-pill pill-green"><span class="pill-dot dot-g"></span>Active</span></td>
+            <td>Feb 2024</td>
+            <td><span class="action-link">View</span></td>
+          </tr>
+          <tr>
+            <td><div class="company-name">FashionHub</div><div class="company-domain">fashionhub.co.uk</div></td>
+            <td><span class="plan-badge plan-starter">Starter</span></td>
+            <td>2</td>
+            <td>£299</td>
+            <td><span class="status-pill pill-red"><span class="pill-dot dot-r"></span>Expired</span></td>
+            <td>Dec 2023</td>
+            <td><span class="action-link">View</span><span class="action-link">Reactivate</span></td>
+          </tr>
+          <tr>
+            <td><div class="company-name">MegaStore</div><div class="company-domain">megastore.com</div></td>
+            <td><span class="plan-badge plan-enterprise">Enterprise</span></td>
+            <td>134</td>
+            <td>£24,000</td>
+            <td><span class="status-pill pill-green"><span class="pill-dot dot-g"></span>Active</span></td>
+            <td>Oct 2022</td>
+            <td><span class="action-link">View</span><span class="action-link">Impersonate</span></td>
+          </tr>
+          <tr>
+            <td><div class="company-name">SwiftSell</div><div class="company-domain">swiftsell.io</div></td>
+            <td><span class="plan-badge plan-pro">Pro</span></td>
+            <td>8</td>
+            <td>£1,200</td>
+            <td><span class="status-pill pill-red"><span class="pill-dot dot-r"></span>Suspended</span></td>
+            <td>Mar 2024</td>
+            <td><span class="action-link">View</span><span class="action-link">Unsuspend</span></td>
+          </tr>
+          <tr>
+            <td><div class="company-name">EasyTrade</div><div class="company-domain">easytrade.co.uk</div></td>
+            <td><span class="plan-badge plan-starter">Starter</span></td>
+            <td>1</td>
+            <td>£0</td>
+            <td><span class="status-pill pill-gray"><span class="pill-dot dot-grey"></span>Churned</span></td>
+            <td>Jan 2024</td>
+            <td><span class="action-link">View</span></td>
+          </tr>
+        </tbody>
+      </table>
+      <div class="pagination">
+        <span class="page-info">Showing 1–8 of 1,247 companies</span>
+        <div class="page-btns">
+          <button class="page-btn">← Previous</button>
+          <button class="page-btn">Next →</button>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+</body>
+</html>

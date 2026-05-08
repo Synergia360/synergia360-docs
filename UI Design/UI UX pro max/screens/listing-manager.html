@@ -1,0 +1,332 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<title>Listing Manager — Synergia360</title>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=Geist+Mono:wght@400;600&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
+<style>
+:root{--bg:#F8F9FC;--surface:#FFFFFF;--surface-2:#F8FAFF;--border:#E2E8F0;--accent:#4F46E5;--accent-dim:rgba(79,70,229,.08);--accent-light:#EEF2FF;--text:#0F172A;--text-2:#475569;--text-3:#94A3B8;--green:#10B981;--green-dim:rgba(16,185,129,.08);--green-light:#ECFDF5;--red:#EF4444;--red-dim:rgba(239,68,68,.08);--red-light:#FEF2F2;--amber:#F59E0B;--amber-dim:rgba(245,158,11,.08);--amber-light:#FFFBEB;--blue:#3B82F6;--font:'Inter',sans-serif;--mono:'Geist Mono',monospace}
+*{margin:0;padding:0;box-sizing:border-box}
+body{font-family:var(--font);background:var(--bg);color:var(--text);font-size:14px;line-height:1.5}
+.app{display:flex;min-height:100vh}
+/* sidebar */
+.sidebar{width:240px;background:#fff;border-right:1px solid var(--border);display:flex;flex-direction:column;flex-shrink:0;position:sticky;top:0;height:100vh;overflow:hidden}
+.sb-logo{padding:18px 20px;border-bottom:1px solid var(--border);display:flex;align-items:center;gap:12px;flex-shrink:0}
+.sb-mark{width:36px;height:36px;background:var(--accent);border-radius:9px;display:grid;place-items:center;color:#fff;font-weight:800;font-size:16px;flex-shrink:0}
+.sb-name{font-weight:700;font-size:15px;color:var(--text)}
+.sb-nav{flex:1;padding:10px;overflow-y:auto}
+.sb-section{font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:.07em;color:var(--text-3);padding:14px 8px 4px;display:block}
+.sb-link{display:flex;align-items:center;gap:10px;padding:8px 10px;border-radius:8px;color:var(--text-2);font-size:13px;font-weight:500;text-decoration:none;border-left:2px solid transparent;margin-bottom:1px;transition:background .15s,color .15s}
+.sb-link:hover{background:#F1F5F9;color:var(--text)}
+.sb-link.active{background:var(--accent-light);color:var(--accent);border-left-color:var(--accent);font-weight:600}
+.sb-link i{width:16px;text-align:center;font-size:13px;color:var(--text-3);flex-shrink:0}
+.sb-link.active i{color:var(--accent)}
+.sb-foot{padding:12px 16px;border-top:1px solid var(--border);display:flex;align-items:center;gap:10px;flex-shrink:0}
+.sb-av{width:34px;height:34px;background:var(--accent-light);border-radius:50%;display:grid;place-items:center;color:var(--accent);font-weight:700;font-size:13px;flex-shrink:0}
+.sb-uname{font-size:13px;font-weight:600;color:var(--text);line-height:1.2}
+.sb-urole{font-size:11px;color:var(--text-3)}
+.avatar{width:36px;height:36px;border-radius:50%;background:linear-gradient(135deg,#4F46E5,#7C3AED);color:#fff;display:flex;align-items:center;justify-content:center;font-weight:600;font-size:13px}
+.main{flex:1}
+.topbar{height:60px;background:#fff;border-bottom:1px solid var(--border);display:flex;align-items:center;justify-content:space-between;padding:0 28px;position:sticky;top:0;z-index:10}
+.topbar h1{font-size:20px;font-weight:700}
+.top-right{display:flex;align-items:center;gap:14px}
+.search{position:relative}
+.search input{width:280px;padding:8px 12px 8px 34px;border:1px solid var(--border);border-radius:8px;background:var(--surface-2);font-size:13px;font-family:var(--font)}
+.search i{position:absolute;left:12px;top:50%;transform:translateY(-50%);color:var(--text-3);font-size:12px}
+.icon-btn{width:36px;height:36px;border-radius:8px;background:var(--surface-2);border:1px solid var(--border);display:flex;align-items:center;justify-content:center;color:var(--text-2);cursor:pointer;position:relative}
+.icon-btn .dot{position:absolute;top:7px;right:8px;width:7px;height:7px;background:var(--red);border-radius:50%;border:2px solid #fff}
+.content{padding:28px}
+.page-head{display:flex;justify-content:space-between;align-items:flex-end;margin-bottom:20px}
+.page-head h2{font-size:24px;font-weight:700;letter-spacing:-.01em}
+.page-head p{color:var(--text-2);margin-top:4px;font-size:13px}
+.btn{padding:9px 16px;border-radius:8px;font-weight:600;font-size:13px;border:1px solid var(--border);background:#fff;color:var(--text);cursor:pointer;display:inline-flex;align-items:center;gap:8px}
+.btn-primary{background:var(--accent);color:#fff;border-color:var(--accent)}
+.btn-primary:hover{background:#4338CA}
+.btn-sm{padding:6px 10px;font-size:12px}
+.bulk-bar{background:var(--accent);color:#fff;border-radius:10px;padding:10px 16px;display:flex;justify-content:space-between;align-items:center;margin-bottom:12px;box-shadow:0 6px 20px rgba(79,70,229,.25)}
+.bulk-bar .left{display:flex;align-items:center;gap:14px;font-size:13px;font-weight:500}
+.bulk-bar .count{background:rgba(255,255,255,.2);padding:3px 10px;border-radius:999px;font-weight:700;font-family:var(--mono)}
+.bulk-bar .right{display:flex;gap:8px}
+.bulk-bar .btn{background:rgba(255,255,255,.15);color:#fff;border-color:rgba(255,255,255,.25)}
+.bulk-bar .btn:hover{background:rgba(255,255,255,.25)}
+.filter-row{background:#fff;border:1px solid var(--border);border-radius:12px;padding:14px;margin-bottom:16px;display:flex;flex-wrap:wrap;align-items:center;gap:12px;box-shadow:0 1px 3px rgba(0,0,0,.04)}
+.tabs{display:flex;gap:4px;background:var(--surface-2);padding:4px;border-radius:10px}
+.tab{padding:7px 14px;border-radius:7px;font-size:12.5px;font-weight:600;color:var(--text-2);cursor:pointer;display:inline-flex;align-items:center;gap:6px}
+.tab.active{background:#fff;color:var(--text);box-shadow:0 1px 2px rgba(0,0,0,.05)}
+.tab .ct{font-family:var(--mono);font-size:11px;color:var(--text-3)}
+.tab.active .ct{color:var(--accent)}
+.filter-search{flex:1;min-width:200px;position:relative}
+.filter-search input{width:100%;padding:8px 12px 8px 34px;border:1px solid var(--border);border-radius:8px;background:var(--surface-2);font-size:13px;font-family:var(--font)}
+.filter-search i{position:absolute;left:12px;top:50%;transform:translateY(-50%);color:var(--text-3);font-size:12px}
+.select{padding:8px 28px 8px 12px;border:1px solid var(--border);border-radius:8px;background:#fff url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='10' height='10' viewBox='0 0 12 12'><path d='M3 5l3 3 3-3' stroke='%2394A3B8' stroke-width='1.5' fill='none'/></svg>") no-repeat right 10px center;font-size:13px;font-family:var(--font);appearance:none}
+.table-card{background:#fff;border:1px solid var(--border);border-radius:12px;overflow:hidden;box-shadow:0 1px 3px rgba(0,0,0,.04)}
+table{width:100%;border-collapse:collapse;font-size:13px}
+th{text-align:left;padding:12px 16px;font-size:11px;font-weight:700;color:var(--text-3);text-transform:uppercase;letter-spacing:.05em;background:var(--surface-2);border-bottom:1px solid var(--border)}
+td{padding:14px 16px;border-bottom:1px solid var(--border);vertical-align:middle}
+tr:last-child td{border-bottom:none}
+tr.attention td:first-child{border-left:3px solid var(--amber);padding-left:13px}
+tr.attention{background:linear-gradient(90deg,rgba(245,158,11,.04),transparent 60%)}
+.checkbox{width:16px;height:16px;border:1.5px solid var(--border);border-radius:4px;display:inline-block;cursor:pointer;vertical-align:middle}
+.checkbox.checked{background:var(--accent);border-color:var(--accent);position:relative}
+.checkbox.checked::after{content:"";position:absolute;left:4px;top:1px;width:4px;height:8px;border:solid #fff;border-width:0 2px 2px 0;transform:rotate(45deg)}
+.product-cell{display:flex;align-items:center;gap:10px}
+.thumb{width:36px;height:36px;border-radius:6px;background:linear-gradient(135deg,#E2E8F0,#CBD5E1);display:flex;align-items:center;justify-content:center;color:var(--text-3);font-size:12px;flex-shrink:0}
+.product-name{font-weight:600;font-size:13px}
+.product-meta{font-size:11px;color:var(--text-3);font-family:var(--mono)}
+.sku{font-family:var(--mono);font-size:12px;color:var(--text-2);background:var(--surface-2);padding:3px 7px;border-radius:5px;display:inline-block}
+.chan-pill{display:inline-flex;align-items:center;gap:6px;padding:3px 9px;border-radius:999px;font-size:11px;font-weight:600;background:var(--surface-2);border:1px solid var(--border)}
+.chan-dot{width:7px;height:7px;border-radius:50%}
+.cd-amazon{background:#FF9900}.cd-ebay{background:#0064D2}.cd-shopify{background:#95BF47}
+.title-cell{max-width:260px;font-size:13px;color:var(--text-2);overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.price{font-weight:700;font-family:var(--mono);font-size:13px}
+.stock-pill{display:inline-block;padding:3px 9px;border-radius:6px;font-size:12px;font-weight:600;font-family:var(--mono)}
+.stock-good{background:var(--green-dim);color:#059669}
+.stock-low{background:var(--amber-dim);color:#D97706}
+.stock-out{background:var(--red-dim);color:#DC2626}
+.health-cell{display:flex;align-items:center;gap:8px}
+.h-bar{width:60px;height:5px;background:#F1F5F9;border-radius:999px;overflow:hidden}
+.h-fill{height:100%;border-radius:999px}
+.h-pct{font-family:var(--mono);font-size:12px;font-weight:700;min-width:34px}
+.badge{display:inline-flex;align-items:center;gap:5px;padding:3px 10px;border-radius:999px;font-size:11px;font-weight:600}
+.b-success{background:var(--green-light);color:#059669}
+.b-warning{background:var(--amber-light);color:#D97706}
+.b-error{background:var(--red-light);color:#DC2626}
+.b-info{background:var(--accent-light);color:var(--accent)}
+.b-neutral{background:#F1F5F9;color:#475569}
+.row-actions{display:flex;gap:6px}
+.row-actions button{width:28px;height:28px;border-radius:6px;border:1px solid var(--border);background:#fff;color:var(--text-2);cursor:pointer;font-size:12px}
+.row-actions button:hover{background:var(--surface-2)}
+.pagination{display:flex;justify-content:space-between;align-items:center;padding:12px 16px;border-top:1px solid var(--border);font-size:12px;color:var(--text-2)}
+.page-btns{display:flex;gap:4px}
+.page-btns button{width:28px;height:28px;border-radius:6px;border:1px solid var(--border);background:#fff;cursor:pointer;font-size:12px;font-family:var(--mono)}
+.page-btns button.active{background:var(--accent);color:#fff;border-color:var(--accent)}
+</style>
+</head>
+<body>
+<div class="app">
+  <aside class="sidebar">
+  <div class="sb-logo">
+    <div class="sb-mark">S</div>
+    <span class="sb-name">Synergia<span style="color:var(--accent)">360</span></span>
+  </div>
+  <nav class="sb-nav">
+    <a href="main-dashboard.html" class="sb-link"><i class="fa-solid fa-grid-2"></i> Dashboard</a>
+    <a href="command-palette.html" class="sb-link"><i class="fa-solid fa-bolt"></i> Command Center</a>
+    <a href="dashboard-builder.html" class="sb-link"><i class="fa-solid fa-sliders"></i> Dashboard Builder</a>
+    <span class="sb-section">Orders</span>
+    <a href="order-queue.html" class="sb-link"><i class="fa-solid fa-receipt"></i> Order Queue</a>
+    <a href="returns-queue.html" class="sb-link"><i class="fa-solid fa-rotate-left"></i> Returns</a>
+    <a href="shipments-list.html" class="sb-link"><i class="fa-solid fa-truck-fast"></i> Shipments</a>
+    <a href="routing-rules.html" class="sb-link"><i class="fa-solid fa-code-branch"></i> Routing Rules</a>
+    <a href="order-automation.html" class="sb-link"><i class="fa-solid fa-robot"></i> Automation</a>
+    <span class="sb-section">Inventory</span>
+    <a href="inventory-stock-overview.html" class="sb-link"><i class="fa-solid fa-boxes-stacked"></i> Stock</a>
+    <a href="inventory-stock-take.html" class="sb-link"><i class="fa-solid fa-clipboard-check"></i> Stock Take</a>
+    <a href="purchase-orders.html" class="sb-link"><i class="fa-solid fa-cart-plus"></i> Purchase Orders</a>
+    <a href="suppliers-list.html" class="sb-link"><i class="fa-solid fa-industry"></i> Suppliers</a>
+    <span class="sb-section">Catalogue</span>
+    <a href="catalogue-product-list.html" class="sb-link"><i class="fa-solid fa-tag"></i> Products</a>
+    <a href="catalogue-bom-builder.html" class="sb-link"><i class="fa-solid fa-list-tree"></i> BOM Builder</a>
+    <span class="sb-section">Channels</span>
+    <a href="channels-overview.html" class="sb-link"><i class="fa-solid fa-plug"></i> Overview</a>
+    <a href="listing-manager.html" class="sb-link active"><i class="fa-solid fa-store"></i> Listings</a>
+    <a href="pricing-rules.html" class="sb-link"><i class="fa-solid fa-pound-sign"></i> Pricing Rules</a>
+    <span class="sb-section">Customers</span>
+    <a href="customers-list.html" class="sb-link"><i class="fa-solid fa-users"></i> Customers</a>
+    <span class="sb-section">Finance</span>
+    <a href="finance-dashboard.html" class="sb-link"><i class="fa-solid fa-chart-pie"></i> Overview</a>
+    <a href="finance-expense-management.html" class="sb-link"><i class="fa-solid fa-file-invoice"></i> Expenses</a>
+    <a href="sku-profitability.html" class="sb-link"><i class="fa-solid fa-chart-bar"></i> SKU Profitability</a>
+    <a href="finance-monthly-close.html" class="sb-link"><i class="fa-solid fa-calendar-check"></i> Monthly Close</a>
+    <span class="sb-section">Reports</span>
+    <a href="reports-library.html" class="sb-link"><i class="fa-solid fa-book"></i> Library</a>
+    <a href="report-builder-ai.html" class="sb-link"><i class="fa-solid fa-wand-magic-sparkles"></i> AI Builder</a>
+    <a href="automation-rule-builder.html" class="sb-link"><i class="fa-solid fa-gears"></i> Automation Rules</a>
+    <span class="sb-section">Settings</span>
+    <a href="settings-team.html" class="sb-link"><i class="fa-solid fa-people-group"></i> Team</a>
+    <a href="settings-rbac.html" class="sb-link"><i class="fa-solid fa-shield-halved"></i> Roles &amp; Permissions</a>
+    <a href="settings-integrations.html" class="sb-link"><i class="fa-solid fa-puzzle-piece"></i> Integrations</a>
+    <a href="settings-billing.html" class="sb-link"><i class="fa-solid fa-credit-card"></i> Billing</a>
+    <a href="settings-notifications.html" class="sb-link"><i class="fa-solid fa-bell"></i> Notifications</a>
+    <a href="settings-locale.html" class="sb-link"><i class="fa-solid fa-earth-europe"></i> Locale &amp; Currency</a>
+    <a href="settings-warehouses.html" class="sb-link"><i class="fa-solid fa-warehouse"></i> Warehouses</a>
+    <a href="settings-api-webhooks.html" class="sb-link"><i class="fa-solid fa-code"></i> API &amp; Webhooks</a>
+  </nav>
+  <div class="sb-foot">
+    <div class="sb-av">JW</div>
+    <div>
+      <div class="sb-uname">James Whitcombe</div>
+      <div class="sb-urole">Owner &middot; Acme Co</div>
+    </div>
+  </div>
+</aside>
+  <main class="main">
+    <div class="topbar">
+      <h1>Listing Manager</h1>
+      <div class="top-right">
+        <div class="search"><i class="fa-solid fa-magnifying-glass"></i><input placeholder="Search listings..."></div>
+        <div class="icon-btn"><i class="fa-regular fa-bell"></i><span class="dot"></span></div>
+        <div class="avatar">RM</div>
+      </div>
+    </div>
+    <div class="content">
+      <div class="page-head">
+        <div>
+          <h2>Listing Manager</h2>
+          <p>4,434 active listings across 5 channels · 12 need attention</p>
+        </div>
+        <div style="display:flex;gap:10px">
+          <button class="btn"><i class="fa-solid fa-file-export"></i>Export</button>
+          <button class="btn btn-primary"><i class="fa-solid fa-plus"></i>Create Listing</button>
+        </div>
+      </div>
+
+      <div class="bulk-bar">
+        <div class="left">
+          <span class="count">2 selected</span>
+          <span>Bulk actions available</span>
+        </div>
+        <div class="right">
+          <button class="btn btn-sm"><i class="fa-solid fa-pen"></i>Edit Price</button>
+          <button class="btn btn-sm"><i class="fa-solid fa-rotate"></i>Re-sync</button>
+          <button class="btn btn-sm"><i class="fa-solid fa-eye-slash"></i>Pause</button>
+          <button class="btn btn-sm"><i class="fa-solid fa-xmark"></i>Clear</button>
+        </div>
+      </div>
+
+      <div class="filter-row">
+        <div class="tabs">
+          <span class="tab active">All <span class="ct">4,434</span></span>
+          <span class="tab">Amazon <span class="ct">1,841</span></span>
+          <span class="tab">eBay <span class="ct">1,204</span></span>
+          <span class="tab">Shopify <span class="ct">892</span></span>
+          <span class="tab">Etsy <span class="ct">341</span></span>
+          <span class="tab">TikTok <span class="ct">156</span></span>
+        </div>
+        <div class="filter-search"><i class="fa-solid fa-magnifying-glass"></i><input placeholder="Search by SKU, title, ASIN..."></div>
+        <select class="select"><option>All statuses</option><option>Active</option><option>Paused</option><option>Error</option></select>
+        <select class="select"><option>All health</option><option>Excellent (≥85%)</option><option>Needs work</option></select>
+      </div>
+
+      <div class="table-card">
+        <table>
+          <thead>
+            <tr>
+              <th style="width:40px"><span class="checkbox"></span></th>
+              <th>Product</th>
+              <th>SKU</th>
+              <th>Channel</th>
+              <th>Listing Title</th>
+              <th>Price</th>
+              <th>Stock</th>
+              <th>Health</th>
+              <th>Status</th>
+              <th style="width:90px"></th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td><span class="checkbox checked"></span></td>
+              <td><div class="product-cell"><div class="thumb"><i class="fa-solid fa-shirt"></i></div><div><div class="product-name">Linen Crew Tee — Sand</div><div class="product-meta">M · Cotton blend</div></div></div></td>
+              <td><span class="sku">TEX-441-M</span></td>
+              <td><span class="chan-pill"><span class="chan-dot cd-amazon"></span>Amazon</span></td>
+              <td class="title-cell">Premium Linen Crew Neck T-Shirt for Men, Soft Breathable Cotton Blend, Sand Beige Medium</td>
+              <td class="price">£24.99</td>
+              <td><span class="stock-pill stock-good">142</span></td>
+              <td><div class="health-cell"><div class="h-bar"><div class="h-fill" style="width:96%;background:var(--green)"></div></div><span class="h-pct" style="color:var(--green)">96%</span></div></td>
+              <td><span class="badge b-success">Active</span></td>
+              <td><div class="row-actions"><button><i class="fa-solid fa-pen"></i></button><button><i class="fa-solid fa-ellipsis"></i></button></div></td>
+            </tr>
+            <tr>
+              <td><span class="checkbox checked"></span></td>
+              <td><div class="product-cell"><div class="thumb"><i class="fa-solid fa-mug-hot"></i></div><div><div class="product-name">Ceramic Pour-Over Mug</div><div class="product-meta">350ml · Matte black</div></div></div></td>
+              <td><span class="sku">HOM-201</span></td>
+              <td><span class="chan-pill"><span class="chan-dot cd-shopify"></span>Shopify</span></td>
+              <td class="title-cell">Hand-Thrown Ceramic Pour-Over Coffee Mug 350ml Matte Black Gift</td>
+              <td class="price">£18.50</td>
+              <td><span class="stock-pill stock-good">89</span></td>
+              <td><div class="health-cell"><div class="h-bar"><div class="h-fill" style="width:91%;background:var(--green)"></div></div><span class="h-pct" style="color:var(--green)">91%</span></div></td>
+              <td><span class="badge b-success">Active</span></td>
+              <td><div class="row-actions"><button><i class="fa-solid fa-pen"></i></button><button><i class="fa-solid fa-ellipsis"></i></button></div></td>
+            </tr>
+            <tr class="attention">
+              <td><span class="checkbox"></span></td>
+              <td><div class="product-cell"><div class="thumb"><i class="fa-solid fa-shoe-prints"></i></div><div><div class="product-name">Trail Runner — Slate</div><div class="product-meta">UK 9 · Vibram sole</div></div></div></td>
+              <td><span class="sku">FTW-882-9</span></td>
+              <td><span class="chan-pill"><span class="chan-dot cd-ebay"></span>eBay</span></td>
+              <td class="title-cell">Mens Trail Running Shoes Lightweight Breathable UK 9 Slate Grey New</td>
+              <td class="price">£64.00</td>
+              <td><span class="stock-pill stock-low">7</span></td>
+              <td><div class="health-cell"><div class="h-bar"><div class="h-fill" style="width:54%;background:var(--red)"></div></div><span class="h-pct" style="color:var(--red)">54%</span></div></td>
+              <td><span class="badge b-warning"><i class="fa-solid fa-triangle-exclamation"></i>Needs Attention</span></td>
+              <td><div class="row-actions"><button><i class="fa-solid fa-pen"></i></button><button><i class="fa-solid fa-ellipsis"></i></button></div></td>
+            </tr>
+            <tr>
+              <td><span class="checkbox"></span></td>
+              <td><div class="product-cell"><div class="thumb"><i class="fa-solid fa-headphones"></i></div><div><div class="product-name">Wireless Earbuds Pro</div><div class="product-meta">Charcoal · ANC</div></div></div></td>
+              <td><span class="sku">ELC-104</span></td>
+              <td><span class="chan-pill"><span class="chan-dot cd-amazon"></span>Amazon</span></td>
+              <td class="title-cell">Wireless Bluetooth Earbuds Pro with Active Noise Cancellation 30h Battery</td>
+              <td class="price">£79.99</td>
+              <td><span class="stock-pill stock-good">214</span></td>
+              <td><div class="health-cell"><div class="h-bar"><div class="h-fill" style="width:88%;background:var(--green)"></div></div><span class="h-pct" style="color:var(--green)">88%</span></div></td>
+              <td><span class="badge b-success">Active</span></td>
+              <td><div class="row-actions"><button><i class="fa-solid fa-pen"></i></button><button><i class="fa-solid fa-ellipsis"></i></button></div></td>
+            </tr>
+            <tr>
+              <td><span class="checkbox"></span></td>
+              <td><div class="product-cell"><div class="thumb"><i class="fa-solid fa-fire"></i></div><div><div class="product-name">Soy Candle — Fig & Cedar</div><div class="product-meta">220g · 50h burn</div></div></div></td>
+              <td><span class="sku">HOM-330</span></td>
+              <td><span class="chan-pill"><span class="chan-dot cd-shopify"></span>Shopify</span></td>
+              <td class="title-cell">Hand-Poured Soy Candle Fig and Cedar 220g 50 Hour Burn Time Natural</td>
+              <td class="price">£22.00</td>
+              <td><span class="stock-pill stock-good">312</span></td>
+              <td><div class="health-cell"><div class="h-bar"><div class="h-fill" style="width:78%;background:var(--amber)"></div></div><span class="h-pct" style="color:var(--amber)">78%</span></div></td>
+              <td><span class="badge b-success">Active</span></td>
+              <td><div class="row-actions"><button><i class="fa-solid fa-pen"></i></button><button><i class="fa-solid fa-ellipsis"></i></button></div></td>
+            </tr>
+            <tr>
+              <td><span class="checkbox"></span></td>
+              <td><div class="product-cell"><div class="thumb"><i class="fa-solid fa-bag-shopping"></i></div><div><div class="product-name">Canvas Tote — Olive</div><div class="product-meta">Heavyweight 14oz</div></div></div></td>
+              <td><span class="sku">ACC-077</span></td>
+              <td><span class="chan-pill"><span class="chan-dot cd-ebay"></span>eBay</span></td>
+              <td class="title-cell">Heavy Duty 14oz Canvas Tote Bag Olive Green Reinforced Strap Reusable</td>
+              <td class="price">£15.50</td>
+              <td><span class="stock-pill stock-out">0</span></td>
+              <td><div class="health-cell"><div class="h-bar"><div class="h-fill" style="width:42%;background:var(--red)"></div></div><span class="h-pct" style="color:var(--red)">42%</span></div></td>
+              <td><span class="badge b-error">Out of Stock</span></td>
+              <td><div class="row-actions"><button><i class="fa-solid fa-pen"></i></button><button><i class="fa-solid fa-ellipsis"></i></button></div></td>
+            </tr>
+            <tr>
+              <td><span class="checkbox"></span></td>
+              <td><div class="product-cell"><div class="thumb"><i class="fa-solid fa-clock"></i></div><div><div class="product-name">Minimalist Watch — Steel</div><div class="product-meta">38mm · Leather strap</div></div></div></td>
+              <td><span class="sku">ACC-512</span></td>
+              <td><span class="chan-pill"><span class="chan-dot cd-amazon"></span>Amazon</span></td>
+              <td class="title-cell">Minimalist Analog Wrist Watch 38mm Stainless Steel Leather Strap Unisex</td>
+              <td class="price">£89.00</td>
+              <td><span class="stock-pill stock-good">56</span></td>
+              <td><div class="health-cell"><div class="h-bar"><div class="h-fill" style="width:93%;background:var(--green)"></div></div><span class="h-pct" style="color:var(--green)">93%</span></div></td>
+              <td><span class="badge b-success">Active</span></td>
+              <td><div class="row-actions"><button><i class="fa-solid fa-pen"></i></button><button><i class="fa-solid fa-ellipsis"></i></button></div></td>
+            </tr>
+          </tbody>
+        </table>
+        <div class="pagination">
+          <span>Showing 1–7 of 4,434 listings</span>
+          <div class="page-btns">
+            <button><i class="fa-solid fa-chevron-left"></i></button>
+            <button class="active">1</button>
+            <button>2</button>
+            <button>3</button>
+            <button>...</button>
+            <button>634</button>
+            <button><i class="fa-solid fa-chevron-right"></i></button>
+          </div>
+        </div>
+      </div>
+    </div>
+  </main>
+</div>
+</body>
+</html>

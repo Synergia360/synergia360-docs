@@ -1,0 +1,211 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>WMS – Scan Error</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+<style>
+:root{
+  --bg:#F8F9FC;--surface:#FFFFFF;--surface-2:#F8FAFF;--border:#E2E8F0;
+  --accent:#4F46E5;--accent-dim:rgba(79,70,229,.08);--accent-light:#EEF2FF;
+  --text:#0F172A;--text-2:#475569;--text-3:#94A3B8;
+  --green:#10B981;--green-dim:rgba(16,185,129,.08);--green-light:#ECFDF5;
+  --red:#EF4444;--red-dim:rgba(239,68,68,.08);--red-light:#FEF2F2;
+  --amber:#F59E0B;--amber-dim:rgba(245,158,11,.08);--amber-light:#FFFBEB;
+  --blue:#3B82F6;--font:'Inter',sans-serif;
+  --shadow-sm:0 1px 2px rgba(0,0,0,.05);--shadow:0 1px 3px rgba(0,0,0,.08),0 1px 2px rgba(0,0,0,.04)
+}
+*{box-sizing:border-box;margin:0;padding:0}
+body{font-family:var(--font);background:#F0F4F8;color:var(--text);font-size:14px;line-height:1.5;min-height:100vh;display:flex;align-items:flex-start;justify-content:center;gap:40px;padding:40px}
+
+.phone-wrap{width:390px;background:#1A1A2E;border-radius:48px;padding:10px;box-shadow:0 30px 80px rgba(0,0,0,.3);flex-shrink:0}
+.phone-screen{background:#FFFFFF;border-radius:40px;overflow:hidden;min-height:700px;display:flex;flex-direction:column}
+
+.status-bar{background:#FFFFFF;padding:14px 24px 8px;display:flex;justify-content:space-between;align-items:center;font-size:12px;font-weight:600;color:#0F172A}
+.status-icons{display:flex;align-items:center;gap:5px}
+
+.top-bar{padding:8px 20px 12px;display:flex;align-items:center;justify-content:space-between;border-bottom:1px solid var(--border)}
+.top-bar-title{font-size:16px;font-weight:600;color:var(--text)}
+.icon-btn{width:36px;height:36px;display:flex;align-items:center;justify-content:center;border-radius:8px;border:none;background:transparent;cursor:pointer;color:var(--text);flex-shrink:0}
+
+.screen-body{padding:24px 20px;display:flex;flex-direction:column;gap:20px;flex:1}
+
+.error-hero{display:flex;flex-direction:column;align-items:center;gap:12px;padding:8px 0}
+.error-circle{width:80px;height:80px;border-radius:50%;background:var(--red);display:flex;align-items:center;justify-content:center;box-shadow:0 0 0 16px rgba(239,68,68,.12)}
+.hero-title{font-size:24px;font-weight:700;color:var(--text);text-align:center}
+.hero-sub{font-size:13px;color:var(--text-2);text-align:center}
+
+.divider{height:1px;background:var(--border)}
+
+.compare-row{display:flex;gap:10px}
+.compare-card{flex:1;border-radius:12px;padding:12px;display:flex;flex-direction:column;gap:4px}
+.compare-card.scanned{border:1.5px solid var(--red);background:var(--red-light)}
+.compare-card.expected{border:1.5px solid var(--green);background:var(--green-light)}
+.cc-label{font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:.6px;margin-bottom:2px}
+.scanned .cc-label{color:var(--red)}
+.expected .cc-label{color:var(--green)}
+.cc-sku{font-size:12px;font-weight:700;color:var(--text)}
+.cc-name{font-size:12px;color:var(--text-2);line-height:1.4}
+.cc-loc{font-size:11px;color:var(--text-3);margin-top:2px}
+
+.actions{display:flex;flex-direction:column;gap:10px}
+.btn-accent{width:100%;height:52px;background:var(--accent);color:#fff;border:none;border-radius:12px;font-size:15px;font-weight:600;cursor:pointer;font-family:var(--font)}
+.btn-danger-outline{width:100%;height:48px;background:var(--surface);color:var(--red);border:1.5px solid var(--red);border-radius:12px;font-size:14px;font-weight:600;cursor:pointer;font-family:var(--font)}
+.text-link{text-align:center;color:var(--text-2);font-size:13px;cursor:pointer;padding:2px 0}
+
+/* Context panel */
+.context-panel{width:360px;background:var(--surface);border:1px solid var(--border);border-radius:16px;padding:24px;box-shadow:var(--shadow);align-self:flex-start;display:flex;flex-direction:column;gap:20px}
+.panel-hd{display:flex;align-items:center;justify-content:space-between}
+.panel-title{font-size:15px;font-weight:600;color:var(--text)}
+.badge{padding:3px 10px;border-radius:99px;font-size:12px;font-weight:600}
+.badge-red{background:var(--red-light);color:var(--red)}
+.badge-amber{background:var(--amber-light);color:var(--amber)}
+
+.scan-history{display:flex;flex-direction:column;gap:2px}
+.scan-event{display:flex;align-items:center;gap:10px;padding:9px 0;border-bottom:1px solid var(--border);font-size:13px}
+.scan-event:last-child{border-bottom:none}
+.scan-dot{width:20px;height:20px;border-radius:50%;display:flex;align-items:center;justify-content:center;flex-shrink:0}
+.dot-green{background:var(--green-light)}
+.dot-red{background:var(--red-light)}
+.scan-info{flex:1}
+.scan-sku{font-weight:500;color:var(--text)}
+.scan-time{font-size:12px;color:var(--text-3)}
+.scan-status{font-size:12px;font-weight:600}
+.status-ok{color:var(--green)}
+.status-err{color:var(--red)}
+
+.alert-box{background:var(--amber-light);border:1px solid var(--amber);border-radius:10px;padding:12px;display:flex;flex-direction:column;gap:4px}
+.alert-box-title{font-size:12px;font-weight:700;color:var(--amber);text-transform:uppercase;letter-spacing:.4px}
+.alert-box-body{font-size:13px;color:var(--text)}
+.alert-box-meta{font-size:12px;color:var(--text-2)}
+</style>
+</head>
+<body>
+
+<div class="phone-wrap">
+  <div class="phone-screen">
+
+    <div class="status-bar">
+      <span>9:41</span>
+      <div class="status-icons">
+        <svg width="16" height="12" viewBox="0 0 16 12" fill="currentColor"><rect x="0" y="7" width="2.5" height="5" rx=".5"/><rect x="3.5" y="5" width="2.5" height="7" rx=".5"/><rect x="7" y="3" width="2.5" height="9" rx=".5"/><rect x="10.5" y="1" width="2.5" height="11" rx=".5" opacity=".35"/></svg>
+        <svg width="16" height="12" viewBox="0 0 20 14" fill="currentColor"><path d="M10 2.5C13.5 2.5 16.6 4 18.7 6.4L20 5c-2.5-2.9-6.1-4.7-10-4.7S2.5 2.1 0 5l1.3 1.4C3.4 4 6.5 2.5 10 2.5zm0 4.2c2.1 0 4 .9 5.4 2.3L16.8 7.6C15 5.9 12.6 4.8 10 4.8S5 5.9 3.2 7.6l1.4 1.4C6 7.6 7.9 6.7 10 6.7zm0 4.2c1 0 1.9.4 2.6 1.1L14 10.6C12.9 9.4 11.5 8.7 10 8.7s-2.9.7-4 1.9l1.4 1.4c.7-.7 1.6-1.1 2.6-1.1zm0 3.1a1.5 1.5 0 100-3 1.5 1.5 0 000 3z"/></svg>
+        <svg width="25" height="12" viewBox="0 0 25 12" fill="none"><rect x=".5" y=".5" width="21" height="11" rx="2.5" stroke="currentColor" stroke-opacity=".35"/><rect x="1.5" y="1.5" width="17" height="9" rx="1.5" fill="currentColor"/><path d="M23 4v4a2 2 0 000-4z" fill="currentColor" opacity=".4"/></svg>
+      </div>
+    </div>
+
+    <div class="top-bar">
+      <button class="icon-btn">
+        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M15 18l-6-6 6-6"/></svg>
+      </button>
+      <span class="top-bar-title">Scan Item</span>
+      <button class="icon-btn">
+        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><path d="M18 6L6 18M6 6l12 12"/></svg>
+      </button>
+    </div>
+
+    <div class="screen-body">
+      <div class="error-hero">
+        <div class="error-circle">
+          <svg width="36" height="36" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="3" stroke-linecap="round"><path d="M18 6L6 18M6 6l12 12"/></svg>
+        </div>
+        <div class="hero-title">Wrong Item Scanned</div>
+        <div class="hero-sub">This item is not on your current pick list</div>
+      </div>
+
+      <div class="divider"></div>
+
+      <div class="compare-row">
+        <div class="compare-card scanned">
+          <div class="cc-label">You Scanned</div>
+          <div class="cc-sku">SKU-99102</div>
+          <div class="cc-name">Blue Pen Pack ×10</div>
+          <div class="cc-loc">Location: A1-S2</div>
+        </div>
+        <div class="compare-card expected">
+          <div class="cc-label">Expected</div>
+          <div class="cc-sku">SKU-78234</div>
+          <div class="cc-name">Blue Widget Pro 500ml</div>
+          <div class="cc-loc">Location: C3-S4</div>
+        </div>
+      </div>
+
+      <div class="actions">
+        <button class="btn-accent">Scan Correct Item</button>
+        <button class="btn-danger-outline">Override (Manager PIN)</button>
+        <div class="text-link">Skip This Item</div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div class="context-panel">
+  <div class="panel-hd">
+    <span class="panel-title">Scan History</span>
+    <span class="badge badge-red">1 Error</span>
+  </div>
+
+  <div class="scan-history">
+    <div class="scan-event">
+      <div class="scan-dot dot-green">
+        <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="#10B981" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg>
+      </div>
+      <div class="scan-info">
+        <div class="scan-sku">SKU-44201 · Zone A</div>
+        <div class="scan-time">9:32 AM</div>
+      </div>
+      <span class="scan-status status-ok">OK</span>
+    </div>
+    <div class="scan-event">
+      <div class="scan-dot dot-green">
+        <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="#10B981" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg>
+      </div>
+      <div class="scan-info">
+        <div class="scan-sku">SKU-11082 · Zone B</div>
+        <div class="scan-time">9:35 AM</div>
+      </div>
+      <span class="scan-status status-ok">OK</span>
+    </div>
+    <div class="scan-event">
+      <div class="scan-dot dot-green">
+        <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="#10B981" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg>
+      </div>
+      <div class="scan-info">
+        <div class="scan-sku">SKU-30041 · Zone A</div>
+        <div class="scan-time">9:37 AM</div>
+      </div>
+      <span class="scan-status status-ok">OK</span>
+    </div>
+    <div class="scan-event">
+      <div class="scan-dot dot-green">
+        <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="#10B981" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg>
+      </div>
+      <div class="scan-info">
+        <div class="scan-sku">SKU-55119 · Zone C</div>
+        <div class="scan-time">9:39 AM</div>
+      </div>
+      <span class="scan-status status-ok">OK</span>
+    </div>
+    <div class="scan-event">
+      <div class="scan-dot dot-red">
+        <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="#EF4444" stroke-width="3" stroke-linecap="round"><path d="M18 6L6 18M6 6l12 12"/></svg>
+      </div>
+      <div class="scan-info">
+        <div class="scan-sku">SKU-99102 · Wrong item</div>
+        <div class="scan-time">9:41 AM</div>
+      </div>
+      <span class="scan-status status-err">Error</span>
+    </div>
+  </div>
+
+  <div class="alert-box">
+    <div class="alert-box-title">Alert Sent to Supervisor</div>
+    <div class="alert-box-body">James Kim is notified</div>
+    <div class="alert-box-meta">Notified at 9:41 AM · Response expected soon</div>
+  </div>
+</div>
+
+</body>
+</html>

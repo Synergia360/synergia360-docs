@@ -1,0 +1,319 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8"/>
+<title>Command Palette — Synergia360</title>
+<meta name="viewport" content="width=device-width, initial-scale=1"/>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=Geist+Mono:wght@400;600&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
+<style>
+:root{
+  --bg:#F8F9FC;--surface:#FFFFFF;--surface-2:#F8FAFF;--border:#E2E8F0;
+  --accent:#4F46E5;--accent-dim:rgba(79,70,229,.08);--accent-light:#EEF2FF;
+  --text:#0F172A;--text-2:#475569;--text-3:#94A3B8;
+  --green:#10B981;--green-dim:rgba(16,185,129,.08);--green-light:#ECFDF5;
+  --red:#EF4444;--amber:#F59E0B;--amber-light:#FFFBEB;
+  --blue:#3B82F6;--font:'Inter',sans-serif;--mono:'Geist Mono',monospace
+}
+*{box-sizing:border-box;margin:0;padding:0}
+html,body{height:100%}
+body{font-family:var(--font);color:var(--text);background:var(--bg);font-size:14px;line-height:1.5;-webkit-font-smoothing:antialiased;overflow:hidden}
+
+/* BLURRED DASHBOARD BACKDROP (simplified main-dashboard) */
+.app{display:flex;min-height:100vh;filter:blur(4px) saturate(.85);opacity:.55;pointer-events:none}
+/* sidebar */
+.sidebar{width:240px;background:#fff;border-right:1px solid var(--border);display:flex;flex-direction:column;flex-shrink:0;position:sticky;top:0;height:100vh;overflow:hidden}
+.sb-logo{padding:18px 20px;border-bottom:1px solid var(--border);display:flex;align-items:center;gap:12px;flex-shrink:0}
+.sb-mark{width:36px;height:36px;background:var(--accent);border-radius:9px;display:grid;place-items:center;color:#fff;font-weight:800;font-size:16px;flex-shrink:0}
+.sb-name{font-weight:700;font-size:15px;color:var(--text)}
+.sb-nav{flex:1;padding:10px;overflow-y:auto}
+.sb-section{font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:.07em;color:var(--text-3);padding:14px 8px 4px;display:block}
+.sb-link{display:flex;align-items:center;gap:10px;padding:8px 10px;border-radius:8px;color:var(--text-2);font-size:13px;font-weight:500;text-decoration:none;border-left:2px solid transparent;margin-bottom:1px;transition:background .15s,color .15s}
+.sb-link:hover{background:#F1F5F9;color:var(--text)}
+.sb-link.active{background:var(--accent-light);color:var(--accent);border-left-color:var(--accent);font-weight:600}
+.sb-link i{width:16px;text-align:center;font-size:13px;color:var(--text-3);flex-shrink:0}
+.sb-link.active i{color:var(--accent)}
+.sb-foot{padding:12px 16px;border-top:1px solid var(--border);display:flex;align-items:center;gap:10px;flex-shrink:0}
+.sb-av{width:34px;height:34px;background:var(--accent-light);border-radius:50%;display:grid;place-items:center;color:var(--accent);font-weight:700;font-size:13px;flex-shrink:0}
+.sb-uname{font-size:13px;font-weight:600;color:var(--text);line-height:1.2}
+.sb-urole{font-size:11px;color:var(--text-3)}
+.fake-line{height:36px;background:#F1F5F9;border-radius:8px;margin-bottom:6px}
+.fake-line.active{background:var(--accent-light)}
+.fake-label{height:10px;width:60px;background:#E2E8F0;border-radius:4px;margin:18px 0 8px 8px}
+.main{padding:24px}
+.fake-head{height:32px;width:300px;background:#E2E8F0;border-radius:6px;margin-bottom:8px}
+.fake-sub{height:14px;width:200px;background:#F1F5F9;border-radius:4px;margin-bottom:24px}
+.fake-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:16px;margin-bottom:20px}
+.fake-card{height:120px;background:#fff;border:1px solid var(--border);border-radius:12px;padding:18px;position:relative}
+.fake-card::before{content:"";position:absolute;left:18px;top:18px;width:28px;height:28px;border-radius:8px;background:var(--accent-light)}
+.fake-card::after{content:"";position:absolute;left:18px;top:60px;width:80px;height:24px;background:#E2E8F0;border-radius:4px}
+.fake-row{display:grid;grid-template-columns:2fr 1fr;gap:16px}
+.fake-big{height:300px;background:#fff;border:1px solid var(--border);border-radius:12px}
+
+/* BACKDROP OVERLAY */
+.backdrop{position:fixed;inset:0;background:rgba(15,23,42,.35);backdrop-filter:blur(2px);z-index:50;display:flex;align-items:flex-start;justify-content:center;padding-top:11vh}
+
+/* PALETTE */
+.palette{width:640px;max-width:92vw;background:#fff;border-radius:16px;border:1px solid var(--border);box-shadow:0 30px 80px -20px rgba(15,23,42,.35),0 8px 24px -8px rgba(15,23,42,.18);overflow:hidden;animation:pop .18s cubic-bezier(.16,1,.3,1)}
+@keyframes pop{from{opacity:0;transform:translateY(-8px) scale(.98)}to{opacity:1;transform:none}}
+
+.search{display:flex;align-items:center;gap:14px;padding:16px 20px;border-bottom:1px solid var(--border);position:relative}
+.search > i{color:var(--text-3);font-size:16px}
+.search input{flex:1;border:none;outline:none;font-family:var(--font);font-size:16px;color:var(--text);font-weight:500;background:transparent}
+.search input::placeholder{color:var(--text-3)}
+.kbd-hint{display:flex;align-items:center;gap:6px;color:var(--text-3);font-size:11px;font-weight:500}
+.kbd{background:#F1F5F9;border:1px solid var(--border);border-radius:5px;padding:2px 7px;font-family:var(--mono);font-size:11px;color:var(--text-2);font-weight:600;line-height:1.4}
+
+.recent{padding:12px 20px;border-bottom:1px solid var(--border);display:flex;align-items:center;gap:8px;flex-wrap:wrap;background:#FCFCFE}
+.recent-label{font-size:11px;letter-spacing:.06em;text-transform:uppercase;font-weight:600;color:var(--text-3);margin-right:4px}
+.chip{display:inline-flex;align-items:center;gap:6px;padding:5px 10px;border-radius:7px;background:#fff;border:1px solid var(--border);font-size:12px;color:var(--text-2);font-weight:500;cursor:pointer;transition:.15s}
+.chip:hover{border-color:#C7D2FE;color:var(--accent);background:#F8FAFF}
+.chip i{font-size:10px;color:var(--text-3)}
+
+.results{max-height:48vh;overflow-y:auto;padding:8px 0}
+.group-label{font-size:10.5px;letter-spacing:.08em;text-transform:uppercase;color:var(--text-3);font-weight:700;padding:12px 20px 6px;display:flex;align-items:center;justify-content:space-between}
+.group-label span:last-child{font-family:var(--mono);font-weight:500;color:var(--text-3);font-size:10px;letter-spacing:0;text-transform:none}
+
+.row{display:flex;align-items:center;gap:14px;padding:9px 20px;cursor:pointer;position:relative;transition:.1s}
+.row:hover{background:#F8FAFF}
+.row.sel{background:var(--accent-light)}
+.row.sel::before{content:"";position:absolute;left:0;top:6px;bottom:6px;width:2px;background:var(--accent);border-radius:0 2px 2px 0}
+.row-icon{width:34px;height:34px;border-radius:8px;display:grid;place-items:center;font-size:14px;flex-shrink:0;background:#F1F5F9;color:var(--text-2)}
+.row-icon.indigo{background:var(--accent-light);color:var(--accent)}
+.row-icon.green{background:var(--green-light);color:#059669}
+.row-icon.amber{background:var(--amber-light);color:#D97706}
+.row-icon.red{background:#FEF2F2;color:#DC2626}
+.row-icon.blue{background:#DBEAFE;color:#2563EB}
+.row.sel .row-icon{background:#fff;border:1px solid rgba(79,70,229,.2)}
+.row-body{flex:1;min-width:0}
+.row-title{font-size:13.5px;font-weight:500;color:var(--text);display:flex;align-items:center;gap:8px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.row.sel .row-title{font-weight:600;color:var(--accent)}
+.row-title b{font-family:var(--mono);font-weight:600;font-size:12.5px;color:var(--text-2);background:#F1F5F9;padding:1px 6px;border-radius:4px}
+.row.sel .row-title b{background:#fff;color:var(--accent)}
+.row-sub{font-size:11.5px;color:var(--text-3);margin-top:2px;display:flex;align-items:center;gap:8px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.row-sub .dot{width:3px;height:3px;border-radius:50%;background:var(--text-3);flex-shrink:0}
+.row-bdg{display:inline-flex;align-items:center;gap:4px;font-size:10.5px;font-weight:600;padding:2px 7px;border-radius:99px;border:1px solid transparent}
+.bdg-success{background:var(--green-light);color:#047857;border-color:rgba(5,150,105,.18)}
+.bdg-warn{background:var(--amber-light);color:#B45309;border-color:rgba(180,83,9,.18)}
+.bdg-info{background:var(--accent-light);color:var(--accent);border-color:rgba(79,70,229,.18)}
+.row-meta{font-family:var(--mono);font-size:11px;color:var(--text-3);font-weight:500}
+.row-shortcut{display:flex;gap:4px;align-items:center}
+.row-arrow{color:var(--text-3);font-size:12px;margin-left:6px}
+.row.sel .row-arrow{color:var(--accent)}
+
+.foot{padding:11px 20px;border-top:1px solid var(--border);display:flex;align-items:center;gap:18px;background:#FCFCFE;font-size:11.5px;color:var(--text-2)}
+.foot-item{display:flex;align-items:center;gap:6px}
+.foot-spacer{flex:1}
+.foot-brand{display:flex;align-items:center;gap:6px;color:var(--text-3);font-size:11px;font-weight:500}
+.foot-brand .mini-mark{width:14px;height:14px;border-radius:3px;background:var(--accent);color:#fff;display:grid;place-items:center;font-size:9px;font-weight:800}
+</style>
+</head>
+<body>
+
+<!-- BLURRED DASHBOARD BACKDROP -->
+<div class="app" aria-hidden="true">
+  <aside class="sidebar">
+    <div class="sb-logo">
+      <div class="sb-mark">S</div>
+      <span class="sb-name">Synergia<span style="color:var(--accent)">360</span></span>
+    </div>
+    <nav class="sb-nav">
+      <a href="main-dashboard.html" class="sb-link"><i class="fa-solid fa-grid-2"></i> Dashboard</a>
+      <a href="command-palette.html" class="sb-link active"><i class="fa-solid fa-bolt"></i> Command Center</a>
+      <a href="dashboard-builder.html" class="sb-link"><i class="fa-solid fa-sliders"></i> Dashboard Builder</a>
+      <span class="sb-section">Orders</span>
+      <a href="order-queue.html" class="sb-link"><i class="fa-solid fa-receipt"></i> Order Queue</a>
+      <a href="returns-queue.html" class="sb-link"><i class="fa-solid fa-rotate-left"></i> Returns</a>
+      <a href="shipments-list.html" class="sb-link"><i class="fa-solid fa-truck-fast"></i> Shipments</a>
+      <a href="routing-rules.html" class="sb-link"><i class="fa-solid fa-code-branch"></i> Routing Rules</a>
+      <a href="order-automation.html" class="sb-link"><i class="fa-solid fa-robot"></i> Automation</a>
+      <span class="sb-section">Inventory</span>
+      <a href="inventory-stock-overview.html" class="sb-link"><i class="fa-solid fa-boxes-stacked"></i> Stock</a>
+      <a href="inventory-stock-take.html" class="sb-link"><i class="fa-solid fa-clipboard-check"></i> Stock Take</a>
+      <a href="purchase-orders.html" class="sb-link"><i class="fa-solid fa-cart-plus"></i> Purchase Orders</a>
+      <a href="suppliers-list.html" class="sb-link"><i class="fa-solid fa-industry"></i> Suppliers</a>
+      <span class="sb-section">Catalogue</span>
+      <a href="catalogue-product-list.html" class="sb-link"><i class="fa-solid fa-tag"></i> Products</a>
+      <a href="catalogue-bom-builder.html" class="sb-link"><i class="fa-solid fa-list-tree"></i> BOM Builder</a>
+      <span class="sb-section">Channels</span>
+      <a href="channels-overview.html" class="sb-link"><i class="fa-solid fa-plug"></i> Overview</a>
+      <a href="listing-manager.html" class="sb-link"><i class="fa-solid fa-store"></i> Listings</a>
+      <a href="pricing-rules.html" class="sb-link"><i class="fa-solid fa-pound-sign"></i> Pricing Rules</a>
+      <span class="sb-section">Customers</span>
+      <a href="customers-list.html" class="sb-link"><i class="fa-solid fa-users"></i> Customers</a>
+      <span class="sb-section">Finance</span>
+      <a href="finance-dashboard.html" class="sb-link"><i class="fa-solid fa-chart-pie"></i> Overview</a>
+      <a href="finance-expense-management.html" class="sb-link"><i class="fa-solid fa-file-invoice"></i> Expenses</a>
+      <a href="sku-profitability.html" class="sb-link"><i class="fa-solid fa-chart-bar"></i> SKU Profitability</a>
+      <a href="finance-monthly-close.html" class="sb-link"><i class="fa-solid fa-calendar-check"></i> Monthly Close</a>
+      <span class="sb-section">Reports</span>
+      <a href="reports-library.html" class="sb-link"><i class="fa-solid fa-book"></i> Library</a>
+      <a href="report-builder-ai.html" class="sb-link"><i class="fa-solid fa-wand-magic-sparkles"></i> AI Builder</a>
+      <a href="automation-rule-builder.html" class="sb-link"><i class="fa-solid fa-gears"></i> Automation Rules</a>
+      <span class="sb-section">Settings</span>
+      <a href="settings-team.html" class="sb-link"><i class="fa-solid fa-people-group"></i> Team</a>
+      <a href="settings-rbac.html" class="sb-link"><i class="fa-solid fa-shield-halved"></i> Roles &amp; Permissions</a>
+      <a href="settings-integrations.html" class="sb-link"><i class="fa-solid fa-puzzle-piece"></i> Integrations</a>
+      <a href="settings-billing.html" class="sb-link"><i class="fa-solid fa-credit-card"></i> Billing</a>
+      <a href="settings-notifications.html" class="sb-link"><i class="fa-solid fa-bell"></i> Notifications</a>
+      <a href="settings-locale.html" class="sb-link"><i class="fa-solid fa-earth-europe"></i> Locale &amp; Currency</a>
+      <a href="settings-warehouses.html" class="sb-link"><i class="fa-solid fa-warehouse"></i> Warehouses</a>
+      <a href="settings-api-webhooks.html" class="sb-link"><i class="fa-solid fa-code"></i> API &amp; Webhooks</a>
+    </nav>
+    <div class="sb-foot">
+      <div class="sb-av">JW</div>
+      <div>
+        <div class="sb-uname">James Whitcombe</div>
+        <div class="sb-urole">Owner &middot; Acme Co</div>
+      </div>
+    </div>
+  </aside>
+  <main class="main">
+    <div class="fake-head"></div>
+    <div class="fake-sub"></div>
+    <div class="fake-grid">
+      <div class="fake-card"></div>
+      <div class="fake-card"></div>
+      <div class="fake-card"></div>
+      <div class="fake-card"></div>
+    </div>
+    <div class="fake-row">
+      <div class="fake-big"></div>
+      <div class="fake-big"></div>
+    </div>
+  </main>
+</div>
+
+<!-- COMMAND PALETTE MODAL -->
+<div class="backdrop">
+  <div class="palette" role="dialog" aria-label="Command palette">
+
+    <div class="search">
+      <i class="fa-solid fa-magnifying-glass"></i>
+      <input type="text" value="ord" placeholder="Search orders, products, actions..." autofocus />
+      <div class="kbd-hint"><span class="kbd">⌘</span><span class="kbd">K</span></div>
+    </div>
+
+    <div class="recent">
+      <span class="recent-label">Recent</span>
+      <span class="chip"><i class="fa-solid fa-clock-rotate-left"></i>SKU-LED-9842</span>
+      <span class="chip"><i class="fa-solid fa-clock-rotate-left"></i>Stockout report</span>
+      <span class="chip"><i class="fa-solid fa-clock-rotate-left"></i>Returns dashboard</span>
+      <span class="chip"><i class="fa-solid fa-clock-rotate-left"></i>Amazon UK channel</span>
+    </div>
+
+    <div class="results">
+
+      <!-- ORDERS -->
+      <div class="group-label"><span>Orders · 3 matches</span><span>Press → to open</span></div>
+      <div class="row sel">
+        <div class="row-icon indigo"><i class="fa-solid fa-receipt"></i></div>
+        <div class="row-body">
+          <div class="row-title"><b>#MER-21847</b>Cordless drill, charger, 2× bits</div>
+          <div class="row-sub">Amazon UK<span class="dot"></span>£284.50<span class="dot"></span>SLA 2h 14m<span class="dot"></span><span class="row-bdg bdg-success">Dispatched</span></div>
+        </div>
+        <i class="fa-solid fa-arrow-turn-down fa-rotate-90 row-arrow"></i>
+      </div>
+      <div class="row">
+        <div class="row-icon indigo"><i class="fa-solid fa-receipt"></i></div>
+        <div class="row-body">
+          <div class="row-title"><b>#MER-21845</b>LED panel 600×600</div>
+          <div class="row-sub">eBay UK<span class="dot"></span>£156.20<span class="dot"></span><span class="row-bdg bdg-warn">Awaiting stock</span></div>
+        </div>
+        <span class="row-meta">2m ago</span>
+      </div>
+      <div class="row">
+        <div class="row-icon indigo"><i class="fa-solid fa-receipt"></i></div>
+        <div class="row-body">
+          <div class="row-title"><b>#MER-21832</b>Surge protector, USB hub</div>
+          <div class="row-sub">Shopify<span class="dot"></span>£68.99<span class="dot"></span><span class="row-bdg bdg-info">Picking</span></div>
+        </div>
+        <span class="row-meta">14m ago</span>
+      </div>
+
+      <!-- NAVIGATION -->
+      <div class="group-label"><span>Navigation · 5 matches</span><span></span></div>
+      <div class="row">
+        <div class="row-icon green"><i class="fa-solid fa-receipt"></i></div>
+        <div class="row-body">
+          <div class="row-title">Order Queue</div>
+          <div class="row-sub">/orders/queue<span class="dot"></span>247 open</div>
+        </div>
+        <div class="row-shortcut"><span class="kbd">G</span><span class="kbd">O</span></div>
+      </div>
+      <div class="row">
+        <div class="row-icon amber"><i class="fa-solid fa-boxes-stacked"></i></div>
+        <div class="row-body">
+          <div class="row-title">Inventory · Stock Overview</div>
+          <div class="row-sub">/inventory<span class="dot"></span>4,128 SKUs</div>
+        </div>
+        <div class="row-shortcut"><span class="kbd">G</span><span class="kbd">I</span></div>
+      </div>
+      <div class="row">
+        <div class="row-icon red"><i class="fa-solid fa-rotate-left"></i></div>
+        <div class="row-body">
+          <div class="row-title">Returns Dashboard</div>
+          <div class="row-sub">/returns<span class="dot"></span>8 awaiting decision</div>
+        </div>
+        <div class="row-shortcut"><span class="kbd">G</span><span class="kbd">R</span></div>
+      </div>
+      <div class="row">
+        <div class="row-icon blue"><i class="fa-solid fa-truck-fast"></i></div>
+        <div class="row-body">
+          <div class="row-title">Fulfilment · Picking Lists</div>
+          <div class="row-sub">/fulfilment/picking</div>
+        </div>
+        <div class="row-shortcut"><span class="kbd">G</span><span class="kbd">F</span></div>
+      </div>
+      <div class="row">
+        <div class="row-icon indigo"><i class="fa-solid fa-chart-line"></i></div>
+        <div class="row-body">
+          <div class="row-title">Insights · Channel Performance</div>
+          <div class="row-sub">/insights/channels</div>
+        </div>
+        <div class="row-shortcut"><span class="kbd">G</span><span class="kbd">P</span></div>
+      </div>
+
+      <!-- ACTIONS -->
+      <div class="group-label"><span>Actions · 3 matches</span><span></span></div>
+      <div class="row">
+        <div class="row-icon green"><i class="fa-solid fa-plus"></i></div>
+        <div class="row-body">
+          <div class="row-title">Create manual order</div>
+          <div class="row-sub">Bypass channels · phone or wholesale order</div>
+        </div>
+        <div class="row-shortcut"><span class="kbd">⌘</span><span class="kbd">N</span></div>
+      </div>
+      <div class="row">
+        <div class="row-icon amber"><i class="fa-solid fa-clipboard-check"></i></div>
+        <div class="row-body">
+          <div class="row-title">Run stock take</div>
+          <div class="row-sub">Start cycle count for selected warehouse</div>
+        </div>
+        <div class="row-shortcut"><span class="kbd">⌘</span><span class="kbd">⇧</span><span class="kbd">S</span></div>
+      </div>
+      <div class="row">
+        <div class="row-icon indigo"><i class="fa-solid fa-arrows-rotate"></i></div>
+        <div class="row-body">
+          <div class="row-title">Force resync all channels</div>
+          <div class="row-sub">Pull last 24h from Amazon, eBay, Shopify, TikTok</div>
+        </div>
+        <div class="row-shortcut"><span class="kbd">⌘</span><span class="kbd">⇧</span><span class="kbd">R</span></div>
+      </div>
+
+    </div>
+
+    <div class="foot">
+      <span class="foot-item"><span class="kbd">↑</span><span class="kbd">↓</span> Navigate</span>
+      <span class="foot-item"><span class="kbd">↵</span> Select</span>
+      <span class="foot-item"><span class="kbd">Tab</span> Switch group</span>
+      <span class="foot-item"><span class="kbd">Esc</span> Close</span>
+      <span class="foot-spacer"></span>
+      <span class="foot-brand"><span class="mini-mark">S</span>Synergia360</span>
+    </div>
+
+  </div>
+</div>
+
+</body>
+</html>

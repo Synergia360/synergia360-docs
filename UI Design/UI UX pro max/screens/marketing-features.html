@@ -1,0 +1,411 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>Features — Synergia360</title>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&family=Geist+Mono:wght@400;600&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
+<style>
+  *,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+  :root{
+    --bg:#FFFFFF;--bg-alt:#F8F9FC;--ink:#0F172A;--ink-2:#475569;--ink-3:#94A3B8;
+    --line:#E2E8F0;--indigo:#4F46E5;--indigo-600:#4338CA;--indigo-50:#EEF2FF;
+    --shadow-sm:0 1px 2px rgba(15,23,42,.04);
+    --shadow:0 10px 30px -12px rgba(15,23,42,.18),0 4px 10px -6px rgba(15,23,42,.06)
+  }
+  html,body{background:var(--bg);color:var(--ink);font-family:'Inter',sans-serif;-webkit-font-smoothing:antialiased;line-height:1.5}
+  a{color:inherit;text-decoration:none}
+  .container{width:100%;max-width:1200px;margin:0 auto;padding:0 24px}
+
+  .nav{position:sticky;top:0;z-index:50;background:rgba(255,255,255,.85);backdrop-filter:blur(12px);border-bottom:1px solid rgba(226,232,240,.7)}
+  .nav-inner{height:68px;display:flex;align-items:center;justify-content:space-between;gap:32px}
+  .logo{display:flex;align-items:center;gap:10px;font-weight:800;font-size:17px;letter-spacing:-.02em}
+  .logo-mark{width:34px;height:34px;border-radius:9px;background:linear-gradient(135deg,#4F46E5,#7C3AED);display:grid;place-items:center;color:#fff;font-weight:900;box-shadow:0 6px 16px -6px rgba(79,70,229,.6)}
+  .nav-links{display:flex;gap:28px;font-size:14.5px;color:var(--ink-2);font-weight:500}
+  .nav-links a:hover{color:var(--ink)}
+  .nav-links a.active{color:var(--ink)}
+  .nav-cta{display:flex;align-items:center;gap:10px}
+  .btn{display:inline-flex;align-items:center;gap:8px;height:40px;padding:0 18px;border-radius:10px;font-weight:600;font-size:14.5px;cursor:pointer;border:1px solid transparent;transition:all .2s;white-space:nowrap}
+  .btn-primary{background:var(--indigo);color:#fff;box-shadow:0 6px 16px -8px rgba(79,70,229,.7)}
+  .btn-primary:hover{background:var(--indigo-600);transform:translateY(-1px)}
+  .btn-ghost{background:transparent}
+  .btn-ghost:hover{background:#F1F5F9}
+  .btn-outline{background:#fff;color:var(--ink);border-color:var(--line)}
+  .btn-outline:hover{border-color:#CBD5E1;background:#F8FAFC}
+  .btn-lg{height:48px;padding:0 22px;font-size:15px;border-radius:11px}
+
+  .hero{position:relative;padding:88px 0 60px;text-align:center;overflow:hidden}
+  .hero::before{content:"";position:absolute;inset:-20% -10% 30% -10%;background:radial-gradient(60% 60% at 50% 30%,rgba(79,70,229,.08),transparent 70%);z-index:-1}
+  .eyebrow{display:inline-flex;align-items:center;gap:8px;padding:6px 14px;background:#fff;border:1px solid var(--line);border-radius:999px;font-size:13px;color:var(--ink-2);font-weight:500;box-shadow:var(--shadow-sm)}
+  .hero h1{margin-top:20px;font-size:clamp(40px,6vw,72px);font-weight:900;line-height:1;letter-spacing:-.035em;max-width:14ch;margin-left:auto;margin-right:auto}
+  .hero h1 em{font-style:normal;background:linear-gradient(120deg,#4F46E5 0%,#8B5CF6 100%);-webkit-background-clip:text;background-clip:text;color:transparent}
+  .hero p{margin:22px auto 0;max-width:600px;font-size:19px;color:var(--ink-2);line-height:1.55}
+
+  /* sticky pill nav */
+  .pill-nav{position:sticky;top:68px;z-index:40;background:rgba(255,255,255,.92);backdrop-filter:blur(12px);border-bottom:1px solid var(--line);padding:14px 0}
+  .pills{display:flex;gap:6px;overflow-x:auto;justify-content:center;flex-wrap:wrap}
+  .pill{padding:7px 14px;border-radius:999px;font-size:13px;font-weight:500;color:var(--ink-2);border:1px solid transparent;cursor:pointer;background:transparent;white-space:nowrap}
+  .pill:hover{background:#F1F5F9;color:var(--ink)}
+  .pill.on{background:var(--ink);color:#fff;border-color:var(--ink)}
+
+  /* split sections */
+  .split{padding:90px 0;border-bottom:1px solid var(--line)}
+  .split.alt{background:var(--bg-alt)}
+  .split-grid{display:grid;grid-template-columns:1fr 1fr;gap:64px;align-items:center}
+  .split.reverse .split-grid > *:first-child{order:2}
+  .split-eyebrow{display:inline-flex;align-items:center;gap:8px;color:var(--indigo);font-weight:700;font-size:13px;letter-spacing:.08em;text-transform:uppercase}
+  .split-eyebrow i{width:24px;height:24px;border-radius:7px;background:var(--indigo-50);display:grid;place-items:center;font-size:11px}
+  .split h2{margin-top:14px;font-size:clamp(32px,3.6vw,44px);font-weight:800;letter-spacing:-.03em;line-height:1.1}
+  .split-lede{margin-top:18px;font-size:17px;color:var(--ink-2);line-height:1.65}
+  .split ul{list-style:none;margin-top:24px;display:flex;flex-direction:column;gap:14px}
+  .split ul li{display:flex;gap:12px;font-size:15px;color:var(--ink)}
+  .split ul li i{color:#10B981;font-size:13px;margin-top:5px;flex-shrink:0}
+  .split ul li strong{display:block;font-weight:600;margin-bottom:2px}
+  .split ul li span{color:var(--ink-2);font-size:14px;line-height:1.5;display:block}
+  .split-cta{margin-top:30px;display:flex;gap:10px;flex-wrap:wrap}
+
+  /* MOCKUPS */
+  .mock-card{background:#fff;border:1px solid var(--line);border-radius:18px;box-shadow:var(--shadow);overflow:hidden;padding:18px}
+  .mock-card .head{display:flex;justify-content:space-between;align-items:center;margin-bottom:14px;padding:6px 4px}
+  .mock-card .head h5{font-size:13.5px;font-weight:700}
+  .mock-card .head .badge{font-size:11px;font-weight:600;padding:3px 9px;border-radius:999px;background:#ECFDF5;color:#047857}
+  .order-row{display:grid;grid-template-columns:auto 1fr auto auto;gap:12px;padding:14px;border:1px solid var(--line);border-radius:12px;margin-bottom:8px;align-items:center;background:#FAFBFD}
+  .order-row .ico{width:34px;height:34px;border-radius:9px;display:grid;place-items:center;font-size:13px;color:#fff}
+  .order-row.amazon .ico{background:linear-gradient(135deg,#FF9900,#B45309)}
+  .order-row.shopify .ico{background:linear-gradient(135deg,#10B981,#047857)}
+  .order-row.ebay .ico{background:linear-gradient(135deg,#4F46E5,#7C3AED)}
+  .order-row .info strong{font-size:13.5px;display:block}
+  .order-row .info span{font-size:12px;color:var(--ink-3)}
+  .sla{font-family:'Geist Mono',monospace;font-weight:600;font-size:13px;padding:4px 8px;border-radius:7px;background:#FEF3C7;color:#92400E}
+  .sla.ok{background:#ECFDF5;color:#047857}
+  .sla.crit{background:#FEE2E2;color:#B91C1C;animation:pulse 1.6s ease-in-out infinite}
+  @keyframes pulse{50%{opacity:.55}}
+  .order-status{font-size:11.5px;font-weight:600;padding:4px 10px;border-radius:6px;background:#F1F5F9;color:var(--ink-2)}
+
+  .channel-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:10px;background:#fff;border:1px solid var(--line);border-radius:18px;padding:16px;box-shadow:var(--shadow)}
+  .ch-tile{aspect-ratio:1;border:1px solid var(--line);border-radius:12px;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:8px;font-weight:600;font-size:12px;color:var(--ink-2);background:#FAFBFD;transition:all .2s}
+  .ch-tile:hover{transform:translateY(-2px);border-color:var(--indigo);background:#fff}
+  .ch-tile i{font-size:26px}
+  .ch-tile.amazon i{color:#FF9900}.ch-tile.ebay i{color:#0064D2}.ch-tile.shopify i{color:#95BF47}
+  .ch-tile.etsy i{color:#F1641E}.ch-tile.tiktok i{color:#FE2C55}.ch-tile.amz-fr i{color:#FF9900}
+  .ch-tile.wf i{color:#7B189F}.ch-tile.bq i{color:#0F0033}
+
+  .chat{background:#fff;border:1px solid var(--line);border-radius:18px;padding:22px;box-shadow:var(--shadow);display:flex;flex-direction:column;gap:14px}
+  .msg{display:flex;gap:12px;align-items:flex-start}
+  .msg.me{justify-content:flex-end}
+  .msg .av{width:32px;height:32px;border-radius:9px;display:grid;place-items:center;color:#fff;font-weight:700;font-size:12px;flex-shrink:0}
+  .msg.me .av{order:2;background:#0F172A}
+  .msg.ai .av{background:linear-gradient(135deg,#4F46E5,#8B5CF6)}
+  .bubble{padding:12px 16px;border-radius:14px;font-size:14px;line-height:1.55;max-width:340px}
+  .msg.me .bubble{background:#0F172A;color:#fff;border-top-right-radius:4px}
+  .msg.ai .bubble{background:#F8FAFC;border:1px solid var(--line);border-top-left-radius:4px}
+  .bubble ul{margin-top:8px;padding-left:14px;font-size:13.5px;color:var(--ink-2)}
+  .bubble ul li{margin-bottom:4px}
+  .chat-actions{display:flex;gap:8px;margin-left:44px}
+  .chat-actions button{height:32px;padding:0 14px;border-radius:8px;font:inherit;font-weight:600;font-size:12.5px;cursor:pointer;border:1px solid var(--line);background:#fff}
+  .chat-actions .accept{background:var(--indigo);color:#fff;border-color:var(--indigo)}
+
+  .phone{width:260px;margin:0 auto;background:#0F172A;border-radius:36px;padding:10px;box-shadow:0 30px 60px -20px rgba(15,23,42,.4)}
+  .phone-screen{background:#fff;border-radius:28px;overflow:hidden;height:480px;display:flex;flex-direction:column}
+  .phone-bar{padding:12px 16px;border-bottom:1px solid var(--line);display:flex;align-items:center;justify-content:space-between;font-size:11px;color:var(--ink-3)}
+  .phone-h{padding:14px 16px;border-bottom:1px solid var(--line)}
+  .phone-h .pickref{font-size:11px;color:var(--ink-3);text-transform:uppercase;letter-spacing:.08em;font-weight:600}
+  .phone-h .picknum{font-size:18px;font-weight:800;letter-spacing:-.02em}
+  .phone-body{padding:16px;flex:1;display:flex;flex-direction:column;gap:14px}
+  .pick-card{border:2px dashed var(--indigo);border-radius:14px;padding:16px;background:var(--indigo-50)}
+  .pick-card .loc{font-family:'Geist Mono',monospace;font-size:14px;font-weight:700;color:var(--indigo)}
+  .pick-card .sku{font-size:12px;color:var(--ink-2);margin-top:4px}
+  .pick-card .pname{font-size:14px;font-weight:600;margin-top:10px;line-height:1.3}
+  .pick-card .qty{margin-top:10px;display:flex;align-items:center;gap:10px}
+  .pick-card .qty strong{font-size:24px;font-weight:900}
+  .pick-card .qty span{font-size:12px;color:var(--ink-2)}
+  .scan-btn{margin-top:auto;height:46px;border-radius:12px;background:var(--indigo);color:#fff;display:flex;align-items:center;justify-content:center;gap:10px;font-weight:700;font-size:14px}
+
+  /* CAPABILITY */
+  .caps{padding:100px 0}
+  .section-head{text-align:center;max-width:680px;margin:0 auto 56px}
+  .section-eyebrow{font-size:12.5px;letter-spacing:.14em;text-transform:uppercase;font-weight:700;color:var(--indigo)}
+  .section-head h2{margin-top:14px;font-size:clamp(32px,4vw,46px);font-weight:800;letter-spacing:-.03em}
+  .caps-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:20px}
+  .cap{padding:28px;background:#fff;border:1px solid var(--line);border-radius:14px}
+  .cap-icon{width:42px;height:42px;border-radius:11px;background:var(--indigo-50);color:var(--indigo);display:grid;place-items:center;font-size:16px;margin-bottom:14px}
+  .cap h4{font-size:16px;font-weight:700;letter-spacing:-.005em}
+  .cap p{margin-top:8px;font-size:14px;color:var(--ink-2);line-height:1.55}
+
+  .cta-section{padding:60px 0 100px}
+  .cta-card{position:relative;overflow:hidden;background:radial-gradient(120% 100% at 50% 0%,#6366F1 0%,#4F46E5 50%,#3730A3 100%);border-radius:24px;padding:70px 40px;text-align:center;color:#fff}
+  .cta-card h2{font-size:clamp(30px,4vw,44px);font-weight:900;letter-spacing:-.03em;line-height:1.05}
+  .cta-card p{margin-top:14px;font-size:17px;color:rgba(255,255,255,.85);max-width:520px;margin-left:auto;margin-right:auto}
+  .cta-card .btn-row{margin-top:28px;display:flex;gap:12px;justify-content:center;flex-wrap:wrap}
+  .cta-card .btn-primary{background:#fff;color:var(--indigo)}
+  .cta-card .btn-outline{background:transparent;color:#fff;border-color:rgba(255,255,255,.3)}
+
+  footer{padding:80px 0 32px;border-top:1px solid var(--line);background:#fff}
+  .foot{display:grid;grid-template-columns:2fr 1fr 1fr 1fr 1fr;gap:48px}
+  .foot-brand p{margin-top:14px;color:var(--ink-2);font-size:14px;max-width:260px;line-height:1.6}
+  .foot-col h6{font-size:12.5px;text-transform:uppercase;letter-spacing:.1em;color:var(--ink-3);font-weight:700;margin-bottom:16px}
+  .foot-col a{display:block;font-size:14px;color:var(--ink-2);padding:5px 0}
+  .foot-col a:hover{color:var(--ink)}
+  .foot-bottom{margin-top:56px;padding-top:24px;border-top:1px solid var(--line);display:flex;justify-content:space-between;font-size:13px;color:var(--ink-3);flex-wrap:wrap;gap:14px}
+  .foot-social{display:flex;gap:14px}
+  .foot-social a{width:32px;height:32px;border-radius:8px;border:1px solid var(--line);display:grid;place-items:center;color:var(--ink-2)}
+
+  @media(max-width:960px){
+    .split-grid{grid-template-columns:1fr;gap:36px}
+    .split.reverse .split-grid > *:first-child{order:0}
+    .caps-grid{grid-template-columns:1fr 1fr}
+    .nav-links{display:none}
+    .foot{grid-template-columns:1fr 1fr 1fr}
+  }
+  @media(max-width:600px){.caps-grid{grid-template-columns:1fr}.foot{grid-template-columns:1fr 1fr}.channel-grid{grid-template-columns:repeat(3,1fr)}}
+</style>
+</head>
+<body>
+
+<header class="nav">
+  <div class="container nav-inner">
+    <a class="logo" href="marketing-home.html"><span class="logo-mark">S</span> Synergia360</a>
+    <nav class="nav-links">
+      <a href="marketing-features.html" class="active">Features</a>
+      <a href="marketing-pricing.html">Pricing</a>
+      <a href="#">Integrations</a>
+      <a href="marketing-comparison.html">Compare</a>
+      <a href="#">Blog</a>
+    </nav>
+    <div class="nav-cta">
+      <a class="btn btn-ghost" href="auth-login.html">Sign in</a>
+      <a class="btn btn-primary" href="auth-signup.html">Start free trial</a>
+    </div>
+  </div>
+</header>
+
+<section class="hero">
+  <div class="container">
+    <span class="eyebrow"><i class="fa-solid fa-sparkles" style="color:var(--indigo)"></i> Eight modules. One platform. Zero handoffs.</span>
+    <h1>Every Feature. <em>Built to Scale.</em></h1>
+    <p>From the first marketplace order to enterprise multi-warehouse fulfilment — every workflow your operations team needs, designed to work together.</p>
+  </div>
+</section>
+
+<div class="pill-nav">
+  <div class="container">
+    <div class="pills">
+      <button class="pill on">Orders</button>
+      <button class="pill">Inventory</button>
+      <button class="pill">Channels</button>
+      <button class="pill">WMS</button>
+      <button class="pill">AI Copilot</button>
+      <button class="pill">Finance</button>
+      <button class="pill">Automation</button>
+      <button class="pill">Analytics</button>
+    </div>
+  </div>
+</div>
+
+<section class="split">
+  <div class="container split-grid">
+    <div>
+      <div class="split-eyebrow"><i class="fa-solid fa-receipt"></i> Order Hub</div>
+      <h2>Every order, every channel, in one queue.</h2>
+      <p class="split-lede">Stop tab-hopping between marketplace dashboards. Synergia360 normalises orders from every storefront into a single, sortable, sliceable queue with live SLA timers and intelligent routing.</p>
+      <ul>
+        <li><i class="fa-solid fa-circle-check"></i><div><strong>Real-time SLA tracking</strong><span>Watch dispatch deadlines against carrier cut-offs and channel commitments.</span></div></li>
+        <li><i class="fa-solid fa-circle-check"></i><div><strong>Smart auto-routing</strong><span>Send orders to the right warehouse, 3PL or drop-shipper based on stock, location and cost.</span></div></li>
+        <li><i class="fa-solid fa-circle-check"></i><div><strong>Bulk actions at speed</strong><span>Tag, split, hold, refund or assign hundreds of orders in seconds.</span></div></li>
+        <li><i class="fa-solid fa-circle-check"></i><div><strong>Returns workflow built in</strong><span>RMA, refund, exchange and restock all in the same record.</span></div></li>
+      </ul>
+      <div class="split-cta">
+        <a class="btn btn-primary btn-lg" href="auth-signup.html">Try the order hub</a>
+      </div>
+    </div>
+    <div>
+      <div class="mock-card">
+        <div class="head"><h5>Order queue · 1,248 today</h5><span class="badge">● Live</span></div>
+        <div class="order-row amazon">
+          <div class="ico"><i class="fa-brands fa-amazon"></i></div>
+          <div class="info"><strong>#SYN-10489 · Hannah Webb</strong><span>2× Oak Side Table · £218.00</span></div>
+          <div class="sla">2h 14m</div>
+          <div class="order-status">Picking</div>
+        </div>
+        <div class="order-row shopify">
+          <div class="ico"><i class="fa-brands fa-shopify"></i></div>
+          <div class="info"><strong>#SYN-10488 · Marcus Reid</strong><span>1× Linen Throw, Sand · £64.00</span></div>
+          <div class="sla crit">42m</div>
+          <div class="order-status">Allocated</div>
+        </div>
+        <div class="order-row ebay">
+          <div class="ico"><i class="fa-brands fa-ebay"></i></div>
+          <div class="info"><strong>#SYN-10487 · Priya Shah</strong><span>4× Brass Picture Hook · £19.96</span></div>
+          <div class="sla ok">5h 02m</div>
+          <div class="order-status">New</div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section class="split alt reverse">
+  <div class="container split-grid">
+    <div>
+      <div class="channel-grid">
+        <div class="ch-tile amazon"><i class="fa-brands fa-amazon"></i> Amazon</div>
+        <div class="ch-tile ebay"><i class="fa-brands fa-ebay"></i> eBay</div>
+        <div class="ch-tile shopify"><i class="fa-brands fa-shopify"></i> Shopify</div>
+        <div class="ch-tile etsy"><i class="fa-brands fa-etsy"></i> Etsy</div>
+        <div class="ch-tile tiktok"><i class="fa-brands fa-tiktok"></i> TikTok</div>
+        <div class="ch-tile wf"><i class="fa-solid fa-cube"></i> Wayfair</div>
+        <div class="ch-tile bq"><i class="fa-solid fa-store"></i> B&Q</div>
+        <div class="ch-tile amz-fr"><i class="fa-brands fa-amazon"></i> Amazon FR</div>
+      </div>
+    </div>
+    <div>
+      <div class="split-eyebrow"><i class="fa-solid fa-plug"></i> Channels</div>
+      <h2>Native integrations. Not "supported via API".</h2>
+      <p class="split-lede">Each connector is built and maintained by our team — not a thin layer over Zapier. Listings, inventory, orders, returns and settlements flow both ways with channel-specific business logic.</p>
+      <ul>
+        <li><i class="fa-solid fa-circle-check"></i><div><strong>30+ first-party integrations</strong><span>Marketplaces, storefronts, 3PLs, carriers and accounting platforms.</span></div></li>
+        <li><i class="fa-solid fa-circle-check"></i><div><strong>Listing & A+ content management</strong><span>Push variations, attributes and rich content from one editor.</span></div></li>
+        <li><i class="fa-solid fa-circle-check"></i><div><strong>Repricing engine</strong><span>Buy-Box-aware on Amazon, watcher-aware on eBay, margin-aware everywhere.</span></div></li>
+        <li><i class="fa-solid fa-circle-check"></i><div><strong>Settlement reconciliation</strong><span>Channel fees, ad spend and refunds matched to your accounts.</span></div></li>
+      </ul>
+    </div>
+  </div>
+</section>
+
+<section class="split">
+  <div class="container split-grid">
+    <div>
+      <div class="split-eyebrow"><i class="fa-solid fa-robot"></i> AI Copilot</div>
+      <h2>Your operations analyst, on tap.</h2>
+      <p class="split-lede">Ask questions in plain English. Get forecasts, anomaly alerts, listing optimisations and bulk actions you can apply or dismiss with one click. The Copilot reads your data — never your customers'.</p>
+      <ul>
+        <li><i class="fa-solid fa-circle-check"></i><div><strong>Conversational data queries</strong><span>"Which SKUs grew &gt;30% week-on-week and have under 4 weeks of cover?"</span></div></li>
+        <li><i class="fa-solid fa-circle-check"></i><div><strong>Anomaly detection</strong><span>Flags pricing errors, listing suppressions and stock blackouts before they cost you.</span></div></li>
+        <li><i class="fa-solid fa-circle-check"></i><div><strong>Listing optimisation</strong><span>Title, bullet and image suggestions tuned per channel and category.</span></div></li>
+        <li><i class="fa-solid fa-circle-check"></i><div><strong>Always reviewable</strong><span>Every action requires human approval. Full audit log included.</span></div></li>
+      </ul>
+    </div>
+    <div>
+      <div class="chat">
+        <div class="msg me">
+          <div class="bubble">Which SKUs are on Amazon UK with under 14 days of cover and no inbound PO?</div>
+          <div class="av">SR</div>
+        </div>
+        <div class="msg ai">
+          <div class="av"><i class="fa-solid fa-sparkles"></i></div>
+          <div class="bubble">
+            Found <strong>7 SKUs</strong> at risk of going OOS within 14 days:
+            <ul>
+              <li><strong>OAK-SIDE-01</strong> — 9 days cover, velocity ↑ 38%</li>
+              <li><strong>LIN-THR-SAND</strong> — 11 days cover, no PO</li>
+              <li><strong>BR-HOOK-XL</strong> — 13 days cover, supplier lead 21d</li>
+            </ul>
+            Want me to draft purchase orders to your default suppliers?
+          </div>
+        </div>
+        <div class="chat-actions">
+          <button class="accept"><i class="fa-solid fa-check"></i> Draft POs</button>
+          <button>Show all 7</button>
+          <button>Dismiss</button>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section class="split alt reverse">
+  <div class="container split-grid">
+    <div>
+      <div class="phone">
+        <div class="phone-screen">
+          <div class="phone-bar"><span>9:41</span><span><i class="fa-solid fa-signal"></i> <i class="fa-solid fa-wifi"></i> <i class="fa-solid fa-battery-full"></i></span></div>
+          <div class="phone-h">
+            <div class="pickref">Wave 24-118 · Pick 4 of 12</div>
+            <div class="picknum">#SYN-10488</div>
+          </div>
+          <div class="phone-body">
+            <div class="pick-card">
+              <div class="loc"><i class="fa-solid fa-location-dot"></i> A-12-04-B</div>
+              <div class="sku">SKU · LIN-THR-SAND</div>
+              <div class="pname">Linen Throw, Sand 130×170</div>
+              <div class="qty"><strong>1</strong><span>unit · scan to confirm</span></div>
+            </div>
+            <div class="scan-btn"><i class="fa-solid fa-barcode"></i> Scan barcode</div>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div>
+      <div class="split-eyebrow"><i class="fa-solid fa-warehouse"></i> WMS</div>
+      <h2>Pick, pack and dispatch from a phone.</h2>
+      <p class="split-lede">A real warehouse app — not a desktop screen squeezed onto mobile. Wave picking, smart batching and barcode-driven accuracy make every dispatch faster and cleaner.</p>
+      <ul>
+        <li><i class="fa-solid fa-circle-check"></i><div><strong>Wave & batch picking</strong><span>Pick by zone, by carrier or by similar SKU groups — whichever wins for you.</span></div></li>
+        <li><i class="fa-solid fa-circle-check"></i><div><strong>Barcode confirmation</strong><span>Every scan checked against the order. Wrong-item shipments approach zero.</span></div></li>
+        <li><i class="fa-solid fa-circle-check"></i><div><strong>Putaway & cycle counts</strong><span>Receive POs, count locations and resolve discrepancies on the floor.</span></div></li>
+        <li><i class="fa-solid fa-circle-check"></i><div><strong>Works offline</strong><span>Patchy warehouse Wi-Fi? Actions queue locally and sync when connection returns.</span></div></li>
+      </ul>
+    </div>
+  </div>
+</section>
+
+<section class="caps">
+  <div class="container">
+    <div class="section-head">
+      <div class="section-eyebrow">And there's more</div>
+      <h2>Full Feature Set</h2>
+    </div>
+    <div class="caps-grid">
+      <div class="cap"><div class="cap-icon"><i class="fa-solid fa-chart-line"></i></div><h4>Demand Forecasting</h4><p>SKU-level forecasts factoring seasonality, promotions and channel mix. Drives auto-replenishment.</p></div>
+      <div class="cap"><div class="cap-icon"><i class="fa-solid fa-tags"></i></div><h4>Dynamic Repricing</h4><p>Margin-protected rules with Buy Box and competitor awareness. Test strategies in dry-run mode.</p></div>
+      <div class="cap"><div class="cap-icon"><i class="fa-solid fa-truck-fast"></i></div><h4>Carrier & Shipping Rules</h4><p>Service selection by weight, value, destination and channel SLA. Integrated label printing.</p></div>
+      <div class="cap"><div class="cap-icon"><i class="fa-solid fa-rotate"></i></div><h4>Returns & RMA</h4><p>Branded return portals, automatic restock, refunds and exchange flows.</p></div>
+      <div class="cap"><div class="cap-icon"><i class="fa-solid fa-cubes-stacked"></i></div><h4>Bundles, Kits & BOMs</h4><p>Sell single SKUs that auto-explode into components on pick. Manufacturing-light included.</p></div>
+      <div class="cap"><div class="cap-icon"><i class="fa-solid fa-file-invoice"></i></div><h4>Accounting Sync</h4><p>Native Xero, QuickBooks and Sage. Per-channel mapping with VAT logic baked in.</p></div>
+      <div class="cap"><div class="cap-icon"><i class="fa-solid fa-shield-halved"></i></div><h4>Roles & Permissions</h4><p>Granular access, IP allow-listing, SSO via Okta/Azure AD, full audit log.</p></div>
+      <div class="cap"><div class="cap-icon"><i class="fa-solid fa-code"></i></div><h4>Open API & Webhooks</h4><p>Build your own surfaces. REST and GraphQL with sandbox keys for every plan.</p></div>
+      <div class="cap"><div class="cap-icon"><i class="fa-solid fa-globe"></i></div><h4>Multi-Currency & Entity</h4><p>Run multiple legal entities, currencies and tax regimes in a single workspace.</p></div>
+    </div>
+  </div>
+</section>
+
+<section class="cta-section">
+  <div class="container">
+    <div class="cta-card">
+      <h2>See it on your data</h2>
+      <p>Start a free trial and connect your channels — see your real orders flowing through Synergia360 in minutes.</p>
+      <div class="btn-row">
+        <a class="btn btn-primary btn-lg" href="auth-signup.html">Start free trial <i class="fa-solid fa-arrow-right"></i></a>
+        <a class="btn btn-outline btn-lg" href="#"><i class="fa-solid fa-calendar"></i> Book a demo</a>
+      </div>
+    </div>
+  </div>
+</section>
+
+<footer>
+  <div class="container">
+    <div class="foot">
+      <div class="foot-brand">
+        <a class="logo" href="marketing-home.html"><span class="logo-mark">S</span> Synergia360</a>
+        <p>The operating system for multi-channel commerce. Made in London. Trusted globally.</p>
+      </div>
+      <div class="foot-col"><h6>Product</h6><a href="marketing-features.html">Features</a><a href="marketing-pricing.html">Pricing</a><a href="#">Integrations</a><a href="#">Changelog</a></div>
+      <div class="foot-col"><h6>Company</h6><a href="#">About</a><a href="#">Customers</a><a href="#">Careers</a><a href="#">Contact</a></div>
+      <div class="foot-col"><h6>Resources</h6><a href="#">Blog</a><a href="#">Docs</a><a href="#">API reference</a><a href="#">Status</a></div>
+      <div class="foot-col"><h6>Legal</h6><a href="#">Privacy</a><a href="#">Terms</a><a href="#">DPA</a><a href="#">Cookies</a></div>
+    </div>
+    <div class="foot-bottom">
+      <span>© 2026 Synergia360 Ltd. Registered in England & Wales · No. 13495021</span>
+      <div class="foot-social">
+        <a href="#"><i class="fa-brands fa-x-twitter"></i></a>
+        <a href="#"><i class="fa-brands fa-linkedin-in"></i></a>
+        <a href="#"><i class="fa-brands fa-github"></i></a>
+        <a href="#"><i class="fa-brands fa-youtube"></i></a>
+      </div>
+    </div>
+  </div>
+</footer>
+
+</body>
+</html>

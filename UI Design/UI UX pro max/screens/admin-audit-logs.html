@@ -1,0 +1,528 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Admin – Audit Logs</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
+<style>
+:root{
+  --bg:#F5F3FF;--surface:#FFFFFF;--surface-2:#F8F5FF;--border:#E9D5FF;
+  --accent:#7C3AED;--accent-light:#F5F3FF;
+  --text:#1E1B4B;--text-2:#5B5891;--text-3:#9CA3AF;
+  --green:#10B981;--red:#EF4444;--amber:#F59E0B;--blue:#3B82F6;
+  --shadow-sm:0 1px 2px rgba(124,58,237,.06);
+  --shadow:0 1px 3px rgba(124,58,237,.1),0 1px 2px rgba(124,58,237,.06)
+}
+*{box-sizing:border-box;margin:0;padding:0}
+body{font-family:'Inter',sans-serif;background:var(--bg);color:var(--text);font-size:14px;line-height:1.5;display:flex;min-height:100vh}
+
+/* ── Sidebar ── */
+.sidebar{width:240px;background:#fff;border-right:1px solid var(--border);display:flex;flex-direction:column;flex-shrink:0;position:sticky;top:0;height:100vh;overflow:hidden}
+.sb-logo{padding:18px 20px;border-bottom:1px solid var(--border);display:flex;align-items:center;gap:12px;flex-shrink:0}
+.sb-mark{width:36px;height:36px;background:var(--accent);border-radius:9px;display:grid;place-items:center;color:#fff;font-weight:800;font-size:14px;flex-shrink:0}
+.sb-nav{flex:1;padding:10px;overflow-y:auto}
+.sb-section{font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:.07em;color:var(--text-3);padding:14px 8px 4px;display:block}
+.sb-link{display:flex;align-items:center;gap:10px;padding:8px 10px;border-radius:8px;color:var(--text-2);font-size:13px;font-weight:500;text-decoration:none;border-left:2px solid transparent;margin-bottom:1px;transition:background .15s,color .15s}
+.sb-link:hover{background:var(--surface-2);color:var(--text)}
+.sb-link.active{background:var(--accent-light);color:var(--accent);border-left-color:var(--accent);font-weight:600}
+.sb-link i{width:16px;text-align:center;font-size:13px;color:var(--text-3);flex-shrink:0}
+.sb-link.active i{color:var(--accent)}
+.sb-foot{padding:12px 16px;border-top:1px solid var(--border);display:flex;align-items:center;gap:10px;flex-shrink:0}
+.sb-av{width:34px;height:34px;background:var(--accent-light);border-radius:50%;display:grid;place-items:center;color:var(--accent);font-weight:700;font-size:13px;flex-shrink:0}
+.sb-uname{font-size:13px;font-weight:600;color:var(--text)}
+.sb-urole{font-size:11px;color:var(--text-3)}
+
+/* ── Main layout ── */
+.main{flex:1;display:flex;flex-direction:column;min-height:100vh;overflow:hidden}
+
+/* Topbar */
+.topbar{padding:16px 28px;border-bottom:1px solid var(--border);background:var(--surface);display:flex;align-items:center;justify-content:space-between;gap:16px;flex-shrink:0}
+.topbar-left{}
+.breadcrumb{font-size:11px;color:var(--text-3);margin-bottom:3px;display:flex;align-items:center;gap:5px}
+.breadcrumb a{color:var(--text-3);text-decoration:none}
+.breadcrumb a:hover{color:var(--accent)}
+.topbar-h1{font-size:20px;font-weight:700;color:var(--text)}
+.topbar-right{display:flex;align-items:center;gap:10px}
+.date-select{padding:8px 12px;border:1px solid var(--border);border-radius:8px;background:var(--surface);font-size:13px;font-weight:500;color:var(--text-2);cursor:pointer;font-family:'Inter',sans-serif;appearance:none;padding-right:28px;background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' viewBox='0 0 24 24' fill='none' stroke='%235B5891' stroke-width='2'%3E%3Cpath d='M6 9l6 6 6-6'/%3E%3C/svg%3E");background-repeat:no-repeat;background-position:right 10px center}
+.btn-outline{padding:8px 14px;border:1px solid var(--border);border-radius:8px;background:var(--surface);font-size:13px;font-weight:500;color:var(--text-2);cursor:pointer;font-family:'Inter',sans-serif;display:inline-flex;align-items:center;gap:6px;transition:all .15s}
+.btn-outline:hover{border-color:var(--accent);color:var(--accent)}
+
+/* Content area (scrollable) */
+.content{padding:20px 28px;display:flex;flex-direction:column;gap:18px;flex:1;overflow-y:auto}
+
+/* Stats chips row */
+.stats-chips{display:flex;align-items:center;gap:10px;flex-wrap:wrap}
+.stat-chip{display:inline-flex;align-items:center;gap:7px;padding:6px 14px;border-radius:20px;font-size:13px;font-weight:600;border:1px solid var(--border);background:var(--surface)}
+.stat-chip .chip-dot{width:8px;height:8px;border-radius:50%;flex-shrink:0}
+.stat-chip.total .chip-dot{background:var(--accent)}
+.stat-chip.total{color:var(--accent);border-color:#DDD6FE}
+.stat-chip.critical .chip-dot{background:var(--red)}
+.stat-chip.critical{color:var(--red);background:#FEF2F2;border-color:#FECACA}
+.stat-chip.warning .chip-dot{background:var(--amber)}
+.stat-chip.warning{color:#B45309;background:#FFFBEB;border-color:#FDE68A}
+
+/* Filter bar */
+.filter-bar{display:flex;align-items:center;gap:10px;flex-wrap:wrap;background:var(--surface);border:1px solid var(--border);border-radius:12px;padding:14px 16px;box-shadow:var(--shadow-sm)}
+.filter-item{display:flex;align-items:center;gap:8px}
+.filter-item label{font-size:12px;font-weight:500;color:var(--text-3);white-space:nowrap}
+.filter-select{padding:7px 28px 7px 10px;border:1px solid var(--border);border-radius:7px;background:var(--surface-2);font-size:12px;font-weight:500;color:var(--text-2);font-family:'Inter',sans-serif;cursor:pointer;appearance:none;background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='10' height='10' viewBox='0 0 24 24' fill='none' stroke='%239CA3AF' stroke-width='2'%3E%3Cpath d='M6 9l6 6 6-6'/%3E%3C/svg%3E");background-repeat:no-repeat;background-position:right 8px center;outline:none;min-width:120px}
+.filter-select:focus{border-color:var(--accent)}
+.filter-divider{width:1px;height:24px;background:var(--border);flex-shrink:0;margin:0 2px}
+.filter-spacer{flex:1}
+.result-count{font-size:12px;color:var(--text-3);white-space:nowrap}
+
+/* Body split: table + detail panel */
+.body-split{display:flex;gap:16px;flex:1;min-height:0}
+.table-side{flex:1;display:flex;flex-direction:column;gap:0;min-width:0}
+
+/* Table card */
+.table-card{background:var(--surface);border:1px solid var(--border);border-radius:12px;overflow:hidden;box-shadow:var(--shadow-sm);flex:1;display:flex;flex-direction:column}
+.table-wrap{overflow-x:auto;flex:1}
+table{width:100%;border-collapse:collapse;font-size:12px}
+thead th{background:var(--surface-2);padding:10px 12px;text-align:left;font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:.06em;color:var(--text-3);border-bottom:1px solid var(--border);white-space:nowrap}
+tbody tr{border-bottom:1px solid var(--border);cursor:pointer;transition:background .1s}
+tbody tr:last-child{border-bottom:none}
+tbody tr:hover{background:var(--surface-2)}
+tbody tr.selected{background:var(--accent-light);outline:2px solid var(--accent);outline-offset:-1px}
+tbody tr.row-failed{background:#FEF2F2}
+tbody tr.row-failed:hover{background:#FEE2E2}
+tbody td{padding:11px 12px;color:var(--text-2);vertical-align:middle}
+.ts-col{font-family:'SF Mono','Fira Code',monospace;font-size:11px;color:var(--text-3);white-space:nowrap}
+.actor-col{font-weight:500;color:var(--text);max-width:160px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.action-col{white-space:nowrap}
+.resource-col{max-width:140px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.ip-col{font-family:'SF Mono','Fira Code',monospace;font-size:11px;color:var(--text-3);white-space:nowrap}
+
+/* Action badges */
+.action-badge{display:inline-flex;align-items:center;gap:4px;padding:2px 8px;border-radius:5px;font-size:11px;font-weight:600;white-space:nowrap}
+.ab-delete{background:#FEF2F2;color:var(--red)}
+.ab-update{background:#EFF6FF;color:var(--blue)}
+.ab-login{background:#F0FDF4;color:var(--green)}
+.ab-export{background:#FFFBEB;color:#92400E}
+.ab-sync{background:#F5F3FF;color:var(--accent)}
+.ab-backup{background:#F5F3FF;color:var(--accent)}
+.ab-flag{background:#FDF4FF;color:#9333EA}
+
+/* Result pill */
+.result-success{color:var(--green);font-weight:600;font-size:12px}
+.result-failed{color:var(--red);font-weight:700;font-size:12px}
+
+/* Company tag */
+.co-tag{display:inline-block;padding:2px 7px;border-radius:5px;font-size:11px;font-weight:500;background:var(--surface-2);color:var(--text-2);border:1px solid var(--border);white-space:nowrap;max-width:100px;overflow:hidden;text-overflow:ellipsis}
+.co-tag.na{background:transparent;border-color:transparent;color:var(--text-3);font-style:italic}
+
+/* Pagination */
+.pagination{display:flex;align-items:center;justify-content:space-between;padding:12px 16px;border-top:1px solid var(--border);background:var(--surface-2);flex-shrink:0;border-radius:0 0 12px 12px}
+.page-info{font-size:12px;color:var(--text-3)}
+.page-btns{display:flex;gap:4px}
+.page-btn{width:30px;height:30px;border:1px solid var(--border);border-radius:7px;background:var(--surface);display:inline-flex;align-items:center;justify-content:center;cursor:pointer;font-size:12px;font-weight:500;color:var(--text-2);transition:all .15s}
+.page-btn:hover{border-color:var(--accent);color:var(--accent)}
+.page-btn.active{background:var(--accent);color:#fff;border-color:var(--accent)}
+.page-btn.arrow{color:var(--text-3)}
+
+/* Detail panel */
+.detail-panel{width:300px;flex-shrink:0;background:var(--surface);border:1px solid var(--border);border-radius:12px;box-shadow:var(--shadow-sm);display:flex;flex-direction:column;overflow:hidden;align-self:flex-start;position:sticky;top:0}
+.dp-header{padding:14px 16px;border-bottom:1px solid var(--border);background:var(--surface-2);display:flex;align-items:center;justify-content:space-between}
+.dp-title{font-size:13px;font-weight:700;color:var(--text)}
+.dp-close{width:24px;height:24px;border-radius:6px;border:1px solid var(--border);background:var(--surface);display:inline-flex;align-items:center;justify-content:center;cursor:pointer;color:var(--text-3);font-size:11px}
+.dp-body{padding:14px 16px;display:flex;flex-direction:column;gap:14px;overflow-y:auto;max-height:calc(100vh - 200px)}
+.dp-section-title{font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:.06em;color:var(--text-3);margin-bottom:8px;display:flex;align-items:center;gap:6px}
+.dp-section-title::after{content:'';flex:1;height:1px;background:var(--border)}
+.dp-field{display:flex;flex-direction:column;gap:2px;margin-bottom:10px}
+.dp-field-label{font-size:10px;font-weight:600;text-transform:uppercase;letter-spacing:.05em;color:var(--text-3)}
+.dp-field-val{font-size:13px;color:var(--text);font-weight:500}
+.dp-field-val.mono{font-family:'SF Mono','Fira Code',monospace;font-size:11px;color:var(--accent)}
+.dp-field-val.failed{color:var(--red);font-weight:700}
+
+/* Diff block */
+.diff-block{background:#0F0D1A;border-radius:8px;padding:12px;font-family:'SF Mono','Fira Code',monospace;font-size:11px;line-height:1.6;overflow-x:auto}
+.diff-line{display:block;white-space:pre}
+.diff-add{color:#34D399}
+.diff-rem{color:#F87171}
+.diff-ctx{color:#6B7280}
+
+/* Related events */
+.related-event{display:flex;align-items:flex-start;gap:8px;padding:8px 0;border-bottom:1px solid var(--border)}
+.related-event:last-child{border-bottom:none}
+.re-dot{width:8px;height:8px;border-radius:50%;background:var(--accent);flex-shrink:0;margin-top:4px}
+.re-text{font-size:12px;color:var(--text-2);flex:1}
+.re-ts{font-size:11px;color:var(--text-3);white-space:nowrap}
+
+/* Empty panel state */
+.dp-empty{padding:32px 16px;text-align:center;color:var(--text-3)}
+.dp-empty i{font-size:28px;margin-bottom:10px;display:block;opacity:.4}
+.dp-empty p{font-size:12px}
+</style>
+</head>
+<body>
+
+<!-- Sidebar -->
+<aside class="sidebar">
+  <div class="sb-logo">
+    <div class="sb-mark">SA</div>
+    <div>
+      <div style="font-weight:700;font-size:14px;color:var(--text)">Synergia<span style="color:var(--accent)">Admin</span></div>
+      <div style="font-size:10px;color:var(--text-3);font-weight:500">Platform Operations</div>
+    </div>
+  </div>
+  <nav class="sb-nav">
+    <span class="sb-section">Companies</span>
+    <a href="admin-company-list.html" class="sb-link"><i class="fa-solid fa-building"></i> All Companies</a>
+    <span class="sb-section">Platform</span>
+    <a href="admin-system-health.html" class="sb-link"><i class="fa-solid fa-heart-pulse"></i> System Health</a>
+    <a href="admin-feature-flags.html" class="sb-link"><i class="fa-solid fa-flag"></i> Feature Flags</a>
+    <a href="admin-audit-logs.html" class="sb-link active"><i class="fa-solid fa-scroll"></i> Audit Logs</a>
+    <span class="sb-section">Support</span>
+    <a href="admin-company-list.html" class="sb-link"><i class="fa-solid fa-headset"></i> Support Queue</a>
+    <a href="admin-company-list.html" class="sb-link"><i class="fa-solid fa-bell"></i> Alerts</a>
+  </nav>
+  <div class="sb-foot">
+    <div class="sb-av">AD</div>
+    <div>
+      <div class="sb-uname">Admin User</div>
+      <div class="sb-urole">Platform Admin</div>
+    </div>
+  </div>
+</aside>
+
+<!-- Main -->
+<div class="main">
+
+  <!-- Topbar -->
+  <div class="topbar">
+    <div class="topbar-left">
+      <div class="breadcrumb">
+        <a href="admin-company-list.html">Admin</a>
+        <span style="opacity:.5;font-size:9px"><i class="fa-solid fa-chevron-right"></i></span>
+        <span style="color:var(--accent);font-weight:600">Audit Logs</span>
+      </div>
+      <div class="topbar-h1">Audit Logs</div>
+    </div>
+    <div class="topbar-right">
+      <select class="date-select">
+        <option>Last 7 days</option>
+        <option>Last 30 days</option>
+        <option>Last 90 days</option>
+        <option>Custom range…</option>
+      </select>
+      <button class="btn-outline"><i class="fa-solid fa-download"></i> Export</button>
+    </div>
+  </div>
+
+  <!-- Content -->
+  <div class="content">
+
+    <!-- Stats chips -->
+    <div class="stats-chips">
+      <div class="stat-chip total"><span class="chip-dot"></span>12,847 events today</div>
+      <div class="stat-chip critical"><span class="chip-dot"></span>3 critical</div>
+      <div class="stat-chip warning"><span class="chip-dot"></span>47 warnings</div>
+    </div>
+
+    <!-- Filter bar -->
+    <div class="filter-bar">
+      <div class="filter-item">
+        <label>Actor</label>
+        <select class="filter-select">
+          <option>All Users</option>
+          <option>admin@synergia.io</option>
+          <option>System</option>
+        </select>
+      </div>
+      <div class="filter-divider"></div>
+      <div class="filter-item">
+        <label>Action Type</label>
+        <select class="filter-select">
+          <option>All</option>
+          <option>DELETE</option>
+          <option>UPDATE</option>
+          <option>LOGIN</option>
+          <option>EXPORT</option>
+          <option>SYNC</option>
+        </select>
+      </div>
+      <div class="filter-divider"></div>
+      <div class="filter-item">
+        <label>Company</label>
+        <select class="filter-select">
+          <option>All Companies</option>
+          <option>Acme Co</option>
+          <option>BrightBox Ltd</option>
+          <option>TechGear UK</option>
+        </select>
+      </div>
+      <div class="filter-divider"></div>
+      <div class="filter-item">
+        <label>Resource Type</label>
+        <select class="filter-select">
+          <option>All</option>
+          <option>Auth</option>
+          <option>Order</option>
+          <option>Product</option>
+          <option>Company</option>
+          <option>System Config</option>
+        </select>
+      </div>
+      <div class="filter-spacer"></div>
+      <span class="result-count">10 of 12,847 events</span>
+    </div>
+
+    <!-- Body split -->
+    <div class="body-split">
+
+      <!-- Table side -->
+      <div class="table-side">
+        <div class="table-card">
+          <div class="table-wrap">
+            <table>
+              <thead>
+                <tr>
+                  <th>Timestamp</th>
+                  <th>Actor</th>
+                  <th>Action</th>
+                  <th>Resource</th>
+                  <th>Company</th>
+                  <th>IP Address</th>
+                  <th>Result</th>
+                </tr>
+              </thead>
+              <tbody>
+
+                <!-- Row 1: DELETE Company #4821 -->
+                <tr class="selected" onclick="selectRow(this)">
+                  <td class="ts-col">14:23:01</td>
+                  <td class="actor-col">admin@synergia.io</td>
+                  <td class="action-col"><span class="action-badge ab-delete"><i class="fa-solid fa-trash-can" style="font-size:10px"></i> DELETE</span></td>
+                  <td class="resource-col">Company #4821</td>
+                  <td><span class="co-tag na">N/A</span></td>
+                  <td class="ip-col">185.x.x.x</td>
+                  <td><span class="result-success"><i class="fa-solid fa-check" style="font-size:10px"></i> Success</span></td>
+                </tr>
+
+                <!-- Row 2: UPDATE Order #ORD-44821 -->
+                <tr onclick="selectRow(this)">
+                  <td class="ts-col">14:21:44</td>
+                  <td class="actor-col">james@acme.co</td>
+                  <td class="action-col"><span class="action-badge ab-update"><i class="fa-solid fa-pen" style="font-size:10px"></i> UPDATE</span></td>
+                  <td class="resource-col">Order #ORD-44821</td>
+                  <td><span class="co-tag">Acme Co</span></td>
+                  <td class="ip-col">82.x.x.x</td>
+                  <td><span class="result-success"><i class="fa-solid fa-check" style="font-size:10px"></i> Success</span></td>
+                </tr>
+
+                <!-- Row 3: FEATURE_FLAG smart_pricing_v2 -->
+                <tr onclick="selectRow(this)">
+                  <td class="ts-col">14:18:22</td>
+                  <td class="actor-col">admin@synergia.io</td>
+                  <td class="action-col"><span class="action-badge ab-flag"><i class="fa-solid fa-flag" style="font-size:10px"></i> FEATURE_FLAG</span></td>
+                  <td class="resource-col">smart_pricing_v2</td>
+                  <td><span class="co-tag na">N/A</span></td>
+                  <td class="ip-col">185.x.x.x</td>
+                  <td><span class="result-success"><i class="fa-solid fa-check" style="font-size:10px"></i> Success</span></td>
+                </tr>
+
+                <!-- Row 4: LOGIN Auth BrightBox -->
+                <tr onclick="selectRow(this)">
+                  <td class="ts-col">14:15:07</td>
+                  <td class="actor-col">sarah@brightbox.com</td>
+                  <td class="action-col"><span class="action-badge ab-login"><i class="fa-solid fa-arrow-right-to-bracket" style="font-size:10px"></i> LOGIN</span></td>
+                  <td class="resource-col">Auth</td>
+                  <td><span class="co-tag">BrightBox Ltd</span></td>
+                  <td class="ip-col">91.x.x.x</td>
+                  <td><span class="result-success"><i class="fa-solid fa-check" style="font-size:10px"></i> Success</span></td>
+                </tr>
+
+                <!-- Row 5: FAILED LOGIN - highlighted -->
+                <tr class="row-failed" onclick="selectRow(this)">
+                  <td class="ts-col">14:12:33</td>
+                  <td class="actor-col" style="color:var(--red)">unknown</td>
+                  <td class="action-col"><span class="action-badge ab-login"><i class="fa-solid fa-arrow-right-to-bracket" style="font-size:10px"></i> LOGIN</span></td>
+                  <td class="resource-col">Auth</td>
+                  <td><span class="co-tag na">Unknown</span></td>
+                  <td class="ip-col" style="color:var(--red);font-weight:600">45.x.x.x</td>
+                  <td><span class="result-failed"><i class="fa-solid fa-xmark" style="font-size:10px"></i> Failed</span></td>
+                </tr>
+
+                <!-- Row 6: EXPORT Orders Report -->
+                <tr onclick="selectRow(this)">
+                  <td class="ts-col">14:10:01</td>
+                  <td class="actor-col">mike@acme.co</td>
+                  <td class="action-col"><span class="action-badge ab-export"><i class="fa-solid fa-file-export" style="font-size:10px"></i> EXPORT</span></td>
+                  <td class="resource-col">Orders Report</td>
+                  <td><span class="co-tag">Acme Co</span></td>
+                  <td class="ip-col">82.x.x.x</td>
+                  <td><span class="result-success"><i class="fa-solid fa-check" style="font-size:10px"></i> Success</span></td>
+                </tr>
+
+                <!-- Row 7: UPDATE System Config -->
+                <tr onclick="selectRow(this)">
+                  <td class="ts-col">14:08:45</td>
+                  <td class="actor-col">admin@synergia.io</td>
+                  <td class="action-col"><span class="action-badge ab-update"><i class="fa-solid fa-pen" style="font-size:10px"></i> UPDATE</span></td>
+                  <td class="resource-col">System Config</td>
+                  <td><span class="co-tag na">N/A</span></td>
+                  <td class="ip-col">185.x.x.x</td>
+                  <td><span class="result-success"><i class="fa-solid fa-check" style="font-size:10px"></i> Success</span></td>
+                </tr>
+
+                <!-- Row 8: DELETE Product #SKU-441 -->
+                <tr onclick="selectRow(this)">
+                  <td class="ts-col">14:05:12</td>
+                  <td class="actor-col">anna@techgear.com</td>
+                  <td class="action-col"><span class="action-badge ab-delete"><i class="fa-solid fa-trash-can" style="font-size:10px"></i> DELETE</span></td>
+                  <td class="resource-col">Product #SKU-441</td>
+                  <td><span class="co-tag">TechGear UK</span></td>
+                  <td class="ip-col">78.x.x.x</td>
+                  <td><span class="result-success"><i class="fa-solid fa-check" style="font-size:10px"></i> Success</span></td>
+                </tr>
+
+                <!-- Row 9: SYNC Channel Amazon -->
+                <tr onclick="selectRow(this)">
+                  <td class="ts-col">14:02:39</td>
+                  <td class="actor-col" style="color:var(--text-3);font-style:italic">system</td>
+                  <td class="action-col"><span class="action-badge ab-sync"><i class="fa-solid fa-rotate" style="font-size:10px"></i> SYNC</span></td>
+                  <td class="resource-col">Channel Amazon</td>
+                  <td><span class="co-tag">Acme Co</span></td>
+                  <td class="ip-col" style="color:var(--accent);font-weight:500">Internal</td>
+                  <td><span class="result-success"><i class="fa-solid fa-check" style="font-size:10px"></i> Success</span></td>
+                </tr>
+
+                <!-- Row 10: BACKUP Database -->
+                <tr onclick="selectRow(this)">
+                  <td class="ts-col">14:00:00</td>
+                  <td class="actor-col" style="color:var(--text-3);font-style:italic">system</td>
+                  <td class="action-col"><span class="action-badge ab-backup"><i class="fa-solid fa-database" style="font-size:10px"></i> BACKUP</span></td>
+                  <td class="resource-col">Database</td>
+                  <td><span class="co-tag na">N/A</span></td>
+                  <td class="ip-col" style="color:var(--accent);font-weight:500">Internal</td>
+                  <td><span class="result-success"><i class="fa-solid fa-check" style="font-size:10px"></i> Success</span></td>
+                </tr>
+
+              </tbody>
+            </table>
+          </div>
+
+          <!-- Pagination -->
+          <div class="pagination">
+            <span class="page-info">Showing 1–10 of 12,847 events</span>
+            <div class="page-btns">
+              <button class="page-btn arrow"><i class="fa-solid fa-chevron-left" style="font-size:10px"></i></button>
+              <button class="page-btn active">1</button>
+              <button class="page-btn">2</button>
+              <button class="page-btn">3</button>
+              <button class="page-btn" style="letter-spacing:2px;font-size:10px">···</button>
+              <button class="page-btn">1285</button>
+              <button class="page-btn arrow"><i class="fa-solid fa-chevron-right" style="font-size:10px"></i></button>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Detail panel -->
+      <div class="detail-panel" id="detailPanel">
+        <div class="dp-header">
+          <div class="dp-title"><i class="fa-solid fa-circle-info" style="color:var(--accent);margin-right:6px"></i>Event Detail</div>
+          <button class="dp-close"><i class="fa-solid fa-xmark"></i></button>
+        </div>
+        <div class="dp-body">
+
+          <!-- Actor section -->
+          <div>
+            <div class="dp-section-title">Actor</div>
+            <div class="dp-field">
+              <div class="dp-field-label">Email</div>
+              <div class="dp-field-val">admin@synergia.io</div>
+            </div>
+            <div class="dp-field">
+              <div class="dp-field-label">Role</div>
+              <div class="dp-field-val">Platform Admin</div>
+            </div>
+            <div class="dp-field">
+              <div class="dp-field-label">IP Address</div>
+              <div class="dp-field-val mono">185.22.143.11</div>
+            </div>
+            <div class="dp-field">
+              <div class="dp-field-label">Session ID</div>
+              <div class="dp-field-val mono" style="font-size:10px">sess_4f8a2b1c…</div>
+            </div>
+          </div>
+
+          <!-- Event section -->
+          <div>
+            <div class="dp-section-title">Event</div>
+            <div class="dp-field">
+              <div class="dp-field-label">Action</div>
+              <div class="dp-field-val"><span class="action-badge ab-delete"><i class="fa-solid fa-trash-can" style="font-size:10px"></i> DELETE</span></div>
+            </div>
+            <div class="dp-field">
+              <div class="dp-field-label">Resource</div>
+              <div class="dp-field-val">Company #4821</div>
+            </div>
+            <div class="dp-field">
+              <div class="dp-field-label">Timestamp</div>
+              <div class="dp-field-val mono">2026-05-08 14:23:01 UTC</div>
+            </div>
+            <div class="dp-field">
+              <div class="dp-field-label">Result</div>
+              <div class="dp-field-val" style="color:var(--green);font-weight:700"><i class="fa-solid fa-check"></i> Success</div>
+            </div>
+          </div>
+
+          <!-- Payload diff -->
+          <div>
+            <div class="dp-section-title">Payload Diff</div>
+            <div class="diff-block">
+<span class="diff-rem">- company_id: 4821</span>
+<span class="diff-rem">- name: "Acme Industries"</span>
+<span class="diff-rem">- status: "active"</span>
+<span class="diff-rem">- plan: "enterprise"</span>
+<span class="diff-ctx">  deleted_at: null</span>
+<span class="diff-add">+ deleted_at: "2026-05-08T14:23:01Z"</span>
+<span class="diff-add">+ deleted_by: "admin@synergia.io"</span>
+            </div>
+          </div>
+
+          <!-- Related events -->
+          <div>
+            <div class="dp-section-title">Related Events</div>
+            <div class="related-event">
+              <div class="re-dot"></div>
+              <div class="re-text"><strong>EXPORT</strong> — Company data snapshot taken</div>
+              <div class="re-ts">14:22:58</div>
+            </div>
+            <div class="related-event">
+              <div class="re-dot" style="background:var(--amber)"></div>
+              <div class="re-text"><strong>UPDATE</strong> — Company status set to <em>pending_deletion</em></div>
+              <div class="re-ts">14:22:44</div>
+            </div>
+            <div class="related-event">
+              <div class="re-dot" style="background:var(--text-3)"></div>
+              <div class="re-text"><strong>VIEW</strong> — Company #4821 detail page accessed</div>
+              <div class="re-ts">14:21:03</div>
+            </div>
+          </div>
+
+        </div>
+      </div>
+
+    </div><!-- /body-split -->
+  </div><!-- /content -->
+</div><!-- /main -->
+
+<script>
+function selectRow(row) {
+  document.querySelectorAll('tbody tr').forEach(r => r.classList.remove('selected'));
+  if (!row.classList.contains('row-failed')) {
+    row.classList.add('selected');
+  } else {
+    row.style.outline = '2px solid var(--red)';
+    row.style.outlineOffset = '-1px';
+    setTimeout(() => { row.style.outline = ''; row.style.outlineOffset = ''; }, 300);
+  }
+}
+</script>
+</body>
+</html>

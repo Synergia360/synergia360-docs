@@ -1,0 +1,442 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Shipments — Synergia360</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+<style>
+:root{
+  --bg:#F8F9FC;--surface:#FFFFFF;--surface-2:#F8FAFF;--border:#E2E8F0;
+  --accent:#4F46E5;--accent-dim:rgba(79,70,229,.08);--accent-light:#EEF2FF;
+  --text:#0F172A;--text-2:#475569;--text-3:#94A3B8;
+  --green:#10B981;--green-dim:rgba(16,185,129,.08);--green-light:#ECFDF5;
+  --red:#EF4444;--red-dim:rgba(239,68,68,.08);--red-light:#FEF2F2;
+  --amber:#F59E0B;--amber-dim:rgba(245,158,11,.08);--amber-light:#FFFBEB;
+  --blue:#3B82F6;--font:'Inter',sans-serif;--mono:'Geist Mono',monospace;
+  --shadow-sm:0 1px 2px rgba(0,0,0,.05);--shadow:0 1px 3px rgba(0,0,0,.08),0 1px 2px rgba(0,0,0,.04)
+}
+*{box-sizing:border-box;margin:0;padding:0}
+body{font-family:var(--font);background:var(--bg);color:var(--text);font-size:14px;line-height:1.5;display:flex}
+
+/* Sidebar */
+.sidebar{width:240px;background:var(--surface);border-right:1px solid var(--border);height:100vh;position:fixed;top:0;left:0;display:flex;flex-direction:column;z-index:50;overflow-y:auto}
+.sb-logo{padding:16px;border-bottom:1px solid var(--border);display:flex;align-items:center;gap:10px;flex-shrink:0}
+.sb-mark{width:32px;height:32px;background:var(--accent);border-radius:8px;display:grid;place-items:center;color:#fff;font-weight:800;font-size:14px;flex-shrink:0}
+.sb-name{font-weight:700;font-size:15px;color:var(--text)}
+.sb-nav{flex:1;padding:10px 8px;overflow-y:auto;display:flex;flex-direction:column}
+.sb-section{font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:.06em;color:var(--text-3);padding:12px 10px 4px;display:block}
+.sb-link{display:flex;align-items:center;gap:8px;padding:8px 10px;border-radius:8px;color:var(--text-2);font-size:13px;font-weight:500;text-decoration:none;border-left:2px solid transparent;margin-bottom:1px;transition:background .15s,color .15s}
+.sb-link:hover{background:var(--surface-2);color:var(--text)}
+.sb-link.active{background:var(--accent-light);color:var(--accent);border-left-color:var(--accent);font-weight:600}
+.sb-foot{padding:12px 16px;border-top:1px solid var(--border);display:flex;align-items:center;gap:10px;flex-shrink:0}
+.sb-av{width:32px;height:32px;background:var(--accent-light);border-radius:50%;display:grid;place-items:center;color:var(--accent);font-weight:700;font-size:12px;flex-shrink:0}
+.sb-uname{font-size:13px;font-weight:600;color:var(--text);line-height:1.2}
+.sb-urole{font-size:11px;color:var(--text-3)}
+.main{margin-left:240px;min-height:100vh;flex:1;display:flex}
+
+/* Top bar */
+.topbar{position:sticky;top:0;z-index:40;background:var(--surface);border-bottom:1px solid var(--border);padding:0 28px;height:60px;display:flex;align-items:center;gap:12px}
+.topbar h1{font-size:18px;font-weight:700;color:var(--text);flex:1}
+.btn{display:inline-flex;align-items:center;gap:6px;padding:7px 14px;border-radius:8px;font-size:13px;font-weight:600;cursor:pointer;border:none;line-height:1.4;text-decoration:none;transition:background .15s}
+.btn-accent{background:var(--accent);color:#fff}
+.btn-accent:hover{background:#4338CA}
+.btn-ghost{background:transparent;border:1px solid var(--border);color:var(--text-2)}
+.btn-ghost:hover{background:var(--surface-2)}
+.btn-sm{padding:5px 10px;font-size:12px}
+
+/* Page body */
+.page-body{flex:1;min-width:0}
+.content{padding:24px 28px}
+
+/* Stats */
+.stats-row{display:flex;gap:12px;margin-bottom:20px}
+.stat-chip{background:var(--surface);border:1px solid var(--border);border-radius:10px;padding:12px 16px;flex:1;box-shadow:var(--shadow-sm)}
+.stat-chip .stat-label{font-size:11px;font-weight:600;text-transform:uppercase;letter-spacing:.05em;color:var(--text-3);margin-bottom:4px}
+.stat-chip .stat-val{font-size:22px;font-weight:700;color:var(--text);line-height:1.2}
+.stat-chip.red-chip{border-color:var(--red);background:var(--red-light)}
+.stat-chip.red-chip .stat-val{color:var(--red)}
+.stat-chip.red-chip .stat-label{color:var(--red)}
+
+/* Tabs */
+.tab-bar{display:flex;gap:2px;margin-bottom:16px;border-bottom:1px solid var(--border);padding-bottom:0}
+.tab{padding:8px 16px;font-size:13px;font-weight:500;color:var(--text-3);cursor:pointer;border:none;background:none;border-bottom:2px solid transparent;margin-bottom:-1px;transition:color .15s}
+.tab.active{color:var(--accent);border-bottom-color:var(--accent);font-weight:600}
+.tab:hover:not(.active){color:var(--text-2)}
+.tab-count{display:inline-flex;align-items:center;justify-content:center;min-width:20px;height:18px;padding:0 5px;border-radius:10px;background:var(--surface-2);border:1px solid var(--border);font-size:10px;font-weight:700;margin-left:5px;color:var(--text-3)}
+.tab.active .tab-count{background:var(--accent-light);border-color:var(--accent-light);color:var(--accent)}
+
+/* Filter row */
+.filter-row{display:flex;gap:8px;margin-bottom:16px;align-items:center;flex-wrap:wrap}
+.input-search{flex:1;min-width:200px;max-width:280px;padding:8px 12px;border:1px solid var(--border);border-radius:8px;font-size:13px;font-family:var(--font);color:var(--text);background:var(--surface);outline:none}
+.input-search:focus{border-color:var(--accent);box-shadow:0 0 0 3px var(--accent-dim)}
+.select{padding:8px 12px;border:1px solid var(--border);border-radius:8px;font-size:13px;font-family:var(--font);color:var(--text-2);background:var(--surface);outline:none;cursor:pointer}
+.date-input{padding:8px 12px;border:1px solid var(--border);border-radius:8px;font-size:13px;font-family:var(--font);color:var(--text-2);background:var(--surface);outline:none}
+
+/* Table */
+.card{background:var(--surface);border:1px solid var(--border);border-radius:12px;box-shadow:var(--shadow);overflow:hidden}
+table{width:100%;border-collapse:collapse}
+thead th{background:var(--surface-2);padding:10px 14px;text-align:left;font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:.05em;color:var(--text-3);border-bottom:1px solid var(--border);white-space:nowrap}
+tbody tr{border-bottom:1px solid var(--border);transition:background .12s}
+tbody tr:last-child{border-bottom:none}
+tbody tr:hover{background:var(--surface-2)}
+tbody td{padding:11px 14px;font-size:13px;color:var(--text-2);vertical-align:middle}
+td.cell-main{color:var(--text);font-weight:600;font-size:13px}
+
+/* Row highlights */
+tr.row-delayed{border-left:3px solid var(--amber)}
+tr.row-failed{border-left:3px solid var(--red)}
+
+/* Badges */
+.badge{display:inline-flex;align-items:center;padding:3px 8px;border-radius:20px;font-size:11px;font-weight:600;white-space:nowrap}
+.badge-blue{background:#EFF6FF;color:var(--blue)}
+.badge-green{background:var(--green-light);color:var(--green)}
+.badge-amber{background:var(--amber-light);color:var(--amber)}
+.badge-red{background:var(--red-light);color:var(--red)}
+
+/* Tracking */
+.tracking-code{font-family:var(--mono);font-size:11px;color:var(--text-3);background:var(--surface-2);padding:2px 6px;border-radius:4px;border:1px solid var(--border)}
+
+/* Actions */
+.action-link{color:var(--accent);font-size:12px;font-weight:600;text-decoration:none;cursor:pointer}
+.action-link:hover{text-decoration:underline}
+.action-link.danger{color:var(--red)}
+.action-sep{color:var(--border);margin:0 4px}
+
+/* Del date */
+.del-date-strike{text-decoration:line-through;color:var(--text-3);margin-right:4px;font-size:12px}
+
+/* Detail Panel */
+.detail-panel{width:320px;flex-shrink:0;background:var(--surface);border-left:1px solid var(--border);height:100vh;position:sticky;top:0;overflow-y:auto;display:flex;flex-direction:column}
+.panel-header{padding:18px 20px;border-bottom:1px solid var(--border);display:flex;align-items:center;justify-content:space-between;flex-shrink:0}
+.panel-title{font-size:15px;font-weight:700;color:var(--text)}
+.panel-close{background:none;border:none;color:var(--text-3);font-size:18px;cursor:pointer;padding:2px 6px;border-radius:6px}
+.panel-close:hover{background:var(--surface-2)}
+.panel-body{padding:20px;flex:1;overflow-y:auto}
+.panel-section-label{font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:.06em;color:var(--text-3);margin-bottom:12px}
+.panel-info-row{display:flex;justify-content:space-between;margin-bottom:8px;font-size:13px}
+.panel-info-row .pil{color:var(--text-3)}
+.panel-info-row .piv{color:var(--text);font-weight:500}
+
+/* Timeline */
+.timeline{margin-top:4px}
+.tl-item{display:flex;gap:12px;margin-bottom:16px;position:relative}
+.tl-item:not(:last-child)::before{content:'';position:absolute;left:11px;top:24px;width:2px;height:calc(100% + 4px);background:var(--border)}
+.tl-dot{width:24px;height:24px;border-radius:50%;display:grid;place-items:center;font-size:11px;flex-shrink:0;border:2px solid var(--border);background:var(--surface);font-weight:700;position:relative;z-index:1}
+.tl-dot.done{background:var(--green-light);border-color:var(--green);color:var(--green)}
+.tl-dot.warn{background:var(--amber-light);border-color:var(--amber);color:var(--amber)}
+.tl-dot.pending{background:var(--surface-2);border-color:var(--border);color:var(--text-3)}
+.tl-content{flex:1;padding-top:2px}
+.tl-event{font-size:13px;font-weight:600;color:var(--text)}
+.tl-time{font-size:11px;color:var(--text-3);margin-top:1px}
+.tl-note{font-size:11px;color:var(--amber);margin-top:3px;font-weight:500}
+
+.panel-actions{padding:16px 20px;border-top:1px solid var(--border);display:flex;flex-direction:column;gap:8px;flex-shrink:0}
+</style>
+</head>
+<body>
+
+<aside class="sidebar">
+  <div class="sb-logo">
+    <div class="sb-mark">S</div>
+    <span class="sb-name">Synergia<span style="color:var(--accent)">360</span></span>
+  </div>
+  <nav class="sb-nav">
+    <a href="main-dashboard.html" class="sb-link">Dashboard</a>
+    <span class="sb-section">Orders</span>
+    <a href="order-queue.html" class="sb-link">Order Queue</a>
+    <a href="returns-queue.html" class="sb-link">Returns</a>
+    <a href="shipments-list.html" class="sb-link active">Shipments</a>
+    <a href="routing-rules.html" class="sb-link">Routing Rules</a>
+    <a href="order-automation.html" class="sb-link">Automation</a>
+    <span class="sb-section">Inventory</span>
+    <a href="inventory-stock-overview.html" class="sb-link">Stock</a>
+    <a href="inventory-stock-take.html" class="sb-link">Stock Take</a>
+    <a href="purchase-orders.html" class="sb-link">Purchase Orders</a>
+    <a href="suppliers-list.html" class="sb-link">Suppliers</a>
+    <span class="sb-section">Catalogue</span>
+    <a href="catalogue-product-list.html" class="sb-link">Products</a>
+    <a href="catalogue-bom-builder.html" class="sb-link">BOM Builder</a>
+    <span class="sb-section">Channels</span>
+    <a href="channels-overview.html" class="sb-link">Overview</a>
+    <a href="listing-manager.html" class="sb-link">Listings</a>
+    <a href="pricing-rules.html" class="sb-link">Pricing Rules</a>
+    <span class="sb-section">Customers</span>
+    <a href="customers-list.html" class="sb-link">Customers</a>
+    <span class="sb-section">Finance</span>
+    <a href="finance-dashboard.html" class="sb-link">Overview</a>
+    <a href="finance-expense-management.html" class="sb-link">Expenses</a>
+    <a href="sku-profitability.html" class="sb-link">SKU Profitability</a>
+    <a href="finance-monthly-close.html" class="sb-link">Monthly Close</a>
+    <span class="sb-section">Reports</span>
+    <a href="reports-library.html" class="sb-link">Library</a>
+    <a href="report-builder-ai.html" class="sb-link">AI Builder</a>
+    <a href="automation-rule-builder.html" class="sb-link">Automation</a>
+    <span class="sb-section">Settings</span>
+    <a href="settings-team.html" class="sb-link">Team</a>
+    <a href="settings-rbac.html" class="sb-link">Roles &amp; Permissions</a>
+    <a href="settings-billing.html" class="sb-link">Billing</a>
+    <a href="settings-notifications.html" class="sb-link">Notifications</a>
+    <a href="settings-locale.html" class="sb-link">Locale &amp; Currency</a>
+    <a href="settings-integrations.html" class="sb-link">Integrations</a>
+    <a href="settings-warehouses.html" class="sb-link">Warehouses</a>
+    <a href="settings-api-webhooks.html" class="sb-link">API &amp; Webhooks</a>
+  </nav>
+  <div class="sb-foot">
+    <div class="sb-av">JW</div>
+    <div>
+      <div class="sb-uname">James Whitcombe</div>
+      <div class="sb-urole">Owner &middot; Acme Co</div>
+    </div>
+  </div>
+</aside>
+
+<div class="main">
+  <!-- Page body -->
+  <div class="page-body">
+    <div class="topbar">
+      <h1>Shipments</h1>
+      <button class="btn btn-accent">+ Create Shipment</button>
+    </div>
+
+    <div class="content">
+      <!-- Stats -->
+      <div class="stats-row">
+        <div class="stat-chip">
+          <div class="stat-label">In Transit</div>
+          <div class="stat-val" style="color:var(--blue)">124</div>
+        </div>
+        <div class="stat-chip">
+          <div class="stat-label">Delivered Today</div>
+          <div class="stat-val" style="color:var(--green)">47</div>
+        </div>
+        <div class="stat-chip red-chip">
+          <div class="stat-label">Delayed</div>
+          <div class="stat-val">8</div>
+        </div>
+        <div class="stat-chip">
+          <div class="stat-label">Avg Transit</div>
+          <div class="stat-val">2.4 days</div>
+        </div>
+      </div>
+
+      <!-- Tabs -->
+      <div class="tab-bar">
+        <button class="tab">All <span class="tab-count">247</span></button>
+        <button class="tab active">In Transit <span class="tab-count">124</span></button>
+        <button class="tab">Delivered <span class="tab-count">89</span></button>
+        <button class="tab">Delayed <span class="tab-count">8</span></button>
+        <button class="tab">Failed <span class="tab-count">3</span></button>
+      </div>
+
+      <!-- Filters -->
+      <div class="filter-row">
+        <input class="input-search" type="text" placeholder="&#128269; Search tracking or order…">
+        <select class="select">
+          <option>Carrier: All</option>
+          <option>Royal Mail</option>
+          <option>DPD</option>
+          <option>Hermes</option>
+          <option>DHL</option>
+          <option>UPS</option>
+        </select>
+        <select class="select">
+          <option>Channel: All</option>
+          <option>Amazon</option>
+          <option>Shopify</option>
+          <option>eBay</option>
+        </select>
+        <input class="date-input" type="date" value="2026-05-01">
+        <span style="color:var(--text-3);font-size:13px">–</span>
+        <input class="date-input" type="date" value="2026-05-08">
+      </div>
+
+      <!-- Table -->
+      <div class="card">
+        <table>
+          <thead>
+            <tr>
+              <th>Shipment ID</th>
+              <th>Order</th>
+              <th>Customer</th>
+              <th>Carrier</th>
+              <th>Tracking</th>
+              <th>Status</th>
+              <th>Dispatched</th>
+              <th>Est. Delivery</th>
+              <th>Actions</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td class="cell-main">SHP-44821</td>
+              <td><a class="action-link" href="#">ORD-14450</a></td>
+              <td>Jane Smith</td>
+              <td>Royal Mail</td>
+              <td><span class="tracking-code">RM9012345678GB</span></td>
+              <td><span class="badge badge-blue">In Transit</span></td>
+              <td>07 May</td>
+              <td>09 May</td>
+              <td><a class="action-link" href="#">Track</a></td>
+            </tr>
+            <tr>
+              <td class="cell-main">SHP-44820</td>
+              <td><a class="action-link" href="#">ORD-14449</a></td>
+              <td>Bob Chen</td>
+              <td>DPD</td>
+              <td><span class="tracking-code">1Z999AA101234</span></td>
+              <td><span class="badge badge-green">Delivered</span></td>
+              <td>06 May</td>
+              <td>08 May</td>
+              <td><a class="action-link" href="#">View</a></td>
+            </tr>
+            <tr class="row-delayed">
+              <td class="cell-main">SHP-44819</td>
+              <td><a class="action-link" href="#">ORD-14448</a></td>
+              <td>Alice Brown</td>
+              <td>Hermes</td>
+              <td><span class="tracking-code">H8800012345</span></td>
+              <td><span class="badge badge-amber">Delayed</span></td>
+              <td>05 May</td>
+              <td><span class="del-date-strike">07 May</span>10 May</td>
+              <td>
+                <a class="action-link" href="#">Track</a>
+                <span class="action-sep">·</span>
+                <a class="action-link" href="#">Contact</a>
+              </td>
+            </tr>
+            <tr>
+              <td class="cell-main">SHP-44818</td>
+              <td><a class="action-link" href="#">ORD-14447</a></td>
+              <td>Tom Wilson</td>
+              <td>DHL</td>
+              <td><span class="tracking-code">1234567890</span></td>
+              <td><span class="badge badge-blue">In Transit</span></td>
+              <td>07 May</td>
+              <td>10 May</td>
+              <td><a class="action-link" href="#">Track</a></td>
+            </tr>
+            <tr>
+              <td class="cell-main">SHP-44817</td>
+              <td><a class="action-link" href="#">ORD-14446</a></td>
+              <td>Sarah Lee</td>
+              <td>Royal Mail</td>
+              <td><span class="tracking-code">RM8891234567GB</span></td>
+              <td><span class="badge badge-green">Delivered</span></td>
+              <td>05 May</td>
+              <td>07 May</td>
+              <td><a class="action-link" href="#">View</a></td>
+            </tr>
+            <tr class="row-failed">
+              <td class="cell-main">SHP-44816</td>
+              <td><a class="action-link" href="#">ORD-14445</a></td>
+              <td>Mike Davis</td>
+              <td>UPS</td>
+              <td><span class="tracking-code">1Z456AA109876</span></td>
+              <td><span class="badge badge-red">Failed</span></td>
+              <td>04 May</td>
+              <td>06 May</td>
+              <td>
+                <a class="action-link" href="#">Reship</a>
+                <span class="action-sep">·</span>
+                <a class="action-link" href="#">View</a>
+              </td>
+            </tr>
+            <tr>
+              <td class="cell-main">SHP-44815</td>
+              <td><a class="action-link" href="#">ORD-14444</a></td>
+              <td>Emma Jones</td>
+              <td>DPD</td>
+              <td><span class="tracking-code">2Z111BB202345</span></td>
+              <td><span class="badge badge-blue">In Transit</span></td>
+              <td>07 May</td>
+              <td>09 May</td>
+              <td><a class="action-link" href="#">Track</a></td>
+            </tr>
+            <tr>
+              <td class="cell-main">SHP-44814</td>
+              <td><a class="action-link" href="#">ORD-14443</a></td>
+              <td>Chris Taylor</td>
+              <td>Hermes</td>
+              <td><span class="tracking-code">H7700098765</span></td>
+              <td><span class="badge badge-green">Delivered</span></td>
+              <td>04 May</td>
+              <td>06 May</td>
+              <td><a class="action-link" href="#">View</a></td>
+            </tr>
+          </tbody>
+        </table>
+        <div style="display:flex;align-items:center;justify-content:space-between;padding:12px 16px;border-top:1px solid var(--border)">
+          <span style="font-size:13px;color:var(--text-3)">Showing 1–8 of 247 shipments</span>
+          <div style="display:flex;gap:6px">
+            <button style="padding:6px 12px;border:1px solid var(--border);border-radius:6px;font-size:13px;font-weight:500;color:var(--text-2);background:var(--surface);cursor:pointer;opacity:.4">&#8592; Prev</button>
+            <button style="padding:6px 12px;border:1px solid var(--border);border-radius:6px;font-size:13px;font-weight:500;color:var(--text-2);background:var(--surface);cursor:pointer">Next &#8594;</button>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Detail Panel: SHP-44819 Delayed -->
+  <div class="detail-panel">
+    <div class="panel-header">
+      <div>
+        <div class="panel-title">SHP-44819</div>
+        <div style="font-size:11px;color:var(--text-3);margin-top:2px">Alice Brown · ORD-14448</div>
+      </div>
+      <button class="panel-close">&#10005;</button>
+    </div>
+    <div class="panel-body">
+      <div class="panel-section-label">Shipment Details</div>
+      <div class="panel-info-row"><span class="pil">Carrier</span><span class="piv">Hermes</span></div>
+      <div class="panel-info-row"><span class="pil">Tracking</span><span class="piv" style="font-family:var(--mono);font-size:11px">H8800012345</span></div>
+      <div class="panel-info-row"><span class="pil">Status</span><span><span class="badge badge-amber">Delayed</span></span></div>
+      <div class="panel-info-row"><span class="pil">Dispatched</span><span class="piv">05 May 2026</span></div>
+      <div class="panel-info-row"><span class="pil">Original ETA</span><span class="piv" style="text-decoration:line-through;color:var(--text-3)">07 May 2026</span></div>
+      <div class="panel-info-row"><span class="pil">New ETA</span><span class="piv" style="color:var(--amber);font-weight:600">10 May 2026</span></div>
+
+      <div style="height:1px;background:var(--border);margin:16px 0"></div>
+      <div class="panel-section-label">Tracking Timeline</div>
+
+      <div class="timeline">
+        <div class="tl-item">
+          <div class="tl-dot done">&#10003;</div>
+          <div class="tl-content">
+            <div class="tl-event">Order dispatched</div>
+            <div class="tl-time">5 May · 09:14</div>
+          </div>
+        </div>
+        <div class="tl-item">
+          <div class="tl-dot done">&#10003;</div>
+          <div class="tl-content">
+            <div class="tl-event">In transit hub</div>
+            <div class="tl-time">5 May · 22:40</div>
+          </div>
+        </div>
+        <div class="tl-item">
+          <div class="tl-dot warn">!</div>
+          <div class="tl-content">
+            <div class="tl-event">Delivery attempted</div>
+            <div class="tl-time">7 May · 11:20</div>
+            <div class="tl-note">"Nobody home"</div>
+          </div>
+        </div>
+        <div class="tl-item">
+          <div class="tl-dot pending">&#9675;</div>
+          <div class="tl-content">
+            <div class="tl-event" style="color:var(--text-3)">Rescheduled delivery</div>
+            <div class="tl-time">10 May · Pending</div>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div class="panel-actions">
+      <button class="btn btn-ghost" style="width:100%;justify-content:center">&#9993; Contact Customer</button>
+      <button class="btn btn-accent" style="width:100%;justify-content:center">&#8635; Reship Order</button>
+    </div>
+  </div>
+</div>
+
+</body>
+</html>

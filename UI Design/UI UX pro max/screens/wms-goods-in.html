@@ -1,0 +1,523 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>WMS — Goods In / Receiving</title>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
+<style>
+:root{
+  --bg:#F8F9FC;--surface:#FFFFFF;--surface-2:#F8FAFF;--border:#E2E8F0;
+  --accent:#4F46E5;--accent-light:#EEF2FF;--accent-dim:rgba(79,70,229,.10);
+  --text:#0F172A;--text-2:#475569;--text-3:#94A3B8;
+  --green:#10B981;--green-light:#ECFDF5;--green-dim:rgba(16,185,129,.1);
+  --red:#EF4444;--red-light:#FEF2F2;--red-dim:rgba(239,68,68,.1);
+  --amber:#F59E0B;--amber-light:#FFFBEB;--amber-dim:rgba(245,158,11,.1);
+  --font:'Inter',sans-serif;
+}
+*{box-sizing:border-box;margin:0;padding:0}
+
+body{
+  font-family:var(--font);
+  background:var(--bg);
+  color:var(--text);
+  display:flex;
+  align-items:flex-start;
+  justify-content:center;
+  gap:48px;
+  padding:48px 32px;
+  min-height:100vh;
+}
+
+/* ── PHONE FRAME ── */
+.phone-frame{
+  width:390px;
+  background:#1A1A1A;
+  border-radius:52px;
+  padding:12px;
+  box-shadow:
+    0 50px 100px rgba(0,0,0,.28),
+    0 0 0 1px rgba(255,255,255,.08),
+    inset 0 0 0 2px rgba(255,255,255,.04);
+  flex-shrink:0;
+  position:relative;
+}
+
+/* notch / dynamic island pill */
+.phone-frame::before{
+  content:'';
+  position:absolute;
+  top:22px;
+  left:50%;
+  transform:translateX(-50%);
+  width:120px;
+  height:34px;
+  background:#1A1A1A;
+  border-radius:20px;
+  z-index:10;
+}
+
+.phone-screen{
+  background:#FFFFFF;
+  border-radius:42px;
+  overflow:hidden;
+  min-height:844px;
+  display:flex;
+  flex-direction:column;
+  position:relative;
+}
+
+/* ── STATUS BAR ── */
+.status-bar{
+  display:flex;
+  justify-content:space-between;
+  align-items:center;
+  padding:16px 28px 6px;
+  font-size:13px;
+  font-weight:700;
+  color:#fff;
+  background:#4F46E5;
+  flex-shrink:0;
+  /* extra top padding to clear the notch */
+  padding-top:52px;
+}
+.status-bar .right{display:flex;gap:5px;align-items:center;font-size:12px}
+
+/* ── HEADER BAR ── */
+.top-bar{
+  display:flex;
+  align-items:center;
+  gap:12px;
+  padding:10px 16px 14px;
+  background:#4F46E5;
+  flex-shrink:0;
+}
+.icon-btn{
+  width:36px;height:36px;
+  border-radius:12px;
+  background:rgba(255,255,255,.15);
+  display:grid;place-items:center;
+  border:none;
+  color:#fff;
+  font-size:14px;
+  cursor:pointer;
+  flex-shrink:0;
+}
+.top-title{
+  flex:1;
+  font-size:17px;
+  font-weight:700;
+  color:#fff;
+  letter-spacing:-.01em;
+}
+
+/* ── SCROLLABLE BODY ── */
+.scroll-area{
+  flex:1;
+  overflow-y:auto;
+  padding:0 0 120px;
+}
+
+/* ── PO SELECTOR ── */
+.po-selector{
+  padding:14px 16px;
+  background:#F8FAFF;
+  border-bottom:1px solid var(--border);
+  display:flex;
+  align-items:center;
+  gap:10px;
+}
+.po-search{
+  flex:1;
+  display:flex;
+  align-items:center;
+  gap:8px;
+  background:#fff;
+  border:1.5px solid var(--border);
+  border-radius:10px;
+  padding:8px 12px;
+}
+.po-search i{color:var(--text-3);font-size:13px}
+.po-search span{font-size:13px;color:var(--text-3)}
+.po-loaded{
+  display:inline-flex;
+  align-items:center;
+  gap:5px;
+  background:var(--green);
+  color:#fff;
+  font-size:11px;
+  font-weight:700;
+  padding:4px 10px;
+  border-radius:99px;
+  flex-shrink:0;
+}
+.po-num{
+  font-size:13px;
+  font-weight:700;
+  color:var(--accent);
+  flex-shrink:0;
+}
+
+/* ── PO SUMMARY CARD ── */
+.po-card{
+  margin:14px 16px;
+  background:#fff;
+  border:1px solid var(--border);
+  border-radius:14px;
+  overflow:hidden;
+  box-shadow:0 2px 8px rgba(15,23,42,.06);
+}
+.po-card-head{
+  background:linear-gradient(135deg,#4F46E5 0%,#6366F1 100%);
+  padding:14px 16px;
+  display:flex;
+  align-items:center;
+  gap:10px;
+}
+.po-card-head .po-id{
+  font-size:16px;
+  font-weight:800;
+  color:#fff;
+  letter-spacing:-.01em;
+}
+.po-card-head .po-status{
+  margin-left:auto;
+  background:rgba(255,255,255,.18);
+  backdrop-filter:blur(6px);
+  color:#fff;
+  font-size:10px;
+  font-weight:700;
+  text-transform:uppercase;
+  letter-spacing:.1em;
+  padding:3px 10px;
+  border-radius:99px;
+}
+.po-card-body{
+  padding:14px 16px;
+  display:grid;
+  grid-template-columns:1fr 1fr;
+  gap:10px;
+}
+.po-field{}
+.po-field .label{font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:.08em;color:var(--text-3);margin-bottom:2px}
+.po-field .value{font-size:13px;font-weight:600;color:var(--text)}
+
+/* ── PROGRESS BAR ── */
+.progress-section{padding:0 16px 10px}
+.progress-row{display:flex;justify-content:space-between;align-items:baseline;margin-bottom:7px}
+.progress-row .label{font-size:12px;font-weight:600;color:var(--text-2)}
+.progress-row .count{font-size:12px;font-weight:700;color:var(--accent)}
+.progress-track{height:7px;background:var(--border);border-radius:99px;overflow:hidden}
+.progress-fill{height:100%;width:42.7%;background:linear-gradient(90deg,#4F46E5,#818CF8);border-radius:99px}
+
+/* ── ITEMS LIST HEADER ── */
+.list-header{
+  display:flex;
+  align-items:center;
+  justify-content:space-between;
+  padding:10px 16px 6px;
+}
+.list-header .label{font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:.1em;color:var(--text-3)}
+.list-header .count-chips{display:flex;gap:5px}
+.mini-chip{
+  font-size:10px;font-weight:700;
+  padding:2px 7px;border-radius:99px;
+  display:inline-flex;align-items:center;gap:3px;
+}
+.mini-chip::before{content:'';width:5px;height:5px;border-radius:50%}
+.mc-green{background:var(--green-light);color:#065F46}.mc-green::before{background:var(--green)}
+.mc-amber{background:var(--amber-light);color:#92400E}.mc-amber::before{background:var(--amber)}
+.mc-red{background:var(--red-light);color:#991B1B}.mc-red::before{background:var(--red)}
+
+/* ── ITEM ROW ── */
+.item-row{
+  display:flex;
+  align-items:center;
+  gap:12px;
+  padding:11px 16px;
+  border-bottom:1px solid var(--border);
+  transition:background .12s;
+}
+.item-row:last-child{border-bottom:none}
+.item-row:active{background:#F8FAFF}
+
+/* status stripe */
+.item-stripe{width:4px;height:40px;border-radius:99px;flex-shrink:0}
+.stripe-green{background:var(--green)}
+.stripe-amber{background:var(--amber)}
+.stripe-red{background:var(--red)}
+
+.item-info{flex:1;min-width:0}
+.item-sku{font-size:10px;font-weight:700;color:var(--text-3);font-family:monospace;letter-spacing:.05em;margin-bottom:1px}
+.item-name{font-size:13px;font-weight:600;color:var(--text);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+
+.item-qty{text-align:right;flex-shrink:0}
+.qty-received{font-size:15px;font-weight:800;line-height:1}
+.qty-expected{font-size:11px;color:var(--text-3);margin-top:1px}
+.qty-green{color:var(--green)}
+.qty-amber{color:var(--amber)}
+.qty-red{color:var(--red)}
+
+.item-status{width:28px;height:28px;border-radius:50%;display:grid;place-items:center;flex-shrink:0;font-size:11px}
+.is-green{background:var(--green-light);color:var(--green)}
+.is-amber{background:var(--amber-light);color:var(--amber)}
+.is-red{background:var(--red-light);color:var(--red)}
+
+/* ── BOTTOM CTA ── */
+.bottom-bar{
+  position:absolute;
+  bottom:0;left:0;right:0;
+  padding:14px 16px 32px;
+  background:linear-gradient(180deg,rgba(255,255,255,0) 0%,#fff 30%);
+}
+.btn-scan{
+  width:100%;
+  background:var(--accent);
+  color:#fff;
+  border:none;
+  padding:17px;
+  border-radius:16px;
+  font-size:17px;
+  font-weight:800;
+  font-family:var(--font);
+  cursor:pointer;
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  gap:10px;
+  box-shadow:0 8px 28px rgba(79,70,229,.4);
+  letter-spacing:.01em;
+}
+.btn-scan i{font-size:16px}
+
+/* ── CONTEXT ASIDE ── */
+.context{max-width:280px;padding-top:24px;color:var(--text)}
+.context .eyebrow{font-size:11px;font-weight:700;letter-spacing:.14em;color:var(--accent);text-transform:uppercase;margin-bottom:10px}
+.context h2{font-size:22px;font-weight:800;line-height:1.25;margin-bottom:10px;color:var(--text)}
+.context p{font-size:13px;color:var(--text-2);line-height:1.6;margin-bottom:18px}
+.feat{display:flex;gap:10px;align-items:flex-start;padding:10px 0;border-top:1px solid #DCE3EC}
+.feat .dot{width:8px;height:8px;border-radius:50%;flex-shrink:0;margin-top:6px}
+.feat .body strong{font-size:13px;font-weight:700;color:var(--text);display:block;margin-bottom:2px}
+.feat .body span{font-size:12px;color:var(--text-2);line-height:1.5}
+</style>
+</head>
+<body>
+
+<!-- ══ PHONE FRAME ══ -->
+<div class="phone-frame">
+  <div class="phone-screen">
+
+    <!-- Status bar -->
+    <div class="status-bar">
+      <span>9:44</span>
+      <span class="right">
+        <i class="fa-solid fa-signal"></i>
+        <i class="fa-solid fa-wifi"></i>
+        <i class="fa-solid fa-battery-full"></i>
+      </span>
+    </div>
+
+    <!-- Header bar -->
+    <div class="top-bar">
+      <button class="icon-btn"><i class="fa-solid fa-arrow-left"></i></button>
+      <span class="top-title">Goods In</span>
+      <button class="icon-btn"><i class="fa-solid fa-ellipsis-vertical"></i></button>
+    </div>
+
+    <!-- Scrollable area -->
+    <div class="scroll-area">
+
+      <!-- PO Selector -->
+      <div class="po-selector">
+        <div class="po-search">
+          <i class="fa-solid fa-barcode"></i>
+          <span>Scan PO Barcode…</span>
+        </div>
+        <span class="po-num">PO-2847</span>
+        <span class="po-loaded"><i class="fa-solid fa-check" style="font-size:9px"></i> Loaded</span>
+      </div>
+
+      <!-- PO Summary Card -->
+      <div class="po-card" style="margin:14px 16px 10px">
+        <div class="po-card-head">
+          <i class="fa-solid fa-file-lines" style="color:rgba(255,255,255,.7);font-size:15px"></i>
+          <span class="po-id">PO-2847</span>
+          <span class="po-status">Receiving in progress</span>
+        </div>
+        <div class="po-card-body">
+          <div class="po-field">
+            <div class="label">Supplier</div>
+            <div class="value">Shenzhen Parts Co.</div>
+          </div>
+          <div class="po-field">
+            <div class="label">Expected Lines</div>
+            <div class="value">24 lines</div>
+          </div>
+          <div class="po-field">
+            <div class="label">Total Units</div>
+            <div class="value">480 units</div>
+          </div>
+          <div class="po-field">
+            <div class="label">Expected Date</div>
+            <div class="value">Today</div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Progress -->
+      <div class="progress-section">
+        <div class="progress-row">
+          <span class="label">Units Received</span>
+          <span class="count">205 / 480</span>
+        </div>
+        <div class="progress-track"><div class="progress-fill"></div></div>
+      </div>
+
+      <!-- Items header -->
+      <div class="list-header">
+        <span class="label">Items to Receive</span>
+        <div class="count-chips">
+          <span class="mini-chip mc-green">3 done</span>
+          <span class="mini-chip mc-amber">1 partial</span>
+          <span class="mini-chip mc-red">2 pending</span>
+        </div>
+      </div>
+
+      <!-- Item rows -->
+
+      <!-- SKU-001 — Complete -->
+      <div class="item-row">
+        <div class="item-stripe stripe-green"></div>
+        <div class="item-info">
+          <div class="item-sku">SKU-001</div>
+          <div class="item-name">Widget A</div>
+        </div>
+        <div class="item-qty">
+          <div class="qty-received qty-green">100</div>
+          <div class="qty-expected">of 100</div>
+        </div>
+        <div class="item-status is-green"><i class="fa-solid fa-check"></i></div>
+      </div>
+
+      <!-- SKU-002 — Complete -->
+      <div class="item-row">
+        <div class="item-stripe stripe-green"></div>
+        <div class="item-info">
+          <div class="item-sku">SKU-002</div>
+          <div class="item-name">Widget B</div>
+        </div>
+        <div class="item-qty">
+          <div class="qty-received qty-green">80</div>
+          <div class="qty-expected">of 80</div>
+        </div>
+        <div class="item-status is-green"><i class="fa-solid fa-check"></i></div>
+      </div>
+
+      <!-- SKU-003 — Partial -->
+      <div class="item-row" style="background:#FFFBEB">
+        <div class="item-stripe stripe-amber"></div>
+        <div class="item-info">
+          <div class="item-sku">SKU-003</div>
+          <div class="item-name">Gadget C</div>
+        </div>
+        <div class="item-qty">
+          <div class="qty-received qty-amber">45</div>
+          <div class="qty-expected">of 60</div>
+        </div>
+        <div class="item-status is-amber"><i class="fa-solid fa-minus"></i></div>
+      </div>
+
+      <!-- SKU-004 — Not started -->
+      <div class="item-row">
+        <div class="item-stripe stripe-red"></div>
+        <div class="item-info">
+          <div class="item-sku">SKU-004</div>
+          <div class="item-name">Part D</div>
+        </div>
+        <div class="item-qty">
+          <div class="qty-received qty-red">0</div>
+          <div class="qty-expected">of 120</div>
+        </div>
+        <div class="item-status is-red"><i class="fa-solid fa-xmark"></i></div>
+      </div>
+
+      <!-- SKU-005 — Complete -->
+      <div class="item-row">
+        <div class="item-stripe stripe-green"></div>
+        <div class="item-info">
+          <div class="item-sku">SKU-005</div>
+          <div class="item-name">Component E</div>
+        </div>
+        <div class="item-qty">
+          <div class="qty-received qty-green">80</div>
+          <div class="qty-expected">of 80</div>
+        </div>
+        <div class="item-status is-green"><i class="fa-solid fa-check"></i></div>
+      </div>
+
+      <!-- SKU-006 — Not started -->
+      <div class="item-row">
+        <div class="item-stripe stripe-red"></div>
+        <div class="item-info">
+          <div class="item-sku">SKU-006</div>
+          <div class="item-name">Module F</div>
+        </div>
+        <div class="item-qty">
+          <div class="qty-received qty-red">0</div>
+          <div class="qty-expected">of 40</div>
+        </div>
+        <div class="item-status is-red"><i class="fa-solid fa-xmark"></i></div>
+      </div>
+
+      <!-- Spacer so items don't hide behind bottom bar -->
+      <div style="height:20px"></div>
+    </div><!-- /scroll-area -->
+
+    <!-- Bottom bar with SCAN button -->
+    <div class="bottom-bar">
+      <button class="btn-scan">
+        <i class="fa-solid fa-barcode-scan"></i> SCAN ITEM
+      </button>
+    </div>
+
+  </div><!-- /phone-screen -->
+</div><!-- /phone-frame -->
+
+<!-- ══ CONTEXT ASIDE ══ -->
+<aside class="context">
+  <div class="eyebrow">WMS · Goods-In Receiver</div>
+  <h2>Scan-first goods-in for warehouse operatives</h2>
+  <p>The receiver sees one PO at a time, with a colour-coded status stripe on every line so the state of the shipment is obvious across the entire list at a glance.</p>
+  <div class="feat">
+    <div class="dot" style="background:var(--green)"></div>
+    <div class="body">
+      <strong>Green — complete</strong>
+      <span>Full quantity received and matched. Line is considered closed and won't prompt the scanner.</span>
+    </div>
+  </div>
+  <div class="feat">
+    <div class="dot" style="background:var(--amber)"></div>
+    <div class="body">
+      <strong>Amber — partial</strong>
+      <span>Some units received but short. Operative can continue scanning or flag a discrepancy.</span>
+    </div>
+  </div>
+  <div class="feat">
+    <div class="dot" style="background:var(--red)"></div>
+    <div class="body">
+      <strong>Red — not started</strong>
+      <span>Zero units booked in. Prominent so missing lines are never accidentally completed.</span>
+    </div>
+  </div>
+  <div class="feat">
+    <div class="dot" style="background:var(--accent)"></div>
+    <div class="body">
+      <strong>One-tap scan CTA</strong>
+      <span>The SCAN ITEM button is permanently pinned — accessible even with gloves or in low-light conditions.</span>
+    </div>
+  </div>
+</aside>
+
+</body>
+</html>

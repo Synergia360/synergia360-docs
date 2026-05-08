@@ -1,0 +1,804 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Synergia360 — UI Design Index</title>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=Geist+Mono:wght@400;600&display=swap" rel="stylesheet">
+<style>
+:root{
+  --bg:#F8F9FC;--surface:#FFFFFF;--surface-2:#F8FAFF;--border:#E2E8F0;
+  --accent:#4F46E5;--accent-dim:rgba(79,70,229,.08);--accent-light:#EEF2FF;
+  --violet:#7C3AED;--violet-dim:rgba(124,58,237,.08);--violet-light:#F5F3FF;
+  --text:#0F172A;--text-2:#475569;--text-3:#94A3B8;
+  --green:#10B981;--green-dim:rgba(16,185,129,.08);--green-light:#ECFDF5;
+  --red:#EF4444;--red-dim:rgba(239,68,68,.08);--blue:#3B82F6;
+  --amber:#F59E0B;
+  --font:'Inter',sans-serif;--mono:'Geist Mono',monospace;
+  --shadow:0 1px 3px rgba(0,0,0,.08),0 1px 2px rgba(0,0,0,.04)
+}
+*{box-sizing:border-box;margin:0;padding:0}
+body{background:var(--bg);color:var(--text);font-family:var(--font);font-size:14px;min-height:100vh}
+a{text-decoration:none;color:inherit}
+
+header{background:rgba(255,255,255,.9);backdrop-filter:blur(16px);border-bottom:1px solid var(--border);position:sticky;top:0;z-index:100;padding:0 40px}
+.header-inner{height:60px;display:flex;align-items:center;gap:16px;max-width:1400px;margin:0 auto}
+.logo{display:flex;align-items:center;gap:10px;font-weight:800;font-size:16px}
+.logo-mark{width:32px;height:32px;background:var(--accent);border-radius:8px;display:grid;place-items:center;font-weight:700;color:#fff;font-size:14px}
+.logo-text{color:var(--text)}
+.logo-text span{color:var(--accent)}
+.header-badge{font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:.08em;padding:3px 9px;border-radius:6px;background:var(--accent-dim);border:1px solid rgba(79,70,229,.2);color:var(--accent)}
+.header-count{margin-left:auto;font-size:12px;color:var(--text-3);font-family:var(--mono)}
+
+.hero{padding:56px 40px 40px;max-width:1400px;margin:0 auto}
+.hero h1{font-size:36px;font-weight:900;letter-spacing:-0.03em;margin-bottom:8px;color:var(--text)}
+.hero h1 span{color:var(--accent)}
+.hero p{font-size:16px;color:var(--text-2);max-width:560px;line-height:1.65}
+.legend{display:flex;flex-wrap:wrap;gap:12px;margin-top:20px}
+.legend-item{display:flex;align-items:center;gap:6px;font-size:12px;color:var(--text-2)}
+.legend-dot{width:8px;height:8px;border-radius:50%}
+
+.section{max-width:1400px;margin:0 auto;padding:0 40px 48px}
+.section-header{display:flex;align-items:center;gap:12px;margin-bottom:20px;padding-bottom:14px;border-bottom:1px solid var(--border)}
+.section-icon{width:40px;height:40px;border-radius:12px;display:grid;place-items:center;font-size:18px;flex-shrink:0}
+.section-title{font-size:18px;font-weight:700;letter-spacing:-0.01em}
+.section-sub{font-size:12px;color:var(--text-3);margin-top:2px}
+.screen-count{margin-left:auto;font-size:11px;font-family:var(--mono);color:var(--text-3);background:var(--surface-2);border:1px solid var(--border);padding:3px 9px;border-radius:6px}
+
+.screen-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(260px,1fr));gap:14px}
+.screen-card{display:block;background:var(--surface);border:1px solid var(--border);border-radius:14px;overflow:hidden;transition:border-color .2s,transform .2s,box-shadow .2s;cursor:pointer;position:relative;box-shadow:var(--shadow);text-decoration:none;color:inherit}
+.screen-card:hover{border-color:rgba(79,70,229,.3);transform:translateY(-2px);box-shadow:0 8px 24px rgba(79,70,229,.1)}
+.screen-card.violet:hover{border-color:rgba(124,58,237,.3);box-shadow:0 8px 24px rgba(124,58,237,.1)}
+.screen-card.mobile:hover{border-color:rgba(16,185,129,.35);box-shadow:0 8px 24px rgba(16,185,129,.1)}
+.screen-card.marketing:hover{border-color:rgba(59,130,246,.35);box-shadow:0 8px 24px rgba(59,130,246,.1)}
+
+.screen-preview{height:140px;border-bottom:1px solid var(--border);display:flex;align-items:center;justify-content:center;font-size:36px;position:relative;overflow:hidden}
+.preview-accent{background:linear-gradient(135deg,rgba(79,70,229,.07) 0%,var(--surface-2) 100%)}
+.preview-violet{background:linear-gradient(135deg,rgba(124,58,237,.08) 0%,var(--surface-2) 100%)}
+.preview-mobile{background:linear-gradient(135deg,rgba(16,185,129,.07) 0%,var(--surface-2) 100%)}
+.preview-marketing{background:linear-gradient(135deg,rgba(59,130,246,.07) 0%,var(--surface-2) 100%)}
+.preview-label{position:absolute;bottom:8px;right:10px;font-size:9px;font-weight:700;text-transform:uppercase;letter-spacing:.08em;color:var(--text-3);font-family:var(--mono)}
+
+.screen-info{padding:14px}
+.screen-name{font-size:13px;font-weight:600;margin-bottom:4px;color:var(--text)}
+.screen-desc{font-size:11px;color:var(--text-3);line-height:1.5}
+.screen-tags{display:flex;gap:5px;flex-wrap:wrap;margin-top:8px}
+.tag{font-size:9px;font-weight:600;text-transform:uppercase;letter-spacing:.05em;padding:2px 7px;border-radius:4px}
+.tag-tenant{background:var(--accent-dim);color:var(--accent)}
+.tag-admin{background:var(--violet-dim);color:var(--violet)}
+.tag-marketing{background:rgba(59,130,246,.1);color:var(--blue)}
+.tag-mobile{background:var(--green-dim);color:var(--green)}
+.tag-ref{background:var(--border);color:var(--text-2)}
+.tag-finance{background:rgba(139,92,246,.1);color:#7C3AED}
+
+.screen-arrow{position:absolute;top:10px;right:10px;width:28px;height:28px;border-radius:8px;background:rgba(0,0,0,.04);border:1px solid var(--border);display:grid;place-items:center;font-size:11px;color:var(--text-3);opacity:0;transition:opacity .15s}
+.screen-card:hover .screen-arrow{opacity:1}
+
+footer{border-top:1px solid var(--border);padding:24px 40px;margin-top:8px}
+.footer-inner{display:flex;justify-content:space-between;align-items:center;max-width:1400px;margin:0 auto;font-size:12px;color:var(--text-3)}
+
+svg.icon{width:20px;height:20px;fill:none;stroke:currentColor;stroke-width:2;stroke-linecap:round;stroke-linejoin:round;pointer-events:none}
+.screen-preview *{pointer-events:none}
+</style>
+</head>
+<body>
+
+<header>
+  <div class="header-inner">
+    <div class="logo">
+      <div class="logo-mark">S</div>
+      <span class="logo-text">Synergia<span>360</span></span>
+    </div>
+    <div class="header-badge">UI Design Index</div>
+    <div class="header-count">55 screens · Prism Light · v2.0</div>
+  </div>
+</header>
+
+<div class="hero">
+  <h1>Synergia360 <span>UI Mockup Library</span></h1>
+  <p>Complete screen-by-screen mockup library for the full Synergia360 platform. All screens use the Prism Light design system — indigo accent, white surfaces, Inter + Geist Mono typography.</p>
+  <div class="legend">
+    <div class="legend-item"><div class="legend-dot" style="background:var(--accent)"></div> Tenant App (Indigo)</div>
+    <div class="legend-item"><div class="legend-dot" style="background:var(--violet)"></div> Platform Admin (Violet)</div>
+    <div class="legend-item"><div class="legend-dot" style="background:var(--blue)"></div> Marketing Site</div>
+    <div class="legend-item"><div class="legend-dot" style="background:var(--green)"></div> Mobile / WMS</div>
+    <div class="legend-item"><div class="legend-dot" style="background:var(--text-3)"></div> Reference / Overlays</div>
+  </div>
+</div>
+
+<!-- AUTH & ONBOARDING -->
+<div class="section">
+  <div class="section-header">
+    <div class="section-icon" style="background:var(--accent-dim);color:var(--accent)">
+      <svg class="icon" viewBox="0 0 24 24"><rect x="3" y="11" width="18" height="11" rx="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/></svg>
+    </div>
+    <div>
+      <div class="section-title">Authentication &amp; Onboarding</div>
+      <div class="section-sub">Login, signup, company setup, channel connection wizard, and design reference</div>
+    </div>
+    <div class="screen-count">5 screens</div>
+  </div>
+  <div class="screen-grid">
+    <a href="auth-login.html" class="screen-card">
+      <div class="screen-arrow">↗</div>
+      <div class="screen-preview preview-accent"><svg class="icon" style="color:var(--accent)" viewBox="0 0 24 24"><rect x="3" y="11" width="18" height="11" rx="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/></svg><div class="preview-label">auth</div></div>
+      <div class="screen-info">
+        <div class="screen-name">Login</div>
+        <div class="screen-desc">Split-screen: indigo gradient hero panel + email/password form with MFA</div>
+        <div class="screen-tags"><span class="tag tag-tenant">Tenant</span></div>
+      </div>
+    </a>
+    <a href="auth-signup.html" class="screen-card">
+      <div class="screen-arrow">↗</div>
+      <div class="screen-preview preview-accent"><svg class="icon" style="color:var(--accent)" viewBox="0 0 24 24"><path d="M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><line x1="19" y1="8" x2="19" y2="14"/><line x1="22" y1="11" x2="16" y2="11"/></svg><div class="preview-label">auth</div></div>
+      <div class="screen-info">
+        <div class="screen-name">Sign Up</div>
+        <div class="screen-desc">3-step progress dots, account creation form, password strength meter</div>
+        <div class="screen-tags"><span class="tag tag-tenant">Tenant</span></div>
+      </div>
+    </a>
+    <a href="auth-company-wizard.html" class="screen-card">
+      <div class="screen-arrow">↗</div>
+      <div class="screen-preview preview-accent"><svg class="icon" style="color:var(--accent)" viewBox="0 0 24 24"><path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/><polyline points="9 22 9 12 15 12 15 22"/></svg><div class="preview-label">onboarding</div></div>
+      <div class="screen-info">
+        <div class="screen-name">Company Setup</div>
+        <div class="screen-desc">Step 2 of 3 — company info, industry, size, GMV, country, VAT</div>
+        <div class="screen-tags"><span class="tag tag-tenant">Tenant</span></div>
+      </div>
+    </a>
+    <a href="auth-channel-onboarding.html" class="screen-card">
+      <div class="screen-arrow">↗</div>
+      <div class="screen-preview preview-accent"><svg class="icon" style="color:var(--accent)" viewBox="0 0 24 24"><path d="M3 9h18M3 15h18M12 3v18"/><rect x="3" y="3" width="18" height="18" rx="2"/></svg><div class="preview-label">onboarding</div></div>
+      <div class="screen-info">
+        <div class="screen-name">Channel Onboarding</div>
+        <div class="screen-desc">Step 3 of 3 — connect Amazon, eBay, Shopify, Etsy, TikTok, WooCommerce</div>
+        <div class="screen-tags"><span class="tag tag-tenant">Tenant</span></div>
+      </div>
+    </a>
+    <a href="design-system.html" class="screen-card">
+      <div class="screen-arrow">↗</div>
+      <div class="screen-preview preview-accent"><svg class="icon" style="color:var(--text-3)" viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"/><path d="M12 8v4l3 3"/></svg><div class="preview-label">reference</div></div>
+      <div class="screen-info">
+        <div class="screen-name">Design System</div>
+        <div class="screen-desc">Prism Light tokens — palette, typography, buttons, badges, forms, components</div>
+        <div class="screen-tags"><span class="tag tag-ref">Reference</span></div>
+      </div>
+    </a>
+  </div>
+</div>
+
+<!-- DASHBOARD -->
+<div class="section">
+  <div class="section-header">
+    <div class="section-icon" style="background:var(--accent-dim);color:var(--accent)">
+      <svg class="icon" viewBox="0 0 24 24"><rect x="3" y="3" width="7" height="7" rx="1"/><rect x="14" y="3" width="7" height="7" rx="1"/><rect x="14" y="14" width="7" height="7" rx="1"/><rect x="3" y="14" width="7" height="7" rx="1"/></svg>
+    </div>
+    <div>
+      <div class="section-title">Dashboard</div>
+      <div class="section-sub">Main operational overview, command palette, and customisable builder</div>
+    </div>
+    <div class="screen-count">3 screens</div>
+  </div>
+  <div class="screen-grid">
+    <a href="main-dashboard.html" class="screen-card">
+      <div class="screen-arrow">↗</div>
+      <div class="screen-preview preview-accent"><svg class="icon" style="color:var(--accent)" viewBox="0 0 24 24"><polyline points="22 12 18 12 15 21 9 3 6 12 2 12"/></svg><div class="preview-label">dashboard</div></div>
+      <div class="screen-info">
+        <div class="screen-name">Main Dashboard</div>
+        <div class="screen-desc">4 KPI cards, revenue bar chart, order donut, AI copilot card, channel health</div>
+        <div class="screen-tags"><span class="tag tag-tenant">Tenant</span></div>
+      </div>
+    </a>
+    <a href="command-palette.html" class="screen-card">
+      <div class="screen-arrow">↗</div>
+      <div class="screen-preview preview-accent"><svg class="icon" style="color:var(--text-3)" viewBox="0 0 24 24"><path d="M9 9l-3 3 3 3M15 9l3 3-3 3M11 5l2 14"/></svg><div class="preview-label">overlay</div></div>
+      <div class="screen-info">
+        <div class="screen-name">Command Palette</div>
+        <div class="screen-desc">⌘K overlay — search, navigate, quick-execute with keyboard shortcuts</div>
+        <div class="screen-tags"><span class="tag tag-ref">Overlay</span></div>
+      </div>
+    </a>
+    <a href="dashboard-builder.html" class="screen-card">
+      <div class="screen-arrow">↗</div>
+      <div class="screen-preview preview-accent"><svg class="icon" style="color:var(--accent)" viewBox="0 0 24 24"><path d="M12 2L2 7l10 5 10-5-10-5zM2 17l10 5 10-5M2 12l10 5 10-5"/></svg><div class="preview-label">dashboard</div></div>
+      <div class="screen-info">
+        <div class="screen-name">Dashboard Builder</div>
+        <div class="screen-desc">Widget library + dashed-grid canvas + config panel — drag-and-drop layout</div>
+        <div class="screen-tags"><span class="tag tag-tenant">Tenant</span></div>
+      </div>
+    </a>
+  </div>
+</div>
+
+<!-- ORDERS -->
+<div class="section">
+  <div class="section-header">
+    <div class="section-icon" style="background:var(--accent-dim);color:var(--accent)">
+      <svg class="icon" viewBox="0 0 24 24"><path d="M6 2L3 6v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2V6l-3-4z"/><line x1="3" y1="6" x2="21" y2="6"/><path d="M16 10a4 4 0 0 1-8 0"/></svg>
+    </div>
+    <div>
+      <div class="section-title">Orders, Returns &amp; Shipments</div>
+      <div class="section-sub">Order queue, detail view, returns, shipments tracking, automation rules, and routing</div>
+    </div>
+    <div class="screen-count">7 screens</div>
+  </div>
+  <div class="screen-grid">
+    <a href="order-queue.html" class="screen-card">
+      <div class="screen-arrow">↗</div>
+      <div class="screen-preview preview-accent"><svg class="icon" style="color:var(--accent)" viewBox="0 0 24 24"><line x1="8" y1="6" x2="21" y2="6"/><line x1="8" y1="12" x2="21" y2="12"/><line x1="8" y1="18" x2="21" y2="18"/><line x1="3" y1="6" x2="3.01" y2="6"/><line x1="3" y1="12" x2="3.01" y2="12"/><line x1="3" y1="18" x2="3.01" y2="18"/></svg><div class="preview-label">orders</div></div>
+      <div class="screen-info">
+        <div class="screen-name">Order Queue</div>
+        <div class="screen-desc">All-channel table with SLA countdowns, channel badges, bulk dispatch</div>
+        <div class="screen-tags"><span class="tag tag-tenant">Tenant</span></div>
+      </div>
+    </a>
+    <a href="order-detail.html" class="screen-card">
+      <div class="screen-arrow">↗</div>
+      <div class="screen-preview preview-accent"><svg class="icon" style="color:var(--accent)" viewBox="0 0 24 24"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/><line x1="16" y1="13" x2="8" y2="13"/><line x1="16" y1="17" x2="8" y2="17"/><polyline points="10 9 9 9 8 9"/></svg><div class="preview-label">orders</div></div>
+      <div class="screen-info">
+        <div class="screen-name">Order Detail</div>
+        <div class="screen-desc">Full order view — items, fulfilment, timeline, customer, AI suggestions</div>
+        <div class="screen-tags"><span class="tag tag-tenant">Tenant</span></div>
+      </div>
+    </a>
+    <a href="returns-queue.html" class="screen-card">
+      <div class="screen-arrow">↗</div>
+      <div class="screen-preview preview-accent"><svg class="icon" style="color:var(--amber)" viewBox="0 0 24 24"><polyline points="1 4 1 10 7 10"/><path d="M3.51 15a9 9 0 1 0 .49-3.52"/></svg><div class="preview-label">returns</div></div>
+      <div class="screen-info">
+        <div class="screen-name">Returns Queue</div>
+        <div class="screen-desc">Returns list with reason codes, condition, refund status, quick actions</div>
+        <div class="screen-tags"><span class="tag tag-tenant">Tenant</span></div>
+      </div>
+    </a>
+    <a href="returns-detail.html" class="screen-card">
+      <div class="screen-arrow">↗</div>
+      <div class="screen-preview preview-accent"><svg class="icon" style="color:var(--amber)" viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/></svg><div class="preview-label">returns</div></div>
+      <div class="screen-info">
+        <div class="screen-name">Return Detail</div>
+        <div class="screen-desc">Single return — items, reason, resolution selector, timeline, internal notes</div>
+        <div class="screen-tags"><span class="tag tag-tenant">Tenant</span></div>
+      </div>
+    </a>
+    <a href="routing-rules.html" class="screen-card">
+      <div class="screen-arrow">↗</div>
+      <div class="screen-preview preview-accent"><svg class="icon" style="color:var(--accent)" viewBox="0 0 24 24"><polyline points="16 3 21 3 21 8"/><line x1="4" y1="20" x2="21" y2="3"/><polyline points="21 16 21 21 16 21"/><line x1="15" y1="15" x2="21" y2="21"/><line x1="4" y1="4" x2="9" y2="9"/></svg><div class="preview-label">routing</div></div>
+      <div class="screen-info">
+        <div class="screen-name">Routing Rules</div>
+        <div class="screen-desc">Priority-ordered rules with IF/THEN condition builder and test simulator</div>
+        <div class="screen-tags"><span class="tag tag-tenant">Tenant</span></div>
+      </div>
+    </a>
+    <a href="order-automation.html" class="screen-card">
+      <div class="screen-arrow">↗</div>
+      <div class="screen-preview preview-accent"><svg class="icon" style="color:var(--accent)" viewBox="0 0 24 24"><polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2"/></svg><div class="preview-label">automation</div></div>
+      <div class="screen-info">
+        <div class="screen-name">Order Automation</div>
+        <div class="screen-desc">Rule list with toggle/priority, expanded condition builder, action blocks</div>
+        <div class="screen-tags"><span class="tag tag-tenant">Tenant</span></div>
+      </div>
+    </a>
+    <a href="shipments-list.html" class="screen-card">
+      <div class="screen-arrow">↗</div>
+      <div class="screen-preview preview-accent"><svg class="icon" style="color:var(--accent)" viewBox="0 0 24 24"><rect x="1" y="3" width="15" height="13" rx="1"/><path d="M16 8h4l3 3v5h-7V8z"/><circle cx="5.5" cy="18.5" r="2.5"/><circle cx="18.5" cy="18.5" r="2.5"/></svg><div class="preview-label">shipments</div></div>
+      <div class="screen-info">
+        <div class="screen-name">Shipments</div>
+        <div class="screen-desc">Carrier tracking, status badges (In Transit/Delivered/Delayed), detail side panel</div>
+        <div class="screen-tags"><span class="tag tag-tenant">Tenant</span></div>
+      </div>
+    </a>
+  </div>
+</div>
+
+<!-- INVENTORY & CATALOGUE -->
+<div class="section">
+  <div class="section-header">
+    <div class="section-icon" style="background:var(--accent-dim);color:var(--accent)">
+      <svg class="icon" viewBox="0 0 24 24"><path d="M21 16V8a2 2 0 0 0-1-1.73l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.73l7 4a2 2 0 0 0 2 0l7-4A2 2 0 0 0 21 16z"/></svg>
+    </div>
+    <div>
+      <div class="section-title">Inventory &amp; Catalogue</div>
+      <div class="section-sub">Stock levels, stock-take, product catalogue, BOM builder, purchase orders, and suppliers</div>
+    </div>
+    <div class="screen-count">7 screens</div>
+  </div>
+  <div class="screen-grid">
+    <a href="inventory-stock-overview.html" class="screen-card">
+      <div class="screen-arrow">↗</div>
+      <div class="screen-preview preview-accent"><svg class="icon" style="color:var(--accent)" viewBox="0 0 24 24"><path d="M21 16V8a2 2 0 0 0-1-1.73l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.73l7 4a2 2 0 0 0 2 0l7-4A2 2 0 0 0 21 16z"/></svg><div class="preview-label">inventory</div></div>
+      <div class="screen-info">
+        <div class="screen-name">Stock Overview</div>
+        <div class="screen-desc">Multi-location stock with OOS alert banner, reorder bars, low-stock rows</div>
+        <div class="screen-tags"><span class="tag tag-tenant">Tenant</span></div>
+      </div>
+    </a>
+    <a href="inventory-stock-take.html" class="screen-card">
+      <div class="screen-arrow">↗</div>
+      <div class="screen-preview preview-accent"><svg class="icon" style="color:var(--accent)" viewBox="0 0 24 24"><path d="M9 11l3 3L22 4"/><path d="M21 12v7a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11"/></svg><div class="preview-label">inventory</div></div>
+      <div class="screen-info">
+        <div class="screen-name">Stock Take</div>
+        <div class="screen-desc">Barcode-driven count sessions, zone progress, variance report panel</div>
+        <div class="screen-tags"><span class="tag tag-tenant">Tenant</span></div>
+      </div>
+    </a>
+    <a href="catalogue-product-list.html" class="screen-card">
+      <div class="screen-arrow">↗</div>
+      <div class="screen-preview preview-accent"><svg class="icon" style="color:var(--accent)" viewBox="0 0 24 24"><rect x="3" y="3" width="18" height="18" rx="2" ry="2"/><line x1="3" y1="9" x2="21" y2="9"/><line x1="9" y1="21" x2="9" y2="9"/></svg><div class="preview-label">catalogue</div></div>
+      <div class="screen-info">
+        <div class="screen-name">Product Catalogue</div>
+        <div class="screen-desc">Master product list — tabs, list/grid toggle, margin chips, channel badges</div>
+        <div class="screen-tags"><span class="tag tag-tenant">Tenant</span></div>
+      </div>
+    </a>
+    <a href="catalogue-product-detail.html" class="screen-card">
+      <div class="screen-arrow">↗</div>
+      <div class="screen-preview preview-accent"><svg class="icon" style="color:var(--accent)" viewBox="0 0 24 24"><path d="M20 7H4a2 2 0 0 0-2 2v10a2 2 0 0 0 2 2h16a2 2 0 0 0 2-2V9a2 2 0 0 0-2-2z"/><path d="M16 3H8a2 2 0 0 0-2 2v2h12V5a2 2 0 0 0-2-2z"/></svg><div class="preview-label">catalogue</div></div>
+      <div class="screen-info">
+        <div class="screen-name">Product Detail</div>
+        <div class="screen-desc">Full record — description, variants, channel listings, images, AI insights</div>
+        <div class="screen-tags"><span class="tag tag-tenant">Tenant</span></div>
+      </div>
+    </a>
+    <a href="catalogue-bom-builder.html" class="screen-card">
+      <div class="screen-arrow">↗</div>
+      <div class="screen-preview preview-accent"><svg class="icon" style="color:var(--accent)" viewBox="0 0 24 24"><line x1="16.5" y1="9.4" x2="7.5" y2="4.21"/><path d="M21 16V8a2 2 0 0 0-1-1.73l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.73l7 4a2 2 0 0 0 2 0l7-4A2 2 0 0 0 21 16z"/><line x1="3.27" y1="6.96" x2="12" y2="12.01"/><line x1="12" y1="22.08" x2="12" y2="12"/></svg><div class="preview-label">catalogue</div></div>
+      <div class="screen-info">
+        <div class="screen-name">BOM Builder</div>
+        <div class="screen-desc">3-level material tree with cost roll-up, margin calc, component config panel</div>
+        <div class="screen-tags"><span class="tag tag-tenant">Tenant</span></div>
+      </div>
+    </a>
+    <a href="purchase-orders.html" class="screen-card">
+      <div class="screen-arrow">↗</div>
+      <div class="screen-preview preview-accent"><svg class="icon" style="color:var(--accent)" viewBox="0 0 24 24"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/></svg><div class="preview-label">inventory</div></div>
+      <div class="screen-info">
+        <div class="screen-name">Purchase Orders</div>
+        <div class="screen-desc">PO list with 6 statuses, expanded row shows line items and receipt progress</div>
+        <div class="screen-tags"><span class="tag tag-tenant">Tenant</span></div>
+      </div>
+    </a>
+    <a href="suppliers-list.html" class="screen-card">
+      <div class="screen-arrow">↗</div>
+      <div class="screen-preview preview-accent"><svg class="icon" style="color:var(--accent)" viewBox="0 0 24 24"><path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/><polyline points="9 22 9 12 15 12 15 22"/></svg><div class="preview-label">inventory</div></div>
+      <div class="screen-info">
+        <div class="screen-name">Suppliers</div>
+        <div class="screen-desc">Supplier table with on-time % bars, status badges, contact details, and actions</div>
+        <div class="screen-tags"><span class="tag tag-tenant">Tenant</span></div>
+      </div>
+    </a>
+  </div>
+</div>
+
+<!-- CHANNELS & LISTINGS -->
+<div class="section">
+  <div class="section-header">
+    <div class="section-icon" style="background:var(--accent-dim);color:var(--accent)">
+      <svg class="icon" viewBox="0 0 24 24"><path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/><polyline points="9 22 9 12 15 12 15 22"/></svg>
+    </div>
+    <div>
+      <div class="section-title">Channels &amp; Listings</div>
+      <div class="section-sub">Channel health, listing management, and competitive pricing rules</div>
+    </div>
+    <div class="screen-count">3 screens</div>
+  </div>
+  <div class="screen-grid">
+    <a href="channels-overview.html" class="screen-card">
+      <div class="screen-arrow">↗</div>
+      <div class="screen-preview preview-accent"><svg class="icon" style="color:var(--accent)" viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"/><line x1="2" y1="12" x2="22" y2="12"/><path d="M12 2a15.3 15.3 0 0 1 4 10 15.3 15.3 0 0 1-4 10 15.3 15.3 0 0 1-4-10 15.3 15.3 0 0 1 4-10z"/></svg><div class="preview-label">channels</div></div>
+      <div class="screen-info">
+        <div class="screen-name">Channels Overview</div>
+        <div class="screen-desc">5-channel health cards, health bars, activity feed, metrics per channel</div>
+        <div class="screen-tags"><span class="tag tag-tenant">Tenant</span></div>
+      </div>
+    </a>
+    <a href="listing-manager.html" class="screen-card">
+      <div class="screen-arrow">↗</div>
+      <div class="screen-preview preview-accent"><svg class="icon" style="color:var(--accent)" viewBox="0 0 24 24"><path d="M20.59 13.41l-7.17 7.17a2 2 0 0 1-2.83 0L2 12V2h10l8.59 8.59a2 2 0 0 1 0 2.82z"/><line x1="7" y1="7" x2="7.01" y2="7"/></svg><div class="preview-label">listings</div></div>
+      <div class="screen-info">
+        <div class="screen-name">Listing Manager</div>
+        <div class="screen-desc">Multi-channel listing table with health bars, bulk actions, Needs Attention row</div>
+        <div class="screen-tags"><span class="tag tag-tenant">Tenant</span></div>
+      </div>
+    </a>
+    <a href="pricing-rules.html" class="screen-card">
+      <div class="screen-arrow">↗</div>
+      <div class="screen-preview preview-accent"><svg class="icon" style="color:var(--accent)" viewBox="0 0 24 24"><line x1="4" y1="21" x2="4" y2="14"/><line x1="4" y1="10" x2="4" y2="3"/><line x1="12" y1="21" x2="12" y2="12"/><line x1="12" y1="8" x2="12" y2="3"/><line x1="20" y1="21" x2="20" y2="16"/><line x1="20" y1="12" x2="20" y2="3"/><line x1="1" y1="14" x2="7" y2="14"/><line x1="9" y1="8" x2="15" y2="8"/><line x1="17" y1="16" x2="23" y2="16"/></svg><div class="preview-label">pricing</div></div>
+      <div class="screen-info">
+        <div class="screen-name">Pricing Rules</div>
+        <div class="screen-desc">Channel-specific rules, IF/THEN builder, expanded view with price preview</div>
+        <div class="screen-tags"><span class="tag tag-tenant">Tenant</span></div>
+      </div>
+    </a>
+  </div>
+</div>
+
+<!-- CUSTOMERS -->
+<div class="section">
+  <div class="section-header">
+    <div class="section-icon" style="background:var(--accent-dim);color:var(--accent)">
+      <svg class="icon" viewBox="0 0 24 24"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/></svg>
+    </div>
+    <div>
+      <div class="section-title">Customers</div>
+      <div class="section-sub">Customer database, segment insights, and individual profile with order history</div>
+    </div>
+    <div class="screen-count">2 screens</div>
+  </div>
+  <div class="screen-grid">
+    <a href="customers-list.html" class="screen-card">
+      <div class="screen-arrow">↗</div>
+      <div class="screen-preview preview-accent"><svg class="icon" style="color:var(--accent)" viewBox="0 0 24 24"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/></svg><div class="preview-label">customers</div></div>
+      <div class="screen-info">
+        <div class="screen-name">Customers</div>
+        <div class="screen-desc">Customer table with segment badges (VIP/Repeat/New/At Risk), churn risk panel, insights</div>
+        <div class="screen-tags"><span class="tag tag-tenant">Tenant</span></div>
+      </div>
+    </a>
+    <a href="customer-detail.html" class="screen-card">
+      <div class="screen-arrow">↗</div>
+      <div class="screen-preview preview-accent"><svg class="icon" style="color:var(--accent)" viewBox="0 0 24 24"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg><div class="preview-label">customers</div></div>
+      <div class="screen-info">
+        <div class="screen-name">Customer Detail</div>
+        <div class="screen-desc">Profile card, 2-col layout, order history tabs, spend stats, notes panel</div>
+        <div class="screen-tags"><span class="tag tag-tenant">Tenant</span></div>
+      </div>
+    </a>
+  </div>
+</div>
+
+<!-- FINANCE -->
+<div class="section">
+  <div class="section-header">
+    <div class="section-icon" style="background:rgba(124,58,237,.08);color:var(--violet)">
+      <svg class="icon" viewBox="0 0 24 24"><line x1="12" y1="1" x2="12" y2="23"/><path d="M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6"/></svg>
+    </div>
+    <div>
+      <div class="section-title">Finance</div>
+      <div class="section-sub">P&amp;L dashboard, SKU profitability, expense management, and monthly close</div>
+    </div>
+    <div class="screen-count">4 screens</div>
+  </div>
+  <div class="screen-grid">
+    <a href="finance-dashboard.html" class="screen-card">
+      <div class="screen-arrow">↗</div>
+      <div class="screen-preview preview-accent"><svg class="icon" style="color:var(--violet)" viewBox="0 0 24 24"><polyline points="23 6 13.5 15.5 8.5 10.5 1 18"/><polyline points="17 6 23 6 23 12"/></svg><div class="preview-label">finance</div></div>
+      <div class="screen-info">
+        <div class="screen-name">Finance Dashboard</div>
+        <div class="screen-desc">Gross/net/expenses/profit KPIs, dual-line area chart, P&amp;L table, channel revenue</div>
+        <div class="screen-tags"><span class="tag tag-tenant">Tenant</span><span class="tag tag-finance">Finance</span></div>
+      </div>
+    </a>
+    <a href="sku-profitability.html" class="screen-card">
+      <div class="screen-arrow">↗</div>
+      <div class="screen-preview preview-accent"><svg class="icon" style="color:var(--violet)" viewBox="0 0 24 24"><rect x="18" y="3" width="4" height="18"/><rect x="10" y="8" width="4" height="13"/><rect x="2" y="13" width="4" height="8"/></svg><div class="preview-label">finance</div></div>
+      <div class="screen-info">
+        <div class="screen-name">SKU Profitability</div>
+        <div class="screen-desc">Per-SKU margin table with trend arrows, distribution chart, AI loss-maker flags</div>
+        <div class="screen-tags"><span class="tag tag-tenant">Tenant</span><span class="tag tag-finance">Finance</span></div>
+      </div>
+    </a>
+    <a href="finance-expense-management.html" class="screen-card">
+      <div class="screen-arrow">↗</div>
+      <div class="screen-preview preview-accent"><svg class="icon" style="color:var(--violet)" viewBox="0 0 24 24"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/><line x1="16" y1="13" x2="8" y2="13"/><line x1="16" y1="17" x2="8" y2="17"/></svg><div class="preview-label">finance</div></div>
+      <div class="screen-info">
+        <div class="screen-name">Expense Management</div>
+        <div class="screen-desc">Category tabs, expense table with approval states, budget vs actual rail</div>
+        <div class="screen-tags"><span class="tag tag-tenant">Tenant</span><span class="tag tag-finance">Finance</span></div>
+      </div>
+    </a>
+    <a href="finance-monthly-close.html" class="screen-card">
+      <div class="screen-arrow">↗</div>
+      <div class="screen-preview preview-accent"><svg class="icon" style="color:var(--violet)" viewBox="0 0 24 24"><rect x="3" y="4" width="18" height="18" rx="2" ry="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/><path d="M9 16l2 2 4-4"/></svg><div class="preview-label">finance</div></div>
+      <div class="screen-info">
+        <div class="screen-name">Monthly Close</div>
+        <div class="screen-desc">10-item checklist, P&amp;L vs prior month table, approval status, audit log</div>
+        <div class="screen-tags"><span class="tag tag-tenant">Tenant</span><span class="tag tag-finance">Finance</span></div>
+      </div>
+    </a>
+  </div>
+</div>
+
+<!-- REPORTS & AUTOMATION -->
+<div class="section">
+  <div class="section-header">
+    <div class="section-icon" style="background:var(--accent-dim);color:var(--accent)">
+      <svg class="icon" viewBox="0 0 24 24"><path d="M2 3h6a4 4 0 0 1 4 4v14a3 3 0 0 0-3-3H2z"/><path d="M22 3h-6a4 4 0 0 0-4 4v14a3 3 0 0 1 3-3h7z"/></svg>
+    </div>
+    <div>
+      <div class="section-title">Reports &amp; Automation</div>
+      <div class="section-sub">Report library, AI natural-language builder, and visual automation canvas</div>
+    </div>
+    <div class="screen-count">3 screens</div>
+  </div>
+  <div class="screen-grid">
+    <a href="reports-library.html" class="screen-card">
+      <div class="screen-arrow">↗</div>
+      <div class="screen-preview preview-accent"><svg class="icon" style="color:var(--accent)" viewBox="0 0 24 24"><path d="M22 19a2 2 0 0 1-2 2H4a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h5l2 3h9a2 2 0 0 1 2 2z"/></svg><div class="preview-label">reports</div></div>
+      <div class="screen-info">
+        <div class="screen-name">Reports Library</div>
+        <div class="screen-desc">Search + filter chips, 6-card report grid with CSS chart thumbnails</div>
+        <div class="screen-tags"><span class="tag tag-tenant">Tenant</span></div>
+      </div>
+    </a>
+    <a href="report-builder-ai.html" class="screen-card">
+      <div class="screen-arrow">↗</div>
+      <div class="screen-preview preview-accent"><svg class="icon" style="color:var(--accent)" viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"/><path d="M9.09 9a3 3 0 0 1 5.83 1c0 2-3 3-3 3"/><line x1="12" y1="17" x2="12.01" y2="17"/></svg><div class="preview-label">reports</div></div>
+      <div class="screen-info">
+        <div class="screen-name">AI Report Builder</div>
+        <div class="screen-desc">Natural-language prompt → SQL → grouped bar chart preview + AI insight</div>
+        <div class="screen-tags"><span class="tag tag-tenant">Tenant</span></div>
+      </div>
+    </a>
+    <a href="automation-rule-builder.html" class="screen-card">
+      <div class="screen-arrow">↗</div>
+      <div class="screen-preview preview-accent"><svg class="icon" style="color:var(--accent)" viewBox="0 0 24 24"><polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2"/></svg><div class="preview-label">automation</div></div>
+      <div class="screen-info">
+        <div class="screen-name">Automation Rule Builder</div>
+        <div class="screen-desc">3-col canvas — trigger/condition/action blocks with connector arrows</div>
+        <div class="screen-tags"><span class="tag tag-tenant">Tenant</span></div>
+      </div>
+    </a>
+  </div>
+</div>
+
+<!-- SETTINGS -->
+<div class="section">
+  <div class="section-header">
+    <div class="section-icon" style="background:var(--accent-dim);color:var(--accent)">
+      <svg class="icon" viewBox="0 0 24 24"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1-2.83 2.83l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-4 0v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83-2.83l.06-.06A1.65 1.65 0 0 0 4.68 15a1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1 0-4h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 2.83-2.83l.06.06A1.65 1.65 0 0 0 9 4.68a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 4 0v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 2.83l-.06.06A1.65 1.65 0 0 0 19.4 9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 0 4h-.09a1.65 1.65 0 0 0-1.51 1z"/></svg>
+    </div>
+    <div>
+      <div class="section-title">Settings</div>
+      <div class="section-sub">Team, RBAC, integrations, billing, notifications, locale, warehouses, and API</div>
+    </div>
+    <div class="screen-count">8 screens</div>
+  </div>
+  <div class="screen-grid">
+    <a href="settings-team.html" class="screen-card">
+      <div class="screen-arrow">↗</div>
+      <div class="screen-preview preview-accent"><svg class="icon" style="color:var(--accent)" viewBox="0 0 24 24"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/></svg><div class="preview-label">settings</div></div>
+      <div class="screen-info">
+        <div class="screen-name">Team Management</div>
+        <div class="screen-desc">Member table, pending invites, role badges, invite banner</div>
+        <div class="screen-tags"><span class="tag tag-tenant">Tenant</span></div>
+      </div>
+    </a>
+    <a href="settings-rbac.html" class="screen-card">
+      <div class="screen-arrow">↗</div>
+      <div class="screen-preview preview-accent"><svg class="icon" style="color:var(--accent)" viewBox="0 0 24 24"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg><div class="preview-label">settings</div></div>
+      <div class="screen-info">
+        <div class="screen-name">Roles &amp; Permissions</div>
+        <div class="screen-desc">5 role cards + custom, 7-module × 5-permission checkbox matrix</div>
+        <div class="screen-tags"><span class="tag tag-tenant">Tenant</span></div>
+      </div>
+    </a>
+    <a href="settings-notifications.html" class="screen-card">
+      <div class="screen-arrow">↗</div>
+      <div class="screen-preview preview-accent"><svg class="icon" style="color:var(--accent)" viewBox="0 0 24 24"><path d="M18 8A6 6 0 0 0 6 8c0 7-3 9-3 9h18s-3-2-3-9"/><path d="M13.73 21a2 2 0 0 1-3.46 0"/></svg><div class="preview-label">settings</div></div>
+      <div class="screen-info">
+        <div class="screen-name">Notifications</div>
+        <div class="screen-desc">Email, in-app, SMS toggle matrix with quiet hours and schedule control</div>
+        <div class="screen-tags"><span class="tag tag-tenant">Tenant</span></div>
+      </div>
+    </a>
+    <a href="settings-locale.html" class="screen-card">
+      <div class="screen-arrow">↗</div>
+      <div class="screen-preview preview-accent"><svg class="icon" style="color:var(--accent)" viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"/><line x1="2" y1="12" x2="22" y2="12"/><path d="M12 2a15.3 15.3 0 0 1 4 10 15.3 15.3 0 0 1-4 10 15.3 15.3 0 0 1-4-10 15.3 15.3 0 0 1 4-10z"/></svg><div class="preview-label">settings</div></div>
+      <div class="screen-info">
+        <div class="screen-name">Locale &amp; Currency</div>
+        <div class="screen-desc">Language, date/time format, timezone, multi-currency with live preview</div>
+        <div class="screen-tags"><span class="tag tag-tenant">Tenant</span></div>
+      </div>
+    </a>
+    <a href="settings-billing.html" class="screen-card">
+      <div class="screen-arrow">↗</div>
+      <div class="screen-preview preview-accent"><svg class="icon" style="color:var(--accent)" viewBox="0 0 24 24"><rect x="1" y="4" width="22" height="16" rx="2" ry="2"/><line x1="1" y1="10" x2="23" y2="10"/></svg><div class="preview-label">settings</div></div>
+      <div class="screen-info">
+        <div class="screen-name">Billing &amp; Subscription</div>
+        <div class="screen-desc">Pro plan card, 3 usage meters, 5-row invoice history, dark Visa card</div>
+        <div class="screen-tags"><span class="tag tag-tenant">Tenant</span></div>
+      </div>
+    </a>
+    <a href="settings-integrations.html" class="screen-card">
+      <div class="screen-arrow">↗</div>
+      <div class="screen-preview preview-accent"><svg class="icon" style="color:var(--accent)" viewBox="0 0 24 24"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"/><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"/></svg><div class="preview-label">settings</div></div>
+      <div class="screen-info">
+        <div class="screen-name">Integrations</div>
+        <div class="screen-desc">9 integration cards (Amazon, Shopify, eBay, Royal Mail, QuickBooks…), marketplace banner</div>
+        <div class="screen-tags"><span class="tag tag-tenant">Tenant</span></div>
+      </div>
+    </a>
+    <a href="settings-warehouses.html" class="screen-card">
+      <div class="screen-arrow">↗</div>
+      <div class="screen-preview preview-accent"><svg class="icon" style="color:var(--accent)" viewBox="0 0 24 24"><path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/><polyline points="9 22 9 12 15 12 15 22"/></svg><div class="preview-label">settings</div></div>
+      <div class="screen-info">
+        <div class="screen-name">Warehouses</div>
+        <div class="screen-desc">4 warehouse cards with capacity bars, channel chips, settings panel, picking order</div>
+        <div class="screen-tags"><span class="tag tag-tenant">Tenant</span></div>
+      </div>
+    </a>
+    <a href="settings-api-webhooks.html" class="screen-card">
+      <div class="screen-arrow">↗</div>
+      <div class="screen-preview preview-accent"><svg class="icon" style="color:var(--accent)" viewBox="0 0 24 24"><polyline points="16 18 22 12 16 6"/><polyline points="8 6 2 12 8 18"/></svg><div class="preview-label">settings</div></div>
+      <div class="screen-info">
+        <div class="screen-name">API &amp; Webhooks</div>
+        <div class="screen-desc">API keys table with masked values, webhook endpoints, scope tags, rate-limit alert</div>
+        <div class="screen-tags"><span class="tag tag-tenant">Tenant</span></div>
+      </div>
+    </a>
+  </div>
+</div>
+
+<!-- WMS MOBILE -->
+<div class="section">
+  <div class="section-header">
+    <div class="section-icon" style="background:var(--green-dim);color:var(--green)">
+      <svg class="icon" viewBox="0 0 24 24"><rect x="5" y="2" width="14" height="20" rx="2" ry="2"/><line x1="12" y1="18" x2="12.01" y2="18"/></svg>
+    </div>
+    <div>
+      <div class="section-title">WMS Mobile App</div>
+      <div class="section-sub">Pick-and-pack, goods-in receiving, scan success/error states, manager overview — phone frame mockups</div>
+    </div>
+    <div class="screen-count">5 screens</div>
+  </div>
+  <div class="screen-grid">
+    <a href="wms-pick-list.html" class="screen-card mobile">
+      <div class="screen-arrow">↗</div>
+      <div class="screen-preview preview-mobile"><svg class="icon" style="color:var(--green)" viewBox="0 0 24 24"><line x1="8" y1="6" x2="21" y2="6"/><line x1="8" y1="12" x2="21" y2="12"/><line x1="8" y1="18" x2="21" y2="18"/><line x1="3" y1="6" x2="3.01" y2="6"/><line x1="3" y1="12" x2="3.01" y2="12"/><line x1="3" y1="18" x2="3.01" y2="18"/></svg><div class="preview-label">mobile · wms</div></div>
+      <div class="screen-info">
+        <div class="screen-name">Pick List</div>
+        <div class="screen-desc">Active pick task — bin location, barcode scan input, item progress</div>
+        <div class="screen-tags"><span class="tag tag-mobile">Mobile</span></div>
+      </div>
+    </a>
+    <a href="wms-scan-success.html" class="screen-card mobile">
+      <div class="screen-arrow">↗</div>
+      <div class="screen-preview preview-mobile"><svg class="icon" style="color:var(--green)" viewBox="0 0 24 24"><path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"/><polyline points="22 4 12 14.01 9 11.01"/></svg><div class="preview-label">mobile · wms</div></div>
+      <div class="screen-info">
+        <div class="screen-name">Scan Success</div>
+        <div class="screen-desc">Green confirmation — large checkmark, item details, quantity stepper</div>
+        <div class="screen-tags"><span class="tag tag-mobile">Mobile</span></div>
+      </div>
+    </a>
+    <a href="wms-scan-error.html" class="screen-card mobile">
+      <div class="screen-arrow">↗</div>
+      <div class="screen-preview preview-mobile"><svg class="icon" style="color:var(--red-400,#F87171)" viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"/><line x1="15" y1="9" x2="9" y2="15"/><line x1="9" y1="9" x2="15" y2="15"/></svg><div class="preview-label">mobile · wms</div></div>
+      <div class="screen-info">
+        <div class="screen-name">Scan Error</div>
+        <div class="screen-desc">Wrong item — scanned vs expected comparison cards, recovery actions</div>
+        <div class="screen-tags"><span class="tag tag-mobile">Mobile</span></div>
+      </div>
+    </a>
+    <a href="wms-manager-dashboard.html" class="screen-card mobile">
+      <div class="screen-arrow">↗</div>
+      <div class="screen-preview preview-mobile"><svg class="icon" style="color:var(--green)" viewBox="0 0 24 24"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/></svg><div class="preview-label">mobile · wms</div></div>
+      <div class="screen-info">
+        <div class="screen-name">Manager Dashboard</div>
+        <div class="screen-desc">Live team tracking, alert cards, shift metrics, zone performance</div>
+        <div class="screen-tags"><span class="tag tag-mobile">Mobile</span></div>
+      </div>
+    </a>
+    <a href="wms-goods-in.html" class="screen-card mobile">
+      <div class="screen-arrow">↗</div>
+      <div class="screen-preview preview-mobile"><svg class="icon" style="color:var(--green)" viewBox="0 0 24 24"><path d="M21 16V8a2 2 0 0 0-1-1.73l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.73l7 4a2 2 0 0 0 2 0l7-4A2 2 0 0 0 21 16z"/><line x1="12" y1="22" x2="12" y2="12"/></svg><div class="preview-label">mobile · wms</div></div>
+      <div class="screen-info">
+        <div class="screen-name">Goods In</div>
+        <div class="screen-desc">PO receiving — scan items, track received vs expected per line, progress bar</div>
+        <div class="screen-tags"><span class="tag tag-mobile">Mobile</span></div>
+      </div>
+    </a>
+  </div>
+</div>
+
+<!-- MARKETING SITE -->
+<div class="section">
+  <div class="section-header">
+    <div class="section-icon" style="background:rgba(59,130,246,.1);color:var(--blue)">
+      <svg class="icon" viewBox="0 0 24 24"><polyline points="22 12 18 12 15 21 9 3 6 12 2 12"/></svg>
+    </div>
+    <div>
+      <div class="section-title">Marketing Site</div>
+      <div class="section-sub">Public-facing homepage, pricing, full features page, and competitor comparison</div>
+    </div>
+    <div class="screen-count">4 screens</div>
+  </div>
+  <div class="screen-grid">
+    <a href="marketing-home.html" class="screen-card marketing">
+      <div class="screen-arrow">↗</div>
+      <div class="screen-preview preview-marketing"><svg class="icon" style="color:var(--blue)" viewBox="0 0 24 24"><path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/><polyline points="9 22 9 12 15 12 15 22"/></svg><div class="preview-label">marketing</div></div>
+      <div class="screen-info">
+        <div class="screen-name">Homepage</div>
+        <div class="screen-desc">Glass nav, radial gradient hero, 6-feature grid, testimonials, footer</div>
+        <div class="screen-tags"><span class="tag tag-marketing">Marketing</span></div>
+      </div>
+    </a>
+    <a href="marketing-pricing.html" class="screen-card marketing">
+      <div class="screen-arrow">↗</div>
+      <div class="screen-preview preview-marketing"><svg class="icon" style="color:var(--blue)" viewBox="0 0 24 24"><line x1="12" y1="1" x2="12" y2="23"/><path d="M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6"/></svg><div class="preview-label">marketing</div></div>
+      <div class="screen-info">
+        <div class="screen-name">Pricing Page</div>
+        <div class="screen-desc">Annual/monthly toggle, 4 plan cards, full feature comparison table, FAQ</div>
+        <div class="screen-tags"><span class="tag tag-marketing">Marketing</span></div>
+      </div>
+    </a>
+    <a href="marketing-features.html" class="screen-card marketing">
+      <div class="screen-arrow">↗</div>
+      <div class="screen-preview preview-marketing"><svg class="icon" style="color:var(--blue)" viewBox="0 0 24 24"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg><div class="preview-label">marketing</div></div>
+      <div class="screen-info">
+        <div class="screen-name">Features Page</div>
+        <div class="screen-desc">Sticky pill nav, 4 alternating split sections, 9-tile capability grid</div>
+        <div class="screen-tags"><span class="tag tag-marketing">Marketing</span></div>
+      </div>
+    </a>
+    <a href="marketing-comparison.html" class="screen-card marketing">
+      <div class="screen-arrow">↗</div>
+      <div class="screen-preview preview-marketing"><svg class="icon" style="color:var(--blue)" viewBox="0 0 24 24"><polyline points="8 6 2 12 8 18"/><polyline points="16 6 22 12 16 18"/><line x1="12" y1="2" x2="12" y2="22"/></svg><div class="preview-label">marketing</div></div>
+      <div class="screen-info">
+        <div class="screen-name">Competitor Comparison</div>
+        <div class="screen-desc">Score cards, full comparison table vs Linnworks/Brightpearl, 6 win tiles</div>
+        <div class="screen-tags"><span class="tag tag-marketing">Marketing</span></div>
+      </div>
+    </a>
+  </div>
+</div>
+
+<!-- PLATFORM ADMIN -->
+<div class="section">
+  <div class="section-header">
+    <div class="section-icon" style="background:var(--violet-dim);color:var(--violet)">
+      <svg class="icon" viewBox="0 0 24 24"><rect x="2" y="3" width="20" height="14" rx="2" ry="2"/><line x1="8" y1="21" x2="16" y2="21"/><line x1="12" y1="17" x2="12" y2="21"/></svg>
+    </div>
+    <div>
+      <div class="section-title">Platform Admin</div>
+      <div class="section-sub">Super-admin portal — violet accent theme, company list, system health, feature flags, and audit logs</div>
+    </div>
+    <div class="screen-count">4 screens</div>
+  </div>
+  <div class="screen-grid">
+    <a href="admin-company-list.html" class="screen-card violet">
+      <div class="screen-arrow">↗</div>
+      <div class="screen-preview preview-violet"><svg class="icon" style="color:var(--violet)" viewBox="0 0 24 24"><path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/><polyline points="9 22 9 12 15 12 15 22"/></svg><div class="preview-label">admin</div></div>
+      <div class="screen-info">
+        <div class="screen-name">Company List</div>
+        <div class="screen-desc">1,247 tenants — plan badges, MRR, status, impersonate and suspend actions</div>
+        <div class="screen-tags"><span class="tag tag-admin">Admin</span></div>
+      </div>
+    </a>
+    <a href="admin-system-health.html" class="screen-card violet">
+      <div class="screen-arrow">↗</div>
+      <div class="screen-preview preview-violet"><svg class="icon" style="color:var(--violet)" viewBox="0 0 24 24"><polyline points="22 12 18 12 15 21 9 3 6 12 2 12"/></svg><div class="preview-label">admin</div></div>
+      <div class="screen-info">
+        <div class="screen-name">System Health</div>
+        <div class="screen-desc">9 service cards, uptime banner, incidents list, request/latency metrics</div>
+        <div class="screen-tags"><span class="tag tag-admin">Admin</span></div>
+      </div>
+    </a>
+    <a href="admin-feature-flags.html" class="screen-card violet">
+      <div class="screen-arrow">↗</div>
+      <div class="screen-preview preview-violet"><svg class="icon" style="color:var(--violet)" viewBox="0 0 24 24"><path d="M4 15s1-1 4-1 5 2 8 2 4-1 4-1V3s-1 1-4 1-5-2-8-2-4 1-4 1z"/><line x1="4" y1="22" x2="4" y2="15"/></svg><div class="preview-label">admin</div></div>
+      <div class="screen-info">
+        <div class="screen-name">Feature Flags</div>
+        <div class="screen-desc">8 flag rows with rollout % bars, toggle switches, beta/experiment/deprecated status pills</div>
+        <div class="screen-tags"><span class="tag tag-admin">Admin</span></div>
+      </div>
+    </a>
+    <a href="admin-audit-logs.html" class="screen-card violet">
+      <div class="screen-arrow">↗</div>
+      <div class="screen-preview preview-violet"><svg class="icon" style="color:var(--violet)" viewBox="0 0 24 24"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/><line x1="16" y1="13" x2="8" y2="13"/><line x1="16" y1="17" x2="8" y2="17"/></svg><div class="preview-label">admin</div></div>
+      <div class="screen-info">
+        <div class="screen-name">Audit Logs</div>
+        <div class="screen-desc">10-row event log with actor, action badges, failed-row highlights, detail side panel</div>
+        <div class="screen-tags"><span class="tag tag-admin">Admin</span></div>
+      </div>
+    </a>
+  </div>
+</div>
+
+<footer>
+  <div class="footer-inner">
+    <span>Synergia360 · Prism Light Design System · 55 screens across 12 surface areas</span>
+    <span>Inter + Geist Mono · #4F46E5 Indigo (Tenant) · #7C3AED Violet (Admin)</span>
+  </div>
+</footer>
+
+</body>
+</html>

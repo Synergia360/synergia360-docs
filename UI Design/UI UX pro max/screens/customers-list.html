@@ -1,0 +1,467 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Customers — Synergia360</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+<style>
+:root{
+  --bg:#F8F9FC;--surface:#FFFFFF;--surface-2:#F8FAFF;--border:#E2E8F0;
+  --accent:#4F46E5;--accent-dim:rgba(79,70,229,.08);--accent-light:#EEF2FF;
+  --text:#0F172A;--text-2:#475569;--text-3:#94A3B8;
+  --green:#10B981;--green-dim:rgba(16,185,129,.08);--green-light:#ECFDF5;
+  --red:#EF4444;--red-dim:rgba(239,68,68,.08);--red-light:#FEF2F2;
+  --amber:#F59E0B;--amber-dim:rgba(245,158,11,.08);--amber-light:#FFFBEB;
+  --blue:#3B82F6;--font:'Inter',sans-serif;--mono:'Geist Mono',monospace;
+  --shadow-sm:0 1px 2px rgba(0,0,0,.05);--shadow:0 1px 3px rgba(0,0,0,.08),0 1px 2px rgba(0,0,0,.04);
+  --purple:#8B5CF6;--purple-light:#F5F3FF
+}
+*{box-sizing:border-box;margin:0;padding:0}
+body{font-family:var(--font);background:var(--bg);color:var(--text);font-size:14px;line-height:1.5;display:flex}
+
+/* Sidebar */
+.sidebar{width:240px;background:var(--surface);border-right:1px solid var(--border);height:100vh;position:fixed;top:0;left:0;display:flex;flex-direction:column;z-index:50;overflow-y:auto}
+.sb-logo{padding:16px;border-bottom:1px solid var(--border);display:flex;align-items:center;gap:10px;flex-shrink:0}
+.sb-mark{width:32px;height:32px;background:var(--accent);border-radius:8px;display:grid;place-items:center;color:#fff;font-weight:800;font-size:14px;flex-shrink:0}
+.sb-name{font-weight:700;font-size:15px;color:var(--text)}
+.sb-nav{flex:1;padding:10px 8px;overflow-y:auto;display:flex;flex-direction:column}
+.sb-section{font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:.06em;color:var(--text-3);padding:12px 10px 4px;display:block}
+.sb-link{display:flex;align-items:center;gap:8px;padding:8px 10px;border-radius:8px;color:var(--text-2);font-size:13px;font-weight:500;text-decoration:none;border-left:2px solid transparent;margin-bottom:1px;transition:background .15s,color .15s}
+.sb-link:hover{background:var(--surface-2);color:var(--text)}
+.sb-link.active{background:var(--accent-light);color:var(--accent);border-left-color:var(--accent);font-weight:600}
+.sb-foot{padding:12px 16px;border-top:1px solid var(--border);display:flex;align-items:center;gap:10px;flex-shrink:0}
+.sb-av{width:32px;height:32px;background:var(--accent-light);border-radius:50%;display:grid;place-items:center;color:var(--accent);font-weight:700;font-size:12px;flex-shrink:0}
+.sb-uname{font-size:13px;font-weight:600;color:var(--text);line-height:1.2}
+.sb-urole{font-size:11px;color:var(--text-3)}
+.main{margin-left:240px;min-height:100vh;flex:1;display:flex}
+
+/* Top bar */
+.topbar{position:sticky;top:0;z-index:40;background:var(--surface);border-bottom:1px solid var(--border);padding:0 28px;height:60px;display:flex;align-items:center;gap:12px}
+.topbar h1{font-size:18px;font-weight:700;color:var(--text);flex:1}
+.btn{display:inline-flex;align-items:center;gap:6px;padding:7px 14px;border-radius:8px;font-size:13px;font-weight:600;cursor:pointer;border:none;line-height:1.4;text-decoration:none;transition:background .15s}
+.btn-ghost{background:transparent;border:1px solid var(--border);color:var(--text-2)}
+.btn-ghost:hover{background:var(--surface-2)}
+
+/* Layout */
+.page-body{flex:1;min-width:0;display:flex;flex-direction:column}
+.content{padding:24px 28px;flex:1}
+.two-col{display:flex;gap:20px;align-items:flex-start}
+.col-main{flex:1;min-width:0}
+.col-side{width:280px;flex-shrink:0}
+
+/* Stats row */
+.stats-row{display:flex;gap:12px;margin-bottom:20px}
+.stat-chip{background:var(--surface);border:1px solid var(--border);border-radius:10px;padding:12px 16px;flex:1;box-shadow:var(--shadow-sm)}
+.stat-label{font-size:11px;font-weight:600;text-transform:uppercase;letter-spacing:.05em;color:var(--text-3);margin-bottom:4px}
+.stat-val{font-size:20px;font-weight:700;color:var(--text);line-height:1.2}
+
+/* Filter row */
+.filter-row{display:flex;gap:8px;margin-bottom:16px;align-items:center;flex-wrap:wrap}
+.input-search{flex:1;min-width:220px;max-width:300px;padding:8px 12px;border:1px solid var(--border);border-radius:8px;font-size:13px;font-family:var(--font);color:var(--text);background:var(--surface);outline:none}
+.input-search:focus{border-color:var(--accent);box-shadow:0 0 0 3px var(--accent-dim)}
+.select{padding:8px 12px;border:1px solid var(--border);border-radius:8px;font-size:13px;font-family:var(--font);color:var(--text-2);background:var(--surface);outline:none;cursor:pointer}
+
+/* Table */
+.card{background:var(--surface);border:1px solid var(--border);border-radius:12px;box-shadow:var(--shadow);overflow:hidden;margin-bottom:16px}
+table{width:100%;border-collapse:collapse}
+thead th{background:var(--surface-2);padding:10px 14px;text-align:left;font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:.05em;color:var(--text-3);border-bottom:1px solid var(--border);white-space:nowrap}
+tbody tr{border-bottom:1px solid var(--border);transition:background .12s}
+tbody tr:last-child{border-bottom:none}
+tbody tr:hover{background:var(--surface-2)}
+tbody td{padding:11px 14px;font-size:13px;color:var(--text-2);vertical-align:middle}
+td.cell-main{color:var(--text);font-weight:600}
+
+/* Row highlights */
+tr.row-atrisk{border-left:3px solid var(--amber)}
+
+/* Customer cell */
+.cust-cell{display:flex;align-items:center;gap:10px}
+.cust-av{width:30px;height:30px;border-radius:50%;background:var(--accent-light);display:grid;place-items:center;color:var(--accent);font-size:10px;font-weight:700;flex-shrink:0}
+
+/* Badges */
+.badge{display:inline-flex;align-items:center;padding:3px 8px;border-radius:20px;font-size:11px;font-weight:600;white-space:nowrap}
+.badge-purple{background:var(--purple-light);color:var(--purple)}
+.badge-green{background:var(--green-light);color:var(--green)}
+.badge-blue{background:#EFF6FF;color:var(--blue)}
+.badge-amber{background:var(--amber-light);color:var(--amber)}
+
+/* Actions */
+.action-link{color:var(--accent);font-size:12px;font-weight:600;text-decoration:none;cursor:pointer}
+.action-link:hover{text-decoration:underline}
+.action-sep{color:var(--border);margin:0 4px}
+
+/* Email cell */
+.email-cell{color:var(--text-3);font-size:12px}
+
+/* Side cards */
+.side-card{background:var(--surface);border:1px solid var(--border);border-radius:12px;padding:16px;box-shadow:var(--shadow-sm);margin-bottom:14px}
+.side-card-title{font-size:13px;font-weight:700;color:var(--text);margin-bottom:12px}
+.insight-row{display:flex;justify-content:space-between;align-items:center;margin-bottom:8px;font-size:12px}
+.insight-row:last-child{margin-bottom:0}
+.insight-label{color:var(--text-3)}
+.insight-val{color:var(--text);font-weight:600}
+
+/* Churn alert card */
+.churn-card{background:var(--amber-light);border:1px solid var(--amber);border-radius:12px;padding:16px;margin-bottom:14px}
+.churn-title{font-size:13px;font-weight:700;color:var(--amber);display:flex;align-items:center;gap:6px;margin-bottom:8px}
+.churn-body{font-size:12px;color:var(--text-2);line-height:1.5;margin-bottom:12px}
+.btn-amber{background:var(--amber);color:#fff;border:none;padding:7px 14px;border-radius:8px;font-size:12px;font-weight:600;cursor:pointer;width:100%;text-align:center}
+.btn-amber:hover{background:#D97706}
+
+/* Segment mini bar */
+.seg-mini{display:flex;gap:6px;flex-wrap:wrap;margin-top:4px}
+.seg-pill{display:inline-flex;align-items:center;gap:4px;padding:2px 8px;border-radius:20px;font-size:10px;font-weight:600}
+
+/* Trend badge */
+.trend-up{color:var(--green);font-weight:600;font-size:12px}
+</style>
+</head>
+<body>
+
+<aside class="sidebar">
+  <div class="sb-logo">
+    <div class="sb-mark">S</div>
+    <span class="sb-name">Synergia<span style="color:var(--accent)">360</span></span>
+  </div>
+  <nav class="sb-nav">
+    <a href="main-dashboard.html" class="sb-link">Dashboard</a>
+    <span class="sb-section">Orders</span>
+    <a href="order-queue.html" class="sb-link">Order Queue</a>
+    <a href="returns-queue.html" class="sb-link">Returns</a>
+    <a href="shipments-list.html" class="sb-link">Shipments</a>
+    <a href="routing-rules.html" class="sb-link">Routing Rules</a>
+    <a href="order-automation.html" class="sb-link">Automation</a>
+    <span class="sb-section">Inventory</span>
+    <a href="inventory-stock-overview.html" class="sb-link">Stock</a>
+    <a href="inventory-stock-take.html" class="sb-link">Stock Take</a>
+    <a href="purchase-orders.html" class="sb-link">Purchase Orders</a>
+    <a href="suppliers-list.html" class="sb-link">Suppliers</a>
+    <span class="sb-section">Catalogue</span>
+    <a href="catalogue-product-list.html" class="sb-link">Products</a>
+    <a href="catalogue-bom-builder.html" class="sb-link">BOM Builder</a>
+    <span class="sb-section">Channels</span>
+    <a href="channels-overview.html" class="sb-link">Overview</a>
+    <a href="listing-manager.html" class="sb-link">Listings</a>
+    <a href="pricing-rules.html" class="sb-link">Pricing Rules</a>
+    <span class="sb-section">Customers</span>
+    <a href="customers-list.html" class="sb-link active">Customers</a>
+    <span class="sb-section">Finance</span>
+    <a href="finance-dashboard.html" class="sb-link">Overview</a>
+    <a href="finance-expense-management.html" class="sb-link">Expenses</a>
+    <a href="sku-profitability.html" class="sb-link">SKU Profitability</a>
+    <a href="finance-monthly-close.html" class="sb-link">Monthly Close</a>
+    <span class="sb-section">Reports</span>
+    <a href="reports-library.html" class="sb-link">Library</a>
+    <a href="report-builder-ai.html" class="sb-link">AI Builder</a>
+    <a href="automation-rule-builder.html" class="sb-link">Automation</a>
+    <span class="sb-section">Settings</span>
+    <a href="settings-team.html" class="sb-link">Team</a>
+    <a href="settings-rbac.html" class="sb-link">Roles &amp; Permissions</a>
+    <a href="settings-billing.html" class="sb-link">Billing</a>
+    <a href="settings-notifications.html" class="sb-link">Notifications</a>
+    <a href="settings-locale.html" class="sb-link">Locale &amp; Currency</a>
+    <a href="settings-integrations.html" class="sb-link">Integrations</a>
+    <a href="settings-warehouses.html" class="sb-link">Warehouses</a>
+    <a href="settings-api-webhooks.html" class="sb-link">API &amp; Webhooks</a>
+  </nav>
+  <div class="sb-foot">
+    <div class="sb-av">JW</div>
+    <div>
+      <div class="sb-uname">James Whitcombe</div>
+      <div class="sb-urole">Owner &middot; Acme Co</div>
+    </div>
+  </div>
+</aside>
+
+<div class="main">
+  <div class="page-body">
+    <div class="topbar">
+      <h1>Customers</h1>
+      <button class="btn btn-ghost">&#8593; Export</button>
+      <button class="btn btn-ghost">&#8595; Import</button>
+    </div>
+
+    <div class="content">
+      <!-- Stats -->
+      <div class="stats-row">
+        <div class="stat-chip">
+          <div class="stat-label">Total Customers</div>
+          <div class="stat-val">12,847</div>
+        </div>
+        <div class="stat-chip">
+          <div class="stat-label">New This Month</div>
+          <div class="stat-val" style="color:var(--green)">234</div>
+        </div>
+        <div class="stat-chip">
+          <div class="stat-label">Repeat Rate</div>
+          <div class="stat-val">42.3%</div>
+        </div>
+        <div class="stat-chip">
+          <div class="stat-label">Avg LTV</div>
+          <div class="stat-val">£284</div>
+        </div>
+      </div>
+
+      <div class="two-col">
+        <!-- Main col -->
+        <div class="col-main">
+          <!-- Filters -->
+          <div class="filter-row">
+            <input class="input-search" type="text" placeholder="&#128269; Search name or email…">
+            <select class="select">
+              <option>Channel: All</option>
+              <option>Amazon</option>
+              <option>Shopify</option>
+              <option>eBay</option>
+            </select>
+            <select class="select">
+              <option>Segment: All</option>
+              <option>New</option>
+              <option>Repeat</option>
+              <option>VIP</option>
+              <option>At Risk</option>
+            </select>
+            <select class="select">
+              <option>Sort: Last Order</option>
+              <option>Sort: Total Spent</option>
+              <option>Sort: Orders</option>
+              <option>Sort: Name A–Z</option>
+            </select>
+          </div>
+
+          <!-- Table -->
+          <div class="card">
+            <table>
+              <thead>
+                <tr>
+                  <th>Customer</th>
+                  <th>Email</th>
+                  <th>Orders</th>
+                  <th>Total Spent</th>
+                  <th>Avg Order</th>
+                  <th>Last Order</th>
+                  <th>Segment</th>
+                  <th>Actions</th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr>
+                  <td class="cell-main">
+                    <div class="cust-cell">
+                      <div class="cust-av">JS</div>
+                      Jane Smith
+                    </div>
+                  </td>
+                  <td class="email-cell">jane.smith@email.com</td>
+                  <td>12</td>
+                  <td style="font-weight:600;color:var(--text)">£1,847.20</td>
+                  <td>£153.93</td>
+                  <td>2 days ago</td>
+                  <td><span class="badge badge-purple">VIP</span></td>
+                  <td><a class="action-link" href="customer-detail.html">View</a></td>
+                </tr>
+                <tr>
+                  <td class="cell-main">
+                    <div class="cust-cell">
+                      <div class="cust-av">BC</div>
+                      Bob Chen
+                    </div>
+                  </td>
+                  <td class="email-cell">bob.chen@gmail.com</td>
+                  <td>3</td>
+                  <td style="font-weight:600;color:var(--text)">£234.50</td>
+                  <td>£78.17</td>
+                  <td>1 week ago</td>
+                  <td><span class="badge badge-green">Repeat</span></td>
+                  <td><a class="action-link" href="#">View</a></td>
+                </tr>
+                <tr>
+                  <td class="cell-main">
+                    <div class="cust-cell">
+                      <div class="cust-av">AB</div>
+                      Alice Brown
+                    </div>
+                  </td>
+                  <td class="email-cell">alice.b@outlook.com</td>
+                  <td>1</td>
+                  <td style="font-weight:600;color:var(--text)">£49.99</td>
+                  <td>£49.99</td>
+                  <td>3 weeks ago</td>
+                  <td><span class="badge badge-blue">New</span></td>
+                  <td><a class="action-link" href="#">View</a></td>
+                </tr>
+                <tr>
+                  <td class="cell-main">
+                    <div class="cust-cell">
+                      <div class="cust-av">TW</div>
+                      Tom Wilson
+                    </div>
+                  </td>
+                  <td class="email-cell">t.wilson@company.com</td>
+                  <td>8</td>
+                  <td style="font-weight:600;color:var(--text)">£921.40</td>
+                  <td>£115.18</td>
+                  <td>4 days ago</td>
+                  <td><span class="badge badge-green">Repeat</span></td>
+                  <td><a class="action-link" href="#">View</a></td>
+                </tr>
+                <tr class="row-atrisk">
+                  <td class="cell-main">
+                    <div class="cust-cell">
+                      <div class="cust-av" style="background:var(--amber-light);color:var(--amber)">SL</div>
+                      Sarah Lee
+                    </div>
+                  </td>
+                  <td class="email-cell">sarah.lee@gmail.com</td>
+                  <td>0</td>
+                  <td style="color:var(--text-3)">£0</td>
+                  <td style="color:var(--text-3)">—</td>
+                  <td>6 months ago</td>
+                  <td><span class="badge badge-amber">At Risk</span></td>
+                  <td>
+                    <a class="action-link" href="#">View</a>
+                    <span class="action-sep">·</span>
+                    <a class="action-link" href="#">Email</a>
+                  </td>
+                </tr>
+                <tr>
+                  <td class="cell-main">
+                    <div class="cust-cell">
+                      <div class="cust-av">MD</div>
+                      Mike Davis
+                    </div>
+                  </td>
+                  <td class="email-cell">mdavis@email.co.uk</td>
+                  <td>24</td>
+                  <td style="font-weight:600;color:var(--text)">£3,291.80</td>
+                  <td>£137.16</td>
+                  <td>Yesterday</td>
+                  <td><span class="badge badge-purple">VIP</span></td>
+                  <td><a class="action-link" href="#">View</a></td>
+                </tr>
+                <tr>
+                  <td class="cell-main">
+                    <div class="cust-cell">
+                      <div class="cust-av">EJ</div>
+                      Emma Jones
+                    </div>
+                  </td>
+                  <td class="email-cell">e.jones@hotmail.com</td>
+                  <td>2</td>
+                  <td style="font-weight:600;color:var(--text)">£188.00</td>
+                  <td>£94.00</td>
+                  <td>2 weeks ago</td>
+                  <td><span class="badge badge-green">Repeat</span></td>
+                  <td><a class="action-link" href="#">View</a></td>
+                </tr>
+                <tr>
+                  <td class="cell-main">
+                    <div class="cust-cell">
+                      <div class="cust-av">CT</div>
+                      Chris Taylor
+                    </div>
+                  </td>
+                  <td class="email-cell">chris.t@gmail.com</td>
+                  <td>1</td>
+                  <td style="font-weight:600;color:var(--text)">£29.99</td>
+                  <td>£29.99</td>
+                  <td>1 month ago</td>
+                  <td><span class="badge badge-blue">New</span></td>
+                  <td><a class="action-link" href="#">View</a></td>
+                </tr>
+              </tbody>
+            </table>
+            <div style="display:flex;align-items:center;justify-content:space-between;padding:12px 16px;border-top:1px solid var(--border)">
+              <span style="font-size:13px;color:var(--text-3)">Showing 1–8 of 12,847 customers</span>
+              <div style="display:flex;gap:6px">
+                <button style="padding:6px 12px;border:1px solid var(--border);border-radius:6px;font-size:13px;font-weight:500;color:var(--text-2);background:var(--surface);cursor:pointer;opacity:.4">&#8592; Prev</button>
+                <button style="padding:6px 12px;border:1px solid var(--border);border-radius:6px;font-size:13px;font-weight:500;color:var(--text-2);background:var(--surface);cursor:pointer">Next &#8594;</button>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Right sidebar -->
+        <div class="col-side">
+          <!-- Churn alert -->
+          <div class="churn-card">
+            <div class="churn-title">&#9888; Churn Risk Alert</div>
+            <div class="churn-body">89 customers haven't ordered in 90+ days. Send a win-back campaign to re-engage them.</div>
+            <button class="btn-amber">Create Campaign</button>
+          </div>
+
+          <!-- Insights -->
+          <div class="side-card">
+            <div class="side-card-title">Customer Insights</div>
+            <div class="insight-row">
+              <span class="insight-label">Top segment</span>
+              <span class="insight-val"><span class="badge badge-purple" style="font-size:10px">VIP</span></span>
+            </div>
+            <div class="insight-row">
+              <span class="insight-label">VIP avg LTV</span>
+              <span class="insight-val">£3,291</span>
+            </div>
+            <div class="insight-row">
+              <span class="insight-label">VIP count</span>
+              <span class="insight-val">24</span>
+            </div>
+            <div style="height:1px;background:var(--border);margin:10px 0"></div>
+            <div class="insight-row">
+              <span class="insight-label">Repeat rate</span>
+              <span class="insight-val">42.3%</span>
+            </div>
+            <div class="insight-row">
+              <span class="insight-label">vs last month</span>
+              <span class="trend-up">+2.1% &#8593;</span>
+            </div>
+            <div style="height:1px;background:var(--border);margin:10px 0"></div>
+            <div class="insight-row">
+              <span class="insight-label">At Risk count</span>
+              <span style="color:var(--amber);font-weight:600">89 customers</span>
+            </div>
+          </div>
+
+          <!-- Segments breakdown -->
+          <div class="side-card">
+            <div class="side-card-title">Segments</div>
+            <div style="display:flex;flex-direction:column;gap:8px">
+              <div style="display:flex;align-items:center;justify-content:space-between">
+                <span class="badge badge-purple">VIP</span>
+                <div style="flex:1;margin:0 10px;height:4px;border-radius:4px;background:var(--border);overflow:hidden">
+                  <div style="width:2%;height:100%;background:var(--purple);border-radius:4px"></div>
+                </div>
+                <span style="font-size:12px;font-weight:600;color:var(--text)">24</span>
+              </div>
+              <div style="display:flex;align-items:center;justify-content:space-between">
+                <span class="badge badge-green">Repeat</span>
+                <div style="flex:1;margin:0 10px;height:4px;border-radius:4px;background:var(--border);overflow:hidden">
+                  <div style="width:32%;height:100%;background:var(--green);border-radius:4px"></div>
+                </div>
+                <span style="font-size:12px;font-weight:600;color:var(--text)">5,340</span>
+              </div>
+              <div style="display:flex;align-items:center;justify-content:space-between">
+                <span class="badge badge-blue">New</span>
+                <div style="flex:1;margin:0 10px;height:4px;border-radius:4px;background:var(--border);overflow:hidden">
+                  <div style="width:56%;height:100%;background:var(--blue);border-radius:4px"></div>
+                </div>
+                <span style="font-size:12px;font-weight:600;color:var(--text)">6,894</span>
+              </div>
+              <div style="display:flex;align-items:center;justify-content:space-between">
+                <span class="badge badge-amber">At Risk</span>
+                <div style="flex:1;margin:0 10px;height:4px;border-radius:4px;background:var(--border);overflow:hidden">
+                  <div style="width:1%;height:100%;background:var(--amber);border-radius:4px"></div>
+                </div>
+                <span style="font-size:12px;font-weight:600;color:var(--text)">89</span>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+</body>
+</html>
