@@ -25,13 +25,14 @@
   - [PROJECT\_STATUS.md Format](#project_statusmd-format-maintained-every-phase)
   - [ADR Format](#adr-format)
 - [Step 5 — Design System](#step-5--design-system)
-  - [Design Tooling](#design-tooling)
-  - [Visual Direction: Dark Luxury](#visual-direction-dark-luxury)
-  - [Colour Palette](#colour-palette-css-custom-properties--oklch)
+  - [Design Source of Truth](#design-source-of-truth)
+  - [Visual Direction: Prism Light](#visual-direction-prism-light)
+  - [Colour Tokens](#colour-tokens)
   - [Typography](#typography)
   - [Three Surfaces](#three-surfaces)
   - [RTL (right-to-left) Support](#rtl-right-to-left-support)
   - [Project Structure](#project-structure)
+  - [Screen Inventory](#screen-inventory)
   - [Custom Components](#custom-components)
   - [Motion & Interaction](#motion--interaction)
 - [Step 6 — Phased Implementation Plan](#step-6--phased-implementation-plan)
@@ -146,7 +147,7 @@
 
 - **Critical schema gaps now in Phase 1 lock:** multi-currency / FX, VAT / tax engine, customers/buyers as first-class entity, channel buffer stock rules
 - **New domains added:** Customers/CRM, Tax & Currency, Repricing, Stock Take, Returns to Vendor, Pricing Rules, GDPR/Compliance
-- **Market-leading additions:** AI woven through workflows from Phase 5 (not just chat at Phase 13), public MCP read-only beta brought forward to Phase 13, free tier for sub-£100K turnover sellers, channel onboarding "60-second connect" wizard, public uptime/metrics page, open-source adapter SDK, 3PL shadow-tenant model, public marketing site at `synergia.co.uk` (Astro), bilingual UI (English + Urdu with full RTL support) from launch, **AI-authored saved reports + 18-report finance starter pack + user-built drag-and-drop dashboards**, **three-tier product research stack — Tier A (Phase 13) → Tier B Marketplace Research (Phase 14) → Tier C Full Research Platform with AI image-match supplier finding & cross-marketplace arbitrage detection (Phase 15)**
+- **Market-leading additions:** AI woven through workflows from Phase 5 (not just chat at Phase 13), public MCP read-only beta brought forward to Phase 13, free tier for sub-£100K turnover sellers, channel onboarding "60-second connect" wizard, public uptime/metrics page, open-source adapter SDK, 3PL shadow-tenant model, public marketing site at `synergia360.app` (Astro), bilingual UI (English + Urdu with full RTL support) from launch, **AI-authored saved reports + 18-report finance starter pack + user-built drag-and-drop dashboards**, **three-tier product research stack — Tier A (Phase 13) → Tier B Marketplace Research (Phase 14) → Tier C Full Research Platform with AI image-match supplier finding & cross-marketplace arbitrage detection (Phase 15)**
 - **Phases now 0–17** (was 0–15): Tier B + Tier C product research inserted as Phases 14 + 15; Storefronts moved to 16; Enterprise + Public API + MCP GA moved to 17.
 - **Implementation Sequence rewritten** to match new phase order
 
@@ -238,11 +239,11 @@ Synergia is a **multichannel marketplace management + 3PL platform** targeting U
 
 **Surfaces**
 
-31. **Public marketing website** — `synergia.co.uk` — the front door of the business. Static-first (Astro) for SEO + performance; pages: home, features (per domain), pricing (free tier prominent), for-sellers, for-3PLs, comparisons (vs Linnworks/StoreFEEDER/Veeqo), integrations directory, blog (content marketing), case studies, about, contact / demo request, legal (privacy, terms, DPA, sub-processors, cookies). Sign-up CTAs route to `app.synergia.co.uk`. Lead capture stored in `marketing_leads` table.
+31. **Public marketing website** — `synergia360.app` — the front door of the business. Static-first (Astro) for SEO + performance; pages: home, features (per domain), pricing (free tier prominent), for-sellers, for-3PLs, comparisons (vs Linnworks/StoreFEEDER/Veeqo), integrations directory, blog (content marketing), case studies, about, contact / demo request, legal (privacy, terms, DPA, sub-processors, cookies). Sign-up CTAs route to `app.synergia360.app`. Lead capture stored in `marketing_leads` table.
 32. **3PL client portal** — scoped portal for 3PL clients (under shadow-tenant model — each managed brand is its own `company` with cross-tenant view permissions for the 3PL operator)
 33. **Public API + webhooks** — REST API; outbound webhook subscriptions; developer docs; first-party TypeScript + Python SDKs
 34. **AI / MCP layer** — internal MCP server (in-app assistant) + **public MCP server (read-only beta from Phase 13, write from Phase 17)** — only platform with native MCP; AI woven through listing optimisation, return triage, repricing, forecasting, report authoring, **product research** (not just a chat panel)
-35. **Public uptime / metrics page** — `status.synergia.co.uk` — transparency: real-time platform status, marketplace sync latency, API rate-limit headroom (trust signal)
+35. **Public uptime / metrics page** — `status.synergia360.app` — transparency: real-time platform status, marketplace sync latency, API rate-limit headroom (trust signal)
 
 **Cross-cutting (not standalone domains)**
 
@@ -265,8 +266,8 @@ Synergia is a **multichannel marketplace management + 3PL platform** targeting U
 | Layer | Choice | Rationale |
 | --- | --- | --- |
 | Backend | ASP.NET Core 8 (C#) | Performance, strong typing, first-class SignalR + Azure integration |
-| Frontend (app) | Vite + React 18 + Shadcn/ui + Tailwind CSS | SPA; fast HMR; no SSR complexity; deploys to Azure Static Web Apps; served at `app.synergia.co.uk` |
-| Marketing site | Astro 4 + Tailwind CSS + MDX (blog) + light React islands | Static-first for SEO + Core Web Vitals; MDX for blog/changelog; React islands only for interactive widgets (pricing calculator, demo form); served at `synergia.co.uk` (apex + `www`) |
+| Frontend (app) | Vite + React 18 + Shadcn/ui + Tailwind CSS | SPA; fast HMR; no SSR complexity; deploys to Azure Static Web Apps; served at `app.synergia360.app` |
+| Marketing site | Astro 4 + Tailwind CSS + MDX (blog) + light React islands | Static-first for SEO + Core Web Vitals; MDX for blog/changelog; React islands only for interactive widgets (pricing calculator, demo form); served at `synergia360.app` (apex + `www`) |
 | Database | Azure SQL (SQL Server) — General Purpose, Azure Database | Fully managed; strong tooling (SSMS, Azure Data Studio); EF Core native support; enterprise SLA |
 | ORM | Entity Framework Core + Dapper (complex queries) | EF Core for CRUD + migrations; Dapper for hand-tuned reporting queries |
 | Migrations | EF Core migrations (`dotnet ef migrations add`) | Single head enforced in CI; `dotnet ef database update` in deploy pipeline |
@@ -280,8 +281,8 @@ Synergia is a **multichannel marketplace management + 3PL platform** targeting U
 | Email | Azure Communication Services | Transactional email; no separate vendor account |
 | AI assistant | Anthropic API (Claude) direct | Best structured reasoning over operational data; large context window |
 | MCP server | `packages/Synergia.Mcp` (C# — ModelContextProtocol NuGet) | Separate project in same solution; connects via internal API; company-scoped |
-| Frontend hosting (app) | Azure Static Web Apps (Standard tier) | Global CDN built-in; ~£7/month; native GitHub Actions deploy; free SSL + custom domains; serves `app.synergia.co.uk` |
-| Marketing site hosting | Azure Static Web Apps (Free tier) | Separate SWA instance; serves `synergia.co.uk` + `www.synergia.co.uk`; free tier sufficient for marketing traffic |
+| Frontend hosting (app) | Azure Static Web Apps (Standard tier) | Global CDN built-in; ~£7/month; native GitHub Actions deploy; free SSL + custom domains; serves `app.synergia360.app` |
+| Marketing site hosting | Azure Static Web Apps (Free tier) | Separate SWA instance; serves `synergia360.app` + `www.synergia360.app`; free tier sufficient for marketing traffic |
 | Cloud | Azure — UK South primary, UK West secondary | Natural .NET fit; UK data centres; strong compliance certifications |
 | CI/CD — backend | GitHub Actions → GHCR → Azure Container Apps | `dotnet build` → push image to GitHub Container Registry → deploy new Container Apps revision; triggers on `src/**` changes only |
 | CI/CD — frontend (app) | GitHub Actions → Azure Static Web Apps | `vite build` → SWA deploy action; preview environments per PR automatically; triggers on `frontend/**` changes only |
@@ -322,8 +323,8 @@ synergia/
 │   ├── Synergia.Api/          # ASP.NET Core 8 API
 │   ├── Synergia.Workers/      # Hangfire + Azure Functions
 │   └── Synergia.Mcp/          # MCP server
-├── frontend/                  # Vite + React (web app — app.synergia.co.uk)
-├── marketing/                 # Astro + MDX (marketing site — synergia.co.uk)
+├── frontend/                  # Vite + React (web app — app.synergia360.app)
+├── marketing/                 # Astro + MDX (marketing site — synergia360.app)
 ├── mobile/                    # Expo + React Native (iOS + Android) — Phase 9
 ├── packages/
 │   ├── api-types/             # TypeScript types auto-generated from .NET OpenAPI spec
@@ -347,14 +348,32 @@ Each workflow deploys independently to its own target — a change to `frontend/
 
 ### Domain layout
 
+**Production**
+
 | Domain | Hosts | Purpose |
 | --- | --- | --- |
-| `synergia.co.uk` (apex) + `www.synergia.co.uk` | Marketing site (Astro) | Public site, lead gen, content marketing, SEO |
-| `app.synergia.co.uk` | Frontend SPA (Vite + React) | Authenticated tenant app |
-| `api.synergia.co.uk` | API (Container Apps) | REST + webhooks; behind Azure Front Door |
-| `status.synergia.co.uk` | Public status page | Uptime, sync latency, rate-limit headroom |
-| `<brand>.synergia.co.uk` | App (multi-tenant routing) | Branded portal per 3PL-managed brand (Phase 11) |
-| `developers.synergia.co.uk` | Developer portal (Phase 17) | API docs, SDK references, sandbox |
+| `synergia360.app` (apex) + `www.synergia360.app` | Marketing site (Astro) | Public site, lead gen, content marketing, SEO |
+| `app.synergia360.app` | Frontend SPA (Vite + React) | Authenticated tenant app |
+| `api.synergia360.app` | API (Container Apps) | REST + webhooks + inbound marketplace webhooks; behind Azure Front Door |
+| `status.synergia360.app` | Public status page | Uptime, sync latency, rate-limit headroom |
+| `track.synergia360.app` | Branded tracking portal | Per-shipment tracking pages; white-label configurable (Phase 8) |
+| `<brand>.synergia360.app` | App (multi-tenant routing) | White-label branded portal per 3PL-managed brand (Phase 13) |
+| `developers.synergia360.app` | Developer portal (Phase 17) | API docs, SDK references, open-source adapter SDK |
+
+**Staging / QA**
+
+| Domain | Hosts | Purpose |
+| --- | --- | --- |
+| `staging.synergia360.app` | Staging frontend (mirrors `app.`) | Full-stack QA environment; nightly k6 load tests run here from Phase 5 |
+| `staging-api.synergia360.app` | Staging API (mirrors `api.`) | Staging REST + webhooks; all marketplace sandbox credentials point here |
+
+**Development** (local / CI ephemeral)
+
+| Domain | Hosts | Purpose |
+| --- | --- | --- |
+| `localhost:5173` | Frontend dev server (Vite HMR) | Local development |
+| `localhost:5000` | API dev server (ASP.NET Core) | Local API |
+| `pr-{N}.synergia360.app` | Per-PR preview (Azure SWA) | Ephemeral preview per open PR; auto-deleted on merge/close |
 
 ---
 
@@ -680,7 +699,7 @@ docs/
 │   ├── 001-monorepo.md
 │   ├── 002-modular-monolith.md
 │   ├── 003-schema-first.md
-│   ├── 004-dark-luxury-design.md
+│   ├── 004-prism-light-design.md
 │   └── NNN-<slug>.md              # one ADR per significant architectural decision
 ├── testing/
 │   └── TESTING_STRATEGY.md
@@ -744,72 +763,189 @@ Every phase has a documentation deliverable. A phase is not complete until `docs
 
 ## Step 5 — Design System
 
-### Design Tooling
+> **Source of truth:** All UI design lives in `synergia360-docs/UI Design/screens/`. Every screen, component pattern, and interaction state is defined there as a standalone HTML mockup. Implementation must reproduce each mockup **exactly and in full detail** — no shortcuts, no approximations, no "good enough" placeholders. If a screen does not yet have a mockup, the mockup must be created in that directory and approved before a line of production React code is written.
 
-**Google Stitch** is used for all UI/component design work before implementation. Every new surface is designed in Stitch first — reviewed and approved — before a line of frontend code is written. Stitch outputs inform the component structure, spacing, and token values used in the React implementation.
+### Design Source of Truth
 
-### Visual Direction: Dark Luxury
+The design is captured as a library of pre-built HTML mockups stored at:
 
-Synergia targets professional operators managing serious commercial operations. The UI must feel premium, considered, and trustworthy — not a generic SaaS dashboard. The chosen direction is **dark luxury**: deep dark surfaces, warm gold accents, high contrast data typography, and motion that clarifies rather than decorates.
+```
+synergia360-docs/UI Design/
+├── shared.css            — Full design-token CSS: colours, typography, spacing, layout, components
+├── shared-styles.css     — Supplementary style overrides and page-level utilities
+├── index.html            — Design index / navigation hub
+└── screens/
+    ├── design-system.html              — Full Prism Light component library reference
+    ├── (56 additional screen mockups — see Screen Inventory below)
+```
 
-**Reference points:** Linear, Vercel dashboard, Raycast, Stripe Dashboard (dark mode) — data-dense but visually refined.
+**Implementation rule:** Every React component and page must be a faithful pixel-level reproduction of its corresponding mockup in `screens/`. The HTML source of the mockup is the specification — inspect it directly when implementing. Token names, spacing values, border radii, font sizes, interaction states, and component variants are all defined there and must be used verbatim in the Tailwind/CSS layer.
 
-**Anti-patterns to avoid explicitly:** default Shadcn slate theme, generic sidebar + cards layout with no hierarchy, blue primary buttons on dark backgrounds, uniform radius and spacing across every component.
+**New screen rule:** Any new screen required in a phase that does not yet have a mockup in `screens/` must be mocked up in HTML in that directory and reviewed before the React implementation begins. The HTML mockup is part of the phase deliverable.
 
-### Colour Palette (CSS custom properties — OKLCH)
+**Mobile app rule:** The React Native mobile app (Phase 9) must reproduce the WMS screens (`wms-*.html`) with full fidelity, adapted for mobile layout only where touch targets or viewport require it — the visual design (colours, typography, component style) must remain identical to the web design system.
+
+### Visual Direction: Prism Light
+
+Synergia targets professional operators managing serious commercial operations. The UI must feel clean, data-dense, and trustworthy — approachable but serious. The chosen direction is **Prism Light**: a bright off-white base with high-contrast slate text, an indigo primary action accent, and semantic colour used sparingly to carry meaning (green = healthy/active, amber = needs attention, red = error/danger).
+
+**Reference points:** Linear, Notion, Vercel dashboard, Stripe Dashboard (light mode) — data-dense, high information density, visually refined without being flashy.
+
+**Anti-patterns to avoid explicitly:** default generic blue SaaS look with no visual hierarchy, overuse of colour for decoration, uniform radius and spacing across every component, modal-heavy workflows that interrupt flow, inconsistent density between tables and cards.
+
+**Density philosophy:** The app serves warehouse operators and order managers who live in the product all day. Information density is a feature, not a problem. Compact row heights, tight spacing in tables, and data-forward layouts are intentional — never "fix" density by adding padding that hides data.
+
+### Colour Tokens
+
+Sourced directly from `synergia360-docs/UI Design/screens/design-system.html`. These are the canonical values — use them exactly as defined. They are extracted into `packages/design-tokens/` for sharing across frontend, marketing, and mobile.
+
+**Prism Light palette (app + marketing site):**
 
 ```css
 :root {
-  /* Surfaces */
-  --color-bg:          oklch(8% 0 0);        /* near-black base */
-  --color-surface:     oklch(12% 0 0);       /* card / panel background */
-  --color-surface-raised: oklch(15% 0 0);   /* elevated surfaces, modals */
-  --color-border:      oklch(22% 0 0);       /* subtle borders */
-  --color-border-active: oklch(35% 0 0);    /* hover/focus borders */
+  /* Backgrounds */
+  --bg:           #F8F9FC;   /* page background */
+  --surface:      #FFFFFF;   /* card / panel surface */
+  --surface-2:    #F8FAFF;   /* elevated secondary surface */
+  --border:       #E2E8F0;   /* default border */
+
+  /* Accent — Indigo */
+  --accent:       #4F46E5;   /* primary action / active state */
+  --accent-dim:   rgba(79, 70, 229, 0.08);  /* accent wash background */
+  --accent-light: #EEF2FF;   /* accent tint for badges, backgrounds */
 
   /* Text */
-  --color-text:        oklch(95% 0 0);       /* primary text */
-  --color-text-muted:  oklch(60% 0 0);       /* secondary / metadata */
-  --color-text-subtle: oklch(40% 0 0);       /* disabled / placeholder */
-
-  /* Accent — warm gold */
-  --color-accent:      oklch(75% 0.14 85);   /* gold primary action */
-  --color-accent-dim:  oklch(55% 0.10 85);   /* muted gold for badges/tags */
-  --color-accent-glow: oklch(75% 0.14 85 / 15%); /* subtle glow on focus */
+  --text:         #0F172A;   /* primary text */
+  --text-2:       #475569;   /* secondary / metadata text */
+  --text-3:       #94A3B8;   /* subtle / disabled / placeholder */
 
   /* Semantic */
-  --color-success:     oklch(65% 0.14 145);  /* green */
-  --color-warning:     oklch(72% 0.16 65);   /* amber */
-  --color-danger:      oklch(58% 0.20 25);   /* deep red */
-  --color-info:        oklch(65% 0.12 240);  /* muted blue */
+  --green:        #10B981;   --green-dim: rgba(16, 185, 129, 0.08);  --green-light: #ECFDF5;
+  --red:          #EF4444;   --red-dim:   rgba(239, 68, 68, 0.08);   --red-light:   #FEF2F2;
+  --amber:        #F59E0B;   --amber-dim: rgba(245, 158, 11, 0.08);  --amber-light: #FFFBEB;
+  --blue:         #3B82F6;
+  --violet:       #7C3AED;   /* platform admin accent — visually distinct from tenant context */
+
+  /* Shadows */
+  --shadow-sm: 0 1px 2px rgba(0, 0, 0, 0.05);
+  --shadow:    0 1px 3px rgba(0, 0, 0, 0.08), 0 1px 2px rgba(0, 0, 0, 0.04);
 }
 ```
 
+**Platform Admin surface:** uses `--violet` (`#7C3AED`) in place of `--accent` across all admin-context UI — this is the only colour difference between tenant and admin surfaces. Staff must never confuse the two contexts.
+
 ### Typography
 
-- **Headings:** Geist (Vercel) — geometric, modern, high legibility at all sizes
-- **Body / UI:** Inter — proven data-dense readability
-- **Monospace / data values:** Geist Mono — order IDs, SKUs, tracking numbers, quantities
-- **Urdu (`ur-PK`):** Noto Nastaliq Urdu — preferred Urdu typeface; subset to Urdu glyphs; loaded conditionally based on locale
-- **Scale:** fluid via `clamp()` — never fixed px for type
-- **Line-height for Urdu:** Nastaliq script needs more vertical rhythm — locale-aware line-height tokens (`--line-height-base-ltr` vs `--line-height-base-rtl`)
+Sourced from `synergia360-docs/UI Design/screens/design-system.html` and the full component library.
 
-```css
---text-xs:   clamp(0.7rem,  0.65rem + 0.2vw, 0.75rem);
---text-sm:   clamp(0.8rem,  0.75rem + 0.2vw, 0.875rem);
---text-base: clamp(0.875rem, 0.82rem + 0.25vw, 1rem);
---text-lg:   clamp(1rem,    0.95rem + 0.3vw, 1.125rem);
---text-xl:   clamp(1.1rem,  1rem + 0.5vw, 1.5rem);
---text-2xl:  clamp(1.4rem,  1.2rem + 1vw, 2rem);
-```
+- **UI / Body:** Inter (Google Fonts) — proven data-dense readability; weights 400/500/600/700
+- **Monospace / data values:** Geist Mono — order IDs, SKUs, tracking numbers, quantities, code; weights 400/600
+- **Urdu (`ur-PK`):** Noto Nastaliq Urdu — preferred Urdu typeface; subset to Urdu glyphs only for performance; loaded conditionally based on locale
+- **Line-height for Urdu:** Nastaliq script requires more vertical rhythm — locale-aware line-height tokens (`--line-height-base-ltr` vs `--line-height-base-rtl`)
+
+**Type scale (from design-system.html):**
+
+| Token | Size | Weight | Usage |
+| --- | --- | --- | --- |
+| Display | 40px | 700 | Hero / landing page headlines |
+| H1 | 28px | 700 | Page titles |
+| H2 | 20px | 600 | Section headings |
+| H3 | 16px | 600 | Card titles, sub-section headings |
+| Body | 14px | 400 | Default paragraph and UI text |
+| Caption | 12px | 400 | Timestamps, metadata, helper text |
+| Mono | 13px | 400 | IDs, SKUs, codes — `Geist Mono` |
+
+**Base font size:** 14px on `<html>`. All values in `rem` relative to this base.
 
 ### Three Surfaces
 
-- **Marketing site** (`synergia.co.uk`) — same dark luxury palette + gold accent; editorial typography; full-bleed hero sections; large product visuals; designed in Stitch first; feels premium, not corporate-template
-- **Tenant App** (`app.synergia.co.uk`) — gold accent on deep dark surfaces; data-dense; every number legible at a glance; warm not cold
-- **Platform Admin** — violet accent (`oklch(65% 0.18 290)`) replacing gold; visually distinct so staff never confuse admin context with tenant context
+All three surfaces share `packages/design-tokens/` and must visually cohere. Visiting `synergia360.app` → signing in → landing in the app must feel like one continuous product.
 
-All three share `packages/design-tokens/` so colour, typography, spacing, and motion stay consistent. Visiting `synergia.co.uk` → signing up → landing in the app should feel like one continuous product, not a marketing site bolted onto an unrelated dashboard.
+- **Marketing site** (`synergia360.app`) — Prism Light palette; editorial typography; full-bleed hero sections; large product screenshots from the `screens/marketing-*.html` mockups; Lighthouse perf ≥ 95, SEO = 100, a11y = 100. Implemented in Astro. See `screens/marketing-home.html`, `marketing-pricing.html`, `marketing-features.html`, `marketing-comparison.html`.
+
+- **Tenant App** (`app.synergia360.app`) — Prism Light; indigo accent; data-dense; every number legible at a glance. 56 pre-built screen mockups define every page. Implemented in Vite + React + Shadcn/ui + Tailwind. See the full Screen Inventory below.
+
+- **Platform Admin** — identical Prism Light base with `--violet` (`#7C3AED`) replacing `--accent` throughout; visually distinct so staff never confuse admin context with tenant context. See `screens/admin-company-list.html`, `admin-system-health.html`, `admin-feature-flags.html`, `admin-audit-logs.html`.
+
+### Screen Inventory
+
+All 56 application screens plus the component library are pre-built in `synergia360-docs/UI Design/screens/`. Implementation must reproduce every screen in full — no screen may be shipped in a reduced or placeholder state. The table below maps each mockup to its phase and domain.
+
+| Mockup file | Surface | Domain | Phase |
+| --- | --- | --- | --- |
+| `design-system.html` | — | Component library reference | All |
+| **Auth & Onboarding** | | | |
+| `auth-login.html` | App | Auth | 3 |
+| `auth-signup.html` | App | Auth | 3 |
+| `auth-company-wizard.html` | App | Onboarding | 3 |
+| `auth-channel-onboarding.html` | App | Channel onboarding | 5 |
+| **Main Dashboard** | | | |
+| `main-dashboard.html` | App | Dashboard | 3 |
+| `dashboard-builder.html` | App | User-built dashboards | 10 |
+| `command-palette.html` | App | Global Cmd+K search | 3 |
+| **Orders** | | | |
+| `order-queue.html` | App | Order management | 6 |
+| `order-detail.html` | App | Order management | 6 |
+| `order-automation.html` | App | Automation | 10 |
+| `routing-rules.html` | App | Order routing | 6 |
+| **Returns** | | | |
+| `returns-queue.html` | App | Returns | 7 |
+| `returns-detail.html` | App | Returns | 7 |
+| **Catalogue** | | | |
+| `catalogue-product-list.html` | App | Product catalogue | 4 |
+| `catalogue-product-detail.html` | App | Product catalogue | 4 |
+| `catalogue-bom-builder.html` | App | BOM / Kits | 4 |
+| **Inventory** | | | |
+| `inventory-stock-overview.html` | App | Inventory | 4 |
+| `inventory-stock-take.html` | App | Stock take & cycle count | 9 |
+| **Channels & Listings** | | | |
+| `channels-overview.html` | App | Channel connections | 5 |
+| `listing-manager.html` | App | Listing management | 5 |
+| `pricing-rules.html` | App | Pricing rules | 5 |
+| **Fulfilment & Shipping** | | | |
+| `shipments-list.html` | App | Fulfilment / Shipping | 8 |
+| `purchase-orders.html` | App | Purchase orders / Suppliers | 4 |
+| `suppliers-list.html` | App | Suppliers | 4 |
+| **Customers** | | | |
+| `customers-list.html` | App | Customers / CRM | 6 |
+| `customer-detail.html` | App | Customers / CRM | 6 |
+| **Finance** | | | |
+| `finance-dashboard.html` | App | Finance | 10 |
+| `finance-expense-management.html` | App | Expense management | 10 |
+| `finance-monthly-close.html` | App | Monthly financial closing | 10 |
+| `sku-profitability.html` | App | SKU profitability | 10 |
+| **Analytics & Reporting** | | | |
+| `reports-library.html` | App | Report builder | 10 |
+| `report-builder-ai.html` | App | AI report authoring | 13 |
+| **Automation** | | | |
+| `automation-rule-builder.html` | App | No-code automation | 10 |
+| **WMS (Mobile-mirrored)** | | | |
+| `wms-manager-dashboard.html` | App / Mobile | WMS | 9 |
+| `wms-pick-list.html` | Mobile | WMS | 9 |
+| `wms-goods-in.html` | Mobile | WMS | 9 |
+| `wms-scan-success.html` | Mobile | WMS | 9 |
+| `wms-scan-error.html` | Mobile | WMS | 9 |
+| **Settings** | | | |
+| `settings-integrations.html` | App | Integrations | 5 |
+| `settings-api-webhooks.html` | App | API & Webhooks | 17 |
+| `settings-warehouses.html` | App | Warehouses | 4 |
+| `settings-billing.html` | App | Billing | 3 |
+| `settings-team.html` | App | Team / Users | 3 |
+| `settings-rbac.html` | App | RBAC / Permissions | 3 |
+| `settings-notifications.html` | App | Notifications | 3 |
+| `settings-locale.html` | App | Localisation | 2 |
+| **Platform Admin** | | | |
+| `admin-company-list.html` | Admin | Platform admin | 3 |
+| `admin-system-health.html` | Admin | Platform admin | 3 |
+| `admin-feature-flags.html` | Admin | Feature flags | 3 |
+| `admin-audit-logs.html` | Admin | Audit log | 3 |
+| **Marketing Site** | | | |
+| `marketing-home.html` | Marketing | Home page | 2 |
+| `marketing-pricing.html` | Marketing | Pricing page | 2 |
+| `marketing-features.html` | Marketing | Features page | 2 |
+| `marketing-comparison.html` | Marketing | Competitor comparison | 2 |
+
+**Implementation completeness rule:** Every screen in this inventory must be fully implemented before its phase is marked complete. "Fully implemented" means: all UI elements visible, all table columns present, all filter controls wired, all button states handled, all empty states rendered, all loading/skeleton states implemented, all responsive breakpoints verified, RTL layout verified for Urdu locale.
 
 ### RTL (right-to-left) support
 
@@ -827,23 +963,25 @@ frontend/
 ├── src/
 │   ├── components/
 │   │   ├── ui/          # Shadcn primitives (generated, do not edit)
-│   │   └── syn/         # Synergia custom components — dark luxury layer
+│   │   └── syn/         # Synergia custom components — Prism Light design layer
 │   ├── pages/           # Route components (React Router v6)
 │   ├── features/        # Feature-scoped modules (orders/, inventory/, wms/, etc.)
 │   ├── hooks/           # Shared custom hooks
 │   ├── lib/             # API client, utilities, constants
 │   ├── stores/          # Jotai atoms
-│   └── styles/          # Tailwind config, CSS tokens, Geist font import
+│   └── styles/          # Tailwind config, CSS tokens, Inter + Geist Mono font imports
 ├── vite.config.ts
 └── staticwebapp.config.json
 ```
+
+**Design fidelity rule:** Every component in `src/components/syn/` maps to a component defined in `synergia360-docs/UI Design/screens/design-system.html`. The HTML source of `design-system.html` is the implementation spec — do not deviate from the spacing, colour tokens, typography scale, or interaction states it defines.
 
 ### Custom Components
 
 | Component | Purpose |
 | --- | --- |
-| `DataGrid` | Virtualised table with column pinning, bulk select, inline edit; gold row highlight on hover |
-| `CommandPalette` | Cmd+K global search across orders/SKUs/channels; dark glass surface |
+| `DataGrid` | Virtualised table with column pinning, bulk select, inline edit; accent-dim row highlight on hover |
+| `CommandPalette` | Cmd+K global search across orders/SKUs/channels; surface-elevated modal with border; see `screens/command-palette.html` |
 | `ScanInput` | Barcode-optimised input with audible feedback states |
 | `LabelPreview` | ZPL/PDF label preview with print queue management |
 | `ManifestPanel` | End-of-day carrier manifest builder |
@@ -891,10 +1029,11 @@ frontend/
 ### Motion & Interaction
 
 - Compositor-only properties: `transform`, `opacity`, `clip-path` — never `width`/`height`/`top`/`left`
-- Entry animations: fade + 4px upward translate, 180ms `cubic-bezier(0.16, 1, 0.3, 1)` — fast, purposeful
+- Entry animations: `fadeUp` — fade + 4px upward translate, 180ms `cubic-bezier(0.16, 1, 0.3, 1)` — fast, purposeful; stagger delays at 40ms increments (`animate-in-delay-1` through `animate-in-delay-5`)
 - Data updates: number count-up on metric cards; subtle pulse on real-time value change
 - `prefers-reduced-motion` respected — all animations disabled when set
-- No decorative loaders; skeleton screens only, dark surface with shimmer in gold tint
+- No decorative loaders; skeleton screens only using `shimmer` keyframe — gradient sweep on `--surface` / `--surface-2` — no spinner except initial app load
+- Transition constants: `--transition-fast: 150ms cubic-bezier(0.16, 1, 0.3, 1)`; `--transition-normal: 250ms cubic-bezier(0.16, 1, 0.3, 1)` — use these values everywhere; do not invent new durations
 
 ---
 
@@ -926,7 +1065,7 @@ frontend/
 
 **No infrastructure spend this phase.**
 
-**Marketplaces to investigate:** eBay, TikTok Shop, Amazon SP-API, Etsy, Vinted, Shopify, WooCommerce
+**Marketplaces to investigate:** eBay, TikTok Shop, Amazon SP-API, Etsy, Vinted, Shopify, WooCommerce, OnBuy, Zalando
 
 For each marketplace, document:
 - **OAuth flow:** token lifecycle, scopes, refresh strategy, webhook registration endpoint
@@ -1001,7 +1140,7 @@ _Cost model validation:_
 
 _Legal & data-residency preconditions for AI:_
 - ☐ **Anthropic DPA + Standard Contractual Clauses (SCCs) signed in writing** — Claude API is US-hosted; AI calls in Phase 5+ send tenant data (orders, customer history, product fields, marketplace messages) to the US. UK GDPR requires a data processing agreement with adequate transfer safeguards. Without this, Phase 5 ships an unmitigated GDPR exposure.
-- ☐ Anthropic listed on `synergia.co.uk/legal/sub-processors` (sub-processor disclosure is a contractual requirement for many enterprise customers)
+- ☐ Anthropic listed on `synergia360.app/legal/sub-processors` (sub-processor disclosure is a contractual requirement for many enterprise customers)
 - ☐ Privacy notice + DPA template updated to reflect AI processing of tenant data — published before Phase 5 first AI feature ships
 - ☐ Tenant-level opt-out path documented (a tenant can request their AI features disabled; required for UK government / NHS / regulated-industry sellers if/when targeted)
 
@@ -1033,7 +1172,7 @@ _Sign-off:_
 **Goal:** Produce the complete, locked schema for the platform — every table the plan will ever need — by combining (a) Phase 0 research on every external API and (b) the Step 3 feature-coverage inventory derived from the 35 product domains. No migration runs until this is signed off. This is the single most important phase in the project.
 
 **Two inputs only — no third source of schema:**
-1. **Phase 0 `docs/api-research/*` + `SCHEMA_IMPACT.md`** — every external API contract that ever touches the platform (eBay, TikTok, Vinted, Etsy, Amazon, Shopify, WooCommerce, Royal Mail, Evri, DPD, ShipStation, Stripe, Anthropic, Open Exchange Rates, Keepa, DataForSEO, Google Trends, AliExpress) — driving column types, idempotency keys, status enums, fee timing, ID strategy.
+1. **Phase 0 `docs/api-research/*` + `SCHEMA_IMPACT.md`** — every external API contract that ever touches the platform (eBay, TikTok, Vinted, Etsy, Amazon, Shopify, WooCommerce, OnBuy, Zalando, Royal Mail, Evri, DPD, ShipStation, Stripe, Anthropic, Open Exchange Rates, Keepa, DataForSEO, Google Trends, AliExpress) — driving column types, idempotency keys, status enums, fee timing, ID strategy.
 2. **Step 3 feature-coverage inventory** — the list of domains and capabilities the schema must cover, derived from the 35 product domains in Step 1. This is the *what*; Phase 0 is the *how*.
 
 If a column being considered doesn't trace to one of those two inputs, it is rejected at review.
@@ -1117,26 +1256,26 @@ _Sign-off:_
 ### Phase 2 — Infrastructure & Repo Foundation
 **Goal:** New repo, CI/CD, schema v1 with all tenant-scoped tables, zero nullable company_ids.
 
-**Azure infrastructure tier:** Consumption / serverless only. Estimated cost: **~£80–100/month** (deferred free-tier resources where possible — see earlier discussion).
+**Azure infrastructure tier:** Free / consumption tiers only. Upgrade when a service hits its free limit or first paying customers arrive. Estimated cost: **~£10–20/month** (mostly Plausible analytics + minor Blob Storage + negligible Key Vault ops).
 
 | Service | Tier | Purpose |
 | --- | --- | --- |
-| Azure SQL | Serverless — General Purpose, 1–4 vCores (auto-pause after 1h inactivity) | Primary DB; ~£30–50/month when active; £0 when paused |
-| Azure Container Apps | Consumption plan (scale to zero) | API only; no charge when idle |
+| Azure SQL | **Free Offer** — Serverless General Purpose (100,000 vCore seconds/month, 32 GB storage, auto-pause, free forever) | Primary DB; **£0**; upgrade to provisioned vCores when storage approaches 32 GB or consistent compute is needed |
+| Azure Container Apps | Consumption plan (scale to zero) — free grant: 180,000 vCPU-seconds + 360,000 GiB-seconds/month | API only; **£0** within free grant at dev/early traffic volumes |
 | Azure Static Web Apps | Free tier | Frontend SPA hosting; global CDN; free SSL; preview envs per PR |
-| Azure Cache for Redis | Basic C0 (£15/month) — defer to Phase 3 | Rate limits, locks; use in-memory until first paying customers |
-| Azure Blob Storage | LRS Hot | Labels, images, seeds |
+| Azure Cache for Redis | **Deferred indefinitely** — use in-memory (`IMemoryCache`) until first paying customers | Rate limits, locks; revisit at Phase 5 when multi-replica scale-out requires distributed cache |
+| Azure Blob Storage | LRS Hot — pay-per-use | Labels, images, seeds; pennies/month at dev volumes |
 | GitHub Container Registry | Free (replaces ACR Basic) | API Docker image storage; free for private repos |
 | Application Insights | Free tier (5 GB/month) | Traces, exceptions |
-| Azure Key Vault | Standard | Secrets via managed identity |
-| GitHub Actions | Free tier | CI/CD for all four workflows |
+| Azure Key Vault | Standard — pay-per-operation (~£0.03/10K ops) | Secrets via managed identity; effectively **£0** at dev volumes |
+| GitHub Actions | Free tier | CI/CD for all workflows |
 
 **Deliverables:**
 - Monorepo: `src/Synergia.Api/`, `src/Synergia.Workers/`, `src/Synergia.Mcp/`, `frontend/`, `marketing/`, `mobile/` (scaffolded, empty), `packages/api-types/`, `packages/design-tokens/`, `infra/`, `docs/`
 - `docs/ARCHITECTURE.md` — component diagram, data flow, infrastructure map
 - `docs/GETTING_STARTED.md` — clone → docker compose up → seed → verify
 - `docs/infra/INFRA_OVERVIEW.md` — Azure resource list, tiers, cost, secrets strategy
-- `docs/adr/001-monorepo.md`, `docs/adr/002-modular-monolith.md`, `docs/adr/004-dark-luxury-design.md`
+- `docs/adr/001-monorepo.md`, `docs/adr/002-modular-monolith.md`, `docs/adr/004-prism-light-design.md`
 - `docs/testing/TESTING_STRATEGY.md` — full pyramid, tools, CI config, schedule, coverage thresholds
 - `docs/infra/INFRA_OVERVIEW.md` — Azure resource map, cost progression, secrets strategy
 - `docs/runbooks/database-restore.md`, `docs/runbooks/secrets-rotation.md`, `docs/runbooks/high-error-rate.md`
@@ -1155,11 +1294,11 @@ _Sign-off:_
 - Vite + React app scaffolded (`npm create vite@latest frontend -- --template react-ts`); Shadcn/ui initialised; Tailwind configured; React Router v6 wired
 - `staticwebapp.config.json` configured: all routes → `index.html` (SPA fallback), CORS headers for API calls
 - **Marketing site scaffolded** (`npm create astro@latest marketing -- --template minimal --typescript strict`): Tailwind + MDX integrations, `packages/design-tokens/` consumed for shared colour/typography
-- **Marketing MVP page set:** home (hero + value prop + waitlist form), pricing (free tier + plan teaser), about, contact — all pages dark-luxury themed, Lighthouse perf ≥ 95
+- **Marketing MVP page set:** home (hero + value prop + waitlist form), pricing (free tier + plan teaser), about, contact — all pages faithfully reproduce `screens/marketing-home.html` and `screens/marketing-pricing.html`; Lighthouse perf ≥ 95, SEO = 100, a11y = 100
 - **Waitlist form** wired to `/api/public/marketing/lead` (writes to `marketing_leads`); double-opt-in email via Azure Communication Services
 - **Analytics: Plausible Cloud** (~£8/month) — privacy-first, no cookie banner needed (D17)
 - **No third-party CMP** (D18) — minimal first-party consent UI built in-house; no marketing cookies until Phase 11+ when revisit if needed
-- DNS: `synergia.co.uk` apex + `www.synergia.co.uk` → marketing SWA; `app.synergia.co.uk` → frontend SWA; `api.synergia.co.uk` → Container Apps via Front Door (added Phase 10)
+- DNS: `synergia360.app` apex + `www.synergia360.app` → marketing SWA; `app.synergia360.app` → frontend SWA; `api.synergia360.app` → Container Apps via Front Door; `staging.synergia360.app` + `staging-api.synergia360.app` → staging Container Apps; `status.synergia360.app` → status SWA; `track.synergia360.app` → tracking portal (Phase 8); `<brand>.synergia360.app` wildcard → Front Door routing (Phase 13)
 
 _Internationalisation foundation (i18n / l10n) — NEW_
 - `packages/locales/` initialised with `en-GB` baseline (full string set extracted from MVP screens)
@@ -1189,7 +1328,7 @@ _Internationalisation foundation (i18n / l10n) — NEW_
 - All 50+ tables exist with `company_id NOT NULL` — verified by integration test scanning `information_schema`
 - `RequireCompanyScope` returns 403 when no company context — unit tested
 - Frontend deploys to SWA on push to `main`; PR branch gets a preview URL automatically
-- Marketing site deploys to `synergia.co.uk` on push to `main`; Lighthouse CI gate enforces perf 95+ / SEO 100 / a11y 100
+- Marketing site deploys to `synergia360.app` on push to `main`; Lighthouse CI gate enforces perf 95+ / SEO 100 / a11y 100
 - Waitlist form on marketing site successfully writes to `marketing_leads` and triggers double-opt-in email
 - ESLint rule blocks any raw text in JSX (must use `t('key')`); zero hardcoded strings in `frontend/`
 - `dir="rtl"` correctly applied when locale is `ur-PK`; layout flips correctly verified via Playwright visual test
@@ -1272,7 +1411,7 @@ _Billing_
 
 _Marketing site (Phase 3 update)_
 - Pricing page connected to live plan data (free/starter/growth/scale/enterprise)
-- "Sign up" CTA on marketing site → routes to `app.synergia.co.uk/signup` (real onboarding flow)
+- "Sign up" CTA on marketing site → routes to `app.synergia360.app/signup` (real onboarding flow)
 - Conversion tracking: which marketing page → sign-up → paid conversion (UTM persisted through sign-up flow)
 - Legal pages live: Privacy, Terms, DPA, Sub-processors, Cookie policy
 
@@ -1382,7 +1521,7 @@ _Expense Management setup (NEW)_
 ### Phase 5 — Channel Connections + Listing Management + Onboarding Wizard
 **Goal:** Connect the three initial marketplaces, push listings from the central catalogue, and offer a "60-second connect" onboarding wizard. AI-assisted listing optimisation woven in from day one.
 
-**Initial marketplace adapters: eBay, TikTok Shop, Vinted.** Etsy and Amazon are added in Phase 12. Shopify and WooCommerce (storefronts) are added in Phase 16.
+**Initial marketplace adapters: eBay, TikTok Shop, Vinted.** OnBuy is added in Phase 6. Etsy, Amazon, and Zalando are added in Phase 12. Shopify and WooCommerce (storefronts) are added in Phase 16.
 
 **Carrier framework note:** The `CarrierAdapter` ABC + `StubCarrierAdapter` are scaffolded in this phase (no real carriers connected yet) so that Phase 7 returns workflow can stub return-label generation cleanly. Real carriers (ShipStation + Royal Mail) connect in Phase 8.
 
@@ -1441,7 +1580,7 @@ _Adapter telemetry — Application Insights custom metrics (precondition for Pha
   - `webhook.delivery_lag_ms{channel, company_id, event_type}` — time from external event timestamp → arrival in `webhook_inbox`
   - `adapter.error_rate_per_min{channel, company_id, error_class}` — rolling per-channel error rate by error class (auth / rate-limit / 5xx / timeout)
 - Metrics written via `ITelemetryClient.TrackMetric` in adapter base class — adapters cannot ship without these; CI gate fails if a new adapter PR doesn't emit the four metrics above
-- These metrics power the Phase 11 public uptime page (`status.synergia.co.uk`). Phase 11 is reading them, not building them — without this Phase 5 deliverable, the status page in Phase 11 has nothing to display per channel
+- These metrics power the Phase 11 public uptime page (`status.synergia360.app`). Phase 11 is reading them, not building them — without this Phase 5 deliverable, the status page in Phase 11 has nothing to display per channel
 
 _Imports & Migrations (NEW — major churn-reducer)_
 
@@ -1496,13 +1635,13 @@ _Localisation rollout (Phase 5)_
 - RTL layout verified across every screen via Playwright visual diff (LTR vs RTL snapshots both stored)
 - Date/number formatting in Urdu locale verified (Urdu uses Western digits in commercial contexts in Pakistan; date order DD/MM/YYYY)
 - Custom translation override UI in tenant settings — operators can rename platform terms (e.g. "Pick task" → "Picking job") for both languages
-- Marketing site at `synergia.co.uk/ur/` fully translated; `hreflang` tags signal Urdu version to search engines
+- Marketing site at `synergia360.app/ur/` fully translated; `hreflang` tags signal Urdu version to search engines
 
 **Marketplace listings stay in marketplace-supported languages.** Synergia operators can run the platform in Urdu (UI, reports, alerts, emails), but listings pushed to eBay/TikTok Shop/Vinted/Amazon remain in the language each marketplace supports for that storefront (typically English for `co.uk` storefronts, with marketplace-supported locales for international storefronts in later phases). The app/operations layer is Urdu-friendly; the public-facing buyer experience on each marketplace stays as the marketplace dictates.
 
 _Marketing site (Phase 5 update)_
 - **Feature pages live** for every shipped capability: Marketplace Management, Listing Management, Channel Onboarding, AI Listing Optimisation, Pricing Rules, Multi-currency, Channel Buffer Stock
-- **Integrations directory** at `synergia.co.uk/integrations`: pages per marketplace (eBay, TikTok Shop, Vinted) + carriers (ShipStation, Royal Mail) — SEO landing pages targeting "[marketplace] inventory management software" terms. **Vinted page must be scoped honestly** — "listings + orders + shipping labels via Vinted Pro Integrations API; returns / messaging / disputes handled in Vinted UI." Don't overclaim; under-promise + over-deliver builds trust.
+- **Integrations directory** at `synergia360.app/integrations`: pages per marketplace (eBay, TikTok Shop, Vinted) + carriers (ShipStation, Royal Mail) — SEO landing pages targeting "[marketplace] inventory management software" terms. **Vinted page must be scoped honestly** — "listings + orders + shipping labels via Vinted Pro Integrations API; returns / messaging / disputes handled in Vinted UI." Don't overclaim; under-promise + over-deliver builds trust.
 - **For-sellers** + **For-3PLs** segment landing pages
 - **Comparison pages**: "Synergia vs Linnworks", "Synergia vs StoreFEEDER", "Synergia vs Veeqo" — side-by-side feature/pricing tables
 - **Blog** scaffolded with first 5 launch posts (MDX)
@@ -1850,15 +1989,15 @@ Reports stored as global `report_templates` rows; on first tenant load, cloned i
   - `3pl_relationships` table: `(operator_company_id, managed_brand_company_id, scope, status)` — defines what the 3PL operator can see in the brand's tenant
   - Brand staff log into their own tenant directly (full feature access scoped to plan tier)
   - 3PL operator switches between managed brands via a "shop selector" in the top nav (similar to GitHub org switcher) — backed by Phase 3's `POST /api/auth/switch-company` endpoint, no auth refactor required
-  - Branded portal URL per brand: `<brand>.synergia.co.uk` or `app.synergia.co.uk/b/<brand>`
+  - Branded portal URL per brand: `<brand>.synergia360.app` or `app.synergia360.app/b/<brand>`
   - **3pl_client_tokens** for read-only API access from external systems
   - **ThreePLClientPortal component:** brand-side dashboard
-- **Public uptime / metrics page** at `status.synergia.co.uk` — consumes the custom App Insights metrics emitted by Phase 5 adapters (`marketplace.sync_latency_ms`, `marketplace.rate_limit_remaining_pct`, `webhook.delivery_lag_ms`, `adapter.error_rate_per_min`); Trust signal for prospects evaluating Synergia
+- **Public uptime / metrics page** at `status.synergia360.app` — consumes the custom App Insights metrics emitted by Phase 5 adapters (`marketplace.sync_latency_ms`, `marketplace.rate_limit_remaining_pct`, `webhook.delivery_lag_ms`, `adapter.error_rate_per_min`); Trust signal for prospects evaluating Synergia
 - Account health dashboard: **eBay seller level gauges + TikTok Shop health metrics**; defect rate trends, SLA breach alerts. Amazon health adds in Phase 12. Vinted shop health is NOT in the Vinted API — operator monitors Vinted health in Vinted UI; Synergia surfaces an `UnavailableCapabilityCard` (per the pattern named in Phase 7) with a "View in Vinted" deep link.
 
 _i18n maintenance gate (Phase 11a)_
 - Every new string introduced in Phase 11a (case studies, account-health labels, status-page strings, brand-switcher copy, payout-report titles) goes through the AI-translate + native-Urdu-review pipeline before merge. CI gate from Phase 5 stays active — no key in `en-GB.json` may ship without a human-reviewed `ur-PK.json` entry.
-- Marketing site `synergia.co.uk/ur/` reaches parity with new English pages within the same release.
+- Marketing site `synergia360.app/ur/` reaches parity with new English pages within the same release.
 
 **Phase 11a acceptance criteria (v1 launch blockers):**
 - eBay case opened in portal → response sent via API → eBay confirms message received
@@ -1903,7 +2042,7 @@ These are valuable but not v1-launch-blocking. Ship in priority order based on c
 | **AI** | Listing optimisation, return triage, repricing suggestions, demand forecast (basic), insights digest email |
 | **Multi-tenant** | 3PL shadow-tenant model with brand switcher; full action-level RBAC; audit log |
 | **i18n** | English (`en-GB`) + Urdu (`ur-PK`) with full RTL; AI-translated + native-reviewed |
-| **Marketing** | `synergia.co.uk` with feature pages, comparison pages, blog, case studies, integrations directory, pricing estimator, demo form |
+| **Marketing** | `synergia360.app` with feature pages, comparison pages, blog, case studies, integrations directory, pricing estimator, demo form |
 | **Trust** | Public status page, GDPR-clean (no cookie banner), UK data residency, SLA tiers per plan |
 | **Pricing** | Free tier (acquisition), Starter, Growth, Scale, Enterprise — turnover-based, rolling 30-day, transparent |
 | **Customer success** | Marketing → app sign-up flow with UTM persistence, HubSpot CRM sync, customer merge tool for clean LTV/CAC |
@@ -1914,11 +2053,11 @@ These are valuable but not v1-launch-blocking. Ship in priority order based on c
 - [ ] First 5 paying tenants successfully migrated from competitor platforms (Linnworks/StoreFEEDER) using Imports & Migrations tooling
 - [ ] First 30 days post-launch: zero critical incidents; uptime ≥ 99.9%; p95 API latency < 2s
 - [ ] Marketing site: 1,000+ unique monthly visitors; 50+ demo requests; 20+ free-tier sign-ups
-- [ ] Public status page live at `status.synergia.co.uk` with real metrics
+- [ ] Public status page live at `status.synergia360.app` with real metrics
 - [ ] G2 / Capterra / Trustpilot listings live, ≥ 5 verified reviews each
 - [ ] All Phase 2–10 acceptance criteria met + **all Phase 11a acceptance criteria** met (Phase 11b deliverables — messaging hub, customer merge tool, AI Insights Digest, CRM sync, marketing case studies — ship as continuous monthly releases post-launch and are NOT v1 launch blockers)
 - [ ] AI cost model validated against actual tenant usage (see `Plans/AI_COST_MODEL.md`)
-- [ ] Anthropic DPA + SCCs signed and Anthropic listed on `synergia.co.uk/legal/sub-processors` (precondition from Phase 0 — verified still in force)
+- [ ] Anthropic DPA + SCCs signed and Anthropic listed on `synergia360.app/legal/sub-processors` (precondition from Phase 0 — verified still in force)
 
 ### Post-Launch Phases (12–17)
 
@@ -2401,8 +2540,8 @@ Cost optimisation principles applied throughout:
 | Phase | Key infrastructure changes | Est. monthly (production) |
 | --- | --- | --- |
 | 0–1 | No infrastructure spend — research and schema design only | **£0** |
-| 2–4 | Azure SQL Serverless, Container Apps consumption, SWA Free, GHCR (free), Blob, App Insights free; Redis deferred | **£80–110** |
-| 5–8 | Azure SQL provisioned 2 vCores, SWA Standard (~£7/month), Redis Standard C1, Service Bus Standard, Storage Queues | **£200–270** |
+| 2–4 | Azure SQL **Free Offer** (£0), Container Apps free grant (£0), SWA Free, GHCR free, Blob (pennies), App Insights free, Redis deferred (in-memory), Key Vault (~£0), Plausible (~£8/month) | **£10–20** |
+| 5–8 | Azure SQL upgrade to provisioned 2 vCores (when free 32 GB storage or consistent compute needed), SWA Standard (~£7/month), Redis Basic C0 introduced, Service Bus Standard, Storage Queues | **£150–200** |
 | 9 | Add Azure SignalR Service Standard 1 unit (WMS real-time) + mobile distribution costs (see below) | **£250–330** + mobile dist |
 | 10–12 | Azure SQL 4 vCores, Azure Front Door Standard | **£380–480** |
 | 13 | 1-year reserved on SQL + Container Apps (35% off), App Insights pay-per-GB with sampling | **£300–380** |
@@ -2577,7 +2716,7 @@ UK + EU operation requires explicit data protection compliance from day one. **P
 - **Retention policies:** `gdpr_retention_policies` table defines per-resource retention (e.g. inactive customer data → anonymise after 7 years; audit logs → retain 7 years)
 - **Auto-purge job:** nightly Hangfire job applies retention policies; logs every action
 - **Data residency:** all data in Azure UK South (UK South + UK West for HA) — never crosses out of UK
-- **Sub-processor list:** maintained at `synergia.co.uk/legal/sub-processors` — every third-party service Synergia routes data through (Stripe, Anthropic, Open Exchange Rates, etc.)
+- **Sub-processor list:** maintained at `synergia360.app/legal/sub-processors` — every third-party service Synergia routes data through (Stripe, Anthropic, Open Exchange Rates, etc.)
 - **DPA template:** Data Processing Agreement template available for enterprise customers
 
 ---
@@ -2702,7 +2841,7 @@ These are the features that move Synergia from "competitive with Linnworks/Store
 | **Multi-currency + base-currency P&L** | Phase 1 (schema) → Phase 10 | UK + EU operation handled cleanly from day one; competitors patch this in retroactively |
 | **First-party developer SDKs** | Phase 17 | TypeScript + Python SDKs published with the public REST API. Lower friction than competitors' raw API docs |
 | **Three-tier product research** | Phase 13 (Tier A) → Phase 14 (Tier B) → Phase 15 (Tier C) | **No competitor offers ops + research in one platform.** ZikAnalytics / Helium 10 / Jungle Scout / Keepa are external tools you pay for separately. Synergia closes the loop: research → list → measure → refine, all integrated. Tier C (cross-marketplace arbitrage detection + AI image-match supplier finding) is genuinely category-defining. |
-| **Editorial-quality marketing site** | Phase 2 → ongoing | Astro static site at `synergia.co.uk` matching the dark luxury app aesthetic; Lighthouse 95+/100/100 enforced in CI; SEO landing pages per marketplace + per segment; comparison pages directly attacking competitor positioning. The marketing site looks like the product, not a separate brand. |
+| **Editorial-quality marketing site** | Phase 2 → ongoing | Astro static site at `synergia360.app` sharing the Prism Light design system with the app; Lighthouse 95+/100/100 enforced in CI; SEO landing pages per marketplace + per segment; comparison pages directly attacking competitor positioning. The marketing site looks like the product, not a separate brand. |
 | **Bilingual (English + Urdu) UI from launch** | Phase 2 (foundation) → Phase 5 (Urdu rollout) | UK has a large Pakistani-British SME seller base — operating Synergia natively in Urdu is a real wedge no UK competitor offers. Full RTL support, Nastaliq typography, native-speaker-reviewed terminology. Per-tenant custom translation overrides for terminology preferences. |
 | **AI-authored, AI-free reports** | Phase 10 (engine) → Phase 13 (AI authoring) | Operator describes report in natural language; AI converts to a structured `ReportSpec`; spec saved; report runs forever without AI tokens. Pay AI cost once at design, deterministic SQL forever after. Competitor reporting is rigid pre-built dashboards or expensive BI add-ons; Synergia gives the flexibility of BI with the cost of a static query. |
 | **User-built dashboards (no defaults)** | Phase 13 | 13 widget types, 12-col drag-and-drop, cascading filters, kiosk mode for warehouse TVs, visibility tiers, public share links. Competitors ship rigid pre-built dashboards you can't reshape; Synergia ships an empty canvas + a template gallery. Operators build the view their team actually needs. |
@@ -2858,7 +2997,7 @@ The sequencing principle: **research before schema → schema locked before any 
 4. **Infrastructure** (Phase 2) — Bicep IaC for dev; Docker Compose local stack; App Insights + Key Vault; idempotency middleware; correlation IDs; health checks; budget alert
 5. **Database baseline** (Phase 2) — EF Core baseline migration from locked schema; `dotnet ef migrations list` shows exactly one migration
 6. **Seed script** (Phase 2) — companies, users, roles, test data; idempotent
-7. **Marketing site MVP** (Phase 2) — Astro scaffold; home + pricing + about + contact + waitlist; deployed to `synergia.co.uk`; Lighthouse 95+/100/100
+7. **Marketing site MVP** (Phase 2) — Astro scaffold; home + pricing + about + contact + waitlist; deployed to `synergia360.app`; Lighthouse 95+/100/100
 8. **i18n / l10n foundation** (Phase 2) — `react-i18next` + Astro i18n + `IStringLocalizer` wired; `packages/locales/en-GB.json` baseline; ESLint blocks raw JSX strings; CSS logical properties throughout; RTL handling verified on app shell
 
 ### Identity, Audit, Notifications, Billing (Phase 3)
@@ -2953,7 +3092,7 @@ The sequencing principle: **research before schema → schema locked before any 
 72. **Account health dashboard** — eBay seller level + TikTok Shop health metrics; defect rate trends, SLA breach alerts; Vinted shows "View in Vinted" placeholder
 73. **Marketplace fee reconciliation** — payout reports → `order_line_costs` actuals (replaces estimates) for eBay + TikTok; Vinted fees remain estimated
 74. **3PL shadow-tenant model** — `3pl_relationships`; brand switcher; per-brand portal URL
-75. **Public uptime / metrics page** — `status.synergia.co.uk`
+75. **Public uptime / metrics page** — `status.synergia360.app`
 76. **Marketing CRM sync (HubSpot Free)** — `marketing_leads` mirrored to HubSpot via API
 77. **Customer merge tool** — manual merge UI for fuzzy-matched duplicate `customers` records flagged in Phase 6; bulk merge for migration cleanup; precondition for clean LTV/CAC analytics
 78. **AI Insights Digest** — daily/weekly AI-generated summary email per opted-in operator
@@ -3023,4 +3162,4 @@ The sequencing principle: **research before schema → schema locked before any 
 
 Reply `proceed` to begin Phase 0 API research.  
 Reply `modify: [section]` to adjust any part of the plan.  
-Reply `questions first` to resolve any open questions before starting.
+Rep
